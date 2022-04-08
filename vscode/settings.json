@@ -37,5 +37,11 @@
       "editor.tabSize": 4,
       "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
-    "terminal.integrated.defaultProfile.windows": "Git Bash"
+    "terminal.integrated.defaultProfile.windows": "Git Bash",
+    "editor.guides.bracketPairs": true,
+    "editor.bracketPairColorization.enabled": true,
+    "[typescript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "telemetry.telemetryLevel": "off"
 }
