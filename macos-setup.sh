@@ -22,6 +22,9 @@ brew install exa
 brew install vim
 brew install tldr
 brew install gh
+brew install thefuck
+fuck
+fuck
 
 # Install pyenv to setup python
 brew install pyenv
