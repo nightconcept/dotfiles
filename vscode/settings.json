@@ -1,47 +1,87 @@
 {
-  "[dart]": {
-    "editor.formatOnSave": true,
-    "editor.formatOnType": true,
-    "editor.rulers": [80],
-    "editor.selectionHighlight": false,
-    "editor.suggest.snippetsPreventQuickSuggestions": false,
-    "editor.suggestSelection": "first",
-    "editor.tabCompletion": "onlySnippets",
-    "editor.wordBasedSuggestions": false
+  "[dart]" : {
+    "editor.suggest.snippetsPreventQuickSuggestions" : false,
+    "editor.suggestSelection" : "first",
+    "editor.tabCompletion" : "onlySnippets",
+    "editor.wordBasedSuggestions" : false,
+    "editor.selectionHighlight" : false,
+    "editor.formatOnSave" : true,
+    "editor.formatOnType" : true,
+    "editor.rulers" : [
+      80
+    ]
   },
-  "workbench.iconTheme": "vscode-icons",
+  "svelte.enable-ts-plugin" : true,
+  "editor.guides.bracketPairs" : true,
+  "editor.accessibilitySupport" : "off",
+  "workbench.iconTheme" : "vscode-icons",
+  "[jsonc]" : {
+    "editor.defaultFormatter" : "esbenp.prettier-vscode"
+  },
+  "[css]" : {
+    "editor.tabSize" : 2
+  },
+  "terminal.integrated.defaultProfile.windows" : "Ubuntu-20.04 (WSL)",
+  "[svelte]" : {
+    "editor.defaultFormatter" : "svelte.svelte-vscode",
+    "editor.tabSize" : 2
+  },
+  "[html]" : {
+    "editor.tabSize" : 4,
+    "editor.defaultFormatter" : "esbenp.prettier-vscode"
+  },
+  "[javascript]" : {
+    "editor.defaultFormatter" : "esbenp.prettier-vscode",
+    "editor.tabSize" : 2
+  },
+  "telemetry.telemetryLevel" : "off",
   "vsicons.dontShowNewVersionMessage": true,
   "dart.flutterSdkPath": "D:\\lib\\flutter",
-  "svelte.enable-ts-plugin": true,
-  "workbench.editorAssociations": {
-    "*.pdf": "latex-workshop-pdf-hook"
+  "terminal.integrated.env.osx": {
+    "FIG_NEW_SESSION": "1"
   },
-  "[javascript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.tabSize": 2
+  "workbench.colorTheme": "Atom One Dark",
+  "editor.fontFamily": " 'Consolas NF', Consolas, 'FiraCode NF', Meslo, monospace",
+  "tabnine.experimentalAutoImports": true,
+  "editor.fontLigatures": true,
+  "settingsSync.ignoredExtensions": [
+    "ms-vscode.cpptools",
+    "menerv.love2d-launcher",
+    "pixelbyte-studios.pixelbyte-love2d",
+    "rog2.luacheck",
+    "spences10.vba",
+    "dart-code.dart-code",
+    "dart-code.flutter",
+    "tecosaur.latex-utilities",
+    "james-yu.latex-workshop",
+    "octref.vetur",
+    "johnsoncodehk.volar"
+  ],
+  "terminal.integrated.profiles.windows": {
+    "PowerShell": {
+      "source": "PowerShell",
+      "icon": "terminal-powershell"
+    },
+    "Command Prompt": {
+      "path": [
+        "${env:windir}\\Sysnative\\cmd.exe",
+        "${env:windir}\\System32\\cmd.exe"
+      ],
+      "args": [],
+      "icon": "terminal-cmd"
+    },
+    "Git Bash": {
+      "source": "Git Bash"
+    },
+    "Ubuntu-20.04 (WSL)": {
+      "path": "C:\\Windows\\System32\\wsl.exe",
+      "args": [
+        "-d",
+        "Ubuntu-20.04"
+      ]
+    },
+    "Hyper-WSL": {
+      "path": "C:\\Users\\dark\\AppData\\Local\\Programs\\Hyper\\Hyper.exe"
+    }
   },
-  "[svelte]": {
-    "editor.defaultFormatter": "svelte.svelte-vscode",
-    "editor.tabSize": 2
-  },
-  "[jsonc]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[sass]": {
-      "editor.tabSize": 2
-    },
-  "[css]": {
-      "editor.tabSize": 2
-    },
-  "[html]": {
-      "editor.tabSize": 4,
-      "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "terminal.integrated.defaultProfile.windows": "Git Bash",
-    "editor.guides.bracketPairs": true,
-    "editor.bracketPairColorization.enabled": true,
-    "[typescript]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "telemetry.telemetryLevel": "off"
 }
