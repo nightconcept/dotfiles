@@ -21,3 +21,4 @@ scoop install 7zip
 # set up 7zip context as well
 scoop install obsidian
 scoop install vscodium
+scoop install hexchat

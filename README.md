@@ -13,9 +13,6 @@ yadm clone https://github.com/nightconcept/dotfiles.git
 
 ### Windows
 1. Use git to pull this repo and it's scripts.
-```
-yadm clone https://github.com/nightconcept/dotfiles.git
-```
 2. Run windows-setup-pkg.ps1
 3. Run wsl-setup.sh inside WSL
 4. Use yadm to pull this repo into ~ in WSL
