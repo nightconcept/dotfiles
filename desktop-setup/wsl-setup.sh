@@ -2,6 +2,11 @@
 
 sudo -v
 
+# Update Linux
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get -y install
+
 # Install zsh
 sudo apt-get -y install zsh
 
@@ -57,7 +62,10 @@ git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:
 git clone https://github.com/spaceship-prompt/spaceship-prompt.git "$ZSH_CUSTOM/themes/spaceship-prompt" --depth=1
 ln -s "$ZSH_CUSTOM/themes/spaceship-prompt/spaceship.zsh-theme" "$ZSH_CUSTOM/themes/spaceship.zsh-theme"
 pnpm i -g hyperterm-atom-dark
-
+pnpm i -g hyperterm-paste
+pnpm i -g hyperlinks
+pnpm i -g hyper-opacity
+pnpm i -g hyper-search
 
 # Remove outdated versions from the cellar.
 brew cleanup
