@@ -70,4 +70,7 @@ shopt -s cmdhist
 # History substitution are not immediately passed to the shell parser.
 shopt -s histappend histverify
 
+# Use for fnm to set node environment
+eval "$(fnm env --use-on-cd)"
+
 cd /c/grmn/prj/avtn/git/

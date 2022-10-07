@@ -21,7 +21,7 @@
   "[css]" : {
     "editor.tabSize" : 2
   },
-  "terminal.integrated.defaultProfile.windows" : "Ubuntu-20.04 (WSL)",
+  "terminal.integrated.defaultProfile.windows" : "Git Bash",
   "[svelte]" : {
     "editor.defaultFormatter" : "svelte.svelte-vscode",
     "editor.tabSize" : 2
@@ -57,4 +57,20 @@
     "octref.vetur",
     "johnsoncodehk.volar"
   ],
+  "terminal.integrated.profiles.windows": {
+    "PowerShell": {
+      "source": "PowerShell",
+      "icon": "terminal-powershell"
+    },
+    "Command Prompt": {
+      "path": [
+        "${env:windir}\\Sysnative\\cmd.exe",
+        "${env:windir}\\System32\\cmd.exe"
+      ],
+      "args": [],
+      "icon": "terminal-cmd"
+    },
+    "Git Bash": {
+      "source": "Git Bash"
+    }
 }
