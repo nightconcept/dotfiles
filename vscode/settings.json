@@ -21,7 +21,7 @@
   "[css]" : {
     "editor.tabSize" : 2
   },
-  "terminal.integrated.defaultProfile.windows" : "Ubuntu-20.04 (WSL)",
+  "terminal.integrated.defaultProfile.windows" : "Git Bash",
   "[svelte]" : {
     "editor.defaultFormatter" : "svelte.svelte-vscode",
     "editor.tabSize" : 2
@@ -72,12 +72,5 @@
     },
     "Git Bash": {
       "source": "Git Bash"
-    },
-    "Ubuntu-20.04 (WSL)": {
-      "path": "C:\\Windows\\System32\\wsl.exe",
-      "args": [
-        "-d",
-        "Ubuntu-20.04"
-      ]
-    },
+    }
 }
