@@ -3,8 +3,6 @@
 sudo -v
 
 # Update Linux
-curl -o /usr/share/keyrings/syncthing-archive-keyring.gpg https://syncthing.net/release-key.gpg
-echo "deb [signed-by=/usr/share/keyrings/syncthing-archive-keyring.gpg] https://apt.syncthing.net/ syncthing stable" | sudo tee /etc/apt/sources.list.d/syncthing.list
 sudo apt-get update
 sudo apt-get upgrade
 sudo apt-get -y install
@@ -39,7 +37,6 @@ brew install gcc
 
 # Install system utils and tools
 brew install git
-
 brew install bat
 brew install gh
 brew install exa
@@ -74,7 +71,6 @@ curl -sSL https://install.pi-hole.net | bash
 apt install unbound
 apt install samba
 apt install ddclient
-apt-get install syncthing
 
 # Remove outdated versions from the cellar.
 brew cleanup
