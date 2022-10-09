@@ -46,14 +46,6 @@ fuck
 fuck
 brew install tldr
 
-# first in path from zshrc over whatever else is installed
-brew install python@3.8
-
-# Install fnm (fast node modules), node LTS, and pnpm
-brew install fnm
-fnm install --lts
-brew install pnpm
-
 # setup terminal plugins
 git clone https://github.com/agkozak/zsh-z $ZSH_CUSTOM/plugins/zsh-z
 git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
@@ -62,6 +54,7 @@ git clone https://github.com/spaceship-prompt/spaceship-prompt.git "$ZSH_CUSTOM/
 ln -s "$ZSH_CUSTOM/themes/spaceship-prompt/spaceship.zsh-theme" "$ZSH_CUSTOM/themes/spaceship.zsh-theme"
 
 # Server specific installation
+brew install --cask vscodium
 apt-get install openssh-server
 systemctl enable ssh --now
 ufw allow ssh
