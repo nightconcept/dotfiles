@@ -3,8 +3,6 @@
 sudo -v
 
 # Update Linux
-curl -o /usr/share/keyrings/syncthing-archive-keyring.gpg https://syncthing.net/release-key.gpg
-echo "deb [signed-by=/usr/share/keyrings/syncthing-archive-keyring.gpg] https://apt.syncthing.net/ syncthing stable" | sudo tee /etc/apt/sources.list.d/syncthing.list
 sudo apt-get update
 sudo apt-get upgrade
 sudo apt-get -y install
@@ -39,7 +37,6 @@ brew install gcc
 
 # Install system utils and tools
 brew install git
-
 brew install bat
 brew install gh
 brew install exa
@@ -49,14 +46,6 @@ fuck
 fuck
 brew install tldr
 
-# first in path from zshrc over whatever else is installed
-brew install python@3.8
-
-# Install fnm (fast node modules), node LTS, and pnpm
-brew install fnm
-fnm install --lts
-brew install pnpm
-
 # setup terminal plugins
 git clone https://github.com/agkozak/zsh-z $ZSH_CUSTOM/plugins/zsh-z
 git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
@@ -65,6 +54,7 @@ git clone https://github.com/spaceship-prompt/spaceship-prompt.git "$ZSH_CUSTOM/
 ln -s "$ZSH_CUSTOM/themes/spaceship-prompt/spaceship.zsh-theme" "$ZSH_CUSTOM/themes/spaceship.zsh-theme"
 
 # Server specific installation
+brew install --cask vscodium
 apt-get install openssh-server
 systemctl enable ssh --now
 ufw allow ssh
@@ -74,7 +64,6 @@ curl -sSL https://install.pi-hole.net | bash
 apt install unbound
 apt install samba
 apt install ddclient
-apt-get install syncthing
 
 # Remove outdated versions from the cellar.
 brew cleanup
