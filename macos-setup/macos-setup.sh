@@ -64,7 +64,6 @@ brew install --cask runjs
 
 # Install everything else
 brew install --cask discord
-brew install --cask rocket
 brew install --cask stretchly
 brew install --cask dozer
 brew install --cask obsidian
@@ -72,7 +71,7 @@ brew install --cask spotify
 brew install --cask plex
 brew install --cask google-drive
 brew install --cask bettertouchtool
-brew install --cask raycast
+brew install --cask rectangle
 brew install --cask mos
 
 # Remove outdated versions from the cellar.
