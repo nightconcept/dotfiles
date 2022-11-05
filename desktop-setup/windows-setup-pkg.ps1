@@ -35,4 +35,12 @@ scoop install pnpm
 scoop install hyper
 scoop install FiraCode-NF
 scoop install FiraCode-NF-Mono
-scoop install heidisql
+scoop install calibre
+scoop install obs-studio
+scoop install plex-desktop
+scoop install spotify
+scoop install typora
+scoop install zoom
+scoop install k-lite-codec-pack-full-np
+scoop install python38
+scoop install qbittorrent
