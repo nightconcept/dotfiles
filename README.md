@@ -14,13 +14,12 @@ yadm clone https://github.com/nightconcept/dotfiles.git
 ### Windows
 1. Use git to pull this repo and it's scripts.
 2. Run windows-setup-pkg.ps1
-3. Run wsl-setup.sh inside WSL
-4. Use yadm to pull this repo into ~ in WSL
-```
-yadm clone https://github.com/nightconcept/dotfiles.git
-```
+3. Copy .bashrc and .bash_profile to /~ # TODO automate this someday
 
 ## Fonts
 
 Editor: Consolas NF from [Znuff/consolas-powerline](https://github.com/Znuff/consolas-powerline)
 Terminal: FiraCode NF from [Nerd Fonts](https://www.nerdfonts.com/font-downloads).
+
+## Credits
+- [odb/official-bash-logo](https://github.com/odb/official-bash-logo)

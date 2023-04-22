@@ -1,76 +1,19 @@
 {
-  "[dart]" : {
-    "editor.suggest.snippetsPreventQuickSuggestions" : false,
-    "editor.suggestSelection" : "first",
-    "editor.tabCompletion" : "onlySnippets",
-    "editor.wordBasedSuggestions" : false,
-    "editor.selectionHighlight" : false,
-    "editor.formatOnSave" : true,
-    "editor.formatOnType" : true,
-    "editor.rulers" : [
-      80
-    ]
-  },
-  "svelte.enable-ts-plugin" : true,
-  "editor.guides.bracketPairs" : true,
-  "editor.accessibilitySupport" : "off",
-  "workbench.iconTheme" : "vscode-icons",
-  "[jsonc]" : {
-    "editor.defaultFormatter" : "esbenp.prettier-vscode"
-  },
-  "[css]" : {
-    "editor.tabSize" : 2
-  },
-  "terminal.integrated.defaultProfile.windows" : "Git Bash",
-  "[svelte]" : {
-    "editor.defaultFormatter" : "svelte.svelte-vscode",
-    "editor.tabSize" : 2
-  },
-  "[html]" : {
-    "editor.tabSize" : 4,
-    "editor.defaultFormatter" : "esbenp.prettier-vscode"
-  },
-  "[javascript]" : {
-    "editor.defaultFormatter" : "esbenp.prettier-vscode",
-    "editor.tabSize" : 2
-  },
-  "telemetry.telemetryLevel" : "off",
-  "vsicons.dontShowNewVersionMessage": true,
-  "dart.flutterSdkPath": "D:\\lib\\flutter",
-  "terminal.integrated.env.osx": {
-    "FIG_NEW_SESSION": "1"
-  },
-  "workbench.colorTheme": "Atom One Dark",
-  "editor.fontFamily": " 'Consolas NF', Consolas, 'FiraCode NF', Meslo, monospace",
-  "tabnine.experimentalAutoImports": true,
-  "editor.fontLigatures": true,
-  "settingsSync.ignoredExtensions": [
-    "ms-vscode.cpptools",
-    "menerv.love2d-launcher",
-    "pixelbyte-studios.pixelbyte-love2d",
-    "rog2.luacheck",
-    "spences10.vba",
-    "dart-code.dart-code",
-    "dart-code.flutter",
-    "tecosaur.latex-utilities",
-    "james-yu.latex-workshop",
-    "octref.vetur",
-    "johnsoncodehk.volar"
-  ],
-  "terminal.integrated.profiles.windows": {
-    "PowerShell": {
-      "source": "PowerShell",
-      "icon": "terminal-powershell"
-    },
-    "Command Prompt": {
-      "path": [
-        "${env:windir}\\Sysnative\\cmd.exe",
-        "${env:windir}\\System32\\cmd.exe"
-      ],
-      "args": [],
-      "icon": "terminal-cmd"
-    },
-    "Git Bash": {
-      "source": "Git Bash"
-    }
+    "workbench.colorTheme": "Atomize",
+    "svelte.enable-ts-plugin": true,
+    "workbench.startupEditor": "none",
+    "workbench.iconTheme": "vscode-icons",
+    "security.workspace.trust.untrustedFiles": "open",
+    "terminal.external.windowsExec": "C:\\Users\\dark\\scoop\\apps\\windows-terminal\\current\\WindowsTerminal.exe",
+    "terminal.integrated.profiles.windows":    
+        {
+            "Bash":
+            {
+                "path": ["C:\\Users\\dark\\scoop\\apps\\git\\current\\bin\\bash.exe"],
+                "icon": "terminal-bash"
+            }
+        },
+        "terminal.integrated.defaultProfile.windows": "Bash",
+        "terminal.integrated.fontSize": 16,
+        "editor.fontFamily": "'Consolas NF', 'FiraCode NFM', 'Consolas, 'Courier New', monospace"
 }
