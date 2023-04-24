@@ -15,5 +15,5 @@
         },
         "terminal.integrated.defaultProfile.windows": "Bash",
         "terminal.integrated.fontSize": 16,
-        "editor.fontFamily": "'Consolas NF', 'FiraCode NFM', 'Consolas, 'Courier New', monospace"
+        "editor.fontFamily": " 'Consolas ligaturized v3', 'Consolas NF', Consolas, 'FiraCode NF', Meslo, monospace",
 }
