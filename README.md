@@ -18,7 +18,7 @@ yadm clone https://github.com/nightconcept/dotfiles.git
 
 ## Fonts
 
-Editor: Consolas NF from [Znuff/consolas-powerline](https://github.com/Znuff/consolas-powerline)
+Editor: Consolas NF from [somq/consolas-ligaturized](https://github.com/somq/consolas-ligaturized)
 Terminal: FiraCode NF from [Nerd Fonts](https://www.nerdfonts.com/font-downloads).
 
 ## Credits
