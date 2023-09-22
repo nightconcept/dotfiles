@@ -26,7 +26,6 @@ brew install bat
 brew install exa
 brew install vim
 brew install tldr
-brew install gh
 brew install --cask github
 brew install thefuck
 fuck
@@ -45,7 +44,7 @@ fnm install --lts
 brew install pnpm
 
 # Install terminal tools
-brew install --cask hyper
+brew install --cask iterm2
 brew install --cask fig
 
 # setup terminal plugins
@@ -54,18 +53,15 @@ git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-m
 git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
 git clone https://github.com/spaceship-prompt/spaceship-prompt.git "$ZSH_CUSTOM/themes/spaceship-prompt" --depth=1
 ln -s "$ZSH_CUSTOM/themes/spaceship-prompt/spaceship.zsh-theme" "$ZSH_CUSTOM/themes/spaceship.zsh-theme"
-pnpm i -g hyperterm-atom-dark
 
 # Install web development tools
 brew install --cask vscodium
-brew install --cask firefox-developer-edition
 brew install --cask eloston-chromium
 brew install --cask runjs
 
 # Install everything else
 brew install --cask discord
 brew install --cask stretchly
-brew install --cask dozer
 brew install --cask obsidian
 brew install --cask spotify
 brew install --cask plex
@@ -73,6 +69,15 @@ brew install --cask google-drive
 brew install --cask bettertouchtool
 brew install --cask rectangle
 brew install --cask mos
+brew install --cask raycast
+brew install --cask ferdium
+brew install --cask nordpass
+brew install --cask authy
+brew install --cask vanilla
+
+# Add cask-upgrade to allow for updating
+# https://github.com/buo/homebrew-cask-upgrade
+brew tap buo/cask-upgrades
 
 # Remove outdated versions from the cellar.
 brew cleanup
