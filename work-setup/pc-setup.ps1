@@ -11,9 +11,7 @@ scoop bucket add nerd-fonts
 
 # Install development apps
 scoop install heidisql
-scoop install vscodium
-Write-Output "Add VSCodium as a context menu option by running: 'C:\Users\solivand\scoop\apps\vscodium\current\install-context.reg'"
-Write-Output "# For VSCodium file associations, run 'C:\Users\solivand\scoop\apps\vscodium\current\install-associations.reg'"
+scoop install extras/vscode
 scoop install notepadplusplus
 scoop install gitextensions
 scoop install fnm
