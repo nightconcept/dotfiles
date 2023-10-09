@@ -9,7 +9,6 @@ scoop bucket add extras
 scoop bucket add nerd-fonts
 scoop bucket add nonportable
 scoop update
-scoop install firefox
 scoop install ungoogled-chromium
 scoop install vlc
 scoop install discord
@@ -18,10 +17,7 @@ scoop install 7zip
 scoop install gpg
 # set up 7zip context as well
 scoop install obsidian
-scoop install vscodium
-# TODO: add registry stuff
-Write-Output "Add VSCodium as a context menu option by running: 'C:\Users\dark\scoop\apps\vscodium\current\install-context.reg'"
-Write-Output "# For VSCodium file associations, run 'C:\Users\dark\scoop\apps\vscodium\current\install-associations.reg'"
+scoop install extras/vscode
 scoop install hexchat
 scoop install stretchly
 scoop install notepadplusplus
@@ -38,8 +34,11 @@ scoop install plex-desktop
 scoop install typora
 scoop install zoom
 scoop install k-lite-codec-pack-full-np
-scoop install python310
 scoop install qbittorrent
+
+# install pyenv
+Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/pyenv-win/pyenv-win/master/pyenv-win/install-pyenv-win.ps1" -OutFile "./install-pyenv-win.ps1"; &"./install-pyenv-win.ps1"
+pyenv install 3.11.5
 
 # PowerShell setup
 scoop install https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/oh-my-posh.json
