@@ -36,7 +36,7 @@ brew install pyenv
 brew install openssl readline sqlite3 xz zlib
 
 # see here: https://github.com/pyenv/pyenv/issues/2143#issuecomment-1069223994
-CC=/opt/homebrew/bin/gcc-11 pyenv install 3.8.12
+CC=/opt/homebrew/bin/gcc-11 pyenv install 3.11.5
 
 # Install fnm (fast node modules), node LTS, and pnpm
 brew install fnm
@@ -55,7 +55,7 @@ git clone https://github.com/spaceship-prompt/spaceship-prompt.git "$ZSH_CUSTOM/
 ln -s "$ZSH_CUSTOM/themes/spaceship-prompt/spaceship.zsh-theme" "$ZSH_CUSTOM/themes/spaceship.zsh-theme"
 
 # Install web development tools
-brew install --cask vscodium
+brew install --cask visual-studio-code
 brew install --cask eloston-chromium
 brew install --cask runjs
 
@@ -65,7 +65,6 @@ brew install --cask stretchly
 brew install --cask obsidian
 brew install --cask spotify
 brew install --cask plex
-brew install --cask google-drive
 brew install --cask bettertouchtool
 brew install --cask rectangle
 brew install --cask mos
