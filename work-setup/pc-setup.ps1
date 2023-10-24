@@ -12,16 +12,13 @@ scoop bucket add nerd-fonts
 # Install development apps
 scoop install heidisql
 scoop install extras/vscode
-scoop install notepadplusplus
+scoop install extras/pycharm
 scoop install gitextensions
 scoop install fnm
 fnm install --lts
 scoop install pnpm
 scoop install gpg
 scoop install github
-scoop install kitty
-scoop install 7zip
-scoop install ungoogled-chromium
 scoop install windows-terminal
 scoop install FiraCode-NF
 scoop install FiraCode-NF-Mono
@@ -29,7 +26,7 @@ scoop install FiraCode-NF-Mono
 # Install productivity apps
 scoop install stretchly
 scoop install caffeine
-scoop install logseq
+scoop install extras/obsidian
 
 # PowerShell setup
 scoop install https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/oh-my-posh.json
