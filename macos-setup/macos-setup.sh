@@ -57,7 +57,6 @@ ln -s "$ZSH_CUSTOM/themes/spaceship-prompt/spaceship.zsh-theme" "$ZSH_CUSTOM/the
 # Install web development tools
 brew install --cask visual-studio-code
 brew install --cask eloston-chromium
-brew install --cask runjs
 
 # Install everything else
 brew install --cask discord
