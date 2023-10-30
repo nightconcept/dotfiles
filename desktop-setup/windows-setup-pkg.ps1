@@ -3,12 +3,17 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; Invoke-Expression (New-Object 
 
 # install Windows only apps
 scoop install git
+
+# install official and unofficial scoop buckets
 scoop bucket add main
 scoop bucket add versions
 scoop bucket add extras
 scoop bucket add nerd-fonts
 scoop bucket add nonportable
+scoop bucket add anderlli0053_DEV-tools https://github.com/anderlli0053/DEV-tools
 scoop update
+
+# add apps
 scoop install ungoogled-chromium
 scoop install vlc
 scoop install discord
@@ -19,7 +24,7 @@ scoop install gpg
 scoop install obsidian
 scoop install extras/vscode
 scoop install hexchat
-scoop install stretchly
+scoop install anderlli0053_DEV-tools/eyeleo-chs-portable
 scoop install notepadplusplus
 scoop install fnm
 fnm install --lts
