@@ -14,32 +14,40 @@ scoop bucket add anderlli0053_DEV-tools https://github.com/anderlli0053/DEV-tool
 scoop update
 
 # add apps
-scoop install ungoogled-chromium
-scoop install vlc
-scoop install discord
-scoop install github
-scoop install 7zip
-scoop install gpg
+scoop install extras/ungoogled-chromium
+scoop install extras/vlc
+scoop install extras/github
+scoop install main/7zip
+scoop install main/gpg
 # set up 7zip context as well
-scoop install obsidian
+scoop install extras/obsidian
 scoop install extras/vscode
-scoop install hexchat
+scoop install extras/hexchat
 scoop install anderlli0053_DEV-tools/eyeleo-chs-portable
-scoop install notepadplusplus
-scoop install fnm
+scoop install anderlli0053_DEV-tools/freefilesync
+scoop install extras/notepadplusplus
+scoop install main/fnm
 fnm install --lts
-scoop install pnpm
-scoop install windows-terminal
-scoop install starship
-scoop install FiraCode-NF
-scoop install FiraCode-NF-Mono
-scoop install calibre
-scoop install obs-studio
-scoop install plex-desktop
-scoop install typora
-scoop install zoom
-scoop install k-lite-codec-pack-full-np
+scoop install main/pnpm
+scoop install extras/windows-terminal
+scoop install main/starship
+scoop install nerd-fonts/FiraCode-NF
+scoop install nerd-fonts/FiraCode-NF-Mono
+scoop install extras/calibre
+scoop install extras/obs-studio
+scoop install extras/plex-desktop
+scoop install extras/typora
+scoop install extras/zoom
+scoop install nonportable/k-lite-codec-pack-full-np
 scoop install qbittorrent
+scoop install extras/rufus
+scoop install extras/slack
+scoop install extras/eartrumpet
+scoop install extras/ferdium
+scoop install extras/windowsspyblocker
+scoop install extras/hwinfo
+scoop install extras/cpu-z
+scoop install extras/kitty
 
 # install pyenv
 Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/pyenv-win/pyenv-win/master/pyenv-win/install-pyenv-win.ps1" -OutFile "./install-pyenv-win.ps1"; &"./install-pyenv-win.ps1"
