@@ -1,25 +1,23 @@
-# Dotfiles
+# dotfiles
+These are all my dotfiles that are meant to be interoporable between all machines that I use. I use Windows, macOS, and Linux often. This is intended to be used *after* `install-scripts`.
 
-My personal config that I  use for setting up my development environments on Windows and Mac. This repo is meant to be managed by [yadm](https://yadm.io/).
+## Supported OS
+- Arch Linux
 
-## Usage
+## Requirements
+- Git
+- stow
 
-### macOS
-1. Use yadm to pull this repo into home directory.
+## Linux Installation
+
+First, check out the dotfiles repo in your $HOME directory using git
+
+1. Download
 ```
-yadm clone https://github.com/nightconcept/dotfiles.git
+$ git clone https://github.com/nightconcept/dotfiles.git
+$ cd dotfiles
 ```
-2. Run macos-setup.sh
-
-### Windows
-1. Use git to pull this repo and it's scripts.
-2. Run windows-setup-pkg.ps1
-3. Copy .bashrc and .bash_profile to /~ # TODO automate this someday
-
-## Fonts
-
-Editor: Consolas NF from [somq/consolas-ligaturized](https://github.com/somq/consolas-ligaturized)
-Terminal: FiraCode NF from [Nerd Fonts](https://www.nerdfonts.com/font-downloads).
-
-## Credits
-- [odb/official-bash-logo](https://github.com/odb/official-bash-logo)
+2. Install via stow to create symlinks in ~
+```
+stow .
+```
