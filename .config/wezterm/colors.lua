@@ -6,6 +6,9 @@ local M = {}
 
 function M.apply_to_config(config)
     config.color_scheme = "Atom"
+
+    config.window_background_opacity = 0.98
+      
 end
 
 return M
