@@ -10,7 +10,7 @@ local function font_with_fallback(name, params)
 end
 
 function M.apply_to_config(config)
-	local term_font = "FiraCode Nerd Font"
+	local term_font = "FiraMono Nerd Font"
 
 	config.font_size = 12
 	config.line_height = 1.0
