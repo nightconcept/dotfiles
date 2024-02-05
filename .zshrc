@@ -115,6 +115,8 @@ alias lls='ls -la --sort=size'
 alias llt='ls -la --sort=time'
 alias rm='rm -iv'
 
+eval "$(fnm env --use-on-cd)"
+
 # export MANPATH="/usr/local/man:$MANPATH"
 
 # You may need to manually set your language environment
