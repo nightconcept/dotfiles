@@ -20,6 +20,6 @@ mousebinds.apply_to_config(config)
 config.scrollback_lines = 7000
 config.hyperlink_rules = wezterm.default_hyperlink_rules()
 config.hide_tab_bar_if_only_one_tab = true
-
+config.window_close_confirmation = 'NeverPrompt'
 
 return config
