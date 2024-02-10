@@ -1,0 +1,54 @@
+- tags: desktop
+  block:
+
+    - name: desktop - install Plasma desktop and SDDM
+      become: true
+      community.general.pacman:
+        name: 
+          #- plasma-meta
+          #- kde-applications-meta
+          - plasma-desktop
+          - sddm-kcm
+        state: present
+      
+
+    - name: desktop - install essential KDE applications
+      become: true
+      become_user: root
+      community.general.pacman:
+      # https://community.kde.org/Distributions/Packaging_Recommendations
+        name:
+          - ark
+          - dolphin
+          - gwenview
+          - kcalc
+          - konsole
+          - kwrite
+          - okular
+          - spectacle
+          - konsole
+          - breeze-gtk
+          - kde-gtk-config
+          - khotkeys
+          - kinfocenter
+          - ksshaskpass
+          - kwallet-pam
+          - plasma-browser-integration
+          - plasma-nm
+          - plasma-pa
+          - bluedevil
+          - ffmpegthumbs
+          - dolphin-plugins
+          - kdegraphics-thumbnailers
+          - kdesdk-thumbnailers
+          - kdenetwork-filesharing
+        state: present
+
+    - name: desktop - Enable service sddm
+      become: true
+      systemd:
+        name: sddm.service
+        enabled: true
+
+    # configure SDDM to breeze as default theme
+

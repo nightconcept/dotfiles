@@ -1,0 +1,70 @@
+# must be `all` and not `localhost` to be able to get the {{inventory_hostname}} value
+- hosts: localhost
+
+  # TODO
+  # fnm
+  # pnpm
+  # hexchat
+  # obsidian
+  # vscode
+  # wezterm
+  # pyenv
+  roles:
+    # core system setup
+    - pre_install
+    - pacman
+    - zsh
+    - yay
+
+    - system
+    - kde
+    - wayland
+    - bluetooth
+
+    - stow
+
+    # applications
+    - mpv
+    
+---
+- name: Distribution
+  debug: msg="{{ ansible_distribution }}"
+
+- name: Bootstrap development environment
+  hosts: localhost
+  tasks:
+    - name: Update all submodules
+      tags:
+        - submodules
+      command:
+        cmd: git submodule update --force --init --recursive --jobs 4
+      changed_when: false
+
+    - name: Pre-install
+      tags: pre_install
+      import_role:
+        name: pre_install
+
+    - name: CLI tools
+      tags: cli
+      import_role:
+        name: cli
+
+    - name: ArchLinux Desktop
+      tags: archlinux
+      import_role:
+        name: archlinux
+      when: >
+        (not 'CI' in ansible_env) and
+        (ansible_system is search("Linux")) and
+        (not ansible_kernel is search("microsoft"))
+
+    - name: Fonts
+      tags: fonts
+      import_role:
+        name: cli
+
+    - name: Stow
+      tags: stow
+      import_role:
+        name: stow

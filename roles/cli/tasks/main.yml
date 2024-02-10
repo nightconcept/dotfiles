@@ -1,0 +1,38 @@
+- tags: cli
+  block:
+
+    - name: cli - Install common CLI tools (ArchLinux)
+      become: true
+      community.general.pacman:
+        state: latest
+        name:
+          - "{{ cli_tools_nix }}"
+          - "{{ cli_tools_linux }}"
+      when: ansible_distribution != "ArchLinux"
+
+    - name: cli - Install common CLI tools (Ubuntu)
+      become: true
+      ansible.builtin.apt:
+        state: latest
+        name:
+          - "{{ cli_tools_nix }}"
+          - "{{ cli_tools_linux }}"
+      when: ansible_distribution != "Ubuntu"
+
+    - name: cli - Install commong CLI tools (macOS)
+      become: true
+      community.general.homebrew:
+        state: latest
+        name:
+          - "{{ cli_tools_nix }}"
+          - "{{ cli_tools_macos }}"
+      when: ansible_distribution != "Ubuntu"
+
+    - name: cli - Install CLI tools
+      become: true
+      community.windows_win_scoop.name:
+        state: latest
+        name: "{{ cli_tools_windows }}"
+      when: ansible_distribution != "Windows"
+
+

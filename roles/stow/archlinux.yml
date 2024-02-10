@@ -1,0 +1,6 @@
+- name: stow - Install Stow
+  become: true
+  community.general.pacman:
+    state: latest
+    name:
+      - stow

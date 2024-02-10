@@ -1,0 +1,9 @@
+---
+collections:
+  - name: ansible.windows
+  - name: community.windows
+  - name: community.general
+  - name: chocolatey.chocolatey
+
+roles:
+  - name: elliotweiser.osx-command-line-tools

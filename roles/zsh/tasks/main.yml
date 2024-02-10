@@ -1,0 +1,40 @@
+- tags: zsh
+  block:
+
+    - name: zsh - Install packages
+      become: true
+      community.general.pacman:
+        state: latest
+        name:
+          - zsh                             # A very advanced and programmable command interpreter (shell) for UNIX
+          - zsh-autosuggestions             # Fish-like autosuggestions for zsh
+          - zsh-completions                 # complete suggestions with tab
+          - zsh-history-substring-search    # ZSH port of Fish history search (up arrow)
+          - zsh-syntax-highlighting         # Fish shell like syntax highlighting for Zsh
+
+    - name: zsh - Make it the user's default shell
+      become: true
+      ansible.builtin.user:
+        name: "{{ user }}"
+        shell: /usr/bin/zsh
+
+    - name: zsh - Clone oh-my-zsh for users
+      tags:
+        # Suppress warning: [ANSIBLE0006] git used in place of git module
+        # Git module doesn't allow us to set `core.autocrlf=input`.
+        - skip_ansible_lint
+      become: yes
+      become_user: '{{ user }}'
+      # core.autocrlf=input prevents https://github.com/robbyrussell/oh-my-zsh/issues/4402
+      command: 'git clone -c core.autocrlf=input https://github.com/robbyrussell/oh-my-zsh.git .oh-my-zsh'
+      args:
+        chdir: '~{{ user }}'
+        creates: '~{{ user }}/.oh-my-zsh'
+
+    - name: zsh - Install PowerLevel10K
+      ansible.builtin.git:
+        repo: https://github.com/romkatv/powerlevel10k.git
+        dest: "/home/{{ user }}/.oh-my-zsh/custom/themes/powerlevel10k"
+        depth: 1
+
+

@@ -1,0 +1,21 @@
+- tags: wayland
+  block:
+
+    - name: wayland - install wayland package
+      become: true
+      community.general.pacman:
+        name: 
+          - wayland
+          - xorg-xwayland
+          - xorg-xlsclients
+          - qt5-wayland
+          - glfw-wayland
+        state: present
+
+    - name: wayland - install plasma-wayland-session
+      become: true
+      community.general.pacman:
+        name: 
+          - plasma-wayland-session
+        state: present
+      when: install_kde_plasma

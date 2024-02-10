@@ -1,0 +1,22 @@
+- tags: bluetooth
+  block:
+
+    - name: bluetooth - Install packages
+      become: true
+      community.general.pacman:
+        state: latest
+        name:
+          - bluez           # Daemons for the bluetooth protocol stack
+          - bluez-utils     # Development and debugging utilities for the bluetooth protocol stack
+
+
+    - name : bluetooth - Link script
+      block:
+        - name: bluetooth - Ensure directory
+          ansible.builtin.file:
+            path: "{{ home }}/.local/bin"
+            owner: "{{ user }}"
+            group: "{{ user }}"
+            mode: '700'
+            state: directory
+

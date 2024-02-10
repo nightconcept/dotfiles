@@ -1,0 +1,10 @@
+- tags: mpv
+  block:
+
+    - name: mpv - Install packages
+      become: true
+      community.general.pacman:
+        state: latest
+        name:
+          - mpv           # A free, open source, and cross-platform media player
+          - mpv-mpris     # MPRIS plugin for mpv (media keys)

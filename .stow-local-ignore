@@ -1,1 +1,6 @@
 *.sh
+ansible.cfg
+bootstrap.yml
+install
+README.md
+setup-windows-client.ps1
