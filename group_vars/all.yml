@@ -36,14 +36,13 @@ cli_tools_nix:
     - btop                # A graphical process/system monitor (`htop` alternative)
     - ncdu                # Disk usage analyzer like WinDirStat (`du` alternative)
     - dosfstools          # DOS filesystem utilities TODO:Remove?
-    # - exfat-utils         # Utilities for exFAT file system TODO:Remove?
+    # - exfat-utils        # Utilities for exFAT file system TODO:Remove?
     - mtools              # A collection of utilities to access MS-DOS disks TODO: Remove?
     # Compression/Uncompression utilities (used by zsh custom function `extract`):
     - p7zip               # Command-line file archiver with high compression ratio
     - unrar               # The RAR uncompression program
     - unzip               # For extracting and viewing files in .zip archives
     - zip                 # Compressor/archiver for creating and modifying zipfiles
-
     - bandwhich           # Terminal bandwidth utilization tool
     - ethtool             # Utility for controlling network drivers and hardware
     - traceroute          # Tracks the route taken by packets over an IP network

@@ -34,6 +34,14 @@
         name: archlinux
       when: ansible_distribution == "Archlinux"
 
+    - name: zsh
+      tags: zsh
+      import_role:
+        name: zsh
+      when: (ansible_distribution == "Archlinux") or
+            (ansible_distribution == "macOS") or
+            (ansible_distribution == "Ubuntu")
+
     - name: Fonts
       tags: fonts
       import_role:
