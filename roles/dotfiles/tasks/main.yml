@@ -3,11 +3,11 @@
   block:
 
   - name: Install stow in ArchLinux
-      become: true
-      community.general.pacman:
-        state: latest
-        name: stow
-      when: ansible_distribution == "Archlinux"
+    become: true
+    community.general.pacman:
+      state: latest
+      name: stow
+    when: ansible_distribution == "Archlinux"
       
 
   - name: Remove files that will conflict with Stow
