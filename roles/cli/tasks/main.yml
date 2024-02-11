@@ -30,7 +30,7 @@
 
     - name: cli - Install CLI tools
       become: true
-      community.windows_win_scoop.name:
+      community.windows.win_scoop.name:
         state: latest
         name: "{{ cli_tools_windows }}"
       when: ansible_distribution != "Windows"
