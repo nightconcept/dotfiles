@@ -1,20 +1,12 @@
 - tags: common
   block:
 
-    - name: common - Install common GUI applications
+    - name: common - Install common GUI tools (Archlinux)
       become: true
       community.general.pacman:
         state: latest
-        name: "{{ gui_tools }}"
-
-    - name: common - Install common GUI tools (ArchLinux)
-      become: true
-      community.general.pacman:
-        state: latest
-        name:
-          - "{{ gui_tools_nix }}"
-          - "{{ gui_tools_linux }}"
-      when: ansible_distribution == "ArchLinux"
+        name: "{{ gui_tools_nix | gui_tools_linux }}"
+      when: ansible_distribution == "Archlinux"
 
     - name: common - Install common GUI tools (Ubuntu)
       become: true

@@ -18,16 +18,21 @@
       import_role:
         name: pre_install
 
-    - name: CLI tools
+    - name: Common CLI tools
       tags: cli
       import_role:
         name: cli
 
-    - name: ArchLinux Desktop
+    - name: Common GUI tools
+      tags: common
+      import_role:
+        name: common
+
+    - name: ArchLinux Setup
       tags: archlinux
       import_role:
         name: archlinux
-      when: ansible_distribution == "ArchLinux"
+      when: ansible_distribution == "Archlinux"
 
     - name: Fonts
       tags: fonts

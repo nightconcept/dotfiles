@@ -62,13 +62,18 @@ cli_tools_arch:
     - audacious           # Audio player
 
 cli_tools_linux:
-    - foliate             # A simple and modern GTK eBook reader
-    - libreoffice-fresh   # LibreOffice branch which contains new features and program enhancements
 
 cli_tools_macos_casks:
     - unarchiver          # unar and lsar: Objective-C tools for uncompressing archive files 
     - libreoffice         # LibreOffice (fresh) branch which contains new features and program enhancements
 
+gui_tools_nix:
+    - mpv           # A free, open source, and cross-platform media player
+    - mpv-mpris     # MPRIS plugin for mpv (media keys)
+
+gui_tools_linux:
+    - libreoffice-fresh   # LibreOffice branch which contains new features and program enhancements
+    - foliate             # A simple and modern GTK eBook reader
 
 
 windows_bloatware:
