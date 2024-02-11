@@ -1,5 +1,3 @@
-
-
 ---
 - tags: dotfiles
   block:
@@ -20,6 +18,7 @@
     ansible.builtin.file:
       path: "{{ ansible_env.HOME }}/{{ item }}"
       state: absent
+
 
   - name: Run stow
     shell: "stow . --target {{ ansible_env.HOME }} --verbose=2"
