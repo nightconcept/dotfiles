@@ -27,41 +27,36 @@
   #   # applications
   #   - mpv
     
-- name: Distribution
-  debug: msg="{{ ansible_distribution }}"
+  - name: Distribution
+    debug: msg="{{ ansible_distribution }}"
 
-- name: Bootstrap development environment
-  hosts: localhost
-  tasks:
-    - name: Update all submodules
-      tags:
-        - submodules
-      command:
-        cmd: git submodule update --force --init --recursive --jobs 4
-      changed_when: false
+  - name: Bootstrap development environment
+    hosts: localhost
+    tasks:
+      - name: Update all submodules
+        tags:
+          - submodules
+        command:
+          cmd: git submodule update --force --init --recursive --jobs 4
+        changed_when: false
 
-    - name: Pre-install
-      tags: pre_install
-      import_role:
-        name: pre_install
+      - name: Pre-install
+        tags: pre_install
+        import_role:
+          name: pre_install
 
-    - name: CLI tools
-      tags: cli
-      import_role:
-        name: cli
+      - name: CLI tools
+        tags: cli
+        import_role:
+          name: cli
 
-    - name: ArchLinux Desktop
-      tags: archlinux
-      import_role:
-        name: archlinux
-      when: ansible_distribution == "ArchLinux"
+      - name: ArchLinux Desktop
+        tags: archlinux
+        import_role:
+          name: archlinux
+        when: ansible_distribution == "ArchLinux"
 
-    - name: Fonts
-      tags: fonts
-      import_role:
-        name: fonts
-
-    - name: Stow
-      tags: stow
-      import_role:
-        name: stow
+      - name: Fonts
+        tags: fonts
+        import_role:
+          name: fonts
