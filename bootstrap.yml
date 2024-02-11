@@ -54,7 +54,7 @@
       tags: archlinux
       import_role:
         name: archlinux
-      when: when: ansible_distribution == "ArchLinux"
+      when: ansible_distribution == "ArchLinux"
 
     - name: Fonts
       tags: fonts
