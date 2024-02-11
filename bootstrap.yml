@@ -10,22 +10,22 @@
   # vscode
   # wezterm
   # pyenv
-  roles:
-    # core system setup
-    - pre_install
-    - pacman
-    - zsh
-    - yay
+  # roles:
+  #   # core system setup
+  #   - pre_install
+  #   - pacman
+  #   - zsh
+  #   - yay
 
-    - system
-    - kde
-    - wayland
-    - bluetooth
+  #   - system
+  #   - kde
+  #   - wayland
+  #   - bluetooth
 
-    - stow
+  #   - stow
 
-    # applications
-    - mpv
+  #   # applications
+  #   - mpv
     
 - name: Distribution
   debug: msg="{{ ansible_distribution }}"
