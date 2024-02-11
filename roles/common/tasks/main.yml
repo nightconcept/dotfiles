@@ -5,7 +5,14 @@
       become: true
       community.general.pacman:
         state: latest
-        name: "{{ gui_tools_nix | gui_tools_linux }}"
+        name: "{{ gui_tools_nix }}"
+      when: ansible_distribution == "Archlinux"
+
+    - name: common - Install common GUI tools (Archlinux)
+      become: true
+      community.general.pacman:
+        state: latest
+        name: "{{ gui_tools_linux }}"
       when: ansible_distribution == "Archlinux"
 
     - name: common - Install common GUI tools (Ubuntu)
