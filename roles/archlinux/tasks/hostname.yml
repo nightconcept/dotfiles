@@ -1,0 +1,11 @@
+- name: Install inetutils for hostname
+  become: true
+  pacman:
+      name: inetutils
+      state: present
+
+- name: Set the hostname
+  become: true
+  hostname:
+    name: "{{ hostname }}"
+  when: hostname is defined

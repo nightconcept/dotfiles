@@ -1,15 +1,13 @@
 - tags: pacman
   block:
 
-    - name: pacman - Enable colored output, verbose lists and parallel downloads
-      become: true
-      ansible.builtin.lineinfile:
-        dest: /etc/pacman.conf
-        regexp: '{{ item.regex }}'
-        line: '{{ item.line }}'
-      loop:
-        - { regex: "^#Color", line: "Color" }
-        - { regex: "^#VerbosePkgLists", line: "VerbosePkgLists" }
-        - { regex: "^#ParallelDownloads", line: "ParallelDownloads = 10" }
+  - name: Copy pacman configuration file
+    become: true
+    copy:
+      src: pacman.conf
+      dest: /etc/pacman.conf
 
-
+  - name: Refresh pacman mirrors
+    become: true
+    pacman:
+      update_cache: yes
