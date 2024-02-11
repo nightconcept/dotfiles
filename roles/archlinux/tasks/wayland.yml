@@ -18,4 +18,3 @@
         name: 
           - plasma-wayland-session
         state: present
-      when: install_kde_plasma
