@@ -46,3 +46,8 @@
       tags: fonts
       import_role:
         name: fonts
+
+    - name: dotfiles
+      tags: dotfiles
+      import_role:
+        name: dotfiles

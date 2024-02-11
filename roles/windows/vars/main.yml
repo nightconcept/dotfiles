@@ -1,0 +1,39 @@
+windows_bloatware:
+  - Microsoft.BingNews
+  - Microsoft.BingWeather
+  - Microsoft.GamingApp
+  - Microsoft.GetHelp
+  - Microsoft.Getstarted
+  # - Microsoft.Messaging
+  - Microsoft.Microsoft3DViewer
+  - Microsoft.MicrosoftOfficeHub
+  - Microsoft.MicrosoftSolitaireCollection
+  - Microsoft.MicrosoftStickyNotes
+  - Microsoft.MixedReality.Portal
+  # - Microsoft.MSPaint
+  - Microsoft.Office.OneNote
+  - Microsoft.OneConnect
+  - Microsoft.People
+  - Microsoft.PowerAutomateDesktop
+  - Microsoft.Print3D
+  - Microsoft.ScreenSketch
+  - Microsoft.SkypeApp
+  - Microsoft.Todos
+  # - Microsoft.Windows.Photos
+  - Microsoft.WindowsAlarms
+  # - Microsoft.WindowsCalculator
+  - Microsoft.Wallet
+  # - Microsoft.WindowsCamera
+  # - microsoft.windowscommunicationsapps
+  - Microsoft.WindowsFeedbackHub
+  - Microsoft.WindowsMaps
+  - Microsoft.WindowsSoundRecorder
+  # - Microsoft.Xbox
+  # - Microsoft.Xbox.TCUI
+  # - Microsoft.XboxApp
+  # - Microsoft.XboxGameOverlay
+  # - Microsoft.XboxSpeechToTextOverlay
+  # - Microsoft.YourPhone
+  - Microsoft.ZuneMusic
+  - Microsoft.ZuneVideo
+  - MicrosoftTeams

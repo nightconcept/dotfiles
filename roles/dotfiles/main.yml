@@ -3,17 +3,12 @@
 ---
 - tags: stow
   block:
-  - name: Install stow in Ubuntu
-    import_tasks: ubuntu.yml
-    when: ansible_distribution == "Ubuntu"
-
   - name: Install stow in ArchLinux
-    import_tasks: archlinux.yml
-    when: ansible_distribution == "ArchLinux"
-
-  - name: Install stow in macOS
-    import_tasks: macos.yml
-    when: ansible_distribution == "MacOSX"
+      become: true
+      community.general.pacman:
+        state: latest
+        name: stow
+      when: ansible_distribution == "Archlinux"
 
   - name: Remove files that will conflict with Stow
     loop:
