@@ -5,9 +5,7 @@
       become: true
       community.general.pacman:
         state: latest
-        name:
-          - "{{ cli_tools_nix }}"
-          - "{{ cli_tools_linux }}"
+        name: "{{ cli_tools_nix }}"
       when: ansible_distribution != "ArchLinux"
 
     - name: cli - Install common CLI tools (Ubuntu)
@@ -26,7 +24,7 @@
         name:
           - "{{ cli_tools_nix }}"
           - "{{ cli_tools_macos }}"
-      when: ansible_distribution != "Ubuntu"
+      when: ansible_distribution != "macOS"
 
     - name: cli - Install CLI tools
       become: true
