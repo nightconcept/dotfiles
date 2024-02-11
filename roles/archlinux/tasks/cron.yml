@@ -2,11 +2,13 @@
   block:
 
   - name: cron - Install cronie
+    become: true
     community.general.pacman:
       name: cronie
       state: present
 
   - name: cron - Enable cronie
+    become: true
     service:
       name: cronie.service
       enabled: yes 
