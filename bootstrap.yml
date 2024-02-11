@@ -1,10 +1,11 @@
 ---
-- name: Distribution
-  debug: msg="{{ ansible_distribution }}"
-
 - name: Bootstrap development environment
   hosts: localhost
   tasks:
+
+    - name: Distribution
+      debug: msg="{{ ansible_distribution }}"
+
     - name: Update all submodules
       tags:
         - submodules
