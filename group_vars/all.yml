@@ -7,58 +7,6 @@ timezone: "America/Los_Angeles"
 #   (password authentication is disabled by default for the root user. You can opt to disable password authentication for all other users as well)
 ssh_disable_password_authentication: false
 
-# ------------------------------------------------------------------------------
-
-# Calculated variables (no need to touch):
-#   (lookup env will get the given environment variable from the controller machine. This is why we must execute this script via `ansible-pull` and while logged in as the user for which we want to generate the config files. For more info see: https://docs.ansible.com/ansible/latest/collections/ansible/builtin/env_lookup.html#ansible-collections-ansible-builtin-env-lookup)
-home: "{{ lookup('env', 'HOME') }}"
-user: "{{ lookup('env', 'USER') }}"
-#   (required for link creation)
-repo_dir: "{{ ansible_facts.env.PWD }}"
-#   (required for processor firmware updates)
-is_intel: "{{ 'GenuineIntel' in ansible_processor }}"
-
-# Encrypted variables:
-#   You can change these variables here if required.
-
-#   (required for tasks that clone private repos)
-ssh_key_passphrase: !vault |
-          $ANSIBLE_VAULT;1.1;AES256
-          64353630333534343932353433616436633165333437393732333264633761323935633263393736
-          3732326334666666313836336435323832346166373562390a616461376265613366303131383631
-          38646433333831613137666264303866616531316163613663616238386335326632383831633437
-          3730333639313366360a346231363637663031336230653136303863326230623835323037323235
-          6532
-          
-spotify_username: !vault |
-          $ANSIBLE_VAULT;1.1;AES256
-          35376439363737646332343665353362393030396135343434653563396466663338363232303464
-          6436326166336162623438366334623562336566383465370a333466653262313230393939376635
-          38363365336362383863383361366365363333313630646438313534373335306631663531313261
-          3235633333343962360a333731373630626134336539663662393462313866333538373264633038
-          38636530346335636436363961656136356531623530643931366665313034336266
-spotify_password: !vault |
-          $ANSIBLE_VAULT;1.1;AES256
-          33376262303638663935306537626462646135616137656261653736343532353636366235323465
-          6134313039393839326236643066333239326236636431390a376234626431303166353961333366
-          66333963646162373664653365623664343639313639616563653833646638636136653834303161
-          3336373863393838340a623037616335346265376333663062356663663064653163653733383461
-          65373734663931633361313638306431633234333734303663643935383663306432
-
-# Configuration variables
-
-base_fonts:
-    - adobe-source-code-pro-fonts
-    - noto-fonts
-    - noto-fonts-emoji
-    - ttf-droid
-    - ttf-fira-code
-    - ttf-fira-mono
-    - ttf-fira-sans
-    - ttf-inconsolata
-    - ttf-opensans
-    - ttf-ubuntu-font-family
-
 cli_tools_common:
     - bat                 # Cat clone with syntax highlighting and git integration (`cat` alternative)
     - eza                 # Modern replacement for ls, community fork of exa (`ls` alternative)
@@ -179,3 +127,12 @@ update_categories:
   - Update Rollups
   # - Updates
   # - Upgrades
+
+# Calculated variables (no need to touch):
+#   (lookup env will get the given environment variable from the controller machine. This is why we must execute this script via `ansible-pull` and while logged in as the user for which we want to generate the config files. For more info see: https://docs.ansible.com/ansible/latest/collections/ansible/builtin/env_lookup.html#ansible-collections-ansible-builtin-env-lookup)
+home: "{{ lookup('env', 'HOME') }}"
+user: "{{ lookup('env', 'USER') }}"
+#   (required for link creation)
+repo_dir: "{{ ansible_facts.env.PWD }}"
+#   (required for processor firmware updates)
+is_intel: "{{ 'GenuineIntel' in ansible_processor }}"

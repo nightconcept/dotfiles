@@ -1,0 +1,11 @@
+base_fonts:
+    - adobe-source-code-pro-fonts
+    - noto-fonts
+    - noto-fonts-emoji
+    - ttf-droid
+    - ttf-fira-code
+    - ttf-fira-mono
+    - ttf-fira-sans
+    - ttf-inconsolata
+    - ttf-opensans
+    - ttf-ubuntu-font-family
