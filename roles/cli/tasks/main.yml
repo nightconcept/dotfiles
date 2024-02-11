@@ -5,8 +5,15 @@
       become: true
       community.general.pacman:
         state: latest
+        name: "{{ cli_tools_common }}"
+      when: ansible_distribution == "Archlinux"
+
+    - name: cli - Install common *nix CLI tools (ArchLinux)
+      become: true
+      community.general.pacman:
+        state: latest
         name: "{{ cli_tools_nix }}"
-      when: ansible_distribution != "ArchLinux"
+      when: ansible_distribution == "Archlinux"
 
     - name: cli - Install common CLI tools (Ubuntu)
       become: true
@@ -15,7 +22,7 @@
         name:
           - "{{ cli_tools_nix }}"
           - "{{ cli_tools_linux }}"
-      when: ansible_distribution != "Ubuntu"
+      when: ansible_distribution == "Ubuntu"
 
     - name: cli - Install commong CLI tools (macOS)
       become: true
@@ -24,13 +31,13 @@
         name:
           - "{{ cli_tools_nix }}"
           - "{{ cli_tools_macos }}"
-      when: ansible_distribution != "macOS"
+      when: ansible_distribution == "macOS"
 
     - name: cli - Install CLI tools
       become: true
       community.windows.win_scoop:
         state: latest
         name: "{{ cli_tools_windows }}"
-      when: ansible_distribution != "Windows"
+      when: ansible_distribution == "Windows"
 
 
