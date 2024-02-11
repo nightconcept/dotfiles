@@ -1,6 +1,7 @@
 ---
 
 - name: Copy pacman configuration file
+  become: true
   copy:
     src: pacman.conf
     dest: /etc/pacman.conf
