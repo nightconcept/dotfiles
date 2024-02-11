@@ -36,7 +36,7 @@
 
     - name: common - Install common GUI tools
       become: true
-      community.windows_win_scoop.name:
+      community.windows.win_scoop:
         state: latest
         name: "{{ gui_tools_windows }}"
       when: ansible_distribution == "Windows"

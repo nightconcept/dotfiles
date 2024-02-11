@@ -1,6 +1,6 @@
 ---
 - name: Install oh-my-posh via Scoop.
-  community.windows_win_scoop.name:
+  community.windows.win_scoop:
     name: oh-my-posh
 
 - name: Get PowerShell profile path.
