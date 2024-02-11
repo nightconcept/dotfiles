@@ -2,6 +2,9 @@
 
 set -e
 
+python3 -m venv env
+source env/bin/activate
+
 pip3 install ansible
 
 export PATH="$PATH:~/.local/bin"

@@ -1,3 +1,4 @@
+---
 # must be `all` and not `localhost` to be able to get the {{inventory_hostname}} value
 - hosts: localhost
 
@@ -26,7 +27,6 @@
     # applications
     - mpv
     
----
 - name: Distribution
   debug: msg="{{ ansible_distribution }}"
 
@@ -54,15 +54,12 @@
       tags: archlinux
       import_role:
         name: archlinux
-      when: >
-        (not 'CI' in ansible_env) and
-        (ansible_system is search("Linux")) and
-        (not ansible_kernel is search("microsoft"))
+      when: when: ansible_distribution == "ArchLinux"
 
     - name: Fonts
       tags: fonts
       import_role:
-        name: cli
+        name: fonts
 
     - name: Stow
       tags: stow

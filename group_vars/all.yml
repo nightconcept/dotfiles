@@ -117,8 +117,6 @@ cli_tools_linux:
     - foliate             # A simple and modern GTK eBook reader
     - libreoffice-fresh   # LibreOffice branch which contains new features and program enhancements
 
-cli_tools_macos:
-
 cli_tools_macos_casks:
     - unarchiver          # unar and lsar: Objective-C tools for uncompressing archive files 
     - libreoffice         # LibreOffice (fresh) branch which contains new features and program enhancements
