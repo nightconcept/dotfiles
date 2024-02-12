@@ -21,6 +21,13 @@ git.
 !!! NOTE IMPORTANT: Windows will need to be run remotely as Windows is not supported as a control for Ansible. All other operating systems install should be run locally.
 
 
+### Ubuntu Client/Host Pre-Install
+Install git with XCode Command Line Tools:
+```
+sudo apt install git -y
+```
+
+
 ### Windows Client Pre-Install
 Copy and paste the code below into your PowerShell terminal to get your Windows machine ready to work with Ansible.
 
@@ -33,12 +40,14 @@ $file = "$env:temp\setup-windows-client.ps1"
 powershell.exe -ExecutionPolicy ByPass -File $file -Verbose
 ```
 
-### macOS Client Pre-Install
+
+### macOS Client/Host Pre-Install
 !!! NOTE UNTESTED SECTION
 Install git with XCode Command Line Tools:
 ```
 xcode-select --install
 ```
+
 
 ### Run the Install on Control Node
 First, check out the dotfiles repo in your $HOME directory using git.
