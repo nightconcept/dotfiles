@@ -1,28 +1,21 @@
 - tags: zsh
   block:
 
-    - name: zsh - Install packages (Archlinux)
+    - name: Install zsh and common packages (Archlinux)
       become: true
       community.general.pacman:
         state: latest
         name: "{{ zsh_common_pkgs }}"
       when: ansible_distribution == "Archlinux"
 
-    - name: zsh - Install Arch-only packages
-      become: true
-      community.general.pacman:
-        state: latest
-        name: "{{ zsh_arch_pkgs }}"
-      when: ansible_distribution == "Archlinux"
-
-    - name: zsh - Install packages (Ubuntu)
+    - name: Install zsh and common packages (Ubuntu)
       become: true
       ansible.builtin.apt:
         state: latest
         name: "{{ zsh_common_pkgs }}"
       when: ansible_distribution == "Ubuntu"
 
-    - name: zsh - Install packages (macOS)
+    - name: Install zsh and common packages (macOS)
       become: true
       community.general.homebrew:
         state: latest
@@ -47,6 +40,18 @@
       args:
         chdir: '~{{ user }}'
         creates: '~{{ user }}/.oh-my-zsh'
+
+    - name: zsh - Clone zsh-completions for users
+      ansible.builtin.git:
+        repo: https://github.com/zsh-users/zsh-completions.git
+        dest: "/home/{{ user }}/.oh-my-zsh/custom/plugins/zsh-completions"
+        depth: 1
+
+    - name: zsh - Clone zsh-history-substring-search for users
+      ansible.builtin.git:
+        repo: https://github.com/zsh-users/zsh-history-substring-search.git
+        dest: "/home/{{ user }}/.oh-my-zsh/custom/plugins/zsh-history-substring-search"
+        depth: 1
 
     - name: zsh - Install PowerLevel10K
       ansible.builtin.git:
