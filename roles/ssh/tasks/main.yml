@@ -19,11 +19,11 @@
   when: ssh.enable_sshd is defined and ssh.enable_sshd == True
 
 - name: Disable and stop OpenSSH
-service:
-  name: sshd.service
-  enabled: no
-  state: stopped
-when: ssh.enable_sshd is defined and ssh.enable_sshd == False
+  service:
+    name: sshd.service
+    enabled: no
+    state: stopped
+  when: ssh.enable_sshd is defined and ssh.enable_sshd == False
 
 - name: Make directory for user SSH key
   file:
