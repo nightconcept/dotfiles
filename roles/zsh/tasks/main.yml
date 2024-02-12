@@ -5,7 +5,7 @@
       become: true
       community.general.pacman:
         state: latest
-        name: "{{ zsh_pkgs }}"
+        name: "{{ zsh_common_pkgs }}"
       when: ansible_distribution == "Archlinux"
 
     - name: zsh - Install Arch-only packages
@@ -19,14 +19,14 @@
       become: true
       ansible.builtin.apt:
         state: latest
-        name: "{{ zsh_pkgs }}"
+        name: "{{ zsh_common_pkgs }}"
       when: ansible_distribution == "Ubuntu"
 
     - name: zsh - Install packages (macOS)
       become: true
       community.general.homebrew:
         state: latest
-        name: "{{ zsh_pkgs }}"
+        name: "{{ zsh_common_pkgs }}"
       when: ansible_distribution == "macOS"
 
     - name: zsh - Make it the user's default shell
