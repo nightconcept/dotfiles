@@ -1,0 +1,13 @@
+---
+- name: Install OpenSSH on Ubuntu
+  ansible.builtin.apt:
+    name: openssh-server
+    state: present
+  when: ansible_distribution == "Ubuntu"
+
+- name: Enable and start OpenSSH
+  service:
+    name: ssh.service
+    enabled: yes
+    state: started
+  when: ansible_distribution == "Ubuntu"

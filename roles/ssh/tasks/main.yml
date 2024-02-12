@@ -1,22 +1,7 @@
 ---
-- name: Install OpenSSH on Archlinux
-  pacman:
-    name: openssh
-    state: present
-  when: ansible_distribution == "Archlinux"
-
-- name: Install OpenSSH on Ubuntu
-  ansible.builtin.apt:
-    name: openssh
-    state: present
-  when: ansible_distribution == "Ubuntu"
-
-- name: Enable and start OpenSSH
-  service:
-    name: sshd.service
-    enabled: yes
-    state: started
-  when: ssh.enable_sshd is defined and ssh.enable_sshd == True
+- include_tasks: archlinux.yml
+- include_tasks: ubuntu.yml
+- include_tasks: macos.yml
 
 - name: Make directory for user SSH key
   file:
