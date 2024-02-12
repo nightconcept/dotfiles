@@ -6,6 +6,7 @@
       community.general.pacman:
         name: "{{ base_fonts }}"
         state: present
+      when: ansible_distribution == "Archlinux"
 
     # - name: Install AUR fonts
     #   aur:
