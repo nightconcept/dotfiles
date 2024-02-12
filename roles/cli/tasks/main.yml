@@ -38,6 +38,14 @@
       ignore_errors: true
       when: ansible_distribution == "Ubuntu"
 
+    - name: cli - Install Ubuntu-specific CLI tools (ArchLinux)
+      become: true
+      ansible.builtin.apt:
+        state: latest
+        name: "{{ cli_tools_ubuntu }}"
+      ignore_errors: true
+      when: ansible_distribution == "Ubuntu"
+
     - name: cli - Install commong CLI tools (macOS)
       become: true
       community.general.homebrew:
