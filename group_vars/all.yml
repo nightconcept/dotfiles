@@ -26,8 +26,7 @@ cli_tools_common:
 cli_tools_nix:
     # For Ansible:
     - sshpass             # Fool ssh into accepting an interactive password non-interactively (required by Ansible to run playbooks on remote managed nodes, in case you ever use this computer to run the `arch-base` playbook on another computer)
-    - vi                  # Called by ansible-vault and maybe others
-
+    
     # For user usage:
     - rsync               # A fast and versatile file copying tool for remote and local files (`cp` alternative)
     - trash-cli           # Command line trashcan (recycle bin) interface (`rm` alternative)
@@ -59,6 +58,7 @@ cli_tools_arch:
     - pipewire-pulse      # Low-latency audio/video router and processor - PulseAudio replacement
     - pavucontrol         # PulseAudio Volume Control
     - audacious           # Audio player
+    - vi                  # Called by ansible-vault and maybe others
 
 cli_tools_linux:
 
