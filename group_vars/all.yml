@@ -61,10 +61,10 @@ cli_tools_linux:
 gui_tools_arch:
     - mpv           # A free, open source, and cross-platform media player
     - mpv-mpris     # MPRIS plugin for mpv (media keys)
-
-gui_tools_linux:
     - libreoffice-fresh   # LibreOffice branch which contains new features and program enhancements
     - foliate             # A simple and modern GTK eBook reader
+
+gui_tools_linux:
 
 gui_tools_macos:
     - unarchiver          # unar and lsar: Objective-C tools for uncompressing archive files 
