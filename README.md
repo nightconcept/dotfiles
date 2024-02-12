@@ -55,8 +55,7 @@ cd dotfiles
 
 3. Run Playbook
 ```sh
-# Bootstrap development environntment in Linux, WSL and macOS
-ansible-playbook bootstrap.yml
+./bootstrap
 ```
 
 
