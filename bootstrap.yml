@@ -51,3 +51,6 @@
       tags: dotfiles
       import_role:
         name: dotfiles
+      when: (ansible_distribution == "Archlinux") or
+            (ansible_distribution == "macOS") or
+            (ansible_distribution == "Ubuntu")
