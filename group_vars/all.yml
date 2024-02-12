@@ -30,7 +30,6 @@ cli_tools_nix:
     # For user usage:
     - rsync               # A fast and versatile file copying tool for remote and local files (`cp` alternative)
     - trash-cli           # Command line trashcan (recycle bin) interface (`rm` alternative)
-    - cronie               # Cron
     - tldr                # Command line client for tldr, a collection of simplified and community-driven man pages
     - btop                # A graphical process/system monitor (`htop` alternative)
     - ncdu                # Disk usage analyzer like WinDirStat (`du` alternative)
@@ -59,6 +58,7 @@ cli_tools_arch:
     - pavucontrol         # PulseAudio Volume Control
     - audacious           # Audio player
     - vi                  # Called by ansible-vault and maybe others
+    - cronie               # Cron
 
 cli_tools_linux:
 
