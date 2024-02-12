@@ -9,11 +9,11 @@
             state: latest
             name: "{{ gui_tools_arch }}"
 
-        - name: Common Linux tools
-          become: true
-          community.general.pacman:
-            state: latest
-            name: "{{ gui_tools_linux }}"
+        # - name: Common Linux tools
+        #   become: true
+        #   community.general.pacman:
+        #     state: latest
+        #     name: "{{ gui_tools_linux }}"
 
     - name: Install GUI tools on Ubuntu
       when: ansible_distribution == "Ubuntu"
