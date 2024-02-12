@@ -3,7 +3,7 @@
   hosts: localhost
   tasks:
 
-    - name: Distribution
+    - name: Distribution Name
       debug: msg="{{ ansible_distribution }}"
 
     - name: Update all submodules
