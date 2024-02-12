@@ -19,7 +19,7 @@ cli_tools_common:
     - wget                # Network utility to retrieve files from the Web (used by Neovim to download files on the internet when pressing `gf`)
     - curl                # Network utility to retrieve files from the Web
     - nmap                # Utility for network discovery and security auditing (great to check open ports)
-    - gh                  # GitHub CLI
+
 
 cli_tools_nix:
     # For Ansible:
@@ -55,10 +55,11 @@ cli_tools_arch:
     - pavucontrol         # PulseAudio Volume Control
     - audacious           # Audio player
     - bandwhich           # Terminal bandwidth utilization tool
+    - github-cli          # GitHub CLI
 
 cli_tools_ubuntu:
     - exa                 # Modern replacement for ls (`ls` alternative)
-
+    - gh                  # GitHub CLI
 
 cli_tools_linux:
 
