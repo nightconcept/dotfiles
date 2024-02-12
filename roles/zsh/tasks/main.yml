@@ -8,6 +8,13 @@
         name: "{{ zsh_pkgs }}"
       when: ansible_distribution == "Archlinux"
 
+    - name: zsh - Install Arch-only packages
+      become: true
+      community.general.pacman:
+        state: latest
+        name: "{{ zsh_arch_pkgs }}"
+      when: ansible_distribution == "Archlinux"
+
     - name: zsh - Install packages (Ubuntu)
       become: true
       ansible.builtin.apt:
