@@ -1,8 +1,6 @@
-zsh_common_pkgs:
-    - zsh                             # A very advanced and programmable command interpreter (shell) for UNIX
-    - zsh-autosuggestions             # Fish-like autosuggestions for zsh
-    - zsh-syntax-highlighting         # Fish shell like syntax highlighting for Zsh
-
+# Plugin names have to be in the format github_user/plugin_name
 zsh_plugins:
-    - zsh-history-substring-search    # Fish-like scroll through command history
-    - zsh-completions                 # Additional completions that are not part of zsh yet
+    - zsh-users/zsh-autosuggestions             # Fish-like autosuggestions for zsh
+    - zsh-users/zsh-syntax-highlighting         # Fish shell like syntax highlighting for Zsh
+    - zsh-users/zsh-history-substring-search    # Fish-like scroll through command history
+    - zsh-users/zsh-completions                 # Additional completions that are not part of zsh yet
