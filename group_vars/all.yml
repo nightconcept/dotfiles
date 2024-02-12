@@ -41,7 +41,6 @@ cli_tools_nix:
     - unrar               # The RAR uncompression program
     - unzip               # For extracting and viewing files in .zip archives
     - zip                 # Compressor/archiver for creating and modifying zipfiles
-    - bandwhich           # Terminal bandwidth utilization tool
     - ethtool             # Utility for controlling network drivers and hardware
     - traceroute          # Tracks the route taken by packets over an IP network
     - evince              # Document viewer (PDF, PostScript, XPS, djvu, dvi, tiff, cbr, cbz, cb7, cbt)
@@ -59,6 +58,7 @@ cli_tools_arch:
     - audacious           # Audio player
     - vi                  # Called by ansible-vault and maybe others
     - cronie               # Cron
+    - bandwhich           # Terminal bandwidth utilization tool
 
 cli_tools_linux:
 
