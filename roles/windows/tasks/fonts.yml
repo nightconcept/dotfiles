@@ -13,7 +13,7 @@
       font_dl_urls | default([]) + nerdfonts_release.json.assets |
       selectattr('name', 'equalto', item ~ '.zip')
       }}
-  loop: "{{ installed_nerdfonts }}"
+  loop: "{{ nerd_fonts }}"
 
 - name: Download fonts
   ansible.windows.win_get_url:
