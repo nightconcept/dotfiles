@@ -21,7 +21,6 @@ cli_tools_common:
     - wget                # Network utility to retrieve files from the Web (used by Neovim to download files on the internet when pressing `gf`)
     - curl                # Network utility to retrieve files from the Web
     - nmap                # Utility for network discovery and security auditing (great to check open ports)
-    - chezmoi             # dotfile management tool
 
 cli_tools_nix:
     # For Ansible:
@@ -46,33 +45,34 @@ cli_tools_nix:
     - evince              # Document viewer (PDF, PostScript, XPS, djvu, dvi, tiff, cbr, cbz, cb7, cbt)
     - fontconfig          # library for configuring and customizing font access
 
-cli_tools_windows:
-    - 7zip                # Unzips everything
-    - qbittorrent         # An advanced BitTorrent client programmed in C++, based on Qt toolkit and libtorrent-rasterbar
-
 cli_tools_arch:
+    - vi                  # Called by ansible-vault and maybe others
+    - cronie              # Cron
     - pipewire-alsa       # Low-latency audio/video router and processor - ALSA configuration
     - pipewire-jack       # Low-latency audio/video router and processor - JACK replacement
     - pipewire-pulse      # Low-latency audio/video router and processor - PulseAudio replacement
     - pavucontrol         # PulseAudio Volume Control
     - audacious           # Audio player
-    - vi                  # Called by ansible-vault and maybe others
-    - cronie               # Cron
     - bandwhich           # Terminal bandwidth utilization tool
 
 cli_tools_linux:
 
-cli_tools_macos_casks:
-    - unarchiver          # unar and lsar: Objective-C tools for uncompressing archive files 
-    - libreoffice         # LibreOffice (fresh) branch which contains new features and program enhancements
-
-gui_tools_nix:
+gui_tools_arch:
     - mpv           # A free, open source, and cross-platform media player
     - mpv-mpris     # MPRIS plugin for mpv (media keys)
 
 gui_tools_linux:
     - libreoffice-fresh   # LibreOffice branch which contains new features and program enhancements
     - foliate             # A simple and modern GTK eBook reader
+
+gui_tools_macos:
+    - unarchiver          # unar and lsar: Objective-C tools for uncompressing archive files 
+    - libreoffice         # LibreOffice (fresh) branch which contains new features and program enhancements
+
+
+gui_tools_windows:
+    - 7zip                # Unzips everything
+    - qbittorrent         # An advanced BitTorrent client programmed in C++, based on Qt toolkit and libtorrent-rasterbar
 
 wsl2_distribution: wsl-ubuntu-2204
 
@@ -95,7 +95,5 @@ update_categories:
 #   (lookup env will get the given environment variable from the controller machine. This is why we must execute this script via `ansible-pull` and while logged in as the user for which we want to generate the config files. For more info see: https://docs.ansible.com/ansible/latest/collections/ansible/builtin/env_lookup.html#ansible-collections-ansible-builtin-env-lookup)
 home: "{{ lookup('env', 'HOME') }}"
 user: "{{ lookup('env', 'USER') }}"
-#   (required for link creation)
-repo_dir: "{{ ansible_facts.env.PWD }}"
 #   (required for processor firmware updates)
 is_intel: "{{ 'GenuineIntel' in ansible_processor }}"

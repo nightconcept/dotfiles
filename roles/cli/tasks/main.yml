@@ -15,19 +15,26 @@
         name: "{{ cli_tools_nix }}"
       when: ansible_distribution == "Archlinux"
 
-    - name: cli - Install common CLI tools (Ubuntu)
+    - name: cli - Install Arch-specific CLI tools (ArchLinux)
       become: true
-      ansible.builtin.apt:
+      community.general.pacman:
         state: latest
-        name: "{{ cli_tools_nix }}"
-      ignore_errors: true
-      when: ansible_distribution == "Ubuntu"
+        name: "{{ cli_tools_arch }}"
+      when: ansible_distribution == "Archlinux"
 
     - name: cli - Install common CLI tools (Ubuntu)
       become: true
       ansible.builtin.apt:
         state: latest
-        name: "{{ cli_tools_linux }}"
+        name: "{{ cli_tools_common }}"
+      ignore_errors: true
+      when: ansible_distribution == "Ubuntu"
+
+    - name: cli - Install common *nix CLI tools (Ubuntu)
+      become: true
+      ansible.builtin.apt:
+        state: latest
+        name: "{{ cli_tools_nix }}"
       ignore_errors: true
       when: ansible_distribution == "Ubuntu"
 
