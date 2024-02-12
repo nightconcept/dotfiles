@@ -22,7 +22,7 @@
         name: "{{ zsh_common_pkgs }}"
       when: ansible_distribution == "macOS"
 
-    - name: zsh - Make it the user's default shell
+    - name: Make it the user's default shell
       become: true
       ansible.builtin.user:
         name: "{{ user }}"
@@ -47,13 +47,16 @@
         dest: "/home/{{ user }}/.oh-my-zsh/custom/plugins/zsh-completions"
         depth: 1
 
-    - name: zsh - Clone zsh-history-substring-search for users
+    - name: Install ZSH Plugins
       ansible.builtin.git:
-        repo: https://github.com/zsh-users/zsh-history-substring-search.git
-        dest: "/home/{{ user }}/.oh-my-zsh/custom/plugins/zsh-history-substring-search"
-        depth: 1
+        repo: "https://github.com/{{ item }}.git"
+        dest: "/home/{{ user }}/.oh-my-zsh/custom/plugins/{{ item.split('/')[1:] | join('/') }}"
+        clone: true
+        update: true
+      with_items: "{{ zsh_plugins }}"
+      when: zsh_plugins is defined
 
-    - name: zsh - Install PowerLevel10K
+    - name: Install PowerLevel10K
       ansible.builtin.git:
         repo: https://github.com/romkatv/powerlevel10k.git
         dest: "/home/{{ user }}/.oh-my-zsh/custom/themes/powerlevel10k"
