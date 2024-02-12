@@ -1,8 +1,12 @@
 - tags: fonts
   block:
-
+    - name: Install fonts to Archlinux
+      when: ansible_distribution == "Archlinux"
     - include_tasks: archlinux.yml
-    - include_tasks: ubuntu.yml
+
+    - name: Install fonts to Ubuntu
+      when: ansible_distribution == "Ubuntu"
+      include_tasks: ubuntu.yml
 
     # - name: Install AUR fonts
     #   aur:
