@@ -1,12 +1,8 @@
 - tags: fonts
   block:
 
-    - name: Install base fonts
-      become: true
-      community.general.pacman:
-        name: "{{ base_fonts }}"
-        state: present
-      when: ansible_distribution == "Archlinux"
+    - include_tasks: archlinux.yml
+    - include_tasks: ubuntu.yml
 
     # - name: Install AUR fonts
     #   aur:

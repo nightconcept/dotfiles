@@ -1,21 +1,21 @@
 - tags: zsh
   block:
 
-    - name: Install zsh and common packages (Archlinux)
+    - name: Install zsh (Archlinux)
       become: true
       community.general.pacman:
         state: latest
         name: zsh
       when: ansible_distribution == "Archlinux"
 
-    - name: Install zsh and common packages (Ubuntu)
+    - name: Install zsh (Ubuntu)
       become: true
       ansible.builtin.apt:
         state: latest
         name: zsh
       when: ansible_distribution == "Ubuntu"
 
-    - name: Install zsh and common packages (macOS)
+    - name: Install zsh (macOS)
       become: true
       community.general.homebrew:
         state: latest
@@ -40,12 +40,6 @@
       args:
         chdir: '~{{ user }}'
         creates: '~{{ user }}/.oh-my-zsh'
-
-    - name: zsh - Clone zsh-completions for users
-      ansible.builtin.git:
-        repo: https://github.com/zsh-users/zsh-completions.git
-        dest: "/home/{{ user }}/.oh-my-zsh/custom/plugins/zsh-completions"
-        depth: 1
 
     - name: Install ZSH Plugins
       ansible.builtin.git:

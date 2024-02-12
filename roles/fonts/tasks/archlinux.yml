@@ -1,0 +1,6 @@
+- name: Install base fonts
+  become: true
+  community.general.pacman:
+    name: "{{ base_fonts }}"
+    state: present
+  when: ansible_distribution == "Archlinux"

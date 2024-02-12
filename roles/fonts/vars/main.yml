@@ -9,3 +9,14 @@ base_fonts:
     - ttf-inconsolata
     - ttf-opensans
     - ttf-ubuntu-font-family
+
+# Keep this in sync with base_fonts where possible
+# Used for Ubuntu
+nerd_fonts:
+    - SourceCodePro
+    - Noto
+    - DroidSansMono
+    - FiraCode
+    - FiraMono
+    - Inconsolata
+    - Ubuntu
