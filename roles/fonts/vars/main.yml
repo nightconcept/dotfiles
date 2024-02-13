@@ -20,3 +20,8 @@ nerd_fonts:
     - FiraMono
     - Inconsolata
     - Ubuntu
+
+ubuntu_fonts:
+    - fonts-noto
+    - fonts-droid-fallback
+    - fonts-firacode

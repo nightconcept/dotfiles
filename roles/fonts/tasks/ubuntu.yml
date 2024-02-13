@@ -1,4 +1,11 @@
 ---
+- name: Install fonts from apt on Ubuntu
+  when: ansible_distribution == "Ubuntu"
+  become: true
+  ansible.builtin.apt:
+    state: latest
+    name: "{{ ubuntu_fonts }}"
+
 - name: Find latest Nerd Fonts release.
   ansible.builtin.uri:
     url: https://api.github.com/repos/ryanoasis/nerd-fonts/releases/latest
