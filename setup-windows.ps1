@@ -15,14 +15,10 @@ if ([bool](Get-Command -Name 'scoop' -ErrorAction SilentlyContinue)) {
 else {
     Write-Verbose "Installing Scoop..." -Verbose
     Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser; Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
-    # Set-ExecutionPolicy Bypass -Scope Process -Force; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 }
 
-# install Windows only apps
-scoop install git
 
 # install official and unofficial scoop buckets
-scoop bucket add main
 scoop bucket add versions
 scoop bucket add extras
 scoop bucket add nerd-fonts
@@ -31,10 +27,10 @@ scoop bucket add anderlli0053_DEV-tools https://github.com/anderlli0053/DEV-tool
 scoop update
 
 # add apps
+scoop install main/git
 scoop install extras/ungoogled-chromium
 scoop install extras/vlc
 scoop install extras/github
-scoop install main/7zip
 scoop install main/gpg
 # set up 7zip context as well
 scoop install extras/obsidian
@@ -46,7 +42,6 @@ scoop install extras/notepadplusplus
 scoop install main/fnm
 fnm install --lts
 scoop install main/pnpm
-scoop install extras/windows-terminal
 scoop install main/starship
 scoop install nerd-fonts/FiraCode-NF
 scoop install nerd-fonts/FiraCode-NF-Mono
@@ -66,6 +61,8 @@ scoop install extras/hwinfo
 scoop install extras/cpu-z
 scoop install extras/kitty
 
+# install contexts
+
 # install pyenv
 Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/pyenv-win/pyenv-win/master/pyenv-win/install-pyenv-win.ps1" -OutFile "./install-pyenv-win.ps1"; &"./install-pyenv-win.ps1"
 pyenv install 3.11.5
@@ -73,7 +70,7 @@ pyenv install 3.11.5
 # PowerShell setup
 scoop install https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/oh-my-posh.json
 # Need newer version (most likely default isn't new enough) for oh-my-posh themes
-Install-Module -Force PSReadLine
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser; Install-Module -Force PSReadLine
 
 # Create PowerShell settings and config
 if (!(Test-Path -Path $PROFILE)) {
