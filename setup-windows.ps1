@@ -129,8 +129,4 @@ $config_file = "$pwd\winutil-config.json"
 
 (New-Object -TypeName System.Net.WebClient).DownloadFile($config_url, $config_file)
 
-[Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12
-$winutil_url = 'https://raw.githubusercontent.com/ChrisTitusTech/winutil/main/winutil.ps1'
-$winutil_file = "$pwd\winutil-config.json"
-(New-Object -TypeName System.Net.WebClient).DownloadFile($winutil_url, $winutil_file)
-Invoke-RestMethod winutil.ps1 -Config $file -Run | Invoke-Expression
+Invoke-RestMethod https://christitus.com/win | Invoke-Expression
