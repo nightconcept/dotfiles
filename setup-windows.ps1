@@ -105,7 +105,9 @@ scoop install nerd-fonts/Ubuntu-NF-Propo
 
 # install pyenv
 Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/pyenv-win/pyenv-win/master/pyenv-win/install-pyenv-win.ps1" -OutFile "./install-pyenv-win.ps1"; &"./install-pyenv-win.ps1"
-pyenv install 3.11.5
+$pyenv_cmd = "$HOME/.pyenv/pyenv-win/bin/pyenv" 
+$pyenv_args = @("install", "3.11.5")
+& $pyenv_cmd $pyenv_args
 
 # PowerShell setup
 scoop install https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/oh-my-posh.json
