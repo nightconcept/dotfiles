@@ -122,3 +122,10 @@ $FNM = 'fnm env --use-on-cd | Out-String | Invoke-Expression'
 $OMP_CONFIG = "oh-my-posh init pwsh --config 'https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/powerlevel10k_rainbow.omp.json' | Invoke-Expression"
 Add-Content -Path $PROFILE -Value $FNM
 Add-Content -Path $PROFILE -Value $OMP_CONFIG
+
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+$url = "https://raw.githubusercontent.com/nightconcept/dotfiles/main/windows/winutil-config.json"
+$file = "$env:temp\winutil-config.json"
+
+(New-Object -TypeName System.Net.WebClient).DownloadFile($url, $file)
+Invoke-RestMethod https://christitus.com/win -Config ./winutil-config.json -Run | Invoke-Expression
