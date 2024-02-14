@@ -17,71 +17,68 @@ else {
     Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser; Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
 }
 
-scoop install main/openssh
+# install official and unofficial scoop buckets
+scoop bucket add versions
+scoop bucket add extras
+scoop bucket add nerd-fonts
+scoop bucket add nonportable
+scoop bucket add anderlli0053_DEV-tools https://github.com/anderlli0053/DEV-tools
+scoop update
 
-openssh
+# add apps
+scoop install main/git
+scoop install extras/ungoogled-chromium
+scoop install extras/vlc
+scoop install extras/github
+scoop install main/gpg
+# set up 7zip context as well
+scoop install extras/obsidian
+scoop install extras/vscode
+scoop install extras/hexchat
+scoop install anderlli0053_DEV-tools/eyeleo-chs-portable
+scoop install anderlli0053_DEV-tools/freefilesync
+scoop install extras/notepadplusplus
+scoop install main/fnm
+fnm install --lts
+scoop install main/pnpm
+scoop install main/starship
+scoop install nerd-fonts/FiraCode-NF
+scoop install nerd-fonts/FiraCode-NF-Mono
+scoop install extras/calibre
+scoop install extras/obs-studio
+scoop install extras/plex-desktop
+scoop install extras/typora
+scoop install extras/zoom
+scoop install nonportable/k-lite-codec-pack-full-np
+scoop install qbittorrent
+scoop install extras/rufus
+scoop install extras/slack
+scoop install extras/ferdium
+scoop install extras/windowsspyblocker
+scoop install extras/hwinfo
+scoop install extras/cpu-z
+scoop install extras/kitty
 
-# # install official and unofficial scoop buckets
-# scoop bucket add versions
-# scoop bucket add extras
-# scoop bucket add nerd-fonts
-# scoop bucket add nonportable
-# scoop bucket add anderlli0053_DEV-tools https://github.com/anderlli0053/DEV-tools
-# scoop update
+# install contexts
+Invoke-Item "$HOME/scoop/apps/vscode/current/install-context.reg" -Confirm
+Invoke-Item "$HOME/scoop/apps/vscode/current/install-associations.reg" -Confirm
+Invoke-Item "$HOME/scoop/apps/7zip/current/install-context.reg" -Confirm
+Invoke-Item "$HOME/scoop/apps/windows-terminal/current/install-context.reg" -Confirm
 
-# # add apps
-# scoop install main/git
-# scoop install extras/ungoogled-chromium
-# scoop install extras/vlc
-# scoop install extras/github
-# scoop install main/gpg
-# # set up 7zip context as well
-# scoop install extras/obsidian
-# scoop install extras/vscode
-# scoop install extras/hexchat
-# scoop install anderlli0053_DEV-tools/eyeleo-chs-portable
-# scoop install anderlli0053_DEV-tools/freefilesync
-# scoop install extras/notepadplusplus
-# scoop install main/fnm
-# fnm install --lts
-# scoop install main/pnpm
-# scoop install main/starship
-# scoop install nerd-fonts/FiraCode-NF
-# scoop install nerd-fonts/FiraCode-NF-Mono
-# scoop install extras/calibre
-# scoop install extras/obs-studio
-# scoop install extras/plex-desktop
-# scoop install extras/typora
-# scoop install extras/zoom
-# scoop install nonportable/k-lite-codec-pack-full-np
-# scoop install qbittorrent
-# scoop install extras/rufus
-# scoop install extras/slack
-# scoop install extras/ferdium
-# scoop install extras/windowsspyblocker
-# scoop install extras/hwinfo
-# scoop install extras/cpu-z
-# scoop install extras/kitty
+# install pyenv
+Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/pyenv-win/pyenv-win/master/pyenv-win/install-pyenv-win.ps1" -OutFile "./install-pyenv-win.ps1"; &"./install-pyenv-win.ps1"
+pyenv install 3.11.5
 
-# # install contexts
-# Invoke-Item "$HOME/scoop/apps/vscode/current/install-context.reg" -Confirm
-# Invoke-Item "$HOME/scoop/apps/7zip/current/install-context.reg" -Confirm
-# Invoke-Item "$HOME/scoop/apps/windows-terminal/current/install-context.reg" -Confirm
+# PowerShell setup
+scoop install https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/oh-my-posh.json
+# Need newer version (most likely default isn't new enough) for oh-my-posh themes
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser; Install-Module -Force PSReadLine
 
-# # install pyenv
-# Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/pyenv-win/pyenv-win/master/pyenv-win/install-pyenv-win.ps1" -OutFile "./install-pyenv-win.ps1"; &"./install-pyenv-win.ps1"
-# pyenv install 3.11.5
-
-# # PowerShell setup
-# scoop install https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/oh-my-posh.json
-# # Need newer version (most likely default isn't new enough) for oh-my-posh themes
-# Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser; Install-Module -Force PSReadLine
-
-# # Create PowerShell settings and config
-# if (!(Test-Path -Path $PROFILE)) {
-#   New-Item -ItemType File -Path $PROFILE -Force
-# }
-# $FNM = 'fnm env --use-on-cd | Out-String | Invoke-Expression'
-# $OMP_CONFIG = "oh-my-posh init pwsh --config 'https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/star.omp.json' | Invoke-Expression"
-# Add-Content -Path $PROFILE -Value $FNM
-# Add-Content -Path $PROFILE -Value $OMP_CONFIG
+# Create PowerShell settings and config
+if (!(Test-Path -Path $PROFILE)) {
+  New-Item -ItemType File -Path $PROFILE -Force
+}
+$FNM = 'fnm env --use-on-cd | Out-String | Invoke-Expression'
+$OMP_CONFIG = "oh-my-posh init pwsh --config 'https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/star.omp.json' | Invoke-Expression"
+Add-Content -Path $PROFILE -Value $FNM
+Add-Content -Path $PROFILE -Value $OMP_CONFIG
