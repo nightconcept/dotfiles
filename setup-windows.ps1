@@ -124,8 +124,13 @@ Add-Content -Path $PROFILE -Value $FNM
 Add-Content -Path $PROFILE -Value $OMP_CONFIG
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-$url = "https://raw.githubusercontent.com/nightconcept/dotfiles/main/windows/winutil-config.json"
-$file = "$env:temp\winutil-config.json"
+$config_url = "https://raw.githubusercontent.com/nightconcept/dotfiles/main/windows/winutil-config.json"
+$config_file = "$pwd\winutil-config.json"
 
-(New-Object -TypeName System.Net.WebClient).DownloadFile($url, $file)
-Invoke-RestMethod https://christitus.com/win -Config ./winutil-config.json -Run | Invoke-Expression
+(New-Object -TypeName System.Net.WebClient).DownloadFile($config_url, $config_file)
+
+[Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12
+$winutil_url = 'https://raw.githubusercontent.com/ChrisTitusTech/winutil/main/winutil.ps1'
+$winutil_file = "$pwd\winutil-config.json"
+(New-Object -TypeName System.Net.WebClient).DownloadFile($winutil_url, $winutil_file)
+Invoke-RestMethod winutil.ps1 -Config $file -Run | Invoke-Expression
