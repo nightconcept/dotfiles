@@ -114,6 +114,10 @@ scoop install nerd-fonts/Ubuntu-NF
 scoop install nerd-fonts/Ubuntu-NF-Mono
 scoop install nerd-fonts/Ubuntu-NF-Propo
 
+#######
+# Interactive section where the user is expected to interact or things won't work right
+#######
+
 # interactive scoop installs
 scoop install nonportable/k-lite-codec-pack-full-np
 scoop install anderlli0053_DEV-tools/freefilesync
@@ -126,6 +130,9 @@ Invoke-Item "$HOME/scoop/apps/vscode/current/install-context.reg" -Confirm
 Invoke-Item "$HOME/scoop/apps/vscode/current/install-associations.reg" -Confirm
 Invoke-Item "$HOME/scoop/apps/7zip/current/install-context.reg" -Confirm
 
+# install PowerShell7
+winget install --id Microsoft.Powershell --source winget
+
 #########################
 # Install non-Scoop tools
 #########################
@@ -136,24 +143,25 @@ $pyenv_cmd = "$HOME/.pyenv/pyenv-win/bin/pyenv"
 $pyenv_args = @("install", "3.11.5")
 & $pyenv_cmd $pyenv_args
 
-# install PowerShell and misc. tools
-
-# install PowerShell7
-winget install --id Microsoft.Powershell --source winget
+# install PowerShell stuff
 
 # install Oh-My-Posh
 scoop install https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/oh-my-posh.json
 # (May not be needed in W11) Need newer version (most likely default isn't new enough) for oh-my-posh themes
 
 # install latest version that may be required for some addons to run in PowerShell 5.1
-Install-Module -Force PSReadLine
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser; Install-Module -Force PSReadLine
 
 ###########################
 # Apply dotfiles equivalent
 ###########################
 
+# get dotfiles
+Set-Location $HOME
+git clone https://github.com/nightconcept/dotfiles.git
+
 # Powershell config
-$SOURCE_PS_CONFIG = "$(Get-ScriptDirectory)\windows\powershell\Microsoft.PowerShell_profile"
+$SOURCE_PS_CONFIG = "${HOME}\dotfiles\windows\powershell\Microsoft.PowerShell_profile"
 $DESTINATION_PS5_CONFIG = "${HOME}\Documents\WindowsPowerShell"
 $DESTINATION_PS7_CONFIG = "${HOME}\Documents\PowerShell"
 Copy-Item $SOURCE_PS_CONFIG -Destination $DESTINATION_PS5_CONFIG -Force
@@ -163,8 +171,4 @@ Copy-Item $SOURCE_PS_CONFIG -Destination $DESTINATION_PS7_CONFIG -Force
 # Run winutils
 ##############
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-$config_url = "https://raw.githubusercontent.com/nightconcept/dotfiles/main/windows/winutils/winutil-config.json"
-$config_file = "${HOME}\Desktop\winutil-config.json"
-(New-Object -TypeName System.Net.WebClient).DownloadFile($config_url, $config_file)
 Invoke-RestMethod https://christitus.com/win | Invoke-Expression
-Remove-Item $config_file
