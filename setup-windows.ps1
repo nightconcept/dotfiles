@@ -17,6 +17,9 @@ else {
     Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser; Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
 }
 
+# install powershell 7
+winget install --id Microsoft.Powershell --source winget
+
 # install official and unofficial scoop buckets
 scoop bucket add versions
 scoop bucket add extras
@@ -31,7 +34,7 @@ scoop install main/fzf
 scoop install main/zoxide
 scoop install main/vim
 scoop install extras/hwinfo
-scoop install main/neofetch
+scoop install main/winfetch
 scoop install main/duf
 scoop install main/speedtest-cli
 scoop install main/wget
@@ -129,6 +132,7 @@ Add-Content -Path $PROFILE -Value $FNM_CONFIG
 Add-Content -Path $PROFILE -Value $OMP_CONFIG
 Add-Content -Path $PROFILE -Value $OMP_CONFIG
 Add-Content -Path $PROFILE -Value $OMP_CONFIG
+# TODO: Update PowerShell 7 Profile
 
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
