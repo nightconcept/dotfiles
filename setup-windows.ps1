@@ -121,10 +121,15 @@ scoop install https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/downl
 if (!(Test-Path -Path $PROFILE)) {
   New-Item -ItemType File -Path $PROFILE -Force
 }
-$FNM = 'fnm env --use-on-cd | Out-String | Invoke-Expression'
+$FNM_CONFIG = 'fnm env --use-on-cd | Out-String | Invoke-Expression'
 $OMP_CONFIG = "oh-my-posh init pwsh --config 'https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/powerlevel10k_rainbow.omp.json' | Invoke-Expression"
-Add-Content -Path $PROFILE -Value $FNM
+$ZOXIDE_CONFIG = "Invoke-Expression (& { (zoxide init powershell | Out-String) })"
+$TERMINAL_ICONS_CONFIG = "Import-Module -Name Terminal-Icons"
+Add-Content -Path $PROFILE -Value $FNM_CONFIG
 Add-Content -Path $PROFILE -Value $OMP_CONFIG
+Add-Content -Path $PROFILE -Value $OMP_CONFIG
+Add-Content -Path $PROFILE -Value $OMP_CONFIG
+
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 $config_url = "https://raw.githubusercontent.com/nightconcept/dotfiles/main/windows/winutil-config.json"
