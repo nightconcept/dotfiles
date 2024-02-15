@@ -13,23 +13,23 @@
 ### This is the default policy on Windows Server 2012 R2 and above for server Windows. For 
 ### more information about execution policies, run Get-Help about_Execution_Policies.
 
-#check for updates
-try{
-    $url = "https://raw.githubusercontent.com/nightconcept/dotfiles/main/windows/powershell/Microsoft.PowerShell_profile.ps1"
-    $oldhash = Get-FileHash $PROFILE
-    Invoke-RestMethod $url -OutFile "$env:temp/Microsoft.PowerShell_profile.ps1"
-    $newhash = Get-FileHash "$env:temp/Microsoft.PowerShell_profile.ps1"
-    if ($newhash -ne $oldhash) {
-        Get-Content "$env:temp/Microsoft.PowerShell_profile.ps1" | Set-Content $PROFILE
-        . $PROFILE
-        return
-    }
-}
-catch {
-    Write-Error "unable to check for `$profile updates"
-}
-Remove-Variable @("newhash", "oldhash", "url")
-Remove-Item  "$env:temp/Microsoft.PowerShell_profile.ps1"
+# #check for updates
+# try{
+#     $url = "https://raw.githubusercontent.com/nightconcept/dotfiles/main/windows/powershell/Microsoft.PowerShell_profile.ps1"
+#     $oldhash = Get-FileHash $PROFILE
+#     Invoke-RestMethod $url -OutFile "$env:temp/Microsoft.PowerShell_profile.ps1"
+#     $newhash = Get-FileHash "$env:temp/Microsoft.PowerShell_profile.ps1"
+#     if ($newhash -ne $oldhash) {
+#         Get-Content "$env:temp/Microsoft.PowerShell_profile.ps1" | Set-Content $PROFILE
+#         . $PROFILE
+#         return
+#     }
+# }
+# catch {
+#     Write-Error "unable to check for `$profile updates"
+# }
+# Remove-Variable @("newhash", "oldhash", "url")
+# Remove-Item  "$env:temp/Microsoft.PowerShell_profile.ps1"
 
 # Import Terminal Icons
 Import-Module -Name Terminal-Icons
@@ -89,22 +89,22 @@ function dirs {
     }
 }
 
-# Simple function to start a new elevated process. If arguments are supplied then 
-# a single command is started with admin rights; if not then a new admin instance
-# of PowerShell is started.
-function admin {
-    if ($args.Count -gt 0) {   
-        $argList = "& '" + $args + "'"
-        Start-Process "$psHome\powershell.exe" -Verb runAs -ArgumentList $argList
-    } else {
-        Start-Process "$psHome\powershell.exe" -Verb runAs
-    }
-}
+# # Simple function to start a new elevated process. If arguments are supplied then 
+# # a single command is started with admin rights; if not then a new admin instance
+# # of PowerShell is started.
+# function admin {
+#     if ($args.Count -gt 0) {   
+#         $argList = "& '" + $args + "'"
+#         Start-Process "$psHome\powershell.exe" -Verb runAs -ArgumentList $argList
+#     } else {
+#         Start-Process "$psHome\powershell.exe" -Verb runAs
+#     }
+# }
 
-# Set UNIX-like aliases for the admin command, so sudo <command> will run the command
-# with elevated rights. 
-Set-Alias -Name su -Value admin
-Set-Alias -Name sudo -Value admin
+# # Set UNIX-like aliases for the admin command, so sudo <command> will run the command
+# # with elevated rights. 
+# Set-Alias -Name su -Value admin
+# Set-Alias -Name sudo -Value admin
 
 
 # Make it easy to edit this profile once it's installed
