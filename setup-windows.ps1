@@ -155,27 +155,14 @@ $pyenv_cmd = "$HOME/.pyenv/pyenv-win/bin/pyenv"
 $pyenv_args = @("install", "3.11.5")
 & $pyenv_cmd $pyenv_args
 
-# install PowerShell stuff
-
+##################################
+# Install Powershell configuration
+##################################
 # install Oh-My-Posh
 scoop install https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/oh-my-posh.json
 
-###########################
-# Apply dotfiles equivalent
-###########################
-
-# get dotfiles
-Set-Location $HOME
-git clone https://github.com/nightconcept/dotfiles.git
-
 # Powershell config
 # reference: https://github.com/ChrisTitusTech/powershell-profile
-$SOURCE_PS_CONFIG = "${HOME}\dotfiles\windows\powershell\Microsoft.PowerShell_profile.ps1"
-$DESTINATION_PS5_CONFIG = "${HOME}\Documents\WindowsPowerShell"
-$DESTINATION_PS7_CONFIG = "${HOME}\Documents\PowerShell"
-Copy-Item $SOURCE_PS_CONFIG -Destination $DESTINATION_PS5_CONFIG -Force
-Copy-Item $SOURCE_PS_CONFIG -Destination $DESTINATION_PS7_CONFIG -Force
-
 #If the file does not exist, create it.
 if (!(Test-Path -Path $PROFILE -PathType Leaf)) {
     try {
@@ -191,7 +178,7 @@ if (!(Test-Path -Path $PROFILE -PathType Leaf)) {
             }
         }
 
-        Invoke-RestMethod https://github.com/ChrisTitusTech/powershell-profile/raw/main/Microsoft.PowerShell_profile.ps1 -OutFile $PROFILE
+        Invoke-RestMethod https://github.com/nightconcept/dotfiles/raw/main/windows/powershell/Microsoft.PowerShell_profile.ps1 -OutFile $PROFILE
         Write-Host "The profile @ [$PROFILE] has been created."
         write-host "if you want to add any persistent components, please do so at
         [$HOME\Documents\PowerShell\Profile.ps1] as there is an updater in the installed profile 
@@ -204,7 +191,7 @@ if (!(Test-Path -Path $PROFILE -PathType Leaf)) {
 # If the file already exists, show the message and do nothing.
  else {
 		 Get-Item -Path $PROFILE | Move-Item -Destination oldprofile.ps1 -Force
-		 Invoke-RestMethod https://github.com/ChrisTitusTech/powershell-profile/raw/main/Microsoft.PowerShell_profile.ps1 -OutFile $PROFILE
+		 Invoke-RestMethod https://github.com/nightconcept/dotfiles/raw/main/windows/powershell/Microsoft.PowerShell_profile.ps1 -OutFile $PROFILE
 		 Write-Host "The profile @ [$PROFILE] has been created and old profile removed."
          write-host "Please back up any persistent components of your old profile to [$HOME\Documents\PowerShell\Profile.ps1]
          as there is an updater in the installed profile which uses the hash to update the profile 
@@ -214,6 +201,12 @@ if (!(Test-Path -Path $PROFILE -PathType Leaf)) {
 
 # Terminal Icons Install
 Install-Module -Name Terminal-Icons -Repository PSGallery -Force
+
+##############
+# Get dotfiles
+##############
+Set-Location $HOME
+git clone https://github.com/nightconcept/dotfiles.git
 
 ##############
 # Run winutils
