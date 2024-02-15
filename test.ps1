@@ -1,7 +1,12 @@
-function Get-ScriptDirectory
-{
-  $Invocation = (Get-Variable MyInvocation -Scope 1).Value
-  Split-Path $Invocation.MyCommand.Path
-}
-$SOURCE_PS_CONFIG = "${HOME}\windows\powershell\Microsoft.PowerShell_profile"
-Write-Output $SOURCE_PS_CONFIG
+# Powershell config
+$SOURCE_PS_CONFIG = "${HOME}\dotfiles\windows\powershell\Microsoft.PowerShell_profile.ps1"
+$DESTINATION_PS5_CONFIG = "${HOME}\Documents\WindowsPowerShell"
+$DESTINATION_PS7_CONFIG = "${HOME}\Documents\PowerShell"
+Copy-Item $SOURCE_PS_CONFIG -Destination $DESTINATION_PS5_CONFIG -Force
+Copy-Item $SOURCE_PS_CONFIG -Destination $DESTINATION_PS7_CONFIG -Force
+
+##############
+# Run winutils
+##############
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+Invoke-RestMethod https://christitus.com/win | Invoke-Expression
