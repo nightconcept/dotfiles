@@ -58,14 +58,12 @@ scoop install extras/obsidian
 scoop install extras/vscode
 scoop install extras/hexchat
 scoop install anderlli0053_DEV-tools/eyeleo-chs-portable
-scoop install anderlli0053_DEV-tools/freefilesync
 scoop install extras/notepadplusplus
 scoop install extras/calibre
 scoop install extras/obs-studio
 scoop install extras/plex-desktop
 scoop install extras/typora
 scoop install extras/zoom
-scoop install nonportable/k-lite-codec-pack-full-np
 scoop install extras/qbittorrent
 scoop install extras/rufus
 scoop install extras/slack
@@ -73,15 +71,20 @@ scoop install extras/ferdium
 scoop install extras/windowsspyblocker
 scoop install extras/cpu-z
 scoop install extras/kitty
-scoop install extras/windows-terminal
 scoop install extras/wezterm
 scoop install extras/sharex
+
+# put interactive installs here!
+scoop install nonportable/k-lite-codec-pack-full-np
+scoop install anderlli0053_DEV-tools/freefilesync
+# freefilsync will fail the first time because there will be a hash mismatch
+# it just needs to be run again to install
+scoop install anderlli0053_DEV-tools/freefilesync
 
 # install contexts
 Invoke-Item "$HOME/scoop/apps/vscode/current/install-context.reg" -Confirm
 Invoke-Item "$HOME/scoop/apps/vscode/current/install-associations.reg" -Confirm
 Invoke-Item "$HOME/scoop/apps/7zip/current/install-context.reg" -Confirm
-Invoke-Item "$HOME/scoop/apps/windows-terminal/current/install-context.reg" -Confirm
 
 # install fonts, dual maintained with font/vars/main.yml
 scoop install nerd-fonts/SourceCodePro-NF
@@ -125,7 +128,7 @@ Add-Content -Path $PROFILE -Value $OMP_CONFIG
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 $config_url = "https://raw.githubusercontent.com/nightconcept/dotfiles/main/windows/winutil-config.json"
-$config_file = "$pwd\winutil-config.json"
+$config_file = "$HOME\Desktop\winutil-config.json"
 
 (New-Object -TypeName System.Net.WebClient).DownloadFile($config_url, $config_file)
 
