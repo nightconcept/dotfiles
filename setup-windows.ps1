@@ -32,17 +32,6 @@ else {
     Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser; Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
 }
 
-####################
-# Install Chocolatey
-####################
-if ([bool](Get-Command -Name 'choco' -ErrorAction SilentlyContinue)) {
-    Write-Verbose "Chocolatey is already installed, skip installation." -Verbose
-}
-else {
-    Write-Verbose "Installing Chocolatey..." -Verbose
-    Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))}
-
-
 
 ####################################
 # Install Scoop managed applications
