@@ -68,7 +68,7 @@ scoop install main/fnm
 fnm install --lts
 scoop install main/pnpm
 scoop install main/starship
-scoop isntall extras/terminal-icons
+scoop install extras/terminal-icons
 
 # gui_tools_windows (or would be if this could be in ansible)
 scoop install extras/ungoogled-chromium
