@@ -133,3 +133,4 @@ $config_file = "$HOME\Desktop\winutil-config.json"
 (New-Object -TypeName System.Net.WebClient).DownloadFile($config_url, $config_file)
 
 Invoke-RestMethod https://christitus.com/win | Invoke-Expression
+Remove-Item $config_file
