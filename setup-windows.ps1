@@ -1,3 +1,17 @@
+##################
+# Helper functions
+##################
+function Get-ScriptDirectory
+{
+  $Invocation = (Get-Variable MyInvocation -Scope 1).Value
+  Split-Path $Invocation.MyCommand.Path
+}
+
+
+##################################################
+# Configure permissions for the rest of the script
+##################################################
+
 # Set PowerShell execution policy to RemoteSigned for the current user
 $ExecutionPolicy = Get-ExecutionPolicy -Scope CurrentUser
 if ($ExecutionPolicy -eq "RemoteSigned") {
@@ -7,8 +21,9 @@ else {
     Write-Verbose "Setting execution policy to RemoteSigned for the current user..." -Verbose
     Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 }
-
+###############
 # Install Scoop
+###############
 if ([bool](Get-Command -Name 'scoop' -ErrorAction SilentlyContinue)) {
     Write-Verbose "Scoop is already installed, skip installation." -Verbose
 }
@@ -17,8 +32,9 @@ else {
     Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser; Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
 }
 
-# install powershell 7
-winget install --id Microsoft.Powershell --source winget
+####################################
+# Install Scoop managed applications
+####################################
 
 # install official and unofficial scoop buckets
 scoop bucket add versions
@@ -51,6 +67,7 @@ scoop install main/fnm
 fnm install --lts
 scoop install main/pnpm
 scoop install main/starship
+scoop isntall extras/terminal-icons
 
 # gui_tools_windows (or would be if this could be in ansible)
 scoop install extras/ungoogled-chromium
@@ -77,18 +94,6 @@ scoop install extras/kitty
 scoop install extras/wezterm
 scoop install extras/sharex
 
-# put interactive installs here!
-scoop install nonportable/k-lite-codec-pack-full-np
-scoop install anderlli0053_DEV-tools/freefilesync
-# freefilsync will fail the first time because there will be a hash mismatch
-# it just needs to be run again to install
-scoop install anderlli0053_DEV-tools/freefilesync
-
-# install contexts
-Invoke-Item "$HOME/scoop/apps/vscode/current/install-context.reg" -Confirm
-Invoke-Item "$HOME/scoop/apps/vscode/current/install-associations.reg" -Confirm
-Invoke-Item "$HOME/scoop/apps/7zip/current/install-context.reg" -Confirm
-
 # install fonts, dual maintained with font/vars/main.yml
 scoop install nerd-fonts/SourceCodePro-NF
 scoop install nerd-fonts/SourceCodePro-NF-Mono
@@ -109,37 +114,57 @@ scoop install nerd-fonts/Ubuntu-NF
 scoop install nerd-fonts/Ubuntu-NF-Mono
 scoop install nerd-fonts/Ubuntu-NF-Propo
 
-# install pyenv
+# interactive scoop installs
+scoop install nonportable/k-lite-codec-pack-full-np
+scoop install anderlli0053_DEV-tools/freefilesync
+# freefilsync will fail the first time because there will be a hash mismatch
+# it just needs to be run again to install
+scoop install anderlli0053_DEV-tools/freefilesync
+
+# install contexts (interactive)
+Invoke-Item "$HOME/scoop/apps/vscode/current/install-context.reg" -Confirm
+Invoke-Item "$HOME/scoop/apps/vscode/current/install-associations.reg" -Confirm
+Invoke-Item "$HOME/scoop/apps/7zip/current/install-context.reg" -Confirm
+
+#########################
+# Install non-Scoop tools
+#########################
+
+# install pyenv-win
 Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/pyenv-win/pyenv-win/master/pyenv-win/install-pyenv-win.ps1" -OutFile "./install-pyenv-win.ps1"; &"./install-pyenv-win.ps1"
 $pyenv_cmd = "$HOME/.pyenv/pyenv-win/bin/pyenv" 
 $pyenv_args = @("install", "3.11.5")
 & $pyenv_cmd $pyenv_args
 
-# PowerShell setup
+# install PowerShell and misc. tools
+
+# install PowerShell7
+winget install --id Microsoft.Powershell --source winget
+
+# install Oh-My-Posh
 scoop install https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/oh-my-posh.json
 # (May not be needed in W11) Need newer version (most likely default isn't new enough) for oh-my-posh themes
-# Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser; Install-Module -Force PSReadLine
 
-# Create PowerShell settings and config
-if (!(Test-Path -Path $PROFILE)) {
-  New-Item -ItemType File -Path $PROFILE -Force
-}
-$FNM_CONFIG = 'fnm env --use-on-cd | Out-String | Invoke-Expression'
-$OMP_CONFIG = "oh-my-posh init pwsh --config 'https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/powerlevel10k_rainbow.omp.json' | Invoke-Expression"
-$ZOXIDE_CONFIG = "Invoke-Expression (& { (zoxide init powershell | Out-String) })"
-$TERMINAL_ICONS_CONFIG = "Import-Module -Name Terminal-Icons"
-Add-Content -Path $PROFILE -Value $FNM_CONFIG
-Add-Content -Path $PROFILE -Value $OMP_CONFIG
-Add-Content -Path $PROFILE -Value $OMP_CONFIG
-Add-Content -Path $PROFILE -Value $OMP_CONFIG
-# TODO: Update PowerShell 7 Profile
+# install latest version that may be required for some addons to run in PowerShell 5.1
+Install-Module -Force PSReadLine
 
+###########################
+# Apply dotfiles equivalent
+###########################
 
+# Powershell config
+$SOURCE_PS_CONFIG = "$(Get-ScriptDirectory)\windows\powershell\Microsoft.PowerShell_profile"
+$DESTINATION_PS5_CONFIG = "${HOME}\Documents\WindowsPowerShell"
+$DESTINATION_PS7_CONFIG = "${HOME}\Documents\PowerShell"
+Copy-Item $SOURCE_PS_CONFIG -Destination $DESTINATION_PS5_CONFIG -Force
+Copy-Item $SOURCE_PS_CONFIG -Destination $DESTINATION_PS7_CONFIG -Force
+
+##############
+# Run winutils
+##############
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-$config_url = "https://raw.githubusercontent.com/nightconcept/dotfiles/main/windows/winutil-config.json"
-$config_file = "$HOME\Desktop\winutil-config.json"
-
+$config_url = "https://raw.githubusercontent.com/nightconcept/dotfiles/main/windows/winutils/winutil-config.json"
+$config_file = "${HOME}\Desktop\winutil-config.json"
 (New-Object -TypeName System.Net.WebClient).DownloadFile($config_url, $config_file)
-
 Invoke-RestMethod https://christitus.com/win | Invoke-Expression
 Remove-Item $config_file

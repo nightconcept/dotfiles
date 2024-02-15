@@ -13,7 +13,7 @@ cli_tools_common:
     - zoxide              # A smarter cd command for your terminal (`cd` alternative)
     - vim                 # Easily usable by anyone
     - hwinfo              # Hardware detection tool from openSUSE
-    - neofetch            # A CLI system information tool written in BASH that supports displaying images.
+    - fastfetch           # A CLI system fetch information tool similar to neofetch
     - duf                 # Disk Usage/Free Utility (`df` alternative)
     - speedtest-cli       # Command line interface for testing internet bandwidth using speedtest.net
     - wget                # Network utility to retrieve files from the Web (used by Neovim to download files on the internet when pressing `gf`)
