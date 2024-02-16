@@ -1,0 +1,14 @@
+- name: cli - Install common CLI tools (macOS)
+  become: true
+  homebrew:
+    state: latest
+    name: "{{ cli_tools_common }}"
+  when: ansible_distribution == "MacOSX"
+
+- name: cli - Install common *nix CLI tools (macOS)
+  become: true
+  homebrew:
+    state: latest
+    name: "{{ cli_tools_nix }}"
+  ignore_errors: true
+  when: ansible_distribution == "MacOSX"

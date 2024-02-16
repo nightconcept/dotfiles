@@ -1,0 +1,20 @@
+- name: cli - Install common CLI tools (ArchLinux)
+  become: true
+  pacman:
+    state: latest
+    name: "{{ cli_tools_common }}"
+  when: ansible_distribution == "Archlinux"
+
+- name: cli - Install common *nix CLI tools (ArchLinux)
+  become: true
+  pacman:
+    state: latest
+    name: "{{ cli_tools_nix }}"
+  when: ansible_distribution == "Archlinux"
+
+- name: cli - Install Arch-specific CLI tools (ArchLinux)
+  become: true
+  pacman:
+    state: latest
+    name: "{{ cli_tools_arch }}"
+  when: ansible_distribution == "Archlinux"
