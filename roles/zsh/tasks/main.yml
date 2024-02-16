@@ -20,7 +20,7 @@
       community.general.homebrew:
         state: latest
         name: zsh
-      when: ansible_distribution == "macOS"
+      when: ansible_distribution == "MacOSX"
 
     - name: Make it the user's default shell
       become: true

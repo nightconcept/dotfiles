@@ -4,6 +4,7 @@ collections:
   - name: community.windows
   - name: community.general
   - name: chocolatey.chocolatey
+  - name: geerlingguy.mac
 
 roles:
   - name: elliotweiser.osx-command-line-tools

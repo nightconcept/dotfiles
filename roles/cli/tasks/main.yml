@@ -3,21 +3,21 @@
 
     - name: cli - Install common CLI tools (ArchLinux)
       become: true
-      community.general.pacman:
+      pacman:
         state: latest
         name: "{{ cli_tools_common }}"
       when: ansible_distribution == "Archlinux"
 
     - name: cli - Install common *nix CLI tools (ArchLinux)
       become: true
-      community.general.pacman:
+      pacman:
         state: latest
         name: "{{ cli_tools_nix }}"
       when: ansible_distribution == "Archlinux"
 
     - name: cli - Install Arch-specific CLI tools (ArchLinux)
       become: true
-      community.general.pacman:
+      pacman:
         state: latest
         name: "{{ cli_tools_arch }}"
       when: ansible_distribution == "Archlinux"
@@ -46,14 +46,20 @@
       ignore_errors: true
       when: ansible_distribution == "Ubuntu"
 
-    - name: cli - Install commong CLI tools (macOS)
+    - name: cli - Install common CLI tools (macOS)
       become: true
-      community.general.homebrew:
+      homebrew:
         state: latest
-        name:
-          - "{{ cli_tools_nix }}"
-          - "{{ cli_tools_macos }}"
-      when: ansible_distribution == "macOS"
+        name: "{{ cli_tools_common }}"
+      when: ansible_distribution == "MacOSX"
+
+    - name: cli - Install common *nix CLI tools (macOS)
+      become: true
+      ansible.builtin.apt:
+        state: latest
+        name: "{{ cli_tools_nix }}"
+      ignore_errors: true
+      when: ansible_distribution == "MacOSX"
 
     - name: cli - Install CLI tools
       become: true

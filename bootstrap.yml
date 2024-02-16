@@ -38,7 +38,7 @@
       tags: macos
       import_role:
         name: macos
-      when: ansible_distribution == "macOS"
+      when: ansible_distribution == "MacOSX"
 
     - name: Windows Setup
       tags: windows
@@ -51,7 +51,7 @@
       import_role:
         name: zsh
       when: (ansible_distribution == "Archlinux") or
-            (ansible_distribution == "macOS") or
+            (ansible_distribution == "MacOSX") or
             (ansible_distribution == "Ubuntu")
 
     - name: Fonts
@@ -64,7 +64,7 @@
       import_role:
         name: ssh
       when: (ansible_distribution == "Archlinux") or
-            (ansible_distribution == "macOS") or
+            (ansible_distribution == "MacOSX") or
             (ansible_distribution == "Ubuntu")
 
     - name: dotfiles
@@ -72,5 +72,5 @@
       import_role:
         name: dotfiles
       when: (ansible_distribution == "Archlinux") or
-            (ansible_distribution == "macOS") or
+            (ansible_distribution == "MacOSX") or
             (ansible_distribution == "Ubuntu")

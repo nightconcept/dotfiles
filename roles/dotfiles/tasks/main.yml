@@ -22,7 +22,7 @@
     community.general.homebrew:
       state: latest
       name: stow
-    when: ansible_distribution == "macOS"
+    when: ansible_distribution == "MacOSX"
 
   - name: Remove files that will conflict with dotfiles
     loop:

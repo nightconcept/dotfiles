@@ -23,7 +23,7 @@
         name: "{{ gui_tools_linux }}"
 
     - name: Install GUI tools on macOS
-      when: ansible_distribution == "macOS"
+      when: ansible_distribution == "MacOSX"
       become: true
       community.general.homebrew:
         state: latest

@@ -63,6 +63,9 @@ cli_tools_ubuntu:
 
 cli_tools_linux:
 
+cli_tools_test:
+    - bat
+
 gui_tools_arch:
     - mpv           # A free, open source, and cross-platform media player
     - mpv-mpris     # MPRIS plugin for mpv (media keys)
