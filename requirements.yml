@@ -5,6 +5,7 @@ collections:
   - name: community.general
   - name: chocolatey.chocolatey
   - name: geerlingguy.mac
+  - name: kewlfft.aur
 
 roles:
   - name: elliotweiser.osx-command-line-tools

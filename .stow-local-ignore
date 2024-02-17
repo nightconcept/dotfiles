@@ -10,12 +10,13 @@ Session.vim
 \.git
 \.gitignore
 \.gitmodules
+\.pyenv
 \.stow-local-ignore
 
 ansible.cfg
 bootstrap.yml
-hosts.ini
 install
+pre-install-mac.sh
 README.md
 requirements.yml
 setup-windows-client.ps1

@@ -35,6 +35,5 @@ elif [ "$DISTRO" == "darwin" ]; then
   pip3 install ansible
 fi
 
-
 ansible-galaxy install -r requirements.yml
 ansible-playbook bootstrap.yml --ask-become-pass

@@ -26,7 +26,11 @@
 
   - name: Remove files that will conflict with dotfiles
     loop:
+      - .bash_profile
       - .bashrc
+      - .gitconfig
+      - .gitignore_global
+      - .huskyrc
       - .profile
       - .zshrc
     ansible.builtin.file:
