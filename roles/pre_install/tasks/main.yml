@@ -1,16 +1,20 @@
 - tags: pre_install
   block:
 
-    - name: pre-tasks - Make sure all packages are up to date in Archlinux
+    - name: Make sure all packages are up to date in Archlinux
       become: true
       community.general.pacman:
         update_cache: true
         upgrade: true
       when: ansible_distribution == "Archlinux"
 
-    - name: pre-tasks - Make sure all packages are up to date in Ubuntu
+    - name: Make sure all packages are up to date in Ubuntu
       become: true
       ansible.builtin.apt:
         update_cache: true
         upgrade: yes
       when: ansible_distribution == "Ubuntu"
+
+    - name: Make sure homebrew is installed in macOS
+      include_tasks: homebrew.yml
+      when: ansible_distribution == "MacOSX"

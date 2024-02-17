@@ -22,16 +22,9 @@
         state: latest
         name: "{{ gui_tools_linux }}"
 
-    - name: Install GUI tools on macOS
-      when: ansible_distribution == "MacOSX"
-      become: true
-      community.general.homebrew:
-        state: latest
-        name: "{{ gui_tools_macos }}"
-
-    - name: Install GUI tools on Windows
-      when: ansible_distribution == "Windows"
-      become: true
-      community.windows.win_scoop:
-        state: latest
-        name: "{{ gui_tools_windows }}"
+    - name: Install GUI tools from Homebrew casks (macOS)
+      homebrew_cask:
+        name: "{{ item.name | default(item) }}"
+        state: present
+        install_options: "{{ item.install_options | default('appdir=/Applications') }}"
+      loop: "{{ gui_tools_macos }}"

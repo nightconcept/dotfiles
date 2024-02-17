@@ -1,23 +1,23 @@
-- name: cli - Install common CLI tools (Ubuntu)
+- name: Install common CLI tools (Ubuntu)
   become: true
-  ansible.builtin.apt:
+  apt:
     state: latest
     name: "{{ cli_tools_common }}"
-  ignore_errors: true
-  when: ansible_distribution == "Ubuntu"
 
-- name: cli - Install common *nix CLI tools (Ubuntu)
+- name: Install common *nix CLI tools (Ubuntu)
   become: true
-  ansible.builtin.apt:
+  apt:
     state: latest
     name: "{{ cli_tools_nix }}"
-  ignore_errors: true
-  when: ansible_distribution == "Ubuntu"
+    
+- name: Install common Linux CLI tools (Ubuntu)
+  become: true
+  apt:
+    state: latest
+    name: "{{ cli_tools_linux }}"
 
-- name: cli - Install Ubuntu-specific CLI tools (ArchLinux)
+- name: Install Ubuntu-specific CLI tools (ArchLinux)
   become: true
   ansible.builtin.apt:
     state: latest
     name: "{{ cli_tools_ubuntu }}"
-  ignore_errors: true
-  when: ansible_distribution == "Ubuntu"

@@ -12,7 +12,6 @@ cli_tools_common:
     - fzf                 # Command-line fuzzy finder
     - zoxide              # A smarter cd command for your terminal (`cd` alternative)
     - vim                 # Easily usable by anyone
-    - hwinfo              # Hardware detection tool from openSUSE
     - fastfetch           # A CLI system fetch information tool similar to neofetch
     - duf                 # Disk Usage/Free Utility (`df` alternative)
     - speedtest-cli       # Command line interface for testing internet bandwidth using speedtest.net
@@ -20,11 +19,7 @@ cli_tools_common:
     - curl                # Network utility to retrieve files from the Web
     - nmap                # Utility for network discovery and security auditing (great to check open ports)
 
-
 cli_tools_nix:
-    # For Ansible:
-    - sshpass             # Fool ssh into accepting an interactive password non-interactively (required by Ansible to run playbooks on remote managed nodes, in case you ever use this computer to run the `arch-base` playbook on another computer)
-    
     # For user usage:
     - rsync               # A fast and versatile file copying tool for remote and local files (`cp` alternative)
     - trash-cli           # Command line trashcan (recycle bin) interface (`rm` alternative)
@@ -36,11 +31,8 @@ cli_tools_nix:
     - mtools              # A collection of utilities to access MS-DOS disks TODO: Remove?
     # Compression/Uncompression utilities (used by zsh custom function `extract`):
     - p7zip               # Command-line file archiver with high compression ratio
-    - unrar               # The RAR uncompression program
     - unzip               # For extracting and viewing files in .zip archives
     - zip                 # Compressor/archiver for creating and modifying zipfiles
-    - ethtool             # Utility for controlling network drivers and hardware
-    - traceroute          # Tracks the route taken by packets over an IP network
     - evince              # Document viewer (PDF, PostScript, XPS, djvu, dvi, tiff, cbr, cbz, cb7, cbt)
     - fontconfig          # library for configuring and customizing font access
 
@@ -60,11 +52,13 @@ cli_tools_arch:
 cli_tools_ubuntu:
     - exa                 # Modern replacement for ls (`ls` alternative)
     - gh                  # GitHub CLI
+    - hwinfo              # Hardware detection tool from openSUSE
 
 cli_tools_linux:
-
-cli_tools_test:
-    - bat
+    - hwinfo              # Hardware detection tool from openSUSE
+    - unrar               # The RAR uncompression program
+    - ethtool             # Utility for controlling network drivers and hardware
+    - traceroute          # Tracks the route taken by packets over an IP network
 
 gui_tools_arch:
     - mpv           # A free, open source, and cross-platform media player
@@ -75,10 +69,28 @@ gui_tools_arch:
 gui_tools_linux:
 
 gui_tools_macos:
-    - unarchiver          # unar and lsar: Objective-C tools for uncompressing archive files 
+    - calibre
+    - discord
+    - eloston-chromium
+    - ferdium
+    - fig
+    - github
     - libreoffice         # LibreOffice (fresh) branch which contains new features and program enhancements
+    - mos
+    - obsidian
+    - plex
+    - raycast
+    - spotify
+    - the-unarchiver          # unar and lsar: Objective-C tools for uncompressing archive files 
+    - vanilla
+    - visual-studio-code
+    - vlc
+    
+
 
 wsl2_distribution: wsl-ubuntu-2204
+
+install_homebrew_if_missing: true
 
 update_categories:
   # You can install only specific updates by uncommenting it

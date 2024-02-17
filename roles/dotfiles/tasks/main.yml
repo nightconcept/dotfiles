@@ -5,14 +5,14 @@
   # If arch-setup was completed correctly, this should already be done
   - name: Install stow on Archlinux
     become: true
-    community.general.pacman:
+    pacman:
       state: latest
       name: stow
     when: ansible_distribution == "Archlinux"
 
   - name: Install stow on Ubuntu
     become: true
-    ansible.builtin.apt:
+    apt:
       state: latest
       name: stow
     when: ansible_distribution == "Ubuntu"
