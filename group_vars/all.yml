@@ -95,6 +95,7 @@ gui_tools_macos:
     - vanilla
     - visual-studio-code
     - vlc
+    - wezterm
     - zoom
 
 install_homebrew_if_missing: true
