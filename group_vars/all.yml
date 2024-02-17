@@ -69,22 +69,30 @@ gui_tools_arch:
 gui_tools_linux:
 
 gui_tools_macos:
+    - alt-tab
     - calibre
     - discord
     - eloston-chromium
     - ferdium
     - fig
     - github
+    - karabiner-elements
     - libreoffice         # LibreOffice (fresh) branch which contains new features and program enhancements
     - mos
+    - nomachine
+    - notunes
     - obsidian
     - plex
     - raycast
+    - rectangle
     - spotify
-    - the-unarchiver          # unar and lsar: Objective-C tools for uncompressing archive files 
+    - stretchly
+    - the-unarchiver
+    - typora          # unar and lsar: Objective-C tools for uncompressing archive files 
     - vanilla
     - visual-studio-code
     - vlc
+    - zoom
     
 
 

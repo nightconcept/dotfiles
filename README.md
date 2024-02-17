@@ -26,7 +26,7 @@ sudo apt install git -y
 
 
 ### macOS Client/Host Pre-Install
-!!! UNTESTED SECTION
+!!! NOTE Contained in install
 Install git with XCode Command Line Tools:
 ```sh
 xcode-select --install
