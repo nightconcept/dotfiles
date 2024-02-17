@@ -66,8 +66,6 @@ gui_tools_arch:
     - libreoffice-fresh   # LibreOffice branch which contains new features and program enhancements
     - foliate             # A simple and modern GTK eBook reader
 
-gui_tools_linux:
-
 gui_tools_macos:
     - alt-tab
     - calibre
@@ -79,6 +77,7 @@ gui_tools_macos:
     - karabiner-elements
     - libreoffice         # LibreOffice (fresh) branch which contains new features and program enhancements
     - mos
+    - mpv
     - nomachine
     - notunes
     - obsidian
@@ -93,27 +92,8 @@ gui_tools_macos:
     - visual-studio-code
     - vlc
     - zoom
-    
-
-
-wsl2_distribution: wsl-ubuntu-2204
 
 install_homebrew_if_missing: true
-
-update_categories:
-  # You can install only specific updates by uncommenting it
-  # * - installs all updates
-  # - "*"
-  - Critical Updates
-  # - Definition Updates
-  # - Developer Kits
-  # - Feature Packs
-  - Security Updates
-  # - Service Packs
-  # - Tools
-  - Update Rollups
-  # - Updates
-  # - Upgrades
 
 # Calculated variables (no need to touch):
 #   (lookup env will get the given environment variable from the controller machine. This is why we must execute this script via `ansible-pull` and while logged in as the user for which we want to generate the config files. For more info see: https://docs.ansible.com/ansible/latest/collections/ansible/builtin/env_lookup.html#ansible-collections-ansible-builtin-env-lookup)
