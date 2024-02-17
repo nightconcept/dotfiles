@@ -24,5 +24,4 @@
 
 - name: Install AUR packages (ArchLinux)
   kewlfft.aur.aur:
-    use: yay
     name: "{{ cli_tools_arch_aur }}"
