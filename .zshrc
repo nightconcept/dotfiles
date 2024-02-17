@@ -117,6 +117,13 @@ alias rm='rm -iv'
 
 eval "$(fnm env --use-on-cd)"
 
+export PATH="/usr/local/bin:$PATH"    # arm64e homebrew path (m1   )
+export PATH="/opt/homebrew/bin:$PATH" # x86_64 homebrew path (intel)
+
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
+
 # export MANPATH="/usr/local/man:$MANPATH"
 
 # You may need to manually set your language environment

@@ -20,17 +20,19 @@ unset UNAME
 
 # Install Ansible
 if [[ "$DISTRO" == "Ubuntu"* ]]; then
-    sudo apt-add-repository -y ppa:ansible/ansible
-    sudo apt update
-    sudo apt -y install ansible
+  sudo apt-add-repository -y ppa:ansible/ansible
+  sudo apt update
+  sudo apt -y install ansible
+  export PATH="$PATH:~/.local/bin"
 elif [ "$DISTRO" == "arch os"* ]; then
   python3 -m venv venv
   source venv/bin/activate
   pip3 install ansible
+  export PATH="$PATH:~/.local/bin"
 elif [ "$DISTRO" == "darwin" ]; then
   pip3 install ansible
 fi
 
-export PATH="$PATH:~/.local/bin"
+
 ansible-galaxy install -r requirements.yml
 ansible-playbook bootstrap.yml --ask-become-pass

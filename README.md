@@ -32,6 +32,19 @@ Install git with XCode Command Line Tools:
 xcode-select --install
 ```
 
+Install brew
+```sh
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+Install pyenv and [dependencies](https://stackoverflow.com/questions/70152525/cannot-install-python-3-10-0-on-m1-apple-silicon-ld-symbols-not-found-for-a) and [suggested build environments](https://github.com/pyenv/pyenv/wiki#suggested-build-environment).
+```sh
+brew update
+brew install openssl readline sqlite3 xz zlib tcl-tk gettext
+brew install pyenv
+pyenv install 3.11.5
+```
+*Note: Python 3.11.5 was the last tested version and was able to compile with no errors on 2/17/24.*
 
 ### Run the Install (Archlinux, Ubuntu, and macOS)
 First, check out the dotfiles repo in your $HOME directory using git.
