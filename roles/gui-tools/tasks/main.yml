@@ -1,26 +1,19 @@
 - tags: gui-tools
   block:
     - name: Install GUI tools on Archlinux
+      become: true
+      pacman:
+        state: latest
+        name: "{{ gui_tools_arch }}"
       when: ansible_distribution == "Archlinux"
-      block:
-        - name: Archlinux specific tools
-          become: true
-          community.general.pacman:
-            state: latest
-            name: "{{ gui_tools_arch }}"
 
-        # - name: Common Linux tools
-        #   become: true
-        #   community.general.pacman:
-        #     state: latest
-        #     name: "{{ gui_tools_linux }}"
 
     - name: Install GUI tools on Ubuntu
-      when: ansible_distribution == "Ubuntu"
       become: true
-      ansible.builtin.apt:
+      apt:
         state: latest
         name: "{{ gui_tools_linux }}"
+      when: ansible_distribution == "Ubuntu"
 
     - name: Install GUI tools from Homebrew casks (macOS)
       homebrew_cask:
@@ -28,3 +21,4 @@
         state: present
         install_options: "{{ item.install_options | default('appdir=/Applications') }}"
       loop: "{{ gui_tools_macos }}"
+      when: ansible_distribution == "MacOSX"

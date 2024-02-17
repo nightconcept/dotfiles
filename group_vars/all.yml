@@ -48,6 +48,8 @@ cli_tools_arch:
     - audacious           # Audio player
     - bandwhich           # Terminal bandwidth utilization tool
     - github-cli          # GitHub CLI
+    - pyenv               # Easy python environment switcher
+    - fnm                 # Fast node manager
 
 cli_tools_ubuntu:
     - exa                 # Modern replacement for ls (`ls` alternative)
