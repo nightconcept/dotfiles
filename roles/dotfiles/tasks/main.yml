@@ -2,28 +2,6 @@
 - tags: dotfiles
   block:
 
-  # If arch-setup was completed correctly, this should already be done
-  - name: Install stow on Archlinux
-    become: true
-    pacman:
-      state: latest
-      name: stow
-    when: ansible_distribution == "Archlinux"
-
-  - name: Install stow on Ubuntu
-    become: true
-    apt:
-      state: latest
-      name: stow
-    when: ansible_distribution == "Ubuntu"
-
-  - name: Install stow in macOS
-    become: true
-    community.general.homebrew:
-      state: latest
-      name: stow
-    when: ansible_distribution == "MacOSX"
-
   - name: Remove files that will conflict with dotfiles
     loop:
       - .bash_profile

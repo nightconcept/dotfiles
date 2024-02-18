@@ -1,12 +1,11 @@
-- name: Install common CLI tools (macOS)
+- name: Install common packages (macOS)
   homebrew:
     name: "{{ item.name | default(item) }}"
     state: latest
-  loop: "{{ cli_tools_common }}"
+  loop: "{{ common_all }}"
   
-
-- name: Install common *nix CLI tools (macOS)
+- name: Install common *nix packages (macOS)
   homebrew:
     name: "{{ item.name | default(item) }}"
     state: latest
-  loop: "{{ cli_tools_nix }}"
+  loop: "{{ common_nix }}"

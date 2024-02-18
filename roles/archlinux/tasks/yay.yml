@@ -1,30 +1,30 @@
 - tags: yay
   block:
 
-    - name: yay - Ensure `base-devel` is installed
+    - name: Ensure `base-devel` is installed
       # Should be already installed, but just in case someone does not read the README.md file
       become: true
       community.general.pacman:
         state: latest
         name: base-devel
 
-    - name: yay - Check if yay already installed
+    - name: Check if yay already installed
       ansible.builtin.command: "which yay"
       register: which_yay
       ignore_errors: true
 
-    - name: yay - Install yay
+    - name: Install yay
       # https://github.com/Jguer/yay?tab=readme-ov-file#installation
       # Once installed this will never run again, update yay with yay itself
       when: which_yay.rc != 0
       block: 
 
-      - name: yay - Clone the `yay` repository
+      - name: Clone the `yay` repository
         ansible.builtin.git:
           repo: https://aur.archlinux.org/yay.git
           dest: "{{ home }}/git/yay"
 
-      - name: yay - Build
+      - name: Build
         # `-s` installs dependencies automatilly
         # `-i` install the package after successfully building it
         # `--noconfirm` answers `yes` to all prompts without asking questions

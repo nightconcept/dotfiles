@@ -1,13 +1,13 @@
 - tags: cron
   block:
 
-  - name: cron - Install cronie
+  - name: Install cronie
     become: true
-    community.general.pacman:
+    pacman:
       name: cronie
       state: present
 
-  - name: cron - Enable cronie
+  - name: Enable cronie
     become: true
     service:
       name: cronie.service

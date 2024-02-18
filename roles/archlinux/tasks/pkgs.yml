@@ -1,0 +1,6 @@
+- name: Install Pacman packages on Archlinux
+  become: true
+  pacman:
+    state: latest
+    name: "{{ arch_pkgs }}"
+  when: ansible_distribution == "Archlinux"

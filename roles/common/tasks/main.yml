@@ -1,19 +1,19 @@
-- tags: cli
+- tags: common
   block:
 
-  - name: Install Archlinux CLI
+  - name: Install Archlinux Common Tools
     include_tasks: archlinux.yml
     when: ansible_distribution == "Archlinux"
 
-  - name: Install Ubuntu CLI
+  - name: Install Ubuntu Common Tools
     include_tasks: ubuntu.yml
     when: ansible_distribution == "Ubuntu"
 
-  - name: Install macOS CLI
+  - name: Install macOS Common Tools
     include_tasks: macos.yml
     when: ansible_distribution == "MacOSX"
 
-  - name: Install Windows CLI
+  - name: Install Windows Common Tools
     include_tasks: windows.yml
     when: ansible_distribution == "Windows"
 

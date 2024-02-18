@@ -18,15 +18,10 @@
       import_role:
         name: pre_install
 
-    - name: CLI tools
-      tags: cli
+    - name: Common tools
+      tags: common
       import_role:
-        name: cli
-
-    - name: GUI tools
-      tags: gui-tools
-      import_role:
-        name: gui-tools
+        name: common
 
     - name: Archlinux Setup
       tags: archlinux
@@ -46,13 +41,13 @@
         name: windows
       when: ansible_distribution == "Windows"
 
-    - name: zsh
-      tags: zsh
-      import_role:
-        name: zsh
-      when: (ansible_distribution == "Archlinux") or
-            (ansible_distribution == "MacOSX") or
-            (ansible_distribution == "Ubuntu")
+    # - name: zsh
+    #   tags: zsh
+    #   import_role:
+    #     name: zsh
+    #   when: (ansible_distribution == "Archlinux") or
+    #         (ansible_distribution == "MacOSX") or
+    #         (ansible_distribution == "Ubuntu")
 
     - name: Fonts
       tags: fonts
