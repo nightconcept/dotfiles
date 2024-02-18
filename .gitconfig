@@ -42,10 +42,6 @@
 	autoStash = false
 	autosquash = false
 	updateRefs = false
-[commit]
-	gpgsign = true
-[gpg]
-	program = C:\\Users\\dark\\scoop\\apps\\gpg\\current\\bin\\gpg.exe
 [credential "https://git-codecommit.us-east-1.amazonaws.com"]
 	provider = generic
 [init]
