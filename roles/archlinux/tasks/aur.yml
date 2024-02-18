@@ -5,4 +5,5 @@
     kewlfft.aur.aur:
       use: yay
       name: "{{ item.name | default(item) }}"
+      ignore_errors: true
     loop: "{{ arch_aur_pkgs }}"
