@@ -61,12 +61,14 @@ arch_pkgs:
     - chromium
     - calibre
     - obsidian
+    - steam
 
 arch_aur_pkgs:
     - ferdium-bin
     - fnm                 # Fast node manager, needs to be pulled off AUR
     - github-desktop-bin
     - nomachine
+    - protonup-qt
     - spotify
     - stretchly
     - typora          # unar and lsar: Objective-C tools for uncompressing archive files 
