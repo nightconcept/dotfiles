@@ -1,6 +1,11 @@
 - tags: pacman
   block:
 
+  - name: Init Pacman keyring
+    become: true
+    ansible.builtin.shell: pacman-key --init
+    ignore_errors: true
+    
   - name: Copy pacman configuration file
     become: true
     copy:
