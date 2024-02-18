@@ -32,6 +32,7 @@ common_all:
     - evince              # Document viewer (PDF, PostScript, XPS, djvu, dvi, tiff, cbr, cbz, cb7, cbt)
     - fontconfig          # library for configuring and customizing font access
     - stow
+    - zsh
 
 common_linux:
     - hwinfo              # Hardware detection tool from openSUSE

@@ -2,5 +2,6 @@
   become: true
   pacman:
     state: latest
-    name: "{{ arch_pkgs }}"
+    name: "{{ item.name | default(item) }}"
+  loop: "{{ arch_pkgs }}"
   when: ansible_distribution == "Archlinux"
