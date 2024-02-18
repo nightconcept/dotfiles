@@ -6,7 +6,6 @@
       pacman:
         update_cache: true
         upgrade: true
-        ignore_errors: true
       when: ansible_distribution == "Archlinux"
 
     - name: Make sure all packages are up to date in Ubuntu
