@@ -58,9 +58,23 @@ arch_pkgs:
     - mpv-mpris     # MPRIS plugin for mpv (media keys)
     - libreoffice-fresh   # LibreOffice branch which contains new features and program enhancements
     - foliate             # A simple and modern GTK eBook reader
+    - discord
+    - chromium
 
 arch_aur_pkgs:
-    - fnm                 # Fast node manager
+    - calibre-git
+    - ferdium-bin
+    - fnm                 # Fast node manager, needs to be pulled off AUR
+    - github-desktop-bin
+    - nomachine
+    - obsidian-bin
+    - spotify
+    - stretchly-bin
+    - typora          # unar and lsar: Objective-C tools for uncompressing archive files 
+    - visual-studio-code-bin
+    - vlc-git
+    - wezterm-git
+    - zoom
 
 ubuntu_pkgs:
     - exa                 # Modern replacement for ls (`ls` alternative)

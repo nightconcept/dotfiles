@@ -14,11 +14,12 @@ Session.vim
 \.stow-local-ignore
 
 ansible.cfg
-bootstrap.yml
+bootstrap
 install
-pre-install-mac.sh
+localhost
+main.yml
 README.md
 requirements.yml
-setup-windows-client.ps1
+windows-install.ps1
 
 ^/\.stowrc

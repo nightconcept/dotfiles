@@ -1,7 +1,7 @@
 - tags: aur
   block:
 
-  - name: Install AUR packages (ArchLinux)
+  - name: Install AUR packages
     kewlfft.aur.aur:
       use: yay
-      name: "{{ cli_tools_arch_aur }}"
+      name: "{{ arch_aur_pkgs }}"
