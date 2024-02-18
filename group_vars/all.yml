@@ -76,7 +76,7 @@ arch_aur_pkgs:
     - zoom
 
 ubuntu_pkgs:
-    - exa                 # Modern replacement for ls (`ls` alternative)
+    - eza                 # Modern replacement for ls (`ls` alternative)
     - gh                  # GitHub CLI
     - hwinfo              # Hardware detection tool from openSUSE
 

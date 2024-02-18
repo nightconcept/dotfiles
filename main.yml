@@ -35,19 +35,18 @@
         name: macos
       when: ansible_distribution == "MacOSX"
 
-    - name: Windows Setup
-      tags: windows
+    - name: Ubuntu Setup
+      tags: ubuntu
       import_role:
-        name: windows
-      when: ansible_distribution == "Windows"
+        name: ubuntu
+      when: ansible_distribution == "Ubuntu"
 
-    # - name: zsh
-    #   tags: zsh
-    #   import_role:
-    #     name: zsh
-    #   when: (ansible_distribution == "Archlinux") or
-    #         (ansible_distribution == "MacOSX") or
-    #         (ansible_distribution == "Ubuntu")
+    - name: zsh
+      tags: zsh
+      import_role:
+        name: zsh
+      when: (ansible_distribution == "Archlinux") or
+            (ansible_distribution == "Ubuntu")
 
     - name: Fonts
       tags: fonts

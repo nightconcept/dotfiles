@@ -100,20 +100,24 @@ alias gb='git branch'
 alias gl="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
 alias gm='git merge'
 
-# Bash aliases
-alias .='cd .'
-alias ..='cd ..'
-alias ...='cd ../../'
-alias ....='cd ../../../'
-alias .....='cd ../../../../'
+# General Aliases
+alias .='z .'
+alias ..='z ..'
+alias ...='z ../../'
+alias ....='z ../../../'
+alias .....='z ../../../../'
 alias bashclear='echo "" > ~/.bash_history'
+alias cd='z'
 alias cls='clear'
-alias ls='ls -F --color=auto'
-alias ll='ls -l'
-alias ll.='ls -la'
-alias lls='ls -la --sort=size'
-alias llt='ls -la --sort=time'
+alias ls='exa -F --color=auto'
+alias ll='exa -l'
+alias ll.='exa -la'
+alias lls='exa -la --sort=size'
+alias llt='exa -la --sort=time'
 alias rm='rm -iv'
+alias zshclear='echo "" > ~/.zsh_history'
+alias zshconfig="vim ~/.zshrc"
+alias zshreload="source ~/.zshrc"
 
 eval "$(fnm env --use-on-cd)"
 
@@ -145,8 +149,10 @@ eval "$(pyenv init -)"
 # For a full list of active aliases, run `alias`.
 #
 # Example aliases
-# alias zshconfig="mate ~/.zshrc"
+
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+
+eval "$(zoxide init zsh)"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh

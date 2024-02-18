@@ -1,0 +1,5 @@
+- name: Install Ubuntu-specific packages
+  become: true
+  apt:
+    state: latest
+    name: "{{ ubuntu_pkgs }}"
