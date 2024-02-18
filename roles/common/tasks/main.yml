@@ -12,9 +12,3 @@
   - name: Install macOS Common Tools
     include_tasks: macos.yml
     when: ansible_distribution == "MacOSX"
-
-  - name: Install Windows Common Tools
-    include_tasks: windows.yml
-    when: ansible_distribution == "Windows"
-
-

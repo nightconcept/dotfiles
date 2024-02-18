@@ -3,12 +3,6 @@
   apt:
     state: latest
     name: "{{ common_all }}"
-
-- name: Install common *nix packages (Ubuntu)
-  become: true
-  apt:
-    state: latest
-    name: "{{ common_nix }}"
     
 - name: Install common Linux packages (Ubuntu)
   become: true

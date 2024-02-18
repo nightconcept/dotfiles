@@ -4,12 +4,6 @@
     state: latest
     name: "{{ common_all }}"
 
-- name: Install common *nix tools (ArchLinux)
-  become: true
-  pacman:
-    state: latest
-    name: "{{ common_nix }}"
-
 - name: Install common Linux tools (ArchLinux)
   become: true
   pacman:

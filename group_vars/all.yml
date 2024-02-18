@@ -18,8 +18,6 @@ common_all:
     - wget                # Network utility to retrieve files from the Web (used by Neovim to download files on the internet when pressing `gf`)
     - curl                # Network utility to retrieve files from the Web
     - nmap                # Utility for network discovery and security auditing (great to check open ports)
-
-common_nix:
     - rsync               # A fast and versatile file copying tool for remote and local files (`cp` alternative)
     - trash-cli           # Command line trashcan (recycle bin) interface (`rm` alternative)
     - tldr                # Command line client for tldr, a collection of simplified and community-driven man pages
