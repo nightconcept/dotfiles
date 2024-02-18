@@ -2,11 +2,13 @@
   become: true
   apt:
     state: latest
-    name: "{{ common_all }}"
+    name: "{{ item.name | default(item) }}"
+  loop: "{{ common_all }}"
     
 - name: Install common Linux packages (Ubuntu)
   become: true
   apt:
     state: latest
-    name: "{{ common_linux }}"
+    name: "{{ item.name | default(item) }}"
+  loop: "{{ common_linux }}"
 

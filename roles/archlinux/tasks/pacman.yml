@@ -1,11 +1,32 @@
 - tags: pacman
   block:
 
+  - name: Init Pacman keyring
+    become: true
+    ansible.builtin.shell: pacman-key --init
+    ignore_errors: true
+    
   - name: Copy pacman configuration file
     become: true
     copy:
       src: pacman.conf
       dest: /etc/pacman.conf
+
+  - name: Add Chaotic-AUR Key 1/2
+    become: true
+    ansible.builtin.shell: pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
+
+  - name: Add Chaotic-AUR Key 2/2
+    become: true
+    ansible.builtin.shell: pacman-key --lsign-key 3056513887B78AEB
+
+  - name: Add Chaotic-AUR Keyring
+    become: true
+    ansible.builtin.shell: pacman -U --noconfirm 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' 
+
+  - name: Add Chaotic-AUR Mirrorlist
+    become: true
+    ansible.builtin.shell: pacman -U --noconfirm 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
 
   - name: Refresh pacman mirrors
     become: true
