@@ -8,3 +8,4 @@
 - include_tasks: cron.yml
 - include_tasks: hostname.yml
 - include_tasks: pkgs.yml
+- include_tasks: aur.yml
