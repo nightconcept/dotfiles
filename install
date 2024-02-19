@@ -24,7 +24,7 @@ if [ "$DISTRO" == "Ubuntu"* ]; then
   sudo apt update
   sudo apt -y install ansible
   export PATH="$PATH:~/.local/bin"
-elif [[ "$DISTRO" == "arch os" || "$DISTRO" == "ManjaroLinux" ]]; then
+elif [[ "$DISTRO" == "arch os" || "$DISTRO" == "ManjaroLinux" || "$DISTRO" == "EndeavourOS"]]; then
   python3 -m venv venv
   source venv/bin/activate
   pip3 install ansible
