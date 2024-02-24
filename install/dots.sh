@@ -5,3 +5,4 @@ cd ~/dotfiles
 stow .
 
 # Stow zshrc files because they are weird
+# test
