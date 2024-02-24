@@ -36,16 +36,20 @@ First, check out the dotfiles repo in your $HOME directory using git.
 
 1. Download
 ```sh
+cd ~
 git clone https://github.com/nightconcept/dotfiles.git
 cd dotfiles
 ```
 2. Install Applications
 ```sh
-./install
+chmod +x ./install.sh
+./install.sh
 ```
 
 3. Install dotfiles
 ```sh
+chmod +x ./dot.sh
+./dot.sh
 ```
 
 ### Run the Install (Windows)
