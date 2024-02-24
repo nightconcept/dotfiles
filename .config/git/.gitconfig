@@ -1,0 +1,36 @@
+[user]
+	name = Danny Solivan
+	email = dark@nightconcept.net
+	signingkey = 8C8CADC9D78265A8
+[credential "helperselector"]
+	selected = manager-core
+[github]
+	user = nightconcept
+[core]
+	excludesfile = ~/.gitignore
+	editor = nvim
+	ignorecase = false[pull]
+	rebase = false
+[push]
+	default = simple
+[color]
+	status = auto
+	diff = auto
+	branch = auto
+	interactive = auto
+	grep = auto
+	ui = auto
+[fetch]
+	prune = false
+[rebase]
+	autoStash = true
+	autosquash = true
+[init]
+	defaultBranch = main
+[hub]
+	protocol = https
+[filter "lfs"]
+	process = git-lfs filter-process
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f

@@ -1,4 +1,4 @@
-[submodule "library/aur"]
-	path = library/aur
+[submodule "install/library/aur"]
+	path = install/library/aur
 	url = https://github.com/nightconcept/ansible-aur.git
 	branch = master

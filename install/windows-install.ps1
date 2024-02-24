@@ -7,7 +7,6 @@ function Get-ScriptDirectory
   Split-Path $Invocation.MyCommand.Path
 }
 
-
 ##################################################
 # Configure permissions for the rest of the script
 ##################################################
@@ -31,7 +30,6 @@ else {
     Write-Verbose "Installing Scoop..." -Verbose
     Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser; Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
 }
-
 
 ####################################
 # Install Scoop managed applications
