@@ -34,6 +34,7 @@ common_all:
     - stow
     - zsh
     - firefox
+    - tmux
 
 common_linux:
     - hwinfo              # Hardware detection tool from openSUSE
