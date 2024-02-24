@@ -55,7 +55,6 @@ alias gb='git branch'
 alias gl="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
 alias gm='git merge'
 
-<<<<<<< HEAD
 # nvim config
 alias vi='nvim'
 alias vim='nvim'
@@ -67,19 +66,14 @@ alias ..='cd ..'
 alias ...='cd ../../'
 alias ....='cd ../../../'
 alias .....='cd ../../../../'
-alias zshclear='echo "" > ~/.zshrc_history'
-alias zshload='source ~/.zshrc'
-alias zshconfig='vim ~/.zshrc'
-=======
+
 # General Aliases
 alias .='z .'
 alias ..='z ..'
 alias ...='z ../../'
 alias ....='z ../../../'
 alias .....='z ../../../../'
-alias bashclear='echo "" > ~/.bash_history'
 alias cd='z'
->>>>>>> 281388a86111e6a0e72556c74ee748fbadb7c358
 alias cls='clear'
 alias ls='exa -F --color=auto'
 alias ll='exa -l'
@@ -91,11 +85,8 @@ alias zshclear='echo "" > ~/.zsh_history'
 alias zshconfig="vim ~/.zshrc"
 alias zshreload="source ~/.zshrc"
 
-<<<<<<< HEAD
 # fnm config
 export PATH="/home/danny/.local/share/fnm:$PATH"
-eval "`fnm env`"
-=======
 eval "$(fnm env --use-on-cd)"
 
 export PATH="/usr/local/bin:$PATH"    # arm64e homebrew path (m1   )
@@ -128,7 +119,6 @@ eval "$(pyenv init -)"
 # Example aliases
 
 # alias ohmyzsh="mate ~/.oh-my-zsh"
->>>>>>> 281388a86111e6a0e72556c74ee748fbadb7c358
 
 eval "$(zoxide init zsh)"
 
