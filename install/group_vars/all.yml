@@ -35,6 +35,8 @@ common_all:
     - zsh
     - firefox
     - tmux
+    - lazygit
+    - neovim
 
 common_linux:
     - hwinfo              # Hardware detection tool from openSUSE
