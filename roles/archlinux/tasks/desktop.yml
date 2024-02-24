@@ -1,9 +1,9 @@
 - tags: desktop
   block:
 
-    - name: desktop - install Plasma desktop and SDDM
+    - name: install Plasma desktop and SDDM
       become: true
-      community.general.pacman:
+      pacman:
         name: 
           #- plasma-meta
           #- kde-applications-meta
@@ -11,11 +11,10 @@
           - sddm-kcm
         state: present
       
-
-    - name: desktop - install essential KDE applications
+    - name: Install essential KDE applications
       become: true
       become_user: root
-      community.general.pacman:
+      pacman:
       # https://community.kde.org/Distributions/Packaging_Recommendations
         name:
           - ark
@@ -44,11 +43,10 @@
           - kdenetwork-filesharing
         state: present
 
-    - name: desktop - Enable service sddm
+    - name: Enable service sddm
       become: true
       systemd:
         name: sddm.service
         enabled: true
 
-    # configure SDDM to breeze as default theme
-
+    # TODO: configure SDDM to breeze as default theme

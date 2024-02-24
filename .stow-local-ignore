@@ -10,14 +10,16 @@ Session.vim
 \.git
 \.gitignore
 \.gitmodules
+\.pyenv
 \.stow-local-ignore
 
 ansible.cfg
-bootstrap.yml
-hosts.ini
+bootstrap
 install
+localhost
+main.yml
 README.md
 requirements.yml
-setup-windows-client.ps1
+windows-install.ps1
 
 ^/\.stowrc

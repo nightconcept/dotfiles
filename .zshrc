@@ -55,6 +55,7 @@ alias gb='git branch'
 alias gl="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
 alias gm='git merge'
 
+<<<<<<< HEAD
 # nvim config
 alias vi='nvim'
 alias vim='nvim'
@@ -69,17 +70,67 @@ alias .....='cd ../../../../'
 alias zshclear='echo "" > ~/.zshrc_history'
 alias zshload='source ~/.zshrc'
 alias zshconfig='vim ~/.zshrc'
+=======
+# General Aliases
+alias .='z .'
+alias ..='z ..'
+alias ...='z ../../'
+alias ....='z ../../../'
+alias .....='z ../../../../'
+alias bashclear='echo "" > ~/.bash_history'
+alias cd='z'
+>>>>>>> 281388a86111e6a0e72556c74ee748fbadb7c358
 alias cls='clear'
-alias ls='ls -F --color=auto'
-alias ll='ls -l'
-alias ll.='ls -la'
-alias lls='ls -la --sort=size'
-alias llt='ls -la --sort=time'
+alias ls='exa -F --color=auto'
+alias ll='exa -l'
+alias ll.='exa -la'
+alias lls='exa -la --sort=size'
+alias llt='exa -la --sort=time'
 alias rm='rm -iv'
+alias zshclear='echo "" > ~/.zsh_history'
+alias zshconfig="vim ~/.zshrc"
+alias zshreload="source ~/.zshrc"
 
+<<<<<<< HEAD
 # fnm config
 export PATH="/home/danny/.local/share/fnm:$PATH"
 eval "`fnm env`"
+=======
+eval "$(fnm env --use-on-cd)"
+
+export PATH="/usr/local/bin:$PATH"    # arm64e homebrew path (m1   )
+export PATH="/opt/homebrew/bin:$PATH" # x86_64 homebrew path (intel)
+
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
+
+# export MANPATH="/usr/local/man:$MANPATH"
+
+# You may need to manually set your language environment
+# export LANG=en_US.UTF-8
+
+# Preferred editor for local and remote sessions
+# if [[ -n $SSH_CONNECTION ]]; then
+#   export EDITOR='vim'
+# else
+#   export EDITOR='mvim'
+# fi
+
+# Compilation flags
+# export ARCHFLAGS="-arch x86_64"
+
+# Set personal aliases, overriding those provided by oh-my-zsh libs,
+# plugins, and themes. Aliases can be placed here, though oh-my-zsh
+# users are encouraged to define aliases within the ZSH_CUSTOM folder.
+# For a full list of active aliases, run `alias`.
+#
+# Example aliases
+
+# alias ohmyzsh="mate ~/.oh-my-zsh"
+>>>>>>> 281388a86111e6a0e72556c74ee748fbadb7c358
+
+eval "$(zoxide init zsh)"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh

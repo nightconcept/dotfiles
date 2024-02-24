@@ -18,15 +18,10 @@
       import_role:
         name: pre_install
 
-    - name: CLI tools
-      tags: cli
+    - name: Common tools
+      tags: common
       import_role:
-        name: cli
-
-    - name: GUI tools
-      tags: gui-tools
-      import_role:
-        name: gui-tools
+        name: common
 
     - name: Archlinux Setup
       tags: archlinux
@@ -38,20 +33,19 @@
       tags: macos
       import_role:
         name: macos
-      when: ansible_distribution == "macOS"
+      when: ansible_distribution == "MacOSX"
 
-    - name: Windows Setup
-      tags: windows
+    - name: Ubuntu Setup
+      tags: ubuntu
       import_role:
-        name: windows
-      when: ansible_distribution == "Windows"
+        name: ubuntu
+      when: ansible_distribution == "Ubuntu"
 
     - name: zsh
       tags: zsh
       import_role:
         name: zsh
       when: (ansible_distribution == "Archlinux") or
-            (ansible_distribution == "macOS") or
             (ansible_distribution == "Ubuntu")
 
     - name: Fonts
@@ -64,7 +58,7 @@
       import_role:
         name: ssh
       when: (ansible_distribution == "Archlinux") or
-            (ansible_distribution == "macOS") or
+            (ansible_distribution == "MacOSX") or
             (ansible_distribution == "Ubuntu")
 
     - name: dotfiles
@@ -72,5 +66,5 @@
       import_role:
         name: dotfiles
       when: (ansible_distribution == "Archlinux") or
-            (ansible_distribution == "macOS") or
+            (ansible_distribution == "MacOSX") or
             (ansible_distribution == "Ubuntu")

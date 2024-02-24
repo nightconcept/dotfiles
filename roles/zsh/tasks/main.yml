@@ -1,27 +1,6 @@
 - tags: zsh
   block:
 
-    - name: Install zsh (Archlinux)
-      become: true
-      community.general.pacman:
-        state: latest
-        name: zsh
-      when: ansible_distribution == "Archlinux"
-
-    - name: Install zsh (Ubuntu)
-      become: true
-      ansible.builtin.apt:
-        state: latest
-        name: zsh
-      when: ansible_distribution == "Ubuntu"
-
-    - name: Install zsh (macOS)
-      become: true
-      community.general.homebrew:
-        state: latest
-        name: zsh
-      when: ansible_distribution == "macOS"
-
     - name: Make it the user's default shell
       become: true
       ansible.builtin.user:

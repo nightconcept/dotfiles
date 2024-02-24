@@ -3,24 +3,23 @@
 
     - name: Clock setup
       block:
-        - name: system - Start and enable `systemd-timesyncd`
+        - name: Start and enable `systemd-timesyncd`
           become: true
           ansible.builtin.service:
             name: systemd-timesyncd
             enabled: true
             state: started
 
-        - name: system - Set time zone
+        - name: Set time zone
           become: true
           community.general.timezone:
             name: "{{ timezone }}"
             # This options is recommended by the `timedatectl` command
             hwclock: "UTC"
 
-
     - name: Locale setup
       block:
-        - name: system - Add locales
+        - name: Add locales
           become: true
           community.general.locale_gen:
             name: "{{ item }}"
@@ -28,15 +27,14 @@
             - en_US.UTF-8
           register: locale_gen
 
-        - name: system - Set `en_US` as default locale
+        - name: Set `en_US` as default locale
           become: true
           ansible.builtin.command: localectl set-locale LANG=en_US.UTF-8
           when: locale_gen.changed
 
-
     - name: Microcode
       block:
-        - name: system - Install `intel-ucode`
+        - name: Install `intel-ucode`
           become: true
           ansible.builtin.package:
             name: intel-ucode
@@ -49,4 +47,3 @@
             name: amd-ucode
             state: latest
           when: not is_intel
-
