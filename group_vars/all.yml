@@ -80,6 +80,7 @@ ubuntu_pkgs:
     - eza                 # Modern replacement for ls (`ls` alternative)
     - gh                  # GitHub CLI
     - hwinfo              # Hardware detection tool from openSUSE
+    #- lazydocker           # for servers only
 
 macos_casks:
     - alt-tab
