@@ -20,6 +20,8 @@ export PATH="/home/danny/.local/share/fnm:$PATH"
 export PATH="/usr/local/bin:$PATH"    # arm64e homebrew path (m1   )
 export PATH="/opt/homebrew/bin:$PATH" # x86_64 homebrew path (intel)
 
+export PATH="$PATH:/opt/nvim-linux64/bin"
+
 export PYENV_ROOT="$HOME/.pyenv"
 [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
 
@@ -98,6 +100,7 @@ alias gm='git merge'
 alias vi='nvim'
 alias vim='nvim'
 export PATH="$PATH:/opt/nvim-linux64/bin"
+alias e='$EDITOR'
 
 # general aliases
 alias .='z .'
@@ -131,4 +134,6 @@ alias apt="sudo apt"
 source "$DOTFILE_PATH/powerlevel10k/powerlevel10k.zsh-theme"
 
 # Fig post block. Keep at the bottom of this file.
-[[ -f "$HOME/.fig/shell/zshrc.post.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.post.zsh"
+if [ -d "$HOME/.fig/" ]; then
+  [[ -f "$HOME/.fig/shell/zshrc.post.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.post.zsh"
+fi
