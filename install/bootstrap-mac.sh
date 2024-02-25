@@ -4,7 +4,7 @@
 # pulled from https://github.com/atomantic/dotfiles/blob/main/install.sh
 
 # include my library helpers for colorized echo
-source ./library/echoes.sh
+source ./lib/echoes.sh
 
 # ###########################################################
 # Install non-brew various tools (PRE-BREW Installs)
