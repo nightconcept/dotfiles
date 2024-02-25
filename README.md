@@ -56,7 +56,7 @@ Copy and paste the code below into your PowerShell terminal to get your Windows 
 
 ```powershell
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-$url = "https://raw.githubusercontent.com/nightconcept/dotfiles/main/install-windows.ps1"
+$url = "https://raw.githubusercontent.com/nightconcept/dotfiles/main/install/install-windows.ps1"
 $file = "${HOME}\install-windows.ps1"
 (New-Object -TypeName System.Net.WebClient).DownloadFile($url, $file)
 $file
