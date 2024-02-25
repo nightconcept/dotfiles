@@ -11,12 +11,31 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
+###################
+# Exports and evals
+###################
+export DOTFILE_PATH="$HOME/.dotfiles"
+export PATH="/home/danny/.local/share/fnm:$PATH"
+
+export PATH="/usr/local/bin:$PATH"    # arm64e homebrew path (m1   )
+export PATH="/opt/homebrew/bin:$PATH" # x86_64 homebrew path (intel)
+
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+
+export LANG=en_US.UTF-8
+export ZSH="$DOTFILE_PATH/.oh-my-zsh"
+
+eval "$(pyenv init -)"
+eval "$(fnm env --use-on-cd)"
+eval "$(zoxide init zsh)"
+# eval "$(thefuck --alias)"
+
 #########################
 # oh-my-zsh configuration
 #########################
 
 # Path to your oh-my-zsh installation.
-export ZSH="$HOME/.dotfiles/.oh-my-zsh"
 
 ZSH_THEME="powerlevel10k/powerlevel10k"
 
@@ -54,7 +73,7 @@ source $ZSH/oh-my-zsh.sh
 # Aliases
 #########
 
-# git config
+# git aliases
 alias gs='git status -sb'
 alias gcm='git checkout master'
 alias gaa='git add --all'
@@ -70,19 +89,12 @@ alias gb='git branch'
 alias gl="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
 alias gm='git merge'
 
-# nvim config
+# nvim aliases
 alias vi='nvim'
 alias vim='nvim'
 export PATH="$PATH:/opt/nvim-linux64/bin"
 
-# zsh config
-alias .='cd .'
-alias ..='cd ..'
-alias ...='cd ../../'
-alias ....='cd ../../../'
-alias .....='cd ../../../../'
-
-# General Aliases
+# general aliases
 alias .='z .'
 alias ..='z ..'
 alias ...='z ../../'
@@ -101,32 +113,14 @@ alias zshclear='echo "" > ~/.zsh_history'
 alias zshconfig="vim ~/.zshrc"
 alias zshreload="source ~/.zshrc"
 
-###################
-# Exports and evals
-###################
-export PATH="/home/danny/.local/share/fnm:$PATH"
-eval "$(fnm env --use-on-cd)"
-
-export PATH="/usr/local/bin:$PATH"    # arm64e homebrew path (m1   )
-export PATH="/opt/homebrew/bin:$PATH" # x86_64 homebrew path (intel)
-
-export PYENV_ROOT="$HOME/.pyenv"
-[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
-
-export LANG=en_US.UTF-8
-
-eval "$(zoxide init zsh)"
-eval "$(thefuck --alias)"
-
 ########################
 # Footers (do not touch)
 ########################
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+[[ ! -f "$HOME/.config/powerlevel10k/.p10k.zsh" ]] || source "$HOME/.config/powerlevel10k/.p10k.zsh"
 
-source ~/.dotfiles/powerlevel10k/powerlevel10k.zsh-theme
+source "$DOTFILE_PATH/powerlevel10k/powerlevel10k.zsh-theme"
 
 # Fig post block. Keep at the bottom of this file.
 [[ -f "$HOME/.fig/shell/zshrc.post.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.post.zsh"
