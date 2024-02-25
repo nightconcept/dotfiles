@@ -26,10 +26,15 @@ export PYENV_ROOT="$HOME/.pyenv"
 export LANG=en_US.UTF-8
 export ZSH="$DOTFILE_PATH/.oh-my-zsh"
 
+export EDITOR=nvim
+export VISUAL=nvim
+
+
 eval "$(pyenv init -)"
 eval "$(fnm env --use-on-cd)"
 eval "$(zoxide init zsh)"
-# eval "$(thefuck --alias)"
+eval "$(thefuck --alias)"
+
 
 #########################
 # oh-my-zsh configuration
@@ -112,6 +117,9 @@ alias rm='rm -iv'
 alias zshclear='echo "" > ~/.zsh_history'
 alias zshconfig="vim ~/.zshrc"
 alias zshreload="source ~/.zshrc"
+alias mkdir="mkdir -p"
+alias cp="cp -r"
+alias apt="sudo apt"
 
 ########################
 # Footers (do not touch)

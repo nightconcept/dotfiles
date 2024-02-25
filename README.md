@@ -15,8 +15,7 @@ Any other OS may have bits of code that may support it, but is not intended to b
 - Homebrew >= 4.2.9 (macOS) - Order of events require Homebrew to be installed before running `install.sh`.
 
 ## Installation
-macOS and Ubuntu will need some pre-install commands run to install
-git.
+macOS and Ubuntu will need some bootstrapping commands run to `install.sh`.
 
 ### Ubuntu Bootstrapping
 Install pre-requisites:
@@ -49,7 +48,7 @@ chmod +x ./install.sh
 3. Install dotfiles
 ```sh
 chmod +x ./dot.sh
-./dot.sh
+./dots.sh
 ```
 
 ### Run the Install (Windows)
@@ -70,3 +69,4 @@ $file
 - [ChrisTitusTech/winutil: Chris Titus Tech's Windows Utility - Install Programs, Tweaks, Fixes, and Updates](https://github.com/ChrisTitusTech/winutil) - For additional tools to debloat and configure Windows 11. This tool is called in the setup-windows.ps1 script.
 - [craftzdog/dotfiles-public](https://github.com/craftzdog/dotfiles-public) - For nvim and tmux configuration.
 - [atomantic/dotfiles](https://github.com/atomantic/dotfiles) - For install scripts.
+- [xero/dotfiles](https://github.com/xero/dotfiles) - For just a lot of dotfile information in general.
