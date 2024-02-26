@@ -90,7 +90,7 @@ scoop install extras/ferdium
 scoop install extras/windowsspyblocker
 scoop install extras/cpu-z
 scoop install extras/kitty
-scoop install extras/wezterm
+scoop install extras/wezterm-nightly
 scoop install extras/sharex
 
 # install fonts, dual maintained with font/vars/main.yml

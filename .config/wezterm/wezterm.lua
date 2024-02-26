@@ -22,4 +22,9 @@ config.hyperlink_rules = wezterm.default_hyperlink_rules()
 config.hide_tab_bar_if_only_one_tab = true
 config.window_close_confirmation = 'NeverPrompt'
 
+-- Set to PowerShell for Windows
+if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
+    config.default_prog = { 'pwsh.exe', '-NoLogo' }
+end  
+
 return config
