@@ -10,13 +10,13 @@ local function font_with_fallback(name, params)
 end
 
 function M.apply_to_config(config)
-    if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
-        local term_font = "FiraCode Nerd Font Mono"
+    if wezterm.target_triple == 'x86_64-pc-windows-msvc' or wezterm.target_triple == 'aarch64-apple-darwin' then
+        local term_font = "FiraMono Nerd Font Mono"
     else
         local term_font = "FiraMono Nerd Font"
     end
 
-	config.font_size = 12
+	config.font_size = 14
 	config.line_height = 1.0
 	config.font = font_with_fallback(term_font)
 	config.font_rules = {

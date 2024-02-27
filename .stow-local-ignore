@@ -4,8 +4,7 @@ venv
 Session.vim
 
 ^/group_vars
-^/library
-^/roles
+^/install
 
 \.git
 \.gitignore
@@ -20,6 +19,5 @@ localhost
 main.yml
 README.md
 requirements.yml
-windows-install.ps1
 
 ^/\.stowrc

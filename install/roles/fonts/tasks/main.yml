@@ -8,6 +8,10 @@
       when: ansible_distribution == "Ubuntu"
       include_tasks: ubuntu.yml
 
+    - name: Install fonts to macOS
+      when: ansible_distribution == "MacOSX"
+      include_tasks: macos.yml
+
     # - name: Install AUR fonts
     #   aur:
     #     name: "{{ aur_fonts }}"

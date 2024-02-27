@@ -37,6 +37,7 @@ common_all:
     - tmux
     - lazygit
     - neovim
+    - eza
 
 common_linux:
     - hwinfo              # Hardware detection tool from openSUSE
@@ -112,6 +113,7 @@ macos_casks:
     - vlc
     - wezterm
     - zoom
+    - cask-fonts
 
 install_homebrew_if_missing: true
 

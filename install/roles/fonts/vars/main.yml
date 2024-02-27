@@ -25,3 +25,12 @@ ubuntu_fonts:
     - fonts-noto
     - fonts-droid-fallback
     - fonts-firacode
+
+# Keep this in sync with base_fonts where possible
+# Used for macOS
+macos_fonts:
+    - font-droid-sans-mono-nerd-font
+    - font-fira-code-nerd-font
+    - font-fira-mono-nerd-font
+    - font-fira-sans
+    - font-inconsolata-nerd-font

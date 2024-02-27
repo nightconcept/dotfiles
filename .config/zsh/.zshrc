@@ -131,8 +131,6 @@ alias apt="sudo apt"
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f "$HOME/.config/powerlevel10k/.p10k.zsh" ]] || source "$HOME/.config/powerlevel10k/.p10k.zsh"
 
-source "$DOTFILE_PATH/powerlevel10k/powerlevel10k.zsh-theme"
-
 # Fig post block. Keep at the bottom of this file.
 if [ -d "$HOME/.fig/" ]; then
   [[ -f "$HOME/.fig/shell/zshrc.post.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.post.zsh"

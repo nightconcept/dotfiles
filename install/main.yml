@@ -46,6 +46,7 @@
       import_role:
         name: zsh
       when: (ansible_distribution == "Archlinux") or
+            (ansible_distribution == "MacOSX") or
             (ansible_distribution == "Ubuntu")
 
     - name: Fonts
@@ -57,14 +58,6 @@
       tags: ssh
       import_role:
         name: ssh
-      when: (ansible_distribution == "Archlinux") or
-            (ansible_distribution == "MacOSX") or
-            (ansible_distribution == "Ubuntu")
-
-    - name: dotfiles
-      tags: dotfiles
-      import_role:
-        name: dotfiles
       when: (ansible_distribution == "Archlinux") or
             (ansible_distribution == "MacOSX") or
             (ansible_distribution == "Ubuntu")

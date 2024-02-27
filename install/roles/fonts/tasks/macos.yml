@@ -1,0 +1,6 @@
+- name: Install base fonts
+  homebrew:
+    name: "{{ item.name | default(item) }}"
+    state: latest
+  loop: "{{ macos_fonts }}"
+  when: ansible_distribution == "MacOSX"
