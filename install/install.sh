@@ -41,4 +41,9 @@ elif [ "$DISTRO" == "darwin" ]; then
 fi
 
 ansible-galaxy install -r requirements.yml
-ansible-playbook main.yml --ask-become-pass
+if [ "$1" == "server" ]; then
+    ansible-playbook main.yml --ask-become-pass --tags server
+else
+    ansible-playbook main.yml --ask-become-pass
+fi
+
