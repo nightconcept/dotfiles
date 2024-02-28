@@ -3,7 +3,7 @@
   ansible.builtin.shell: sudo mkdir -p /etc/apt/keyrings
 
 - name: Get GPG key
-  ansible.builtin.shell: wget -qO- https://raw.githubusercontent.com/eza-community/eza/main/deb.asc | sudo gpg --dearmor -o /etc/apt/keyrings/gierens.gpg
+  ansible.builtin.shell: wget -qO- https://raw.githubusercontent.com/eza-community/eza/main/deb.asc | sudo gpg --dearmor -o --batch --yes /etc/apt/keyrings/gierens.gpg
 
 - name: Echo key
   become: true

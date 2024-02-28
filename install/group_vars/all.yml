@@ -11,7 +11,6 @@ ssh_disable_password_authentication: false
 common_all:
     - bat                 # Cat clone with syntax highlighting and git integration (`cat` alternative)
     - fzf                 # Command-line fuzzy finder
-    - zoxide              # A smarter cd command for your terminal (`cd` alternative)
     - vim                 # Easily usable by anyone
     - duf                 # Disk Usage/Free Utility (`df` alternative)
     - speedtest-cli       # Command line interface for testing internet bandwidth using speedtest.net
@@ -67,7 +66,8 @@ arch_pkgs:
     - fastfetch           # A CLI system fetch information tool similar to neofetch
     - lazygit
     - eza
-
+    - zoxide              # A smarter cd command for your terminal (`cd` alternative)
+    
 arch_aur_pkgs:
     - ferdium-bin
     - fnm                 # Fast node manager, needs to be pulled off AUR
