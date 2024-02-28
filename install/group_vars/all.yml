@@ -32,6 +32,10 @@ common_all:
     - zsh
     - tmux
     - neovim
+    - fastfetch           # A CLI system fetch information tool similar to neofetch
+    - lazygit
+    - eza
+    - zoxide
 
 common_linux:
     #- hwinfo              # Hardware detection tool from openSUSE
@@ -63,11 +67,8 @@ arch_pkgs:
     - firefox
     - evince              # Document viewer (PDF, PostScript, XPS, djvu, dvi, tiff, cbr, cbz, cb7, cbt)
     - fontconfig          # library for configuring and customizing font access
-    - fastfetch           # A CLI system fetch information tool similar to neofetch
-    - lazygit
-    - eza
-    - zoxide              # A smarter cd command for your terminal (`cd` alternative)
-    
+      # A smarter cd command for your terminal (`cd` alternative)
+
 arch_aur_pkgs:
     - ferdium-bin
     - fnm                 # Fast node manager, needs to be pulled off AUR
