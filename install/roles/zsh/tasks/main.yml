@@ -23,7 +23,7 @@
       become: yes
       become_user: '{{ user }}'
       # core.autocrlf=input prevents https://github.com/robbyrussell/oh-my-zsh/issues/4402
-      command: 'git clone -c core.autocrlf=input https://github.com/robbyrussell/oh-my-zsh.git .oh-my-zsh'
+      command: 'git clone -c core.autocrlf=input https://github.com/robbyrussell/oh-my-zsh.git ~{{ user }}/.dotfiles/.oh-my-zsh'
       args:
         chdir: '~{{ user }}'
         creates: '~{{ user }}/.dotfiles/.oh-my-zsh'
