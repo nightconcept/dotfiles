@@ -23,15 +23,15 @@
       become: yes
       become_user: '{{ user }}'
       # core.autocrlf=input prevents https://github.com/robbyrussell/oh-my-zsh/issues/4402
-      command: 'git clone -c core.autocrlf=input https://github.com/robbyrussell/oh-my-zsh.git ~{{ user }}/.dotfiles/.oh-my-zsh'
+      command: 'git clone -c core.autocrlf=input https://github.com/robbyrussell/oh-my-zsh.git ~{{ user }}/.oh-my-zsh'
       args:
         chdir: '~{{ user }}'
-        creates: '~{{ user }}/.dotfiles/.oh-my-zsh'
+        creates: '~{{ user }}/.oh-my-zsh'
 
     - name: Install ZSH Plugins
       ansible.builtin.git:
         repo: "https://github.com/{{ item }}.git"
-        dest: "/home/{{ user }}/./dotfiles/.oh-my-zsh/custom/plugins/{{ item.split('/')[1:] | join('/') }}"
+        dest: "/home/{{ user }}/.oh-my-zsh/custom/plugins/{{ item.split('/')[1:] | join('/') }}"
         clone: true
         update: true
       with_items: "{{ zsh_plugins }}"
@@ -40,7 +40,7 @@
     - name: Install PowerLevel10K
       ansible.builtin.git:
         repo: https://github.com/romkatv/powerlevel10k.git
-        dest: "/home/{{ user }}/.dotfiles/.oh-my-zsh/custom/themes/powerlevel10k"
+        dest: "/home/{{ user }}/.oh-my-zsh/custom/themes/powerlevel10k"
         depth: 1
 
 

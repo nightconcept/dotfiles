@@ -14,7 +14,6 @@ fi
 ###################
 # Exports and evals
 ###################
-export DOTFILE_PATH="$HOME/.dotfiles"
 export PATH="/home/danny/.local/share/fnm:$PATH"
 
 export PATH="/usr/local/bin:$PATH"    # arm64e homebrew path (m1   )
@@ -26,7 +25,7 @@ export PYENV_ROOT="$HOME/.pyenv"
 [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
 
 export LANG=en_US.UTF-8
-export ZSH="$DOTFILE_PATH/.oh-my-zsh"
+export ZSH="$HOME/.oh-my-zsh"
 
 export EDITOR=nvim
 export VISUAL=nvim
