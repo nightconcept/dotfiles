@@ -12,7 +12,7 @@ Any other OS may have bits of code that may support it, but is not intended to b
 ## Requirements
 - git >= 2.35 (macOS/Arch/Ubuntu) - To pull this repo before running it. Usually 
 - Python >= 3.11 (macOS/Arch/Ubuntu) - To run Ansible which will do all of the setup.
-- Homebrew >= 4.2.9 (macOS) - Order of events require Homebrew to be installed before running `install.sh`.
+- Homebrew >= 4.2.9 (macOS/Ubuntu) - Order of events require Homebrew to be installed before running `install.sh`.
 
 ## Installation
 macOS and Ubuntu will need some bootstrapping commands run to `install.sh`.

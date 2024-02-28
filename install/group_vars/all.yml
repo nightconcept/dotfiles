@@ -36,6 +36,7 @@ common_all:
     - lazygit
     - eza
     - zoxide
+    - thefuck
 
 common_linux:
     #- hwinfo              # Hardware detection tool from openSUSE
@@ -84,9 +85,9 @@ arch_aur_pkgs:
 
 # expected to be server only
 ubuntu_pkgs:
-    - eza                 # Modern replacement for ls (`ls` alternative)
     - gh                  # GitHub CLI
-#    - lazydocker          # Visual docker GUI for terminal TODO: move this out of here: https://lindevs.com/install-lazydocker-on-ubuntu/
+    - lazydocker          # Visual docker GUI for terminal TODO: move this out of here: https://lindevs.com/install-lazydocker-on-ubuntu/
+    - fnm
 
 macos_casks:
     - alt-tab

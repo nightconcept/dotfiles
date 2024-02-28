@@ -1,8 +1,5 @@
 - name: Install Ubuntu-specific packages
-  become: true
-  apt:
+  homebrew:
+    name: "{{ item.name | default(item) }}"
     state: latest
-    name: "{{ ubuntu_pkgs }}"
-
-- name: Install zoxide
-  ansible.builtin.shell: curl -sS https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | bash
+loop: "{{ ubuntu_pkgs }}"
