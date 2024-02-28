@@ -92,6 +92,7 @@ scoop install extras/cpu-z
 scoop install extras/kitty
 scoop install extras/wezterm-nightly
 scoop install extras/sharex
+scoop install anderlli0053_DEV-tools/googledrive-np
 
 # install fonts, dual maintained with font/vars/main.yml
 scoop install nerd-fonts/SourceCodePro-NF
