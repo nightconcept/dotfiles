@@ -19,7 +19,7 @@ fi
 unset UNAME
 
 # Install Ansible
-if [ "$DISTRO" == "Ubuntu"* ]; then
+if [ "$DISTRO" == "Ubuntu" ]; then
 	sudo apt-add-repository -y ppa:ansible/ansible
 	sudo apt update
 	sudo apt -y install ansible
