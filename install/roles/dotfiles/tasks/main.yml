@@ -1,0 +1,16 @@
+---
+- tags: dotfiles
+  block:
+
+  - name: Remove files that will conflict with dotfiles. Requires dots.sh to be run after!
+    loop:
+      - .bash_profile
+      - .bashrc
+      - .gitconfig
+      - .gitignore_global
+      - .huskyrc
+      - .profile
+      - .zshrc
+    ansible.builtin.file:
+      path: "{{ ansible_env.HOME }}/{{ item }}"
+      state: absent

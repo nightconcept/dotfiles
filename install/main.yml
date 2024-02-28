@@ -9,17 +9,22 @@
     - name: Update all submodules
       tags:
         - submodules
+        - server
       command:
         cmd: git submodule update --force --init --recursive --jobs 4
       changed_when: false
 
     - name: Pre-install
-      tags: pre_install
+      tags: 
+        - pre_install
+        - server
       import_role:
         name: pre_install
 
     - name: Common tools
-      tags: common
+      tags:
+        - common
+        - server
       import_role:
         name: common
 
@@ -36,13 +41,17 @@
       when: ansible_distribution == "MacOSX"
 
     - name: Ubuntu Setup
-      tags: ubuntu
+      tags:
+        - ubuntu
+        - server
       import_role:
         name: ubuntu
       when: ansible_distribution == "Ubuntu"
 
     - name: zsh
-      tags: zsh
+      tags:
+        - zsh
+        - server
       import_role:
         name: zsh
       when: (ansible_distribution == "Archlinux") or
@@ -55,7 +64,9 @@
         name: fonts
 
     - name: ssh
-      tags: ssh
+      tags:
+        - ssh
+        - server
       import_role:
         name: ssh
       when: (ansible_distribution == "Archlinux") or
