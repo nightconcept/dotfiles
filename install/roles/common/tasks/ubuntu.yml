@@ -1,17 +1,3 @@
-# - name: Install common packages (Ubuntu)
-#   become: true
-#   apt:
-#     state: latest
-#     name: "{{ item.name | default(item) }}"
-#   loop: "{{ common_all }}"
-    
-# - name: Install common Linux packages (Ubuntu)
-#   become: true
-#   apt:
-#     state: latest
-#     name: "{{ item.name | default(item) }}"
-#   loop: "{{ common_linux }}"
-
 - name: Install common packages (Ubuntu)
   homebrew:
     name: "{{ item.name | default(item) }}"
