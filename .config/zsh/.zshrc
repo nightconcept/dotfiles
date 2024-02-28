@@ -35,7 +35,7 @@ eval "$(pyenv init -)"
 eval "$(fnm env --use-on-cd)"
 eval "$(zoxide init zsh)"
 eval "$(thefuck --alias)"
-if [ -d "$HOME/linuxbrew/" ]; then
+if [ -d "/home/linuxbrew/" ]; then
     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
 
