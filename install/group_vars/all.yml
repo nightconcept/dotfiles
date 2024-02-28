@@ -85,7 +85,7 @@ arch_aur_pkgs:
 ubuntu_pkgs:
     - eza                 # Modern replacement for ls (`ls` alternative)
     - gh                  # GitHub CLI
-    - lazydocker          # Visual docker GUI for terminal
+#    - lazydocker          # Visual docker GUI for terminal TODO: move this out of here: https://lindevs.com/install-lazydocker-on-ubuntu/
 
 macos_casks:
     - alt-tab
