@@ -18,16 +18,23 @@ fi
 [ "$DISTRO" == "" ] && export DISTRO=$UNAME
 unset UNAME
 
+echo $
+
 # Install Ansible
 if [ "$DISTRO" == "Ubuntu" ]; then
 	sudo apt-add-repository -y ppa:ansible/ansible
 	sudo apt update
 	sudo apt -y install ansible
 	export PATH="$PATH:~/.local/bin"
-elif [[ "$DISTRO" == "arch os" || "$DISTRO" == "ManjaroLinux" ]]; then
+elif [ "$DISTRO" == "arch os" ]; then
 	python3 -m venv venv
 	source venv/bin/activate
 	pip3 install ansible
+	export PATH="$PATH:~/.local/bin"
+if [ "$DISTRO" == "ManjaroLinux" ]; then
+	sudo apt-add-repository -y ppa:ansible/ansible
+	sudo apt update
+	sudo apt -y install ansible
 	export PATH="$PATH:~/.local/bin"
 elif ["$DISTRO" == "EndeavourOS" ]; then
 	python3 -m venv venv
