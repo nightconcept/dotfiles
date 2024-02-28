@@ -29,8 +29,10 @@ ubuntu_fonts:
 # Keep this in sync with base_fonts where possible
 # Used for macOS
 macos_fonts:
+    - font-noto-nerd-font
     - font-droid-sans-mono-nerd-font
     - font-fira-code-nerd-font
     - font-fira-mono-nerd-font
     - font-fira-sans
     - font-inconsolata-nerd-font
+    - font-ubuntu-nerd-font
