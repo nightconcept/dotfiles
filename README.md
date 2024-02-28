@@ -37,7 +37,7 @@ First, check out the dotfiles repo in your $HOME directory using git.
 ```sh
 cd ~
 git clone https://github.com/nightconcept/dotfiles.git
-cd dotfiles
+cd ~/dotfiles/install
 ```
 2. Install Applications
 ```sh
@@ -60,6 +60,15 @@ $url = "https://raw.githubusercontent.com/nightconcept/dotfiles/main/install/ins
 $file = "${HOME}\install-windows.ps1"
 (New-Object -TypeName System.Net.WebClient).DownloadFile($url, $file)
 $file
+```
+
+### Rebuild (macOS/Arch/Ubuntu)
+To save some time with some requirements checking, just run this script to re-run the Ansible playbook. This functions similar to `nixos-rebuild switch` where your system is rebuilt to the configuration.
+
+```sh
+cd ~/dotfiles/install
+chmod +x ./rebuild.sh
+./rebuild.sh
 ```
 
 ## References
