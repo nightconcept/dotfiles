@@ -5,5 +5,4 @@
     name: "{{ ubuntu_pkgs }}"
 
 - name: Install zoxide
-  become: true
   ansible.builtin.shell: curl -sS https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | bash
