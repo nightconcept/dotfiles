@@ -18,8 +18,6 @@ fi
 [ "$DISTRO" == "" ] && export DISTRO=$UNAME
 unset UNAME
 
-echo $
-
 # Install Ansible
 if [ "$DISTRO" == "Ubuntu" ]; then
 	sudo apt-add-repository -y ppa:ansible/ansible
@@ -53,4 +51,3 @@ if [ "$1" == "server" ]; then
 else
     ansible-playbook main.yml --ask-become-pass
 fi
-
