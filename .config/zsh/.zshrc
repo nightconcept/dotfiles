@@ -126,6 +126,10 @@ alias mkdir="mkdir -p"
 alias cp="cp -r"
 alias apt="sudo apt"
 
+# nix aliases
+alias nix-config="nvim ~/.nixpkgs/darwin-configuration.nix"
+alias rebuild="darwin-rebuild switch"
+
 ########################
 # Footers (do not touch)
 ########################
