@@ -35,6 +35,9 @@ else {
 # Install Scoop managed applications
 ####################################
 
+# git is required for buckets
+scoop install main/git
+
 # install official and unofficial scoop buckets
 scoop bucket add versions
 scoop bucket add extras
@@ -60,7 +63,7 @@ scoop install main/nmap
 scoop install main/eza
 scoop install main/fd
 scoop install main/gh
-scoop install main/git
+
 scoop install main/gpg
 scoop install main/fnm
 fnm install --lts
@@ -70,6 +73,7 @@ scoop install extras/terminal-icons
 
 # gui_tools_windows (or would be if this could be in ansible)
 scoop install extras/ungoogled-chromium
+scoop install extras/firefox
 scoop install extras/vlc
 scoop install extras/github
 scoop install extras/nextcloud
@@ -90,7 +94,7 @@ scoop install extras/ferdium
 scoop install extras/windowsspyblocker
 scoop install extras/cpu-z
 scoop install extras/kitty
-scoop install extras/wezterm-nightly
+scoop install versions/wezterm-nightly
 scoop install extras/sharex
 scoop install anderlli0053_DEV-tools/googledrive-np
 scoop install anderlli0053_DEV-tools/NoMachine-Install
