@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
 ####
 # script that re-runs the playbook so you don't need
 # to remember the ansible playbook command
