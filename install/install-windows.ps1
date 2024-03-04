@@ -80,7 +80,7 @@ scoop install extras/nextcloud
 scoop install extras/obsidian
 scoop install extras/vscode
 scoop install extras/hexchat
-scoop install anderlli0053_DEV-tools/eyeleo-chs-portable
+scoop install anderlli0053_DEV-tools/eyeleo-portable
 scoop install extras/notepadplusplus
 scoop install extras/calibre
 scoop install extras/obs-studio
@@ -98,7 +98,8 @@ scoop install versions/wezterm-nightly
 scoop install extras/sharex
 scoop install anderlli0053_DEV-tools/googledrive-np
 scoop install anderlli0053_DEV-tools/NoMachine-Install
-scoop install anderlli0053_DEV-tools/microsoft-teams
+scoop install extras/spotify
+scoop install extras/discord
 
 # install fonts, dual maintained with font/vars/main.yml
 scoop install nerd-fonts/SourceCodePro-NF
