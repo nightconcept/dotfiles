@@ -98,6 +98,7 @@ scoop install versions/wezterm-nightly
 scoop install extras/sharex
 scoop install anderlli0053_DEV-tools/googledrive-np
 scoop install anderlli0053_DEV-tools/NoMachine-Install
+scoop install anderlli0053_DEV-tools/microsoft-teams
 
 # install fonts, dual maintained with font/vars/main.yml
 scoop install nerd-fonts/SourceCodePro-NF
