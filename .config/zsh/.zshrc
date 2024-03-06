@@ -127,8 +127,14 @@ alias cp="cp -r"
 alias apt="sudo apt"
 
 # nix aliases
-alias nix-config="nvim ~/.nixpkgs/darwin-configuration.nix"
-alias rebuild="darwin-rebuild switch"
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+  alias nix-config="sudo nvim /etc/nixos/configuration.nix"
+  alias rebuild="sudo nixos-rebuild switch"
+  alias flake-rebuild="sudo nixos-rebuild switch --flake"
+else
+  alias nix-config="nvim ~/.nixpkgs/darwin-configuration.nix"
+  alias rebuild="darwin-rebuild switch"
+fi
 
 ########################
 # Footers (do not touch)
