@@ -77,7 +77,6 @@ scoop install extras/ungoogled-chromium
 scoop install extras/firefox
 scoop install extras/vlc
 scoop install extras/github
-scoop install extras/nextcloud
 scoop install extras/obsidian
 scoop install extras/vscode
 scoop install extras/hexchat
@@ -101,6 +100,7 @@ scoop install anderlli0053_DEV-tools/googledrive-np
 scoop install anderlli0053_DEV-tools/NoMachine-Install
 scoop install extras/spotify
 scoop install extras/discord
+scoop install extras/winmerge
 
 # install fonts, dual maintained with font/vars/main.yml
 scoop install nerd-fonts/SourceCodePro-NF
@@ -112,6 +112,9 @@ scoop install nerd-fonts/Noto-NF-Propo
 scoop install nerd-fonts/FiraCode-NF
 scoop install nerd-fonts/FiraCode-NF-Mono
 scoop install nerd-fonts/FiraCode-NF-Propo
+scoop install nerd-fonts/FiraMono-NF
+scoop install nerd-fonts/FiraMono-NF-Mono
+scoop install nerd-fonts/FiraMono-NF-Propo
 scoop install nerd-fonts/DroidSansMono-NF
 scoop install nerd-fonts/DroidSansMono-NF-Mono
 scoop install nerd-fonts/DroidSansMono-NF-Propo
