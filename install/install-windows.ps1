@@ -71,6 +71,8 @@ scoop install main/pnpm
 scoop install main/starship
 scoop install extras/terminal-icons
 scoop install main/openssh
+scoop install main/base64
+scoop install main/git-crypt
 
 # gui_tools_windows (or would be if this could be in ansible)
 scoop install extras/ungoogled-chromium
