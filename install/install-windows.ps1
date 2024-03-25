@@ -58,6 +58,8 @@ scoop install main/speedtest-cli
 scoop install main/wget
 scoop install main/curl
 scoop install main/nmap
+scoop install main/base64
+scoop install main/git-crypt
 
 # cli_tools_windows (or would be if this could be in ansible)
 scoop install main/eza
@@ -71,8 +73,6 @@ scoop install main/pnpm
 scoop install main/starship
 scoop install extras/terminal-icons
 scoop install main/openssh
-scoop install main/base64
-scoop install main/git-crypt
 
 # gui_tools_windows (or would be if this could be in ansible)
 scoop install extras/ungoogled-chromium
