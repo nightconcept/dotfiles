@@ -79,3 +79,7 @@ chmod +x ./rebuild.sh
 - [craftzdog/dotfiles-public](https://github.com/craftzdog/dotfiles-public) - For nvim and tmux configuration.
 - [atomantic/dotfiles](https://github.com/atomantic/dotfiles) - For install scripts.
 - [xero/dotfiles](https://github.com/xero/dotfiles) - For just a lot of dotfile information in general.
+- [phelipetls/dotfiles: My configuration files for Linux, macOS and WSL](https://github.com/phelipetls/dotfiles)
+	- [Ansible for dotfiles: the introduction I wish I've had - Phelipe Teles](https://phelipetls.github.io/posts/introduction-to-ansible/#installing-ansible)
+- [linuxmobile/kaku](https://github.com/linuxmobile/kaku)
+- [dustinlyons/nixos-config](https://github.com/dustinlyons/nixos-config)
