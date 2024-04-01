@@ -104,28 +104,13 @@ scoop install extras/spotify
 scoop install extras/discord
 scoop install extras/winmerge
 
-# install fonts, dual maintained with font/vars/main.yml
-scoop install nerd-fonts/SourceCodePro-NF
-scoop install nerd-fonts/SourceCodePro-NF-Mono
-scoop install nerd-fonts/SourceCodePro-NF-Propo
-scoop install nerd-fonts/Noto-NF
-scoop install nerd-fonts/Noto-NF-Mono
-scoop install nerd-fonts/Noto-NF-Propo
+# install fonts
 scoop install nerd-fonts/FiraCode-NF
 scoop install nerd-fonts/FiraCode-NF-Mono
 scoop install nerd-fonts/FiraCode-NF-Propo
 scoop install nerd-fonts/FiraMono-NF
 scoop install nerd-fonts/FiraMono-NF-Mono
 scoop install nerd-fonts/FiraMono-NF-Propo
-scoop install nerd-fonts/DroidSansMono-NF
-scoop install nerd-fonts/DroidSansMono-NF-Mono
-scoop install nerd-fonts/DroidSansMono-NF-Propo
-scoop install nerd-fonts/Inconsolata-NF
-scoop install nerd-fonts/Inconsolata-NF-Mono
-scoop install nerd-fonts/Inconsolata-NF-Propo
-scoop install nerd-fonts/Ubuntu-NF
-scoop install nerd-fonts/Ubuntu-NF-Mono
-scoop install nerd-fonts/Ubuntu-NF-Propo
 
 #######
 # Interactive section where the user is expected to interact or things won't work right
