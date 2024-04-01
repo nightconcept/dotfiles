@@ -112,6 +112,9 @@ scoop install nerd-fonts/FiraMono-NF
 scoop install nerd-fonts/FiraMono-NF-Mono
 scoop install nerd-fonts/FiraMono-NF-Propo
 
+# TODO: set terminal theme to tokyo night
+# https://github.com/jiyometrik/tokyonight-windows-terminal/blob/master/tokyonight-night.json
+
 #######
 # Interactive section where the user is expected to interact or things won't work right
 #######
