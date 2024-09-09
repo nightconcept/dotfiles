@@ -48,20 +48,16 @@ scoop update
 
 # cli_tools_common from /group_vars/all.yml
 scoop install main/bat
-scoop install main/fzf
 scoop install main/zoxide
-scoop install main/vim
 scoop install extras/hwinfo
 scoop install main/winfetch
 scoop install main/duf
-scoop install main/speedtest-cli
 scoop install main/wget
 scoop install main/curl
 scoop install main/nmap
 
 # cli_tools_windows (or would be if this could be in ansible)
 scoop install main/eza
-scoop install main/fd
 scoop install main/gh
 
 scoop install main/gpg
@@ -84,14 +80,12 @@ scoop install extras/hexchat
 scoop install anderlli0053_DEV-tools/eyeleo-portable
 scoop install extras/notepadplusplus
 scoop install extras/calibre
-scoop install extras/obs-studio
 scoop install extras/plex-desktop
 scoop install extras/typora
 scoop install extras/zoom
 scoop install extras/qbittorrent
 scoop install extras/rufus
 scoop install extras/slack
-scoop install extras/ferdium
 scoop install extras/windowsspyblocker
 scoop install extras/cpu-z
 scoop install extras/kitty
