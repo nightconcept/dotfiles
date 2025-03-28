@@ -1,5 +1,0 @@
-- name: Install OpenSSH on Archlinux
-  pacman:
-    name: openssh
-    state: present
-  when: ansible_distribution == "Archlinux"

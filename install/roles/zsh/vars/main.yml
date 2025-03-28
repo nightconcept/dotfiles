@@ -1,6 +1,0 @@
-# Plugin names have to be in the format github_user/plugin_name
-zsh_plugins:
-    - zsh-users/zsh-autosuggestions             # Fish-like autosuggestions for zsh
-    - zsh-users/zsh-syntax-highlighting         # Fish shell like syntax highlighting for Zsh
-    - zsh-users/zsh-history-substring-search    # Fish-like scroll through command history
-    - zsh-users/zsh-completions                 # Additional completions that are not part of zsh yet

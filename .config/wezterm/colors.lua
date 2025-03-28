@@ -5,7 +5,7 @@ local wezterm = require("wezterm")
 local M = {}
 
 function M.apply_to_config(config)
-	config.color_scheme = "Solarized Osaka"
+	config.color_scheme = "tokyonight_night"
 
 	config.window_background_opacity = 0.97
 end
