@@ -99,105 +99,74 @@ if not scoop_list_output:
 
 lines = scoop_list_output.splitlines()
 
-# Find the start of the data (after the header and separator)
-data_start_index = -1
 # Compile the regex for ANSI escape codes for efficiency
-# This pattern matches most common ANSI sequences
 ansi_escape_pattern = re.compile(r'\x1b(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
+
+# --- Find header and column positions ---
+header_line_text = None
+separator_line_index = -1
 
 for i, line in enumerate(lines):
     line_no_ansi = ansi_escape_pattern.sub('', line)
-    line_stripped = line_no_ansi.strip() 
-    if line_stripped.startswith('----'):
-        # print(f"FOUND separator at line {i}")
-        data_start_index = i + 1
+    if line_no_ansi.strip().startswith('----'):
+        separator_line_index = i
+        # The header is the first non-empty line before the separator
+        for j in range(i - 1, -1, -1):
+            prev_line_no_ansi = ansi_escape_pattern.sub('', lines[j])
+            if prev_line_no_ansi.strip():
+                header_line_text = prev_line_no_ansi
+                break
         break
 
-if data_start_index == -1:
-    print("Error: Could not find the data header separator line (starting with '----') after removing ANSI codes.", file=sys.stderr)
+if separator_line_index == -1 or not header_line_text:
+    print("Error: Could not find the data header and separator lines (e.g., 'Name Version Source' and '---- ...').", file=sys.stderr)
     print("--- Received Output (first 1000 chars) ---", file=sys.stderr)
     print(scoop_list_output[:1000] + ("..." if len(scoop_list_output) > 1000 else ""), file=sys.stderr)
     print("------------------------------------------", file=sys.stderr)
     sys.exit(1)
 
+version_col_start = header_line_text.find('Version')
+source_col_start = header_line_text.find('Source')
+
+if version_col_start == -1 or source_col_start == -1:
+    print(f"Error: Could not find 'Version' or 'Source' columns in header line: '{header_line_text.strip()}'", file=sys.stderr)
+    sys.exit(1)
+
+data_start_index = separator_line_index + 1
+
 print("--- Parsing application list ---")
 # --- Parse Data Lines ---
 for i, line in enumerate(lines[data_start_index:], start=data_start_index):
     line_no_ansi = ansi_escape_pattern.sub('', line)
-    line_stripped = line_no_ansi.strip()
     
-    if not line_stripped: 
+    if not line_no_ansi.strip():
         continue
 
-    # Split by 2 or more whitespace characters - this is the primary column delimiter
-    parts = re.split(r'\s{2,}', line_stripped)
+    # --- Parse based on column positions from header ---
+    name = line_no_ansi[:version_col_start].strip()
+    # We don't use version, but it's here for completeness
+    # version = line_no_ansi[version_col_start:source_col_start].strip()
+    source = line_no_ansi[source_col_start:].strip()
 
-    name = None
-    source = None
+    if not name:
+        print(f"Warning line {i}: Skipping line with no application name: '{line_no_ansi.strip()}'")
+        continue
+
+    # Handle cases where source is empty
+    if not source:
+        source = None
+
     is_url_source = False
-
-    # --- Try to extract Name, Version, Source ---
-    if len(parts) >= 2: # Need at least a potential Name and potential Source/Date
-        potential_name_version = parts[0].strip()
+    if source and (source.startswith('http') or source.endswith('.json')):
+        is_url_source = True
         
-        # --- NAME CORRECTION: Check if version got stuck to the name ---
-        # If the first part contains an internal space, try splitting off the last word
-        if ' ' in potential_name_version:
-            name_parts = potential_name_version.rsplit(' ', 1)
-            # Check if the second part looks like a version (contains digit or 'nightly')
-            # and the first part isn't empty
-            if len(name_parts) == 2 and name_parts[0] and \
-               (any(c.isdigit() for c in name_parts[1]) or 'nightly' in name_parts[1].lower()):
-                
-                name = name_parts[0].strip() # Real name is before the last space
-                # Version is name_parts[1] - we don't strictly need it
-                
-                # Source should now be in parts[1] (index 1 because version was part of index 0)
-                if len(parts) >= 2:
-                    source = parts[1].strip()
-                # else: source remains None
-            else:
-                 # Contains space, but doesn't look like version appended. Treat as full name.
-                 name = potential_name_version
-                 # Source might be in parts[1] or parts[2] depending on if Version column exists
-                 if len(parts) >= 3:
-                      source = parts[2].strip()
-                 elif len(parts) == 2:
-                      source = parts[1].strip() # Assume Name, Source (no version)
-        else:
-            # No space in first part, it's the name
-            name = potential_name_version
-            # Source might be in parts[1] or parts[2]
-            if len(parts) >= 3:
-                source = parts[2].strip() # Assume Name, Version, Source
-            elif len(parts) >= 2:
-                source = parts[1].strip() # Assume Name, Source
+    app_data.append({'name': name, 'source': source, 'is_url': is_url_source})
 
-        # --- Validate Source ---
-        # If source looks like a date, it's wrong. Source must come before date.
-        if source and re.match(r'^\d{4}-\d{2}-\d{2}', source):
-             print(f"Warning line {i}: Possible incorrect source parsing for '{name}'. Found date '{source}' instead of source. Skipping.")
-             name = None
-             source = None
-        # If source looks like a URL
-        elif source and (source.startswith('http') or source.endswith('.json')):
-             is_url_source = True
-             # Keep source as the URL for adding buckets if needed later (though usually not)
-             # But for install command, we might just use the name
-             
-    # --- Store Valid Data ---
-    if name and source:
-        # print(f"Parsed: Name='{name}', Source='{source}', IsURL={is_url_source}")
-        app_data.append({'name': name, 'source': source, 'is_url': is_url_source})
-
-        # Add bucket if it's not main and not a URL
-        if source != 'main' and not is_url_source:
-             # Basic sanity check for bucket names
-             if ':' not in source and '/' not in source and ' ' not in source: 
-                buckets.add(source)
-                
-    elif line_stripped: # Log if we stripped a line but failed to parse name/source
-         print(f"Warning line {i}: Failed to parse name/source from: '{line_stripped}' - Parts: {parts}")
+    # Add bucket if it's not main, not a URL, and not None
+    if source and source != 'main' and not is_url_source:
+         # Basic sanity check for bucket names
+         if ':' not in source and '/' not in source and ' ' not in source:
+            buckets.add(source)
 
 print("--- Finished parsing ---")
 
@@ -225,17 +194,16 @@ app_data.sort(key=lambda x: x['name'].lower())
 
 # Format scoop install list
 for app in app_data:
-    if app.get('is_url', False) and not app['name'] in EXCLUDED_LIST:
-         # For direct URL manifests, standard is just 'scoop install <name>'
-         # Scoop remembers the URL or finds the manifest if it was cached/added.
-         # Installing directly via URL isn't idempotent for *reinstalling*.
-         # print(f"Install command for URL source '{app['name']}' (using name only)")
-         output_lines.append(f"scoop install {app['name']}")
+    if app['name'] in EXCLUDED_LIST:
+        continue
+
+    # For URL sources or apps with no source, install by name only
+    if app.get('is_url', False) or app['source'] is None:
+        output_lines.append(f"scoop install {app['name']}")
     else:
-         # Per user request: Prepend source bucket even for 'main'
-         safe_source = app['source'].split(' ')[0] # Basic sanitize just in case
-         #print(f"Install command for bucket source '{safe_source}/{app['name']}'")
-         output_lines.append(f"scoop install {safe_source}/{app['name']}")
+        # Prepend source bucket
+        safe_source = app['source'].split(' ')[0] # Basic sanitize just in case
+        output_lines.append(f"scoop install {safe_source}/{app['name']}")
 
 # Write output file
 output_filename = "scoop-install-script.ps1"
