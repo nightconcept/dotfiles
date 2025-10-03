@@ -70,6 +70,11 @@ in
       systemd.tmpfiles.rules = [
         "d ${cfg.configDir} 0755 ${cfg.user} users -"
         "d ${cfg.configDir}/qbittorrent 0755 ${cfg.user} users -"
+        "d ${cfg.configDir}/qbittorrent/qBittorrent 0755 ${cfg.user} users -"
+        "d ${cfg.configDir}/qbittorrent/qBittorrent/cache 0755 ${cfg.user} users -"
+        "d ${cfg.configDir}/qbittorrent/qBittorrent/config 0755 ${cfg.user} users -"
+        "d ${cfg.configDir}/qbittorrent/qBittorrent/data 0755 ${cfg.user} users -"
+        "d ${cfg.configDir}/qbittorrent/qBittorrent/data/logs 0755 ${cfg.user} users -"
         "d ${cfg.downloadDir} 0755 ${cfg.user} users -"  # Create download directory
       ];
     }
