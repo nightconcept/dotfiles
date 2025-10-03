@@ -6,23 +6,11 @@
   inputs,
   ...
 }:
-let
-  sources = import ./npins;
-  pinnedPkgs = import sources.nixpkgs {
-    system = "x86_64-linux";
-    config = { allowUnfree = true; };
-  };
-in {
+{
   imports = [
     ./hardware-configuration.nix
     # TODO: Add after pushing changes: ./dokploy-routing.nix  # Route traffic to Vincent's Dokploy
   ];
-
-  # Use pinned nixpkgs
-  nixpkgs.pkgs = pinnedPkgs;
-
-  # Disable nixpkgs.config since we're using an external pkgs instance
-  nixpkgs.config = lib.mkForce {};
 
   # Bootloader configuration (override any systemd-boot settings)
   boot.loader = {

@@ -6,22 +6,10 @@
   inputs,
   ...
 }:
-let
-  sources = import ./npins;
-  pinnedPkgs = import sources.nixpkgs {
-    system = "x86_64-linux";
-    config = { allowUnfree = true; };
-  };
-in {
+{
   imports = [
     ./hardware-configuration.nix
   ];
-
-  # Use pinned nixpkgs
-  nixpkgs.pkgs = pinnedPkgs;
-
-  # Disable nixpkgs.config since we're using an external pkgs instance
-  nixpkgs.config = lib.mkForce {};
 
   # Networking
   modules.nixos.networking.base.hostName = "barrett";
@@ -35,6 +23,9 @@ in {
       device = "/dev/sda";  # Install GRUB to MBR
     };
   };
+
+  # Explicitly allow unfree packages
+  nixpkgs.config.allowUnfree = true;
 
   modules.nixos = {
     kernel.type = "lts";
@@ -50,38 +41,41 @@ in {
       enableTitan = true;
     };
 
-    services.vpn-torrent = {
+    # NordVPN service using official client - all optimal defaults
+    services.nordvpn = {
       enable = true;
       user = "danny";
-      downloadDir = "/mnt/titan/downloads";  # Use titan network drive
-      configDir = "/var/lib/vpn-torrent";    # Local configuration
+      tokenFile = config.sops.secrets."vpn/nordvpn_token".path;
+      # All other settings use optimal defaults:
+      # - server = null (auto P2P servers)
+      # - killSwitch = true
+      # - autoConnect = true
+      # - protocol = "NordLynx"
+      # - dns = NordVPN DNS servers
+    };
+
+    # Torrent service with privacy settings - minimal config
+    services.torrent = {
+      enable = true;
+      user = "danny";
+      downloadDir = "/mnt/titan/downloads";
 
       qbittorrent = {
-        enable = true;
         webUIPort = 8112;
-        torrentPort = 6881;
         username = "danny";
         passwordFile = config.sops.secrets."vpn/qbittorrent_password".path;
         passwordHashFile = config.sops.secrets."vpn/qbittorrent_password_hash".path;
+        # All privacy settings and VPN binding use secure defaults
       };
 
       autoremove = {
-        enable = true;
-        intervalMinutes = 10;  # Run every 10 minutes as requested
+        intervalMinutes = 10;
         strategies = {
-          # Remove torrents after just 10 minutes of seeding
           minimal_seed_strategy = {
-            remove = "seeding_time > 600";  # 600 seconds = 10 minutes
+            remove = "seeding_time > 600";  # 10 minutes
             delete_data = true;
           };
         };
-      };
-
-      nordvpn = {
-        enable = true;
-        # Use the actual path where SOPS deploys the secret
-        tokenFile = config.sops.secrets."vpn/nordvpn_token".path;
-        country = "United States";  # P2P servers are available in most US locations
       };
     };
   };

@@ -28,6 +28,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nordvpn-flake = {
+      url = "github:conneroisu/nordvpn-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     nixos-hardware = {
       url = "github:NixOS/nixos-hardware/master";
     };
@@ -72,8 +77,8 @@
       tidus = lib.mkNixos inputs.nixpkgs "tidus";
       tidus-persist = lib.mkNixos inputs.nixpkgs "tidus-persist";
       aerith = lib.mkNixosServer inputs.nixpkgs "aerith";
-      barrett = lib.mkNixosServer (lib.mkPinnedNixpkgs ./hosts/nixos/barrett) "barrett";
-      rinoa = lib.mkNixosServer (lib.mkPinnedNixpkgs ./hosts/nixos/rinoa) "rinoa";
+      barrett = lib.mkNixosServer inputs.nixpkgs "barrett";
+      rinoa = lib.mkNixosServer inputs.nixpkgs "rinoa";
       vincent = lib.mkNixosServer inputs.nixpkgs "vincent";
     };
 

@@ -6,29 +6,13 @@
   inputs,
   ...
 }:
-let
-  sources = import ./npins;
-  pinnedPkgs = import sources.nixpkgs {
-    system = "x86_64-linux";
-    config = { allowUnfree = true; };
-    overlays = [
-      # Override Plex with latest flake version
-      (import ../../../overlays/flake-packages.nix {
-        inherit inputs;
-        overridePackages = [ "plex" ];
-      })
-    ];
-  };
-in {
+{
   imports = [
     ./hardware-configuration.nix
   ];
 
-  # Use pinned nixpkgs with Plex override
-  nixpkgs.pkgs = pinnedPkgs;
-
-  # Disable nixpkgs.config since we're using an external pkgs instance
-  nixpkgs.config = lib.mkForce {};
+  # Allow unfree packages
+  nixpkgs.config.allowUnfree = true;
 
   # Networking
   modules.nixos.networking.base.hostName = "aerith";

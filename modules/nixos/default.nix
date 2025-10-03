@@ -4,7 +4,8 @@
     ./kernel
     ./network
     ./services/plex
-    ./services/vpn-torrent
+    ./services/nordvpn
+    ./services/torrent
 
     # New modular architecture
     ./core
