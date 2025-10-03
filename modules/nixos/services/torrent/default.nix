@@ -31,7 +31,7 @@ in
       username = mkOpt lib.types.str "danny" "qBittorrent Web UI username";
       passwordFile = mkOpt (lib.types.nullOr lib.types.path) null "Path to file containing qBittorrent password (from SOPS)";
       passwordHashFile = mkOpt (lib.types.nullOr lib.types.path) null "Path to file containing qBittorrent PBKDF2 hash (from SOPS)";
-      uploadRateLimit = mkOpt lib.types.int 102400 "Upload rate limit in bytes/second (102400 = 100 KB/s, 0 = unlimited)";
+      uploadRateLimit = mkOpt lib.types.int 100 "Upload rate limit in KiBytes/second (100 KB/s default, 0 = unlimited)";
       downloadRateLimit = mkOpt lib.types.int 0 "Download rate limit in bytes/second (0 = unlimited)";
 
       # Privacy settings
