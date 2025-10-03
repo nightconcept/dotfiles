@@ -79,8 +79,8 @@ disabled = false
 [directory]
 style = "fg:#00afff bg:#444444 bold"
 format = "[   $path ]($style)"
-truncation_length = 3
-truncation_symbol = "../"
+truncation_length = 5
+fish_style_pwd_dir_length = 1
 truncate_to_repo = false
 
 # Git branch
