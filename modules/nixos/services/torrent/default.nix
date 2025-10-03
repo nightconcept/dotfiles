@@ -61,6 +61,12 @@ in
         };
       } "Autoremove strategies configuration";
     };
+
+    ipfilter = {
+      enable = mkBoolOpt false "Enable automatic IP filter updates";
+      updateIntervalHours = mkOpt lib.types.int 24 "How often to update IP filters (in hours)";
+      cacheDir = mkOpt lib.types.str "/var/cache/qbittorrent-ipfilter" "Directory for IP filter cache";
+    };
   };
 
   config = mkIf cfg.enable (mkMerge [
@@ -128,6 +134,10 @@ in
           ${lib.optionalString (cfg.qbittorrent.vpnInterface != null) ''
           Session\\Interface=${cfg.qbittorrent.vpnInterface}
           Session\\InterfaceName=${cfg.qbittorrent.vpnInterface}
+          ''}
+          ${lib.optionalString cfg.ipfilter.enable ''
+          Session\\IPFilteringEnabled=true
+          Session\\IPFilterFile=${cfg.configDir}/qbittorrent/qBittorrent/data/ipfilter.dat
           ''}
           Session\\LSDEnabled=${if cfg.qbittorrent.disableLSD then "false" else "true"}
           Session\\MaxActiveDownloads=${toString cfg.qbittorrent.maxActiveDownloads}
@@ -337,5 +347,200 @@ in
         };
       };
     }))
+
+    # IP Filter configuration
+    (mkIf cfg.ipfilter.enable {
+      # Create cache directory
+      systemd.tmpfiles.rules = [
+        "d ${cfg.ipfilter.cacheDir} 0755 ${cfg.user} users -"
+        "d ${cfg.configDir}/qbittorrent/qBittorrent/data 0755 ${cfg.user} users -"
+      ];
+
+      # IP Filter update script
+      systemd.services.qbittorrent-ipfilter-update = {
+        description = "Update qBittorrent IP filters";
+        after = [ "network-online.target" ];
+        wants = [ "network-online.target" ];
+
+        path = with pkgs; [ curl gzip unzip coreutils gnugrep gawk findutils ];
+
+        script = ''
+          set -euo pipefail
+
+          CACHE_DIR="${cfg.ipfilter.cacheDir}"
+          OUTPUT_FILE="${cfg.configDir}/qbittorrent/qBittorrent/data/ipfilter.dat"
+          TEMP_FILE=$(mktemp)
+          BLOCKLIST_DIR="$CACHE_DIR/blocklists"
+
+          mkdir -p "$BLOCKLIST_DIR"
+          cd "$BLOCKLIST_DIR"
+
+          echo "Starting IP filter update..."
+
+          # Function to check if file needs updating (simple age check for NixOS)
+          check_file_age() {
+            local file="$1"
+            local max_age=$((${toString cfg.ipfilter.updateIntervalHours} * 3600))
+
+            [ ! -f "$file" ] && return 0
+
+            local file_age=$(($(date +%s) - $(stat -c %Y "$file")))
+            [ $file_age -ge $max_age ] && return 0
+
+            return 1
+          }
+
+          # Function to download blocklist
+          download_blocklist() {
+            local url="$1"
+            local output="$2"
+
+            if check_file_age "$output"; then
+              echo "Downloading $url..."
+              if curl -sSL "$url" -o "$output.tmp" --connect-timeout 30 --max-time 120; then
+                mv "$output.tmp" "$output"
+                echo "Downloaded $(basename "$output")"
+              else
+                rm -f "$output.tmp"
+                echo "Failed to download $url"
+                return 1
+              fi
+            else
+              echo "Cached: $(basename "$output")"
+            fi
+          }
+
+          # Download blocklists
+          echo "Downloading blocklists..."
+          download_blocklist "http://list.iblocklist.com/?list=ydxerpxkpcfqjaybcssw&fileformat=p2p&archiveformat=gz" "level1.gz" || true
+          download_blocklist "http://list.iblocklist.com/?list=dufcxgnbjsdwmwctgfuj&fileformat=p2p&archiveformat=gz" "pedo.gz" || true
+          download_blocklist "http://list.iblocklist.com/?list=usrcshglbiilevmyfhse&fileformat=p2p&archiveformat=gz" "hijacked.gz" || true
+          download_blocklist "http://list.iblocklist.com/?list=xpbqleszmajjesnzddhv&fileformat=p2p&archiveformat=gz" "dshield.gz" || true
+          download_blocklist "http://list.iblocklist.com/?list=ficutxiwawokxlcyoeye&fileformat=p2p&archiveformat=gz" "forumspam.gz" || true
+          download_blocklist "http://list.iblocklist.com/?list=togdoptykrlolpddwbvz&fileformat=p2p&archiveformat=gz" "tor.gz" || true
+          download_blocklist "http://list.iblocklist.com/?list=gihxqmhyunbxhbmgqrla&fileformat=p2p&archiveformat=gz" "bogon.gz" || true
+          download_blocklist "http://list.iblocklist.com/?list=xshktygkujudfnjfioro&fileformat=p2p&archiveformat=gz" "microsoft.gz" || true
+          download_blocklist "http://list.iblocklist.com/?list=mcvxsnihddgutbjfbghy&fileformat=p2p&archiveformat=gz" "spider.gz" || true
+          download_blocklist "http://list.iblocklist.com/?list=bt_level1&fileformat=p2p&archiveformat=gz" "iblock_level1.gz" || true
+          download_blocklist "http://list.iblocklist.com/?list=bt_level2&fileformat=p2p&archiveformat=gz" "iblock_level2.gz" || true
+          download_blocklist "http://list.iblocklist.com/?list=bt_level3&fileformat=p2p&archiveformat=gz" "iblock_level3.gz" || true
+          download_blocklist "https://raw.githubusercontent.com/Naunter/BT_Blocklists/master/ipfilter.dat" "naunter.dat" || true
+          download_blocklist "https://www.biglybt.com/blocklist/level1.gz" "biglybt.gz" || true
+          download_blocklist "https://raw.githubusercontent.com/firehol/blocklist-ipsets/master/firehol_level1.netset" "firehol.netset" || true
+          download_blocklist "http://www.ipdeny.com/ipblocks/data/countries/cn.zone" "ipdeny_cn.zone" || true
+          download_blocklist "https://cinsscore.com/list/ci-badguys.txt" "cins_army.txt" || true
+          download_blocklist "https://isc.sans.edu/feeds/block.txt" "dshield.txt" || true
+          download_blocklist "https://feodotracker.abuse.ch/downloads/ipblocklist.txt" "feodo.txt" || true
+          download_blocklist "https://sslbl.abuse.ch/blacklist/sslipblacklist.txt" "sslbl.txt" || true
+
+          echo "Processing blocklists..."
+
+          # Process all files and extract IPs
+          for file in *; do
+            if [[ -f "$file" ]]; then
+              case "$file" in
+                *.gz)
+                  zcat "$file" | grep -oE '([0-9]{1,3}\.){3}[0-9]{1,3}(/[0-9]{1,2})?(-([0-9]{1,3}\.){3}[0-9]{1,3})?' >> "$TEMP_FILE" || true
+                  ;;
+                *.dat|*.txt|*.netset|*.zone)
+                  grep -oE '([0-9]{1,3}\.){3}[0-9]{1,3}(/[0-9]{1,2})?(-([0-9]{1,3}\.){3}[0-9]{1,3})?' "$file" >> "$TEMP_FILE" || true
+                  ;;
+              esac
+            fi
+          done
+
+          # Count statistics
+          TOTAL_COUNT=$(wc -l < "$TEMP_FILE" || echo 0)
+
+          # Sort and remove duplicates
+          sort -u "$TEMP_FILE" -o "$TEMP_FILE.sorted"
+          FINAL_COUNT=$(wc -l < "$TEMP_FILE.sorted" || echo 0)
+          DUPLICATE_COUNT=$((TOTAL_COUNT - FINAL_COUNT))
+
+          echo "Creating IP filter file..."
+
+          # Write header and convert to qBittorrent format
+          {
+            echo "# qBittorrent IP Filter"
+            echo "# Updated: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+            echo "# Format: range start-range end, access level"
+            echo "# Total unique IPs/ranges: $FINAL_COUNT"
+            echo ""
+
+            while IFS= read -r line; do
+              if [[ $line =~ ^([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)(/[0-9]+)?$ ]]; then
+                if [[ $line == *"/"* ]]; then
+                  # CIDR notation - convert to range
+                  base_ip="''${BASH_REMATCH[1]}"
+                  cidr="''${line#*/}"
+                  IFS=. read -r i1 i2 i3 i4 <<< "$base_ip"
+                  ip_int=$(( (i1 << 24) + (i2 << 16) + (i3 << 8) + i4 ))
+                  mask=$((0xffffffff << (32 - cidr)))
+                  net_start=$((ip_int & mask))
+                  net_end=$((net_start | ~mask & 0xffffffff))
+                  printf "%d.%d.%d.%d-%d.%d.%d.%d,1\n" \
+                    $((net_start >> 24 & 0xff)) $((net_start >> 16 & 0xff)) \
+                    $((net_start >> 8 & 0xff)) $((net_start & 0xff)) \
+                    $((net_end >> 24 & 0xff)) $((net_end >> 16 & 0xff)) \
+                    $((net_end >> 8 & 0xff)) $((net_end & 0xff))
+                else
+                  # Single IP
+                  echo "$line-$line,1"
+                fi
+              elif [[ $line =~ ^([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)-([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)$ ]]; then
+                # Already in range format
+                echo "$line,1"
+              fi
+            done < "$TEMP_FILE.sorted"
+          } > "$OUTPUT_FILE.tmp"
+
+          # Atomic replacement
+          mv "$OUTPUT_FILE.tmp" "$OUTPUT_FILE"
+          chown ${cfg.user}:users "$OUTPUT_FILE"
+
+          # Cleanup
+          rm -f "$TEMP_FILE" "$TEMP_FILE.sorted"
+
+          echo "IP filter update complete!"
+          echo "- Total IPs found: $TOTAL_COUNT"
+          echo "- Duplicates removed: $DUPLICATE_COUNT"
+          echo "- Final unique IPs: $FINAL_COUNT"
+          echo "- Output: $OUTPUT_FILE"
+        '';
+
+        serviceConfig = {
+          Type = "oneshot";
+          User = cfg.user;
+          Group = "users";
+
+          # Security hardening
+          PrivateTmp = true;
+          ProtectSystem = "strict";
+          ReadWritePaths = [
+            cfg.ipfilter.cacheDir
+            cfg.configDir
+          ];
+          NoNewPrivileges = true;
+        };
+      };
+
+      # Timer for periodic updates
+      systemd.timers.qbittorrent-ipfilter-update = {
+        description = "Update qBittorrent IP filters every ${toString cfg.ipfilter.updateIntervalHours} hours";
+        wantedBy = [ "timers.target" ];
+
+        timerConfig = {
+          OnBootSec = "5min";  # Run 5 minutes after boot
+          OnUnitActiveSec = "${toString cfg.ipfilter.updateIntervalHours}h";
+          Unit = "qbittorrent-ipfilter-update.service";
+        };
+      };
+
+      # Make qBittorrent service depend on initial IP filter
+      systemd.services.qbittorrent = {
+        wants = [ "qbittorrent-ipfilter-update.service" ];
+        after = [ "qbittorrent-ipfilter-update.service" ];
+      };
+    })
   ]);
 }

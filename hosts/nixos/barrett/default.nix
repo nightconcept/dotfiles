@@ -77,6 +77,12 @@
           };
         };
       };
+
+      # IP filter for blocking malicious peers
+      ipfilter = {
+        enable = true;
+        updateIntervalHours = 24;  # Update daily
+      };
     };
   };
 
