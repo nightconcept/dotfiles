@@ -138,6 +138,7 @@ in
           ${lib.optionalString cfg.ipfilter.enable ''
           Session\\IPFilteringEnabled=true
           Session\\IPFilterFile=${cfg.configDir}/qbittorrent/qBittorrent/data/ipfilter.dat
+          Session\\IPFilterTrackers=true
           ''}
           Session\\LSDEnabled=${if cfg.qbittorrent.disableLSD then "false" else "true"}
           Session\\MaxActiveDownloads=${toString cfg.qbittorrent.maxActiveDownloads}
@@ -254,6 +255,7 @@ in
           pyyaml
           requests
           ply
+          deluge-client
         ];
 
         doCheck = false;
@@ -350,10 +352,11 @@ in
 
     # IP Filter configuration
     (mkIf cfg.ipfilter.enable {
-      # Create cache directory
+      # Create cache directory and pre-generate empty IP filter file
       systemd.tmpfiles.rules = [
         "d ${cfg.ipfilter.cacheDir} 0755 ${cfg.user} users -"
         "d ${cfg.configDir}/qbittorrent/qBittorrent/data 0755 ${cfg.user} users -"
+        "f ${cfg.configDir}/qbittorrent/qBittorrent/data/ipfilter.dat 0644 ${cfg.user} users - # qBittorrent IP Filter\n# This file will be populated by qbittorrent-ipfilter-update.service\n"
       ];
 
       # IP Filter update script
@@ -536,11 +539,6 @@ in
         };
       };
 
-      # Make qBittorrent service depend on initial IP filter
-      systemd.services.qbittorrent = {
-        wants = [ "qbittorrent-ipfilter-update.service" ];
-        after = [ "qbittorrent-ipfilter-update.service" ];
-      };
     })
   ]);
 }

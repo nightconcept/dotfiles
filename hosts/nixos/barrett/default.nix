@@ -69,7 +69,7 @@
       };
 
       autoremove = {
-        intervalMinutes = 10;
+        intervalMinutes = 5;
         strategies = {
           minimal_seed_strategy = {
             remove = "seeding_time > 600";  # 10 minutes
