@@ -1,0 +1,28 @@
+services:
+  blog:
+    image: nginx:alpine
+    container_name: blog
+    restart: unless-stopped
+    networks:
+      - proxy
+    ports:
+      - "${BLOG_PORT}:80"
+    volumes:
+      - ${SITE_PATH}:/usr/share/nginx/html:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.blog.entrypoints=http"
+      - "traefik.http.routers.blog.rule=Host(`${BLOG_DOMAIN}`)"
+      - "traefik.http.middlewares.blog-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.blog.middlewares=blog-https-redirect"
+      - "traefik.http.routers.blog-secure.entrypoints=https"
+      - "traefik.http.routers.blog-secure.rule=Host(`${BLOG_DOMAIN}`)"
+      - "traefik.http.routers.blog-secure.tls=true"
+      - "traefik.http.routers.blog-secure.service=blog"
+      - "traefik.http.services.blog.loadbalancer.server.port=80"
+      - "traefik.docker.network=proxy"
+      - "com.centurylinklabs.watchtower.enable=${WATCHTOWER_ENABLE}"
+
+networks:
+  proxy:
+    external: true

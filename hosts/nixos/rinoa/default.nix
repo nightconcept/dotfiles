@@ -98,6 +98,7 @@
     uptime-kuma.enable = true;
     forgejo.enable = true;
     freshrss.enable = true;
+    blog.enable = true;
   };
 
   # System packages for server management

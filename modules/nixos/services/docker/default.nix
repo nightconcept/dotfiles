@@ -24,6 +24,7 @@ in
     # Add other containers as default.nix files are created
     ./containers/audiobookshelf
     ./containers/authelia
+    ./containers/blog
     # ./containers/calibre
     # ./containers/calibre-web
     ./containers/cloudflare-tunnel
