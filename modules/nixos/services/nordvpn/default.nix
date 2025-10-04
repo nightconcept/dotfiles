@@ -59,6 +59,12 @@ in
 
       serviceConfig = {
         ExecStart = "${nordVpnPkg}/bin/nordvpnd";
+        ExecStartPre = pkgs.writeShellScript "nordvpn-prestart" ''
+          mkdir -m 700 -p /var/lib/nordvpn
+          if [ -z "$(ls -A /var/lib/nordvpn)" ]; then
+            cp -r ${nordVpnPkg}/var/lib/nordvpn/* /var/lib/nordvpn
+          fi
+        '';
         NonBlocking = true;
         KillMode = "process";
         Restart = "on-failure";
@@ -66,13 +72,6 @@ in
         RuntimeDirectory = "nordvpn";
         RuntimeDirectoryMode = "0750";
         Group = "nordvpn";
-
-        # Create socket directory with proper permissions
-        ExecStartPre = pkgs.writeShellScript "nordvpn-prestart" ''
-          mkdir -p /run/nordvpn
-          chown root:nordvpn /run/nordvpn
-          chmod 0750 /run/nordvpn
-        '';
       };
     };
 

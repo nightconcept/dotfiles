@@ -29,7 +29,7 @@
     };
 
     nordvpn-flake = {
-      url = "github:conneroisu/nordvpn-flake";
+      url = "github:nightconcept/nordvpn-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
