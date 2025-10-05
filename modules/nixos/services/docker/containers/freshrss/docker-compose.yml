@@ -10,6 +10,12 @@ services:
       - CRON_MIN=${CRON_MIN}
       - FRESHRSS_ENV=production
       - BASE_URL=${BASE_URL}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     ports:
       - "${PORT}:80"
     volumes:

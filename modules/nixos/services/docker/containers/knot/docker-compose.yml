@@ -10,6 +10,12 @@ services:
       - KNOT_SERVER_OWNER=${KNOT_SERVER_OWNER}
       - KNOT_SERVER_PORT=${KNOT_SERVER_PORT}
       - KNOT_SERVER_SECRET=${KNOT_SERVER_SECRET}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     ports:
       - "${SSH_PORT}:2222"  # SSH port for git operations
       - "${HTTP_PORT}:8080" # HTTP port for web interface

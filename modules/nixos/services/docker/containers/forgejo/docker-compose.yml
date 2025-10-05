@@ -11,6 +11,12 @@ services:
       - POSTGRES_USER=forgejo
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=forgejo
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U forgejo -d forgejo"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   forgejo:
     image: codeberg.org/forgejo/forgejo:11
@@ -19,7 +25,14 @@ services:
     networks:
       - proxy
     depends_on:
-      - forgejo-db
+      forgejo-db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
     volumes:
       - ${REMOTE_DATA_PATH}:/data
     environment:

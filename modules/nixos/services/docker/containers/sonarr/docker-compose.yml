@@ -9,6 +9,12 @@ services:
       - PUID=${PUID}
       - TZ=${TZ}
     image: linuxserver/sonarr:latest
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8989/ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
     ports:
       - target: 8989
         published: "8989"

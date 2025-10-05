@@ -11,6 +11,12 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /home/danny/docker/vaultwarden/data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/alive"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.vaultwarden.entrypoints=http"

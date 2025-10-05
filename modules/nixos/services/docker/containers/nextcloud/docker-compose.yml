@@ -17,6 +17,12 @@ services:
       - MYSQL_PASSWORD=${DB_PW}
       - MYSQL_DATABASE=nextcloud
       - MYSQL_USER=${DB_USER}
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   # Nextcloud Redis
   nextcloud-redis:
@@ -25,6 +31,12 @@ services:
     restart: always
     networks:
       - proxy
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   # Nextcloud App
   nextcloud:
@@ -47,8 +59,16 @@ services:
       - "traefik.docker.network=proxy"
       - "com.centurylinklabs.watchtower.enable=true"
     depends_on:
-      - nextcloud-redis
-      - nextcloud-db
+      nextcloud-redis:
+        condition: service_healthy
+      nextcloud-db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/status.php"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
     volumes:
       - ~/config/nextcloud/library:/var/www/html
     environment:
@@ -86,6 +106,12 @@ services:
       # Allow connections from Nextcloud
       - ALLOW_META_IP_ADDRESS=true
       - ALLOW_PRIVATE_IP_ADDRESS=true
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/healthcheck"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 90s
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.onlyoffice.entrypoints=http"
@@ -102,7 +128,8 @@ services:
       - "traefik.docker.network=proxy"
       - "com.centurylinklabs.watchtower.enable=true"
     depends_on:
-      - nextcloud
+      nextcloud:
+        condition: service_healthy
 
 networks:
   proxy:

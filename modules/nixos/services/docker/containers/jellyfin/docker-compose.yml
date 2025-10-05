@@ -8,6 +8,12 @@ services:
     environment:
       - JELLYFIN_PublishedServerUrl=${PUBLISHED_SERVER_URL}
       - TZ=${TZ}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8096/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
     ports:
       - "${WEBUI_PORT}:8096"
       - "${HTTPS_PORT}:8920"

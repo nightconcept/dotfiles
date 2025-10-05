@@ -8,6 +8,12 @@ services:
     environment:
       - PGID=1000
       - PUID=1000
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/healthcheck"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     volumes:
       - /mnt/titan/Audiobooks:/audiobooks
       - /mnt/titan/Podcasts:/podcasts
