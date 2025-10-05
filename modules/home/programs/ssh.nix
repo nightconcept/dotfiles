@@ -43,11 +43,17 @@ in
     home.file.".ssh/id_sdev.pub".text = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMJKTm63zFmYfGauCBlUWq7lvHFq+NVPT5RqIfjLM7MN danny@solivan.dev";
 
     # Set up authorized_keys with id_sdev for SSH access
-    home.file.".ssh/authorized_keys" = lib.mkIf config.modules.home.programs.ssh.authorizedKeysAllowed {
-      text = ''
+    # Use activation script to copy (not symlink) to avoid SSH permission issues with /nix/store
+    home.activation.authorizedKeys = lib.mkIf config.modules.home.programs.ssh.authorizedKeysAllowed (
+      lib.hm.dag.entryAfter ["writeBoundary"] ''
+        $DRY_RUN_CMD mkdir -p $HOME/.ssh
+        $DRY_RUN_CMD chmod 700 $HOME/.ssh
+        $DRY_RUN_CMD cat > $HOME/.ssh/authorized_keys <<'EOF'
         # Standard development key for remote access
         ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMJKTm63zFmYfGauCBlUWq7lvHFq+NVPT5RqIfjLM7MN danny@solivan.dev
-      '';
-    };
+        EOF
+        $DRY_RUN_CMD chmod 600 $HOME/.ssh/authorized_keys
+      ''
+    );
   };
 }
