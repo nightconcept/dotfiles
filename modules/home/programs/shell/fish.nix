@@ -10,7 +10,7 @@ let
   inherit (moduleLib) mkBoolOpt enabled disabled;
 
   # Dotfiles directory constant - change this if the repo moves
-  dot_dir = "$HOME/git/dotfiles-nix";
+  dot_dir = "$HOME/git/dotfiles";
 in
 {
   options.modules.home.programs.shell.fish = {
