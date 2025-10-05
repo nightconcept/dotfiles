@@ -1,17 +1,6 @@
-{ inputs }:
-
-let
+{inputs}: let
   inherit (inputs) nixpkgs home-manager nix-darwin vscode-server stylix spicetify-nix sops-nix disko lix-module;
-in
-{
-  # Create a fake nixpkgs input for npins-managed hosts
-  mkPinnedNixpkgs = hostPath: {
-    legacyPackages.x86_64-linux = import (import (hostPath + "/npins")).nixpkgs {
-      system = "x86_64-linux";
-      config.allowUnfree = true;
-    };
-    lib = nixpkgs.lib;
-  };
+in {
   mkNixos = pkgs: hostname:
     pkgs.lib.nixosSystem {
       system = "x86_64-linux";
@@ -34,7 +23,10 @@ in
               spicetify-nix.homeManagerModules.default
               sops-nix.homeManagerModules.sops
             ];
-            extraSpecialArgs = {inherit inputs; inherit hostname;};
+            extraSpecialArgs = {
+              inherit inputs;
+              inherit hostname;
+            };
           };
         }
       ];
@@ -62,7 +54,10 @@ in
               stylix.homeModules.stylix
               sops-nix.homeManagerModules.sops
             ];
-            extraSpecialArgs = {inherit inputs; inherit hostname;};
+            extraSpecialArgs = {
+              inherit inputs;
+              inherit hostname;
+            };
           };
         }
         vscode-server.nixosModules.default
@@ -98,24 +93,27 @@ in
               stylix.homeModules.stylix
               sops-nix.homeManagerModules.sops
             ];
-            extraSpecialArgs = {inherit inputs; inherit hostname;};
+            extraSpecialArgs = {
+              inherit inputs;
+              inherit hostname;
+            };
           };
         }
       ];
     };
-    
+
   mkHome = hostname:
     home-manager.lib.homeManagerConfiguration {
-      pkgs = import nixpkgs { 
+      pkgs = import nixpkgs {
         system = "x86_64-linux";
         config.allowUnfree = true;
       };
-      modules = [ 
+      modules = [
         ../home
         stylix.homeModules.stylix
         spicetify-nix.homeManagerModules.default
         sops-nix.homeManagerModules.sops
       ];
-      extraSpecialArgs = { inherit inputs hostname; };
+      extraSpecialArgs = {inherit inputs hostname;};
     };
 }

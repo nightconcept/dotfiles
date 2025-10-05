@@ -139,28 +139,6 @@ The home configuration uses a profile-based system where `home/default.nix` sele
 
 ### Overlays and Package Management
 
-#### Overlay Strategy
-Overlays provide package customizations and overrides:
-
-1. **Flake Package Override** (`/overlays/flake-packages.nix`):
-   - Generalized overlay to inject flake packages over npins
-   - Override specific packages with latest flake versions
-   - Used by pinned hosts that need newer versions of select packages
-
-Example usage:
-```nix
-let
-  pinnedPkgs = import sources.nixpkgs {
-    overlays = [
-      (import ../../overlays/flake-packages.nix {
-        inherit inputs;
-        overridePackages = [ "plex" "docker" ];
-      })
-    ];
-  };
-in
-```
-
 #### Module Package Options
 Modules can expose package options for flexibility:
 ```nix
@@ -221,62 +199,6 @@ docker compose down
 2. Test changes locally with rebuild commands
 3. Commit changes to git
 4. The flake.lock should be updated periodically with `nix flake update`
-
-## Package Version Management with npins
-
-Server hosts are pinned to specific nixpkgs commits using [npins](https://github.com/andir/npins) for stability. This allows servers to stay on known-good package versions while other systems track nixpkgs unstable.
-
-### Current Pinned Hosts
-- `rinoa` - Uses npins-managed nixpkgs at `/hosts/nixos/rinoa/npins/`
-- `barrett` - Uses npins-managed nixpkgs at `/hosts/nixos/barrett/npins/`
-- `vincent` - Uses npins-managed nixpkgs at `/hosts/nixos/vincent/npins/`
-- `aerith` - Uses npins-managed nixpkgs with Plex override at `/hosts/nixos/aerith/npins/`
-
-### Setting Up npins for a Host
-
-1. Initialize npins in the host directory:
-```bash
-cd hosts/nixos/<hostname>
-nix-shell -p npins --run "npins init --bare"
-```
-
-2. Pin to current flake nixpkgs commit:
-```bash
-# Get current commit from flake.lock
-COMMIT=$(nix flake metadata --json | jq -r '.locks.nodes.nixpkgs.locked.rev')
-nix-shell -p npins --run "npins add github nixos nixpkgs --branch nixos-unstable --at $COMMIT"
-```
-
-3. Update host configuration to use pinned nixpkgs:
-```nix
-# In hosts/nixos/<hostname>/default.nix
-let
-  sources = import ./npins;
-  pinnedPkgs = import sources.nixpkgs {
-    system = pkgs.system;
-    config = config.nixpkgs.config;
-  };
-in {
-  # Use pinned packages
-  nixpkgs.pkgs = pinnedPkgs;
-  # ...
-}
-```
-
-### Managing Pinned Versions
-
-Update a host's nixpkgs:
-```bash
-cd hosts/nixos/<hostname>
-npins update nixpkgs  # Update to latest
-npins update nixpkgs --at <commit>  # Pin to specific commit
-```
-
-Freeze a host to prevent updates:
-```bash
-npins freeze nixpkgs  # Won't update with 'npins update'
-npins unfreeze nixpkgs  # Allow updates again
-```
 
 ## Hyprland Desktop Environment
 
