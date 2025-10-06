@@ -10,12 +10,6 @@ services:
       - CRON_MIN=${CRON_MIN}
       - FRESHRSS_ENV=production
       - BASE_URL=${BASE_URL}
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:80/"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
     ports:
       - "${PORT}:80"
     volumes:
@@ -30,6 +24,7 @@ services:
       - "traefik.http.routers.freshrss-secure.entrypoints=https"
       - "traefik.http.routers.freshrss-secure.rule=Host(`freshrss.local.solivan.dev`)"
       - "traefik.http.routers.freshrss-secure.tls=true"
+      - "traefik.http.routers.freshrss-secure.tls.certresolver=cloudflare"
       - "traefik.http.routers.freshrss-secure.service=freshrss"
       - "traefik.http.services.freshrss.loadbalancer.server.port=80"
       - "traefik.docker.network=proxy"
