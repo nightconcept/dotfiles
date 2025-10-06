@@ -485,7 +485,7 @@ in {
       };
 
       filesystem = {
-        enable = mkBoolOpt true "Enable filesystem MCP server";
+        enable = mkBoolOpt false "Enable filesystem MCP server (disabled for claude-code-sandbox)";
         paths = mkOpt (lib.types.listOf lib.types.str) [
           "$HOME/Documents"
           "$HOME/Desktop"
