@@ -5,28 +5,14 @@
   ...
 }: {
   config = lib.mkIf (config.desktops.hyprland.enable or false) {
+    # Disable Stylix GTK theming to use proper Tokyo Night GTK theme
+    stylix.targets.gtk.enable = lib.mkForce false;
+
     # GTK 3 Configuration
     gtk.gtk3 = {
       enable = true;
 
-      # Theme, cursor, and font are managed by Stylix now
-      # theme = {
-      #   name = "cachyos-nord";
-      #   package = pkgs.nordic; # Fallback to nordic if cachyos-nord not available
-      # };
-
-      # cursorTheme = {
-      #   name = "capitaine-cursors";
-      #   size = 24;
-      #   package = pkgs.capitaine-cursors;
-      # };
-
-      # font = {
-      #   name = "Fira Sans";
-      #   size = 10;
-      # };
-
-      # Extra GTK3 settings from CachyOS
+      # Extra GTK3 settings
       extraConfig = {
         gtk-application-prefer-dark-theme = true;
         gtk-button-images = true;
@@ -41,7 +27,7 @@
     gtk.gtk4 = {
       enable = true;
 
-      # Extra GTK4 settings (has one additional setting)
+      # Extra GTK4 settings
       extraConfig = {
         gtk-application-prefer-dark-theme = true;
         gtk-button-images = true;
@@ -57,27 +43,20 @@
     gtk = {
       enable = true;
 
-      # Theme, cursor, and font are managed by Stylix now
-      # theme = {
-      #   name = "cachyos-nord";
-      #   package = pkgs.nordic; # Using Nordic as fallback theme
-      # };
+      # Use proper Tokyo Night GTK theme for readable buttons
+      theme = {
+        name = "Tokyonight-Dark-B";
+        package = pkgs.tokyo-night-gtk;
+      };
 
       iconTheme = {
         name = "Papirus-Dark";
         package = pkgs.papirus-icon-theme;
       };
 
-      # cursorTheme = {
-      #   name = "capitaine-cursors";
-      #   size = 24;
-      #   package = pkgs.capitaine-cursors;
-      # };
-
-      # font = {
-      #   name = "Fira Sans";
-      #   size = 10;
-      # };
+      # Let Stylix handle cursor and font
+      # cursorTheme will be set by Stylix
+      # font will be set by Stylix
     };
   };
 }

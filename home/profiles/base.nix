@@ -28,7 +28,6 @@
         mcp = {
           sequential-thinking.enable = true;
           filesystem.enable = true;
-          puppeteer.enable = true;
           fetch.enable = true;
           # API keys are managed via SOPS secrets
           brave-search.enable = true;

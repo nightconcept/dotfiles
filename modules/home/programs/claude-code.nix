@@ -431,15 +431,6 @@
         }
         else null;
 
-      # Puppeteer for web automation
-      puppeteer =
-        if cfg.mcp.puppeteer.enable
-        then {
-          command = "npx";
-          args = ["-y" "@modelcontextprotocol/server-puppeteer"];
-        }
-        else null;
-
       # Enhanced fetch server
       fetch =
         if cfg.mcp.fetch.enable
@@ -500,10 +491,6 @@ in {
           "$HOME/Desktop"
           "$HOME/Downloads"
         ] "Paths accessible to the filesystem MCP server";
-      };
-
-      puppeteer = {
-        enable = mkBoolOpt true "Enable Puppeteer MCP server for web automation";
       };
 
       fetch = {

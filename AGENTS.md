@@ -2,10 +2,6 @@
 
 This file provides guidance to AI agents when working with code in this repository.
 
-## Architecture
-
-This codebase uses a module-based architecture for NixOS, Darwin, and Home Manager configurations. The module system provides composable, reusable configuration units.
-
 ## Project Overview
 
 This is a Nix flake configuration for personal dotfiles supporting multiple platforms:
@@ -14,8 +10,8 @@ This is a Nix flake configuration for personal dotfiles supporting multiple plat
 - **home-manager**: User-level configurations for any system
 
 ### Nixpkgs Strategy
-- **All systems**: Use `nixpkgs` (unstable) for latest features
-- **Overlays**: Package overrides and customizations via `/overlays/`
+- **All systems**: Use `nixpkgs-unstable` for latest features
+- No overlays directory - packages are managed through module options
 
 ## Common Commands
 
@@ -65,84 +61,94 @@ nix flake show
 ### Directory Structure
 
 - `/flake.nix` - Main flake configuration defining all system outputs
-- `/lib/lib.nix` - Helper functions (mkNixos, mkDarwin, mkHome, etc.)
-- `/modules/` - Reusable configuration modules
+- `/lib/lib.nix` - Helper functions (mkNixos, mkNixosServer, mkDarwin, mkHome)
+- `/modules/` - Reusable configuration modules organized by platform
   - `nixos/` - NixOS system modules
+    - `core/` - Core system configuration (bootloader, locale, nix, packages, users)
+    - `desktop/` - Desktop environment modules (hyprland, plasma6)
+    - `hardware/` - Hardware configurations (bluetooth, graphics, power, printing, sound, usb-automount)
+    - `kernel/` - Kernel configuration
+    - `network/` - Network configuration
+    - `networking/` - Network services and base configuration
+    - `programs/` - System programs
+    - `security/` - Security configuration (sops)
+    - `services/` - System services (docker, nordvpn, openssh, plex, torrent)
+    - `storage/` - Storage configuration (impermanence, network-drives)
   - `darwin/` - macOS system modules
+    - `core/` - Core Darwin configuration
+    - `homebrew/` - Homebrew package management
+    - `system-settings/` - macOS system settings
   - `home/` - Home Manager modules
-  - `shared/` - Cross-platform modules
-- `/overlays/` - Nixpkgs overlays
-  - `unstable-packages.nix` - Exposes `pkgs.unstable.*` namespace
-  - `plex/` - Plex uses unstable version
-  - Additional service-specific overlays as needed
+    - `programs/` - Program modules (nvim, shell, wezterm)
+    - `secrets/` - User-level sops secrets
+    - `themes/` - Theme configuration
 - `/home/` - Home Manager user configurations
   - `default.nix` - Profile selector based on hostname
   - `profiles/` - Composable configuration profiles
     - `base.nix` - Common to all systems
-    - `desktop.nix` - GUI applications
-    - `laptop.nix` - Laptop-specific (extends desktop)
+    - `linux-desktop.nix` - Generic Linux desktop
+    - `nixos-laptop.nix` - NixOS laptop (Hyprland)
+    - `darwin-laptop.nix` - macOS laptop
+    - `darwin-desktop.nix` - macOS desktop
     - `server.nix` - Minimal server config
-    - `darwin.nix` - macOS-specific
   - `programs/` - Application configurations
-  - `desktops/` - Desktop environment configs
-  - `secrets/` - User-level sops secrets
-- `/hosts/` - Host-specific configurations (hardware, networking, services)
-- `/systems/` - Platform-specific system configurations
-  - `nixos/` - NixOS system configuration
-    - `pkgs/` - Custom packages and system packages
-    - `secrets/` - System-level sops secrets
-    - `hardware/` - Hardware configurations
-    - `desktops/` - Desktop environment modules (Hyprland, Plasma6)
-  - `darwin/` - macOS system configuration
+  - `desktops/` - Desktop environment configs (hyprland)
+- `/hosts/` - Host-specific configurations (no subdirectories, hosts defined directly in flake.nix)
+  - Note: Currently no host-specific files, hosts are configured through modules
+- `/shared/` - Shared resources (e.g., starship.toml)
+- `/iso/` - Custom installer ISO configurations
+- `/scripts/` - Bootstrap and utility scripts
+- `/windows/` - Windows-specific configurations (powershell, winutils)
+- `/wallpaper/` - Wallpaper images for theming
 
 ### Configuration Hierarchy
 
 #### NixOS Systems
 1. `flake.nix` calls `lib.mkNixos` or `lib.mkNixosServer`
-2. Imports `./systems/nixos` (base system config)
-3. Imports `./hosts/nixos/<hostname>` (host-specific config)
+2. Imports `./modules/nixos` (base NixOS modules)
+3. Imports `./hosts/nixos/<hostname>` (host-specific config if exists)
 4. Includes Home Manager with `./home` (uses default.nix selector)
 
 #### Darwin Systems
-1. `flake.nix` calls `lib.mkDarwin` or `lib.mkDarwinLaptop`
-2. Imports `./systems/darwin` (base macOS config)
-3. Imports `./hosts/darwin/<hostname>` (host-specific config)
+1. `flake.nix` calls `lib.mkDarwin`
+2. Imports `./modules/darwin` (base Darwin modules)
+3. Imports `./hosts/darwin/<hostname>` (host-specific config if exists)
 4. Includes Home Manager with `./home` (uses default.nix selector)
 
 #### Home Manager Standalone
 1. `flake.nix` calls `lib.mkHome`
 2. Imports `./home` with hostname parameter
-3. `default.nix` selects appropriate profiles
+3. `default.nix` selects appropriate profiles based on hostname
 
 ### Profile System
 
 The home configuration uses a profile-based system where `home/default.nix` selects the appropriate profiles based on hostname:
 
-- **tidus**: `base + laptop` (NixOS laptop)
-- **aerith**: `base + server` (NixOS server)
-- **barrett**: `base + server` (NixOS server)
-- **waver**: `base + darwin-laptop` (MacBook)
-- **merlin**: `base + darwin` (Mac Mini)
+- **tidus**: `base + nixos-laptop` (Dell Latitude 7420 with Hyprland)
+- **tidus-persist**: `base + nixos-laptop` (Impermanence variant)
+- **aerith**: `base + server` (Plex media server)
+- **barrett**: `base + server` (VPN torrent server)
+- **rinoa**: `base + server` (Docker services)
+- **vincent**: `base + server` (CI/CD runner with Docker)
+- **waver**: `base + darwin-laptop` (MacBook Pro M1)
+- **merlin**: `base + darwin-desktop` (Mac Mini M1)
 - **desktop/laptop/server**: Generic standalone profiles
 
 ### Key Components
-- **Modules**: Self-contained feature modules in `/modules/{nixos,darwin,home,shared}/`
-- **Overlays**: Package overrides in `/overlays/` for selective unstable packages
-- **Systems**: Base platform configurations in `/systems/{nixos,darwin}/`
-- **Hosts**: Individual machine configs in `/hosts/{nixos,darwin}/<hostname>/`
+- **Modules**: Self-contained feature modules in `/modules/{nixos,darwin,home}/`
+- **Hosts**: Individual machine configs referenced in `flake.nix`
 - **Programs**: User application configs in `/home/programs/`
-- **Hardware**: Hardware-specific settings in `/systems/nixos/hardware/`
 - **Desktops**: Desktop environment configs in `/home/desktops/`
-- **Themes**: Stylix theming configuration in `/home/stylix.nix`
+- **Themes**: Stylix theming in `modules/home/themes/`
 - **Wallpapers**: Wallpaper images in `/wallpaper/`
-- **Secrets**: SOPS-managed secrets in `*/secrets/`
+- **Secrets**: SOPS-managed secrets in `modules/{nixos,home}/security/sops/`
 
-### Overlays and Package Management
+### Module Options Pattern
 
-#### Module Package Options
-Modules can expose package options for flexibility:
+Modules expose enable options and package options for flexibility:
 ```nix
 options.modules.nixos.services.plex = {
+  enable = mkEnableOption "Plex Media Server";
   package = mkOpt lib.types.package pkgs.plex "The plex package to use";
 };
 ```
@@ -150,11 +156,12 @@ options.modules.nixos.services.plex = {
 ### Host Configurations
 
 #### Active NixOS Hosts
+- `tidus` - Dell Latitude 7420 laptop with Hyprland desktop
+- `tidus-persist` - Same as tidus but with impermanence for root filesystem
 - `aerith` - Plex media server
-- `barrett` - VPN torrent server
+- `barrett` - VPN torrent server with NordVPN
 - `rinoa` - General purpose server (Docker services)
-- `vincent` - CI/CD runner host with Docker
-- `tidus` - Dell Latitude 7420 laptop with Hyprland
+- `vincent` - CI/CD runner host with Docker and Forgejo runner
 
 #### Active Darwin Hosts
 - `waver` - MacBook Pro M1
@@ -162,36 +169,26 @@ options.modules.nixos.services.plex = {
 
 ### Docker Container Configuration
 
-For hosts running Docker services (e.g., `rinoa`), containers are organized as follows:
+Docker services are managed as Nix modules in `/modules/nixos/services/docker/containers/`. Each container has its own module that defines:
+- Docker compose configuration
+- Environment variables
+- Volume mounts
+- Network configuration
+- Traefik labels for reverse proxy
 
-#### Directory Structure
-```
-~/docker/
-├── <service-name>/
-│   ├── docker-compose.yml
-│   ├── .env
-│   └── config/
-│       └── <service configuration files>
-```
+Available container modules include:
+- **Media**: jellyfin, plex
+- ***arr Stack**: sonarr, radarr, prowlarr, readarr, flaresolverr
+- **Books**: audiobookshelf, calibre, calibre-web, readarr-books
+- **Home Automation**: homepage, uptime-kuma
+- **Infrastructure**: traefik, portainer, watchtower, cloudflare-tunnel
+- **Authentication**: authelia, vaultwarden
+- **Development**: forgejo, forgejo-runner
+- **Gaming**: minecraft, enshrouded, palworld
+- **Utilities**: freshrss, nextcloud, open-webui, searxng, wg-easy, ddclient, knot
 
-#### Common Docker Operations
-```bash
-# Start a service
-cd ~/docker/<service-name>
-docker compose up -d
-
-# View logs
-docker logs <container-name>
-
-# Check status
-docker ps
-
-# Stop a service
-docker compose down
-```
-
-#### Docker Networks
-- `proxy` - Shared network for services behind reverse proxy
+Docker networks:
+- `proxy` - Shared network for services behind Traefik reverse proxy
 
 ## Development Workflow
 
@@ -247,10 +244,11 @@ The bootstrap script:
 ## SOPS Secret Management
 
 Secrets are managed using sops-nix:
-- User secrets in `/home/secrets/`
-- System secrets in `/systems/nixos/secrets/`
+- System secrets configured in `/modules/nixos/security/sops/`
+- User secrets configured in `/modules/home/secrets/`
 - Age keys derived from SSH keys
 - Automatic deployment to runtime directories
+
 ### Secret Storage Conventions
 
 #### SOPS Encryption Key
@@ -266,17 +264,7 @@ User services (home-manager) should use:
 - Expands to `/run/user/1000/secrets/<secret>`
 - Example: `/run/user/1000/secrets/gemini_api_key`
 
-#### Current Configured Secrets
-System-level (`/systems/nixos/secrets/sops.nix`):
-- `ssh_keys/id_sdev` → `/home/danny/.ssh/id_sdev`
-- `network/titan_credentials` → `/etc/sops-mog-secrets`
-- `vpn/nordvpn_token` → `/run/secrets/nordvpn-token`
-
-User-level (`/home/secrets/sops.nix`):
-- `id_sdev` → `~/.ssh/id_sdev`
-- `gemini_api_key` → `$XDG_RUNTIME_DIR/secrets/gemini_api_key`
-
 #### Adding New Secrets
-1. Edit the YAML file (`common.yaml` or `user.yaml`)
-2. Add the secret definition in the appropriate `sops.nix`
+1. Edit the encrypted YAML file using `sops` command
+2. Add the secret definition in the appropriate module's sops configuration
 3. Follow the path conventions above for consistency
