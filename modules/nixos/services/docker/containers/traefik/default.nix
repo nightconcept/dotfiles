@@ -149,12 +149,12 @@ in {
         DASHBOARD_SUBDOMAIN=${cfg.dashboard.subdomain}
         EOF
 
-        # Copy static configs if they exist in the module
+        # Always copy traefik.yml from module to ensure updates are applied
         ${lib.optionalString (builtins.pathExists ./config/traefik.yml) ''
-          cp ${./config/traefik.yml} ${cfg.configPath}/traefik.yml
+          cp -f ${./config/traefik.yml} ${cfg.configPath}/traefik.yml
         ''}
         ${lib.optionalString (builtins.pathExists ./config/config.yml) ''
-          cp ${./config/config.yml} ${cfg.configPath}/config.yml
+          cp -f ${./config/config.yml} ${cfg.configPath}/config.yml
         ''}
 
         # Generate Dokploy routing configuration if enabled
