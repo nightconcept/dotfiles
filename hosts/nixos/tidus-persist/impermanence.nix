@@ -1,7 +1,10 @@
 # Impermanence configuration for tidus
 # Defines what persists across reboots
-{ config, lib, ... }:
 {
+  config,
+  lib,
+  ...
+}: {
   # Enable systemd in initrd for rollback service
   boot.initrd.systemd.enable = true;
 
@@ -11,9 +14,9 @@
   # Rollback service to restore root to blank snapshot
   boot.initrd.systemd.services.rollback-root = {
     description = "Rollback BTRFS root subvolume to blank state";
-    wantedBy = [ "initrd.target" ];
-    after = [ "device-dev-mapper-cryptroot.device" ];
-    before = [ "sysroot.mount" ];
+    wantedBy = ["initrd.target"];
+    after = ["device-dev-mapper-cryptroot.device"];
+    before = ["sysroot.mount"];
     unitConfig.DefaultDependencies = "no";
     serviceConfig.Type = "oneshot";
     script = ''
@@ -65,8 +68,16 @@
       "/var/lib/NetworkManager"
 
       # Container runtimes
-      { directory = "/var/lib/docker"; user = "root"; mode = "0700"; }
-      { directory = "/var/lib/containers"; user = "root"; mode = "0700"; }
+      {
+        directory = "/var/lib/docker";
+        user = "root";
+        mode = "0700";
+      }
+      {
+        directory = "/var/lib/containers";
+        user = "root";
+        mode = "0700";
+      }
 
       # Development
       "/var/lib/libvirt"
@@ -76,8 +87,8 @@
       "/var/cache/cups"
 
       # firmware/hardware
-      "/var/lib/fprint"  # Fingerprint reader
-      "/var/lib/tpm"     # TPM state
+      "/var/lib/fprint" # Fingerprint reader
+      "/var/lib/tpm" # TPM state
 
       # Time sync
       "/var/lib/chrony"
@@ -126,10 +137,19 @@
         ".cache/pip"
 
         # Dotfiles and configs
-        { directory = ".gnupg"; mode = "0700"; }
-        { directory = ".ssh"; mode = "0700"; }
-        { directory = ".local/share/keyrings"; mode = "0700"; }
-        ".config/gh"  # GitHub CLI
+        {
+          directory = ".gnupg";
+          mode = "0700";
+        }
+        {
+          directory = ".ssh";
+          mode = "0700";
+        }
+        {
+          directory = ".local/share/keyrings";
+          mode = "0700";
+        }
+        ".config/gh" # GitHub CLI
         ".config/sops"
 
         # Browser profiles

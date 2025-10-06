@@ -15,15 +15,16 @@
 
     package = lib.mkOption {
       type = lib.types.package;
-      default = if config.modules.home.programs.gemini-cli.useBinVersion
-                then pkgs.gemini-cli-bin
-                else pkgs.gemini-cli;
+      default =
+        if config.modules.home.programs.gemini-cli.useBinVersion
+        then pkgs.gemini-cli-bin
+        else pkgs.gemini-cli;
       description = "The gemini-cli package to use";
     };
   };
 
   config = lib.mkIf config.modules.home.programs.gemini-cli.enable {
-    home.packages = [ config.modules.home.programs.gemini-cli.package ];
+    home.packages = [config.modules.home.programs.gemini-cli.package];
 
     # Create Fish function for API key checking
     programs.fish.functions.gemini-check = lib.mkIf config.programs.fish.enable {

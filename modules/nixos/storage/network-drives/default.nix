@@ -1,9 +1,11 @@
 # Network drives (CIFS/SMB) configuration module
-{ config, lib, pkgs, ... }:
-
-with lib;
-
-let
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+with lib; let
   cfg = config.modules.nixos.storage.networkDrives;
 
   # Default titan mount configuration
@@ -12,8 +14,7 @@ let
     source = "//192.168.1.167/titan";
     credentials = "/run/secrets/network/titan_credentials";
   };
-in
-{
+in {
   options.modules.nixos.storage.networkDrives = {
     enable = mkEnableOption "Network drive mounting";
 
@@ -57,34 +58,41 @@ in
     allMounts = cfg.mounts ++ (optionals cfg.enableTitan [titanMount]);
   in {
     # Create mount points
-    systemd.tmpfiles.rules = map (mount:
-      "d /mnt/${mount.name} 0755 root root -"
-    ) allMounts;
+    systemd.tmpfiles.rules =
+      map (
+        mount: "d /mnt/${mount.name} 0755 root root -"
+      )
+      allMounts;
 
     # Create mount units
-    systemd.mounts = map (mount: {
-      description = "Mount ${mount.name} network share";
-      what = mount.source;
-      where = "/mnt/${mount.name}";
-      type = "cifs";
-      options = "credentials=${mount.credentials},uid=1000,gid=100,iocharset=utf8,nofail,_netdev,x-systemd.automount,x-systemd.mount-timeout=10";
-      wantedBy = [ ];
-      after = [ "network-online.target" "nss-lookup.target" ];
-      wants = [ "network-online.target" ];
-      requiredBy = [ ];
-    }) allMounts;
+    systemd.mounts =
+      map (mount: {
+        description = "Mount ${mount.name} network share";
+        what = mount.source;
+        where = "/mnt/${mount.name}";
+        type = "cifs";
+        options = "credentials=${mount.credentials},uid=1000,gid=100,iocharset=utf8,nofail,_netdev,x-systemd.automount,x-systemd.mount-timeout=10";
+        wantedBy = [];
+        after = ["network-online.target" "nss-lookup.target"];
+        wants = ["network-online.target"];
+        requiredBy = [];
+      })
+      allMounts;
 
     # Create automount units
-    systemd.automounts = map (mount: {
-      description = "Automount ${mount.name} network share";
-      where = "/mnt/${mount.name}";
-      wantedBy = [ "multi-user.target" ];
-      automountConfig = {
-        TimeoutIdleSec = if mount.name == "titan"
-          then toString cfg.titanIdleTimeout
-          else "60";
-        DirectoryMode = "0755";
-      };
-    }) allMounts;
+    systemd.automounts =
+      map (mount: {
+        description = "Automount ${mount.name} network share";
+        where = "/mnt/${mount.name}";
+        wantedBy = ["multi-user.target"];
+        automountConfig = {
+          TimeoutIdleSec =
+            if mount.name == "titan"
+            then toString cfg.titanIdleTimeout
+            else "60";
+          DirectoryMode = "0755";
+        };
+      })
+      allMounts;
   });
 }

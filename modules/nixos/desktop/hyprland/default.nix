@@ -1,12 +1,13 @@
 # Hyprland Wayland compositor module
-{ config, lib, pkgs, ... }:
-
-with lib;
-
-let
-  cfg = config.modules.nixos.desktop.hyprland;
-in
 {
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+with lib; let
+  cfg = config.modules.nixos.desktop.hyprland;
+in {
   options.modules.nixos.desktop.hyprland = {
     enable = mkEnableOption "Hyprland Wayland compositor";
 
@@ -34,7 +35,7 @@ in
       enable = true;
       wayland.enable = true;
     };
-    
+
     services.displayManager.autoLogin = mkIf cfg.autoLogin {
       enable = true;
       user = cfg.user;
@@ -66,7 +67,7 @@ in
       networkmanagerapplet
       pavucontrol
       kdePackages.polkit-kde-agent-1
-      
+
       # Python packages for waybar scripts
       python3
       python3Packages.pygobject3

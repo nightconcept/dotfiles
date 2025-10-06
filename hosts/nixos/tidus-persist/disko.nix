@@ -1,7 +1,6 @@
 # Disko configuration for tidus with BTRFS + LUKS + Impermanence
 # This creates an encrypted BTRFS filesystem with subvolumes for impermanence
-{ lib, ... }:
-{
+{lib, ...}: {
   disko.devices = {
     disk = {
       main = {
@@ -81,7 +80,7 @@
                       mountpoint = "/.swapvol";
                       swap = {
                         swapfile = {
-                          size = "16G";  # Match or exceed RAM for hibernation
+                          size = "16G"; # Match or exceed RAM for hibernation
                         };
                       };
                     };

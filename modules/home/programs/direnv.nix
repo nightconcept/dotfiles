@@ -2,13 +2,11 @@
   config,
   lib,
   ...
-}:
-let
+}: let
   # Import our custom lib functions
-  moduleLib = import ../../../lib/module { inherit lib; };
+  moduleLib = import ../../../lib/module {inherit lib;};
   inherit (moduleLib) mkBoolOpt enabled disabled;
-in
-{
+in {
   options.modules.home.programs.direnv = {
     enable = mkBoolOpt true "Enable direnv for automatic environment loading";
   };

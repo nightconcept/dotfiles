@@ -1,12 +1,14 @@
 # FreshRSS RSS Feed Aggregator Container Module
-{ config, lib, pkgs, ... }:
-
-let
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
   cfg = config.modules.nixos.docker.containers.freshrss;
   containerName = "freshrss";
   containerPath = "/var/lib/docker-containers/${containerName}";
-in
-{
+in {
   options.modules.nixos.docker.containers.freshrss = {
     enable = lib.mkEnableOption "FreshRSS RSS feed aggregator container";
 
@@ -55,7 +57,7 @@ in
 
     database = {
       type = lib.mkOption {
-        type = lib.types.enum [ "sqlite" "mysql" "postgres" ];
+        type = lib.types.enum ["sqlite" "mysql" "postgres"];
         default = "sqlite";
         description = "Database type for FreshRSS";
       };
@@ -106,9 +108,9 @@ in
     # FreshRSS container service
     systemd.services."docker-container-${containerName}" = {
       description = "FreshRSS RSS Feed Aggregator Container";
-      after = [ "docker.service" "docker-network-proxy.service" ];
-      requires = [ "docker.service" "docker-network-proxy.service" ];
-      wantedBy = [ "multi-user.target" ];
+      after = ["docker.service" "docker-network-proxy.service"];
+      requires = ["docker.service" "docker-network-proxy.service"];
+      wantedBy = ["multi-user.target"];
 
       preStart = ''
         # Copy docker-compose.yml to runtime directory
@@ -143,6 +145,6 @@ in
     };
 
     # Open firewall port
-    networking.firewall.allowedTCPPorts = [ cfg.port ];
+    networking.firewall.allowedTCPPorts = [cfg.port];
   };
 }

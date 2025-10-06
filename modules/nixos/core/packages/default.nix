@@ -1,12 +1,13 @@
 # Core system packages and fonts
-{ config, lib, pkgs, ... }:
-
-with lib;
-
-let
-  cfg = config.modules.nixos.core.packages;
-in
 {
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+with lib; let
+  cfg = config.modules.nixos.core.packages;
+in {
   options.modules.nixos.core.packages = {
     enable = mkOption {
       type = types.bool;

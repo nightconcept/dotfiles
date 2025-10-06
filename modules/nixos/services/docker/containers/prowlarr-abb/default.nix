@@ -1,12 +1,14 @@
 # Prowlarr ABB (AudioBook Bay) Indexer Module
-{ config, lib, pkgs, ... }:
-
-let
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
   cfg = config.modules.nixos.docker.containers.prowlarr-abb;
   containerName = "prowlarr-abb";
   containerPath = "/var/lib/docker-containers/${containerName}";
-in
-{
+in {
   options.modules.nixos.docker.containers.prowlarr-abb = {
     enable = lib.mkEnableOption "Prowlarr ABB audiobook indexer";
 
@@ -54,9 +56,9 @@ in
     # Prowlarr ABB container service
     systemd.services."docker-container-${containerName}" = {
       description = "Prowlarr ABB Audiobook Indexer Container";
-      after = [ "docker.service" "docker-network-proxy.service" ];
-      requires = [ "docker.service" "docker-network-proxy.service" ];
-      wantedBy = [ "multi-user.target" ];
+      after = ["docker.service" "docker-network-proxy.service"];
+      requires = ["docker.service" "docker-network-proxy.service"];
+      wantedBy = ["multi-user.target"];
 
       preStart = ''
         # Copy docker-compose.yml to runtime directory

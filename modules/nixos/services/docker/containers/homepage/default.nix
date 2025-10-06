@@ -1,12 +1,14 @@
 # Homepage Dashboard Container Module
-{ config, lib, pkgs, ... }:
-
-let
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
   cfg = config.modules.nixos.docker.containers.homepage;
   containerName = "homepage";
   containerPath = "/var/lib/docker-containers/${containerName}";
-in
-{
+in {
   options.modules.nixos.docker.containers.homepage = {
     enable = lib.mkEnableOption "Homepage dashboard";
 
@@ -45,9 +47,9 @@ in
 
     systemd.services."docker-container-${containerName}" = {
       description = "Homepage Dashboard Container";
-      after = [ "docker.service" "docker-network-proxy.service" ];
-      requires = [ "docker.service" "docker-network-proxy.service" ];
-      wantedBy = [ "multi-user.target" ];
+      after = ["docker.service" "docker-network-proxy.service"];
+      requires = ["docker.service" "docker-network-proxy.service"];
+      wantedBy = ["multi-user.target"];
 
       preStart = ''
         # Copy docker-compose.yml to runtime directory
@@ -69,6 +71,6 @@ in
       };
     };
 
-    networking.firewall.allowedTCPPorts = [ cfg.port ];
+    networking.firewall.allowedTCPPorts = [cfg.port];
   };
 }

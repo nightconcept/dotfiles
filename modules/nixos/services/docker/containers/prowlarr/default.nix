@@ -1,12 +1,14 @@
 # Prowlarr Indexer Manager Container Module
-{ config, lib, pkgs, ... }:
-
-let
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
   cfg = config.modules.nixos.docker.containers.prowlarr;
   containerName = "prowlarr";
   containerPath = "/var/lib/docker-containers/${containerName}";
-in
-{
+in {
   options.modules.nixos.docker.containers.prowlarr = {
     enable = lib.mkEnableOption "Prowlarr indexer manager container";
 
@@ -81,13 +83,12 @@ in
       "d ${cfg.configPath} 0755 ${toString cfg.uid} ${toString cfg.gid} -"
     ];
 
-
     # Prowlarr container service
     systemd.services."docker-container-${containerName}" = {
       description = "Prowlarr Indexer Manager Container";
-      after = [ "docker.service" ] ++ lib.optional cfg.enableTraefik "docker-network-proxy.service";
-      requires = [ "docker.service" ] ++ lib.optional cfg.enableTraefik "docker-network-proxy.service";
-      wantedBy = [ "multi-user.target" ];
+      after = ["docker.service"] ++ lib.optional cfg.enableTraefik "docker-network-proxy.service";
+      requires = ["docker.service"] ++ lib.optional cfg.enableTraefik "docker-network-proxy.service";
+      wantedBy = ["multi-user.target"];
 
       preStart = ''
         # Copy docker-compose.yml to runtime directory

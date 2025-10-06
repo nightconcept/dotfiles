@@ -1,18 +1,21 @@
-{ config, lib, pkgs, ... }:
-
 {
+  config,
+  lib,
+  pkgs,
+  ...
+}: {
   config = lib.mkIf (config.desktops.hyprland.enable or false) {
     # Install gnome-keyring and libsecret for secret management
     home.packages = with pkgs; [
       gnome-keyring
       libsecret
-      seahorse  # GUI for managing keyring
+      seahorse # GUI for managing keyring
     ];
 
     # Enable gnome-keyring service
     services.gnome-keyring = {
       enable = true;
-      components = [ "pkcs11" "secrets" "ssh" ];
+      components = ["pkcs11" "secrets" "ssh"];
     };
 
     # Set up environment variables for secret service

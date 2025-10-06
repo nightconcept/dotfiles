@@ -23,50 +23,49 @@
   };
 
   config = lib.mkIf config.desktops.hyprland.enable {
-
     # Essential packages for Hyprland desktop
     home.packages = with pkgs; [
       # Screenshot tools
       grimblast
       grim
       slurp
-      
+
       # Wallpaper
       swaybg
-      
+
       # Clipboard
       wl-clipboard
       cliphist
-      
+
       # Authentication agent
       kdePackages.polkit-kde-agent-1
-      
+
       # System control
       brightnessctl
       pamixer
       playerctl
-      
+
       # Notifications and overlays
       libnotify
       wob
-      
+
       # App launcher dependencies
       dmenu
-      
+
       # File manager
       xfce.thunar
-      
+
       # Network manager applet
       networkmanagerapplet
-      
+
       # Font for UI
       nerd-fonts.fira-mono
       nerd-fonts.fira-code
       font-awesome
-      
+
       # Audio control
       pavucontrol
-      
+
       # Additional utilities
       hypridle
       hyprlock
@@ -89,7 +88,6 @@
       XDG_SESSION_TYPE = "wayland";
       XDG_SESSION_DESKTOP = "Hyprland";
     };
-
 
     # XDG portal configuration
     xdg.portal = {

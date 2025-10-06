@@ -4,16 +4,14 @@
   pkgs,
   options,
   ...
-}:
-let
+}: let
   # Import our custom lib functions
-  moduleLib = import ../../../lib/module { inherit lib; };
+  moduleLib = import ../../../lib/module {inherit lib;};
   inherit (moduleLib) mkBoolOpt enabled disabled;
-  
+
   # Check if stylix option is available (i.e., stylix module is imported)
   stylixAvailable = builtins.hasAttr "stylix" options;
-in
-{
+in {
   options.modules.home.themes.stylix = {
     enable = mkBoolOpt false "Enable Stylix theming with Tokyo Night";
   };
@@ -21,13 +19,13 @@ in
   config = lib.mkIf (config.modules.home.themes.stylix.enable && stylixAvailable) {
     stylix = {
       enable = true;
-      
+
       # Use Tokyo Night theme
       base16Scheme = "${pkgs.base16-schemes}/share/themes/tokyo-night-dark.yaml";
-      
+
       # Use the laptop wallpaper
       image = ../../../wallpaper/laptop.jpg;
-      
+
       # Font configuration
       fonts = {
         monospace = {
@@ -49,33 +47,33 @@ in
           terminal = 11;
         };
       };
-      
+
       # Cursor theme - using default Adwaita
       cursor = {
         package = pkgs.adwaita-icon-theme;
         name = "Adwaita";
         size = 24;
       };
-      
+
       # Enable styling for applications that need it
       targets = {
         waybar.enable = false;
-        wofi.enable = true;  # Enable Stylix theming for wofi
+        wofi.enable = true; # Enable Stylix theming for wofi
         hyprland.enable = false;
         mako.enable = false;
         alacritty.enable = false;
         swaylock.enable = false;
-        gtk.enable = true;  # Enable GTK theming for dark mode
+        gtk.enable = true; # Enable GTK theming for dark mode
         gnome.enable = false;
         vscode.enable = false;
         firefox = {
-          enable = true;  # Let Stylix handle Firefox theming
-          profileNames = [ "danny" ];  # Specify the profile to theme
+          enable = true; # Let Stylix handle Firefox theming
+          profileNames = ["danny"]; # Specify the profile to theme
         };
-        spicetify.enable = true;  # Enable Spicetify theming with Tokyo Night colors
-        vencord.enable = true;  # Enable Vencord Discord theming with Tokyo Night colors
+        spicetify.enable = true; # Enable Spicetify theming with Tokyo Night colors
+        vencord.enable = true; # Enable Vencord Discord theming with Tokyo Night colors
       };
-      
+
       # Override specific colors if needed
       # You can uncomment and adjust these if you want to tweak the theme
       # override = {

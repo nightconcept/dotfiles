@@ -3,13 +3,11 @@
   lib,
   pkgs,
   ...
-}:
-let
+}: let
   # Import our custom lib functions
-  moduleLib = import ../../../lib/module { inherit lib; };
+  moduleLib = import ../../../lib/module {inherit lib;};
   inherit (moduleLib) mkBoolOpt enabled disabled;
-in
-{
+in {
   options.modules.home.programs.common = {
     enable = mkBoolOpt true "Enable common programs for all systems";
   };
@@ -28,7 +26,7 @@ in
       eza
       fastfetch
       gnupg
-      just  # Task runner for command organization
+      just # Task runner for command organization
       lazygit
       lua51Packages.lua
       ncdu

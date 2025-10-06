@@ -1,12 +1,13 @@
 # Nix configuration module
-{ config, lib, inputs, ... }:
-
-with lib;
-
-let
-  cfg = config.modules.nixos.core.nix;
-in
 {
+  config,
+  lib,
+  inputs,
+  ...
+}:
+with lib; let
+  cfg = config.modules.nixos.core.nix;
+in {
   options.modules.nixos.core.nix = {
     enable = mkOption {
       type = types.bool;

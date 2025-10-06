@@ -1,12 +1,14 @@
 # Knot (Tangled) Git Server Container Module
-{ config, lib, pkgs, ... }:
-
-let
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
   cfg = config.modules.nixos.docker.containers.knot;
   containerName = "knot";
   containerPath = "/var/lib/docker-containers/${containerName}";
-in
-{
+in {
   options.modules.nixos.docker.containers.knot = {
     enable = lib.mkEnableOption "Knot (Tangled) git server container";
 
@@ -95,9 +97,9 @@ in
     # Knot container service
     systemd.services."docker-container-${containerName}" = {
       description = "Knot (Tangled) Git Server Container";
-      after = [ "docker.service" "docker-network-proxy.service" ];
-      requires = [ "docker.service" "docker-network-proxy.service" ];
-      wantedBy = [ "multi-user.target" ];
+      after = ["docker.service" "docker-network-proxy.service"];
+      requires = ["docker.service" "docker-network-proxy.service"];
+      wantedBy = ["multi-user.target"];
 
       preStart = ''
         # Copy docker-compose.yml to runtime directory

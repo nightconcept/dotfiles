@@ -1,12 +1,14 @@
 # Vaultwarden Password Manager Container Module
-{ config, lib, pkgs, ... }:
-
-let
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
   cfg = config.modules.nixos.docker.containers.vaultwarden;
   containerName = "vaultwarden";
   containerPath = "/var/lib/docker-containers/${containerName}";
-in
-{
+in {
   options.modules.nixos.docker.containers.vaultwarden = {
     enable = lib.mkEnableOption "Vaultwarden password manager";
 
@@ -30,9 +32,10 @@ in
 
     adminTokenFile = lib.mkOption {
       type = lib.types.nullOr lib.types.path;
-      default = if config.modules.nixos.security.sops.enable
-               then "/run/secrets/services/vaultwarden/admin_token"
-               else null;
+      default =
+        if config.modules.nixos.security.sops.enable
+        then "/run/secrets/services/vaultwarden/admin_token"
+        else null;
       description = "Path to file containing Vaultwarden admin token";
     };
   };
@@ -50,9 +53,9 @@ in
     # Vaultwarden container service
     systemd.services."docker-container-${containerName}" = {
       description = "Vaultwarden Password Manager Container";
-      after = [ "docker.service" "docker-network-proxy.service" ];
-      requires = [ "docker.service" "docker-network-proxy.service" ];
-      wantedBy = [ "multi-user.target" ];
+      after = ["docker.service" "docker-network-proxy.service"];
+      requires = ["docker.service" "docker-network-proxy.service"];
+      wantedBy = ["multi-user.target"];
 
       preStart = ''
         # Copy docker-compose.yml to runtime directory
@@ -64,7 +67,7 @@ in
         DOMAIN=${cfg.domain}
         SUBDOMAIN=${cfg.subdomain}
         ${lib.optionalString (cfg.adminTokenFile != null) ''
-        ADMIN_TOKEN=$(cat ${cfg.adminTokenFile})
+          ADMIN_TOKEN=$(cat ${cfg.adminTokenFile})
         ''}
         EOF
 

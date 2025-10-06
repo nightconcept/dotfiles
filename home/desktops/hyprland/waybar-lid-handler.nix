@@ -9,14 +9,14 @@
     systemd.user.services.waybar-lid-handler = {
       Unit = {
         Description = "Refresh waybar on lid open";
-        After = [ "graphical-session.target" ];
+        After = ["graphical-session.target"];
       };
-      
+
       Service = {
         Type = "simple";
         ExecStart = pkgs.writeShellScript "waybar-lid-handler" ''
           #!/usr/bin/env bash
-          
+
           # Monitor for lid events
           ${pkgs.acpid}/bin/acpi_listen | while IFS= read -r line; do
             if echo "$line" | grep -q "button/lid.*open"; then
@@ -30,17 +30,17 @@
         Restart = "always";
         RestartSec = "5";
       };
-      
+
       Install = {
-        WantedBy = [ "hyprland-session.target" ];
+        WantedBy = ["hyprland-session.target"];
       };
     };
-    
+
     # Alternative: Use Hyprland's exec-once to monitor lid events
     wayland.windowManager.hyprland.extraConfig = lib.mkAfter ''
       # Refresh waybar on various system events
       bind = , XF86ScreenSaver, exec, pkill -SIGUSR2 waybar
-      
+
       # Monitor lid events and refresh waybar
       exec-once = ${pkgs.writeShellScript "waybar-lid-monitor" ''
         #!/usr/bin/env bash

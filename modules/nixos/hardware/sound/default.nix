@@ -1,12 +1,12 @@
 # Sound configuration module
-{ config, lib, ... }:
-
-with lib;
-
-let
-  cfg = config.modules.nixos.hardware.sound;
-in
 {
+  config,
+  lib,
+  ...
+}:
+with lib; let
+  cfg = config.modules.nixos.hardware.sound;
+in {
   options.modules.nixos.hardware.sound = {
     enable = mkEnableOption "Sound support";
   };

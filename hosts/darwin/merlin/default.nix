@@ -1,5 +1,5 @@
 # Merlin - Mac Mini M1 (desktop)
-{ pkgs, ... }: {
+{pkgs, ...}: {
   # Enable Darwin modules for desktop
   modules.darwin = {
     core.enable = true;

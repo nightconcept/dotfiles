@@ -1,12 +1,12 @@
 # SOPS secrets management module
-{ config, lib, ... }:
-
-with lib;
-
-let
-  cfg = config.modules.nixos.security.sops;
-in
 {
+  config,
+  lib,
+  ...
+}:
+with lib; let
+  cfg = config.modules.nixos.security.sops;
+in {
   options.modules.nixos.security.sops = {
     enable = mkOption {
       type = types.bool;
@@ -43,7 +43,7 @@ in
       age.keyFile = "/var/lib/sops-nix/key.txt";
 
       # Fallback to SSH host keys if age key is not available
-      age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+      age.sshKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"];
 
       secrets = {
         "ssh_keys/id_sdev" = {

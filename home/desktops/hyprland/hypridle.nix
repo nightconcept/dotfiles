@@ -14,10 +14,10 @@
     home.packages = with pkgs; [
       (writeShellScriptBin "hypridle-wrapper" ''
         #!/usr/bin/env bash
-        
+
         # Kill any existing hypridle instances
         killall hypridle 2>/dev/null
-        
+
         # Check if AC adapter is connected (on battery = 0, on AC = 1)
         on_ac() {
           if [[ -f /sys/class/power_supply/AC/online ]]; then
@@ -31,7 +31,7 @@
             true
           fi
         }
-        
+
         # Start hypridle with appropriate config
         if on_ac; then
           hypridle -c ~/.config/hypr/hypridle-plugged.conf
@@ -40,7 +40,7 @@
         fi
       '')
     ];
-    
+
     # Hypridle configuration for when laptop is PLUGGED IN
     xdg.configFile."hypr/hypridle-plugged.conf".text = ''
       general {
@@ -75,7 +75,7 @@
         on-timeout = systemctl suspend              # suspend system
       }
     '';
-    
+
     # Hypridle configuration for when laptop is UNPLUGGED (on battery)
     xdg.configFile."hypr/hypridle-unplugged.conf".text = ''
       general {

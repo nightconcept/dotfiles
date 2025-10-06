@@ -1,6 +1,11 @@
 # Custom NixOS installer ISO for tidus-persist with disko and impermanence
-{ config, pkgs, lib, modulesPath, ... }:
 {
+  config,
+  pkgs,
+  lib,
+  modulesPath,
+  ...
+}: {
   imports = [
     "${modulesPath}/installer/cd-dvd/installation-cd-minimal.nix"
   ];
@@ -189,11 +194,17 @@
 
   # Ensure we boot with all needed modules
   boot.initrd.availableKernelModules = [
-    "xhci_pci" "thunderbolt" "nvme" "usb_storage"
-    "sd_mod" "rtsx_pci_sdmmc" "aesni-intel" "cryptd"
+    "xhci_pci"
+    "thunderbolt"
+    "nvme"
+    "usb_storage"
+    "sd_mod"
+    "rtsx_pci_sdmmc"
+    "aesni-intel"
+    "cryptd"
   ];
 
-  boot.kernelModules = [ "kvm-intel" ];
+  boot.kernelModules = ["kvm-intel"];
 
   # Use latest kernel for best hardware support
   boot.kernelPackages = pkgs.linuxPackages_latest;

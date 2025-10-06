@@ -1,12 +1,14 @@
 # Uptime Kuma Monitoring Container Module
-{ config, lib, pkgs, ... }:
-
-let
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
   cfg = config.modules.nixos.docker.containers.uptime-kuma;
   containerName = "uptimekuma";
   containerPath = "/var/lib/docker-containers/${containerName}";
-in
-{
+in {
   options.modules.nixos.docker.containers.uptime-kuma = {
     enable = lib.mkEnableOption "Uptime Kuma monitoring service";
 
@@ -51,9 +53,9 @@ in
 
     systemd.services."docker-container-${containerName}" = {
       description = "Uptime Kuma Monitoring Container";
-      after = [ "docker.service" "docker-network-proxy.service" ];
-      requires = [ "docker.service" "docker-network-proxy.service" ];
-      wantedBy = [ "multi-user.target" ];
+      after = ["docker.service" "docker-network-proxy.service"];
+      requires = ["docker.service" "docker-network-proxy.service"];
+      wantedBy = ["multi-user.target"];
 
       preStart = ''
         # Copy docker-compose.yml to runtime directory
@@ -64,7 +66,11 @@ in
         DATA_PATH=${cfg.dataPath}
         PORT=${toString cfg.port}
         DOMAIN=${cfg.subdomain}.${cfg.domain}
-        USE_AUTHELIA=${if cfg.useAuthelia then "true" else "false"}
+        USE_AUTHELIA=${
+          if cfg.useAuthelia
+          then "true"
+          else "false"
+        }
         EOF
       '';
 
@@ -77,6 +83,6 @@ in
       };
     };
 
-    networking.firewall.allowedTCPPorts = [ cfg.port ];
+    networking.firewall.allowedTCPPorts = [cfg.port];
   };
 }

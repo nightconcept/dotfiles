@@ -1,12 +1,14 @@
 # Lix - Alternative Nix implementation
-{ config, lib, pkgs, inputs, ... }:
-
-with lib;
-
-let
-  cfg = config.modules.nixos.core.lix;
-in
 {
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
+}:
+with lib; let
+  cfg = config.modules.nixos.core.lix;
+in {
   options.modules.nixos.core.lix = {
     enable = mkOption {
       type = types.bool;

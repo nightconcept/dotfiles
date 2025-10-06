@@ -1,12 +1,13 @@
 # USB automount configuration module
-{ config, lib, pkgs, ... }:
-
-with lib;
-
-let
-  cfg = config.modules.nixos.hardware.usbAutomount;
-in
 {
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+with lib; let
+  cfg = config.modules.nixos.hardware.usbAutomount;
+in {
   options.modules.nixos.hardware.usbAutomount = {
     enable = mkEnableOption "USB drive automounting";
   };

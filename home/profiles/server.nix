@@ -1,7 +1,10 @@
 # Minimal server configuration
-{ config, lib, pkgs, ... }:
-
 {
+  config,
+  lib,
+  pkgs,
+  ...
+}: {
   imports = [
     ./base.nix
   ];

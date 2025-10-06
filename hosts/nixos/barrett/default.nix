@@ -5,8 +5,7 @@
   lib,
   inputs,
   ...
-}:
-{
+}: {
   imports = [
     ./hardware-configuration.nix
   ];
@@ -20,7 +19,7 @@
     efi.canTouchEfiVariables = lib.mkForce false;
     grub = {
       enable = true;
-      device = "/dev/sda";  # Install GRUB to MBR
+      device = "/dev/sda"; # Install GRUB to MBR
     };
   };
 
@@ -72,7 +71,7 @@
         intervalMinutes = 5;
         strategies = {
           minimal_seed_strategy = {
-            remove = "seeding_time > 600";  # 10 minutes
+            remove = "seeding_time > 600"; # 10 minutes
             delete_data = true;
           };
         };
@@ -81,11 +80,10 @@
       # IP filter for blocking malicious peers
       ipfilter = {
         enable = true;
-        updateIntervalHours = 24;  # Update daily
+        updateIntervalHours = 24; # Update daily
       };
     };
   };
-
 
   # System packages for server management
   environment.systemPackages = with pkgs; [

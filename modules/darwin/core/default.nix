@@ -1,12 +1,13 @@
 # Core Darwin system configuration
-{ config, lib, pkgs, ... }:
-
-with lib;
-
-let
-  cfg = config.modules.darwin.core;
-in
 {
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+with lib; let
+  cfg = config.modules.darwin.core;
+in {
   options.modules.darwin.core = {
     enable = mkEnableOption "core Darwin configuration";
 

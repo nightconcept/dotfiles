@@ -1,12 +1,13 @@
 # Power management configuration module
-{ config, lib, pkgs, ... }:
-
-with lib;
-
-let
-  cfg = config.modules.nixos.hardware.power;
-in
 {
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+with lib; let
+  cfg = config.modules.nixos.hardware.power;
+in {
   options.modules.nixos.hardware.power = {
     enable = mkEnableOption "Power management";
   };

@@ -3,16 +3,14 @@
   lib,
   pkgs,
   ...
-}:
-let
+}: let
   inherit (lib) mkIf;
   cfg = config.modules.nixos.services.plex;
 
   # Import our custom lib functions
-  moduleLib = import ../../../../lib/module { inherit lib; };
+  moduleLib = import ../../../../lib/module {inherit lib;};
   inherit (moduleLib) mkBoolOpt mkOpt enabled disabled;
-in
-{
+in {
   options.modules.nixos.services.plex = {
     enable = mkBoolOpt false "Enable Plex Media Server";
 
@@ -23,15 +21,15 @@ in
     openFirewall = mkBoolOpt true "Open firewall ports for Plex";
 
     ports = mkOpt (lib.types.listOf lib.types.port) [
-      32400  # Plex Media Server
-      1900   # UPnP/DLNA
-      5353   # mDNS
-      8324   # Plex for Roku
-      32410  # GDM network discovery
-      32412  # GDM network discovery
-      32413  # GDM network discovery
-      32414  # GDM network discovery
-      32469  # Plex DLNA Server
+      32400 # Plex Media Server
+      1900 # UPnP/DLNA
+      5353 # mDNS
+      8324 # Plex for Roku
+      32410 # GDM network discovery
+      32412 # GDM network discovery
+      32413 # GDM network discovery
+      32414 # GDM network discovery
+      32469 # Plex DLNA Server
     ] "TCP ports to open for Plex service";
   };
 

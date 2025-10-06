@@ -21,20 +21,20 @@
       in {
         "*" = {
           # Tokyo Night color palette
-          bg-col = mkLiteral "#1a1b26";           # tokyonight_bg
-          bg-col-light = mkLiteral "#292e42";     # tokyonight_bg_highlight
-          border-col = mkLiteral "#7aa2f7";       # tokyonight_blue
-          selected-col = mkLiteral "#3b4261";     # tokyonight_fg_gutter
-          blue = mkLiteral "#7aa2f7";             # tokyonight_blue
-          cyan = mkLiteral "#7dcfff";             # tokyonight_cyan
-          fg-col = mkLiteral "#c0caf5";           # tokyonight_fg
-          fg-col2 = mkLiteral "#a9b1d6";          # tokyonight_fg_dark
-          grey = mkLiteral "#565f89";             # tokyonight_comment
-          red = mkLiteral "#f7768e";              # tokyonight_red
-          green = mkLiteral "#9ece6a";            # tokyonight_green
-          yellow = mkLiteral "#e0af68";           # tokyonight_yellow
-          orange = mkLiteral "#ff9e64";           # tokyonight_orange
-          purple = mkLiteral "#bb9af7";           # tokyonight_magenta
+          bg-col = mkLiteral "#1a1b26"; # tokyonight_bg
+          bg-col-light = mkLiteral "#292e42"; # tokyonight_bg_highlight
+          border-col = mkLiteral "#7aa2f7"; # tokyonight_blue
+          selected-col = mkLiteral "#3b4261"; # tokyonight_fg_gutter
+          blue = mkLiteral "#7aa2f7"; # tokyonight_blue
+          cyan = mkLiteral "#7dcfff"; # tokyonight_cyan
+          fg-col = mkLiteral "#c0caf5"; # tokyonight_fg
+          fg-col2 = mkLiteral "#a9b1d6"; # tokyonight_fg_dark
+          grey = mkLiteral "#565f89"; # tokyonight_comment
+          red = mkLiteral "#f7768e"; # tokyonight_red
+          green = mkLiteral "#9ece6a"; # tokyonight_green
+          yellow = mkLiteral "#e0af68"; # tokyonight_yellow
+          orange = mkLiteral "#ff9e64"; # tokyonight_orange
+          purple = mkLiteral "#bb9af7"; # tokyonight_magenta
 
           width = 600;
           font = "${config.stylix.fonts.monospace.name} ${toString config.stylix.fonts.sizes.applications}";

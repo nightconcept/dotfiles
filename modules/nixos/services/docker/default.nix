@@ -1,9 +1,11 @@
-{ config, lib, pkgs, ... }:
-
-let
-  cfg = config.modules.nixos.docker;
-in
 {
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
+  cfg = config.modules.nixos.docker;
+in {
   imports = [
     # Core infrastructure
     ./containers/traefik
@@ -89,7 +91,7 @@ in
       autoPrune = {
         enable = true;
         dates = "weekly";
-        flags = [ "--all" ];
+        flags = ["--all"];
       };
       # Swarm mode requires live-restore to be disabled
       daemon.settings = lib.mkIf cfg.swarm.enable {
@@ -97,12 +99,12 @@ in
       };
     };
 
-    users.users.danny.extraGroups = [ "docker" ];
+    users.users.danny.extraGroups = ["docker"];
 
     environment.systemPackages = [
       cfg.composePackage
       pkgs.lazydocker
-      pkgs.yq  # For manipulating docker-compose.yml files
+      pkgs.yq # For manipulating docker-compose.yml files
     ];
 
     # Create base directories
@@ -113,9 +115,9 @@ in
     # Create proxy network for containers
     systemd.services.docker-network-proxy = {
       description = "Create Docker proxy network";
-      after = [ "docker.service" ];
-      requires = [ "docker.service" ];
-      wantedBy = [ "multi-user.target" ];
+      after = ["docker.service"];
+      requires = ["docker.service"];
+      wantedBy = ["multi-user.target"];
       script = ''
         ${pkgs.docker}/bin/docker network ls | grep -q proxy || \
         ${pkgs.docker}/bin/docker network create proxy

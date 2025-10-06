@@ -6,8 +6,7 @@
   lib,
   inputs,
   ...
-}:
-{
+}: {
   imports = [
     ./hardware-configuration.nix
   ];
@@ -72,7 +71,6 @@
       schedule = "0 0 4 * * *";
     };
   };
-
 
   # System state version
   system.stateVersion = "24.11";

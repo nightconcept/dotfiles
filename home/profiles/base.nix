@@ -1,7 +1,10 @@
 # Base configuration shared across all machines
-{ config, lib, pkgs, ... }:
-
 {
+  config,
+  lib,
+  pkgs,
+  ...
+}: {
   imports = [
     ../../modules/home
   ];
@@ -34,7 +37,7 @@
       };
       common.enable = true;
       direnv.enable = true;
-      gemini-cli.enable = true;  # Uses bin version by default
+      gemini-cli.enable = true; # Uses bin version by default
       git.enable = true;
       nvim = {
         enable = true;

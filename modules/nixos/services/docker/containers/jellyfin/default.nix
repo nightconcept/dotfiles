@@ -1,12 +1,14 @@
 # Jellyfin Media Server Container Module
-{ config, lib, pkgs, ... }:
-
-let
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
   cfg = config.modules.nixos.docker.containers.jellyfin;
   containerName = "jellyfin";
   containerPath = "/var/lib/docker-containers/${containerName}";
-in
-{
+in {
   options.modules.nixos.docker.containers.jellyfin = {
     enable = lib.mkEnableOption "Jellyfin media server container";
 
@@ -89,9 +91,9 @@ in
     # Jellyfin container service
     systemd.services."docker-container-${containerName}" = {
       description = "Jellyfin Media Server Container";
-      after = [ "docker.service" "docker-network-proxy.service" ];
-      requires = [ "docker.service" "docker-network-proxy.service" ];
-      wantedBy = [ "multi-user.target" ];
+      after = ["docker.service" "docker-network-proxy.service"];
+      requires = ["docker.service" "docker-network-proxy.service"];
+      wantedBy = ["multi-user.target"];
 
       preStart = ''
         # Copy docker-compose.yml to runtime directory
@@ -124,8 +126,8 @@ in
 
     # Open firewall ports
     networking.firewall = {
-      allowedTCPPorts = [ cfg.ports.webUI cfg.ports.https ];
-      allowedUDPPorts = [ cfg.ports.discovery cfg.ports.dlna ];
+      allowedTCPPorts = [cfg.ports.webUI cfg.ports.https];
+      allowedUDPPorts = [cfg.ports.discovery cfg.ports.dlna];
     };
   };
 }

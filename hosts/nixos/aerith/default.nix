@@ -5,8 +5,7 @@
   lib,
   inputs,
   ...
-}:
-{
+}: {
   imports = [
     ./hardware-configuration.nix
   ];
@@ -23,7 +22,7 @@
     efi.canTouchEfiVariables = lib.mkForce false;
     grub = {
       enable = true;
-      device = "/dev/sda";  # Install GRUB to MBR
+      device = "/dev/sda"; # Install GRUB to MBR
     };
   };
 

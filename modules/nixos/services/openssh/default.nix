@@ -1,12 +1,12 @@
 # OpenSSH server configuration module
-{ config, lib, ... }:
-
-with lib;
-
-let
-  cfg = config.modules.nixos.services.openssh;
-in
 {
+  config,
+  lib,
+  ...
+}:
+with lib; let
+  cfg = config.modules.nixos.services.openssh;
+in {
   options.modules.nixos.services.openssh = {
     enable = mkOption {
       type = types.bool;
@@ -36,7 +36,7 @@ in
   config = mkIf cfg.enable {
     services.openssh = {
       enable = true;
-      ports = [ cfg.port ];
+      ports = [cfg.port];
 
       settings = {
         # Security hardening
@@ -49,7 +49,7 @@ in
 
         # Disable unused authentication methods
         ChallengeResponseAuthentication = false;
-        UsePAM = true;  # Required for password authentication
+        UsePAM = true; # Required for password authentication
 
         # Connection limits
         MaxAuthTries = 3;

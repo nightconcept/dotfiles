@@ -1,12 +1,14 @@
 # Watchtower Auto-Update Container Module
-{ config, lib, pkgs, ... }:
-
-let
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
   cfg = config.modules.nixos.docker.containers.watchtower;
   containerName = "watchtower";
   containerPath = "/var/lib/docker-containers/${containerName}";
-in
-{
+in {
   options.modules.nixos.docker.containers.watchtower = {
     enable = lib.mkEnableOption "Watchtower container auto-updater";
 
@@ -18,9 +20,10 @@ in
 
     apiTokenFile = lib.mkOption {
       type = lib.types.nullOr lib.types.path;
-      default = if config.modules.nixos.security.sops.enable
-               then "/run/secrets/services/watchtower/api_token"
-               else null;
+      default =
+        if config.modules.nixos.security.sops.enable
+        then "/run/secrets/services/watchtower/api_token"
+        else null;
       description = "Path to file containing Watchtower API token";
     };
   };
@@ -34,9 +37,9 @@ in
 
     systemd.services."docker-container-${containerName}" = {
       description = "Watchtower Auto-Update Container";
-      after = [ "docker.service" "docker-network-proxy.service" ];
-      requires = [ "docker.service" "docker-network-proxy.service" ];
-      wantedBy = [ "multi-user.target" ];
+      after = ["docker.service" "docker-network-proxy.service"];
+      requires = ["docker.service" "docker-network-proxy.service"];
+      wantedBy = ["multi-user.target"];
 
       preStart = ''
         # Use docker-compose.yml with proxy network
@@ -68,7 +71,7 @@ in
         cat > ${containerPath}/.env <<EOF
         WATCHTOWER_SCHEDULE=${cfg.schedule}
         ${lib.optionalString (cfg.apiTokenFile != null) ''
-        WATCHTOWER_HTTP_API_TOKEN=$(cat ${cfg.apiTokenFile})
+          WATCHTOWER_HTTP_API_TOKEN=$(cat ${cfg.apiTokenFile})
         ''}
         EOF
       '';

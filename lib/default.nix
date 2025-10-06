@@ -6,5 +6,5 @@
   ...
 }: {
   # Custom module helper functions
-  module = import ./module { inherit lib; };
+  module = import ./module {inherit lib;};
 }

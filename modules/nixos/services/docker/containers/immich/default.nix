@@ -1,12 +1,14 @@
 # Immich photo management system module
-{ config, lib, pkgs, ... }:
-
-let
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
   cfg = config.modules.nixos.docker.containers.immich;
   containerName = "immich";
   containerPath = "/var/lib/docker-containers/${containerName}";
-in
-{
+in {
   options.modules.nixos.docker.containers.immich = {
     enable = lib.mkEnableOption "Immich photo management system";
 
@@ -36,9 +38,10 @@ in
 
     dbPasswordFile = lib.mkOption {
       type = lib.types.nullOr lib.types.path;
-      default = if config.modules.nixos.security.sops.enable
-               then "/run/secrets/services/immich/db_password"
-               else null;
+      default =
+        if config.modules.nixos.security.sops.enable
+        then "/run/secrets/services/immich/db_password"
+        else null;
       description = "Path to file containing database password";
     };
 
@@ -63,17 +66,17 @@ in
     systemd.tmpfiles.rules = [
       "d ${containerPath} 0755 root root -"
       "d /home/danny/docker/immich 0755 danny users -"
-      "d ${cfg.dbDataLocation} 0755 999 999 -"  # PostgreSQL user
+      "d ${cfg.dbDataLocation} 0755 999 999 -" # PostgreSQL user
       "d ${cfg.uploadLocation} 0755 danny users -"
     ];
 
     # Immich multi-container service
     systemd.services."docker-container-${containerName}" = {
       description = "Immich Photo Management System";
-      after = [ "docker.service" "docker-network-proxy.service" "mnt-titan.mount" ];
-      requires = [ "docker.service" "docker-network-proxy.service" ];
-      wants = [ "mnt-titan.mount" ];
-      wantedBy = [ "multi-user.target" ];
+      after = ["docker.service" "docker-network-proxy.service" "mnt-titan.mount"];
+      requires = ["docker.service" "docker-network-proxy.service"];
+      wants = ["mnt-titan.mount"];
+      wantedBy = ["multi-user.target"];
 
       preStart = ''
         # Copy docker-compose.yml to runtime directory
@@ -100,16 +103,16 @@ in
 
         # Add password from secrets file
         ${lib.optionalString (cfg.dbPasswordFile != null) ''
-        if [ -f ${cfg.dbPasswordFile} ]; then
-          echo "DB_PASSWORD=$(cat ${cfg.dbPasswordFile})" >> ${containerPath}/.env
-        else
-          echo "Error: Database password file not found at ${cfg.dbPasswordFile}"
-          exit 1
-        fi
+          if [ -f ${cfg.dbPasswordFile} ]; then
+            echo "DB_PASSWORD=$(cat ${cfg.dbPasswordFile})" >> ${containerPath}/.env
+          else
+            echo "Error: Database password file not found at ${cfg.dbPasswordFile}"
+            exit 1
+          fi
         ''}
         ${lib.optionalString (cfg.dbPasswordFile == null) ''
-        echo "Error: No database password configured"
-        exit 1
+          echo "Error: No database password configured"
+          exit 1
         ''}
 
         # Update docker-compose.yml with proper subdomain

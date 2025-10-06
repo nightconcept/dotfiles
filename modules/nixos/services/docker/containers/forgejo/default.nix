@@ -1,12 +1,14 @@
 # Forgejo Git Forge Container Module
-{ config, lib, pkgs, ... }:
-
-let
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
   cfg = config.modules.nixos.docker.containers.forgejo;
   containerName = "forgejo";
   containerPath = "/var/lib/docker-containers/${containerName}";
-in
-{
+in {
   options.modules.nixos.docker.containers.forgejo = {
     enable = lib.mkEnableOption "Forgejo git forge";
 
@@ -70,9 +72,9 @@ in
 
     systemd.services."docker-container-${containerName}" = {
       description = "Forgejo Git Forge Container";
-      after = [ "docker.service" "docker-network-proxy.service" ];
-      requires = [ "docker.service" "docker-network-proxy.service" ];
-      wantedBy = [ "multi-user.target" ];
+      after = ["docker.service" "docker-network-proxy.service"];
+      requires = ["docker.service" "docker-network-proxy.service"];
+      wantedBy = ["multi-user.target"];
 
       preStart = ''
         # Copy docker-compose.yml to runtime directory
@@ -86,7 +88,11 @@ in
         FORGEJO_DOMAIN=${cfg.domain}
         FORGEJO_SSH_PORT=${toString cfg.sshPort}
         FORGEJO_HTTP_PORT=${toString cfg.httpPort}
-        FORGEJO_ACTIONS_ENABLED=${if cfg.enableActions then "true" else "false"}
+        FORGEJO_ACTIONS_ENABLED=${
+          if cfg.enableActions
+          then "true"
+          else "false"
+        }
         FORGEJO_ACTIONS_URL=${cfg.actionsUrl}
         EOF
       '';
@@ -100,6 +106,6 @@ in
       };
     };
 
-    networking.firewall.allowedTCPPorts = [ cfg.sshPort ];
+    networking.firewall.allowedTCPPorts = [cfg.sshPort];
   };
 }

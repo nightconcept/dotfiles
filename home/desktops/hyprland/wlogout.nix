@@ -11,7 +11,7 @@
   config = lib.mkIf (config.desktops.hyprland.enable or false) {
     programs.wlogout = {
       enable = true;
-      
+
       layout = [
         {
           label = "lock";
@@ -50,7 +50,7 @@
           keybind = "r";
         }
       ];
-      
+
       style = let
         colors = config.lib.stylix.colors;
       in ''

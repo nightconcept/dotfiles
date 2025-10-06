@@ -1,12 +1,14 @@
 # Traefik Reverse Proxy Container Module
-{ config, lib, pkgs, ... }:
-
-let
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
   cfg = config.modules.nixos.docker.containers.traefik;
   containerName = "traefik";
   containerPath = "/var/lib/docker-containers/${containerName}";
-in
-{
+in {
   options.modules.nixos.docker.containers.traefik = {
     enable = lib.mkEnableOption "Traefik reverse proxy container";
 
@@ -66,9 +68,10 @@ in
 
     cloudflareTokenFile = lib.mkOption {
       type = lib.types.nullOr lib.types.path;
-      default = if config.modules.nixos.security.sops.enable
-               then "/run/secrets/services/traefik/cloudflare_token"
-               else null;
+      default =
+        if config.modules.nixos.security.sops.enable
+        then "/run/secrets/services/traefik/cloudflare_token"
+        else null;
       description = "Path to file containing Cloudflare DNS API token";
       example = "/run/secrets/cloudflare-dns-token";
     };
@@ -125,13 +128,12 @@ in
       "d ${containerPath}/logs 0755 root root -"
     ];
 
-
     # Traefik container service
     systemd.services."docker-container-${containerName}" = {
       description = "Traefik Reverse Proxy Container";
-      after = [ "docker.service" "docker-network-proxy.service" ];
-      requires = [ "docker.service" "docker-network-proxy.service" ];
-      wantedBy = [ "multi-user.target" ];
+      after = ["docker.service" "docker-network-proxy.service"];
+      requires = ["docker.service" "docker-network-proxy.service"];
+      wantedBy = ["multi-user.target"];
 
       preStart = ''
         # Copy docker-compose.yml to runtime directory
@@ -140,7 +142,7 @@ in
         # Generate .env file
         cat > ${containerPath}/.env <<EOF
         ${lib.optionalString (cfg.cloudflareTokenFile != null) ''
-        CLOUDFLARE_DNS_API_TOKEN=$(cat ${cfg.cloudflareTokenFile})
+          CLOUDFLARE_DNS_API_TOKEN=$(cat ${cfg.cloudflareTokenFile})
         ''}
         CONFIG_PATH=${cfg.configPath}
         DOMAIN=${cfg.domain}
@@ -157,50 +159,50 @@ in
 
         # Generate Dokploy routing configuration if enabled
         ${lib.optionalString cfg.dokployIntegration.enable ''
-          cat > ${cfg.configPath}/dokploy-routing.yml <<'DOKPLOY_CONFIG'
-        # Dokploy routing configuration - auto-generated
-        http:
-          services:
-            # Dokploy dashboard service
-            dokploy-dashboard:
-              loadBalancer:
-                servers:
-                  - url: "http://${cfg.dokployIntegration.host}:${toString cfg.dokployIntegration.ports.dashboard}"
+            cat > ${cfg.configPath}/dokploy-routing.yml <<'DOKPLOY_CONFIG'
+          # Dokploy routing configuration - auto-generated
+          http:
+            services:
+              # Dokploy dashboard service
+              dokploy-dashboard:
+                loadBalancer:
+                  servers:
+                    - url: "http://${cfg.dokployIntegration.host}:${toString cfg.dokployIntegration.ports.dashboard}"
 
-            # Dokploy Traefik service (for deployed applications)
-            dokploy-apps:
-              loadBalancer:
-                servers:
-                  - url: "https://${cfg.dokployIntegration.host}:${toString cfg.dokployIntegration.ports.traefik}"
-                serversTransport: dokploy-transport
+              # Dokploy Traefik service (for deployed applications)
+              dokploy-apps:
+                loadBalancer:
+                  servers:
+                    - url: "https://${cfg.dokployIntegration.host}:${toString cfg.dokployIntegration.ports.traefik}"
+                  serversTransport: dokploy-transport
 
-          routers:
-            # Route for Dokploy dashboard
-            dokploy-dashboard:
-              rule: "Host(\`${cfg.dokployIntegration.dashboardSubdomain}.${cfg.domain}\`)"
-              entryPoints:
-                - https
-              service: dokploy-dashboard
-              tls:
-                certResolver: cloudflare
+            routers:
+              # Route for Dokploy dashboard
+              dokploy-dashboard:
+                rule: "Host(\`${cfg.dokployIntegration.dashboardSubdomain}.${cfg.domain}\`)"
+                entryPoints:
+                  - https
+                service: dokploy-dashboard
+                tls:
+                  certResolver: cloudflare
 
-            # Wildcard route for all Dokploy-deployed applications
-            dokploy-apps:
-              rule: "HostRegexp(\`{subdomain:[a-z0-9-]+}.${cfg.dokployIntegration.appsSubdomain}.${cfg.domain}\`)"
-              entryPoints:
-                - https
-              service: dokploy-apps
-              tls:
-                certResolver: cloudflare
-                domains:
-                  - main: "*.${cfg.dokployIntegration.appsSubdomain}.${cfg.domain}"
+              # Wildcard route for all Dokploy-deployed applications
+              dokploy-apps:
+                rule: "HostRegexp(\`{subdomain:[a-z0-9-]+}.${cfg.dokployIntegration.appsSubdomain}.${cfg.domain}\`)"
+                entryPoints:
+                  - https
+                service: dokploy-apps
+                tls:
+                  certResolver: cloudflare
+                  domains:
+                    - main: "*.${cfg.dokployIntegration.appsSubdomain}.${cfg.domain}"
 
-          serversTransports:
-            # Transport configuration for Dokploy's Traefik
-            dokploy-transport:
-              insecureSkipVerify: true  # Skip cert verification for internal traffic
-              maxIdleConnsPerHost: 10
-        DOKPLOY_CONFIG
+            serversTransports:
+              # Transport configuration for Dokploy's Traefik
+              dokploy-transport:
+                insecureSkipVerify: true  # Skip cert verification for internal traffic
+                maxIdleConnsPerHost: 10
+          DOKPLOY_CONFIG
         ''}
 
         # Ensure acme.json exists with correct permissions
@@ -284,6 +286,6 @@ in
     };
 
     # Open firewall ports
-    networking.firewall.allowedTCPPorts = [ cfg.ports.http cfg.ports.https ];
+    networking.firewall.allowedTCPPorts = [cfg.ports.http cfg.ports.https];
   };
 }

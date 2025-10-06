@@ -3,10 +3,9 @@
   lib,
   pkgs,
   ...
-}:
-let
+}: let
   # Import our custom lib functions
-  moduleLib = import ../../../lib/module { inherit lib; };
+  moduleLib = import ../../../lib/module {inherit lib;};
   inherit (moduleLib) mkBoolOpt mkOpt enabled;
 
   # Helper for string options
@@ -16,13 +15,15 @@ let
 
   # Claude Code settings.json configuration
   claudeSettingsConfig = pkgs.writeText "claude-settings.json" (builtins.toJSON (
-    if cfg.statusline.enable then {
+    if cfg.statusline.enable
+    then {
       model = "sonnet";
       statusLine = {
         type = "command";
         command = "bash $HOME/.claude/statusline-command.sh";
       };
-    } else {
+    }
+    else {
       model = "sonnet";
     }
   ));
@@ -413,44 +414,61 @@ let
   mcpConfig = pkgs.writeText "mcp-config.json" (builtins.toJSON {
     mcpServers = lib.filterAttrs (n: v: v != null) {
       # Sequential thinking server for problem-solving
-      sequential-thinking = if cfg.mcp.sequential-thinking.enable then {
-        command = "npx";
-        args = [ "-y" "@modelcontextprotocol/server-sequential-thinking" ];
-      } else null;
+      sequential-thinking =
+        if cfg.mcp.sequential-thinking.enable
+        then {
+          command = "npx";
+          args = ["-y" "@modelcontextprotocol/server-sequential-thinking"];
+        }
+        else null;
 
       # Filesystem server with configurable paths
-      filesystem = if cfg.mcp.filesystem.enable then {
-        command = "npx";
-        args = [ "-y" "@modelcontextprotocol/server-filesystem" ] ++ cfg.mcp.filesystem.paths;
-      } else null;
+      filesystem =
+        if cfg.mcp.filesystem.enable
+        then {
+          command = "npx";
+          args = ["-y" "@modelcontextprotocol/server-filesystem"] ++ cfg.mcp.filesystem.paths;
+        }
+        else null;
 
       # Puppeteer for web automation
-      puppeteer = if cfg.mcp.puppeteer.enable then {
-        command = "npx";
-        args = [ "-y" "@modelcontextprotocol/server-puppeteer" ];
-      } else null;
+      puppeteer =
+        if cfg.mcp.puppeteer.enable
+        then {
+          command = "npx";
+          args = ["-y" "@modelcontextprotocol/server-puppeteer"];
+        }
+        else null;
 
       # Enhanced fetch server
-      fetch = if cfg.mcp.fetch.enable then {
-        command = "npx";
-        args = [ "-y" "@kazuph/mcp-fetch" ];
-      } else null;
+      fetch =
+        if cfg.mcp.fetch.enable
+        then {
+          command = "npx";
+          args = ["-y" "@kazuph/mcp-fetch"];
+        }
+        else null;
 
       # Brave search (requires API key) - uses wrapper script
-      brave-search = if cfg.mcp.brave-search.enable then {
-        command = "${braveSearchMcpScript}/bin/brave-search-mcp";
-        args = [];
-      } else null;
+      brave-search =
+        if cfg.mcp.brave-search.enable
+        then {
+          command = "${braveSearchMcpScript}/bin/brave-search-mcp";
+          args = [];
+        }
+        else null;
 
       # Context7 for library docs (requires API key) - uses wrapper script
-      context7 = if cfg.mcp.context7.enable then {
-        command = "${context7McpScript}/bin/context7-mcp";
-        args = [];
-      } else null;
+      context7 =
+        if cfg.mcp.context7.enable
+        then {
+          command = "${context7McpScript}/bin/context7-mcp";
+          args = [];
+        }
+        else null;
     };
   });
-in
-{
+in {
   options.modules.home.programs.claude-code = {
     enable = mkBoolOpt true "Enable Claude Code configuration";
 
@@ -531,98 +549,101 @@ in
     };
 
     # Install Claude Code package and additional scripts
-    home.packages = [ pkgs.claude-code ] ++ (with pkgs; [
-      (writeShellScriptBin "claude-setup" ''
-        #!/usr/bin/env bash
-        set -e
+    home.packages =
+      [pkgs.claude-code]
+      ++ (with pkgs; [
+        (writeShellScriptBin "claude-setup" ''
+          #!/usr/bin/env bash
+          set -e
 
-        echo "=== Claude Code Configuration Setup ==="
-        echo ""
-
-        # Check if Claude Code is running
-        if pgrep -f "claude" > /dev/null 2>&1; then
-          echo "⚠️  Warning: Claude Code appears to be running."
-          echo "   Some changes may require restarting Claude Code."
+          echo "=== Claude Code Configuration Setup ==="
           echo ""
-        fi
 
-        # Ensure directory exists
-        mkdir -p ~/.claude
+          # Check if Claude Code is running
+          if pgrep -f "claude" > /dev/null 2>&1; then
+            echo "⚠️  Warning: Claude Code appears to be running."
+            echo "   Some changes may require restarting Claude Code."
+            echo ""
+          fi
 
-        # Statusline setup
-        if [ -f ~/.claude/statusline.json ]; then
-          echo "✓ Statusline configuration found at ~/.claude/statusline.json"
+          # Ensure directory exists
+          mkdir -p ~/.claude
+
+          # Statusline setup
+          if [ -f ~/.claude/statusline.json ]; then
+            echo "✓ Statusline configuration found at ~/.claude/statusline.json"
+            echo ""
+            echo "To apply the statusline, run in Claude Code:"
+            echo "  /statusline ~/.claude/statusline.json"
+          else
+            echo "✗ No statusline configuration found"
+          fi
+
           echo ""
-          echo "To apply the statusline, run in Claude Code:"
-          echo "  /statusline ~/.claude/statusline.json"
-        else
-          echo "✗ No statusline configuration found"
-        fi
 
-        echo ""
+          # MCP setup
+          if [ -f ~/.claude/mcp-config.json ]; then
+            echo "✓ MCP configuration found at ~/.claude/mcp-config.json"
+            echo ""
+            echo "To apply MCP servers, start Claude Code with:"
+            echo "  claude --mcp-config ~/.claude/mcp-config.json"
+            echo ""
+            echo "Or add them individually with commands like:"
+            echo "  claude mcp add-from-claude-desktop"
+            echo ""
+            echo "Current MCP servers configured in Nix:"
+            cat ~/.claude/mcp-config.json | jq -r '.mcpServers | keys[]' 2>/dev/null || echo "  (unable to parse)"
+          else
+            echo "✗ No MCP configuration found"
+          fi
 
-        # MCP setup
-        if [ -f ~/.claude/mcp-config.json ]; then
-          echo "✓ MCP configuration found at ~/.claude/mcp-config.json"
           echo ""
-          echo "To apply MCP servers, start Claude Code with:"
-          echo "  claude --mcp-config ~/.claude/mcp-config.json"
-          echo ""
-          echo "Or add them individually with commands like:"
-          echo "  claude mcp add-from-claude-desktop"
-          echo ""
-          echo "Current MCP servers configured in Nix:"
-          cat ~/.claude/mcp-config.json | jq -r '.mcpServers | keys[]' 2>/dev/null || echo "  (unable to parse)"
-        else
-          echo "✗ No MCP configuration found"
-        fi
+          echo "To see currently active MCP servers, run:"
+          echo "  claude mcp list"
+        '')
 
-        echo ""
-        echo "To see currently active MCP servers, run:"
-        echo "  claude mcp list"
-      '')
+        # Official Claude Code wrapper (preserves default behavior)
+        # Note: claude-code package already provides 'claude' binary
+        # This wrapper is commented out to avoid conflicts
+        # (writeShellScriptBin "claude" ''
+        #   #!/usr/bin/env bash
+        #   # Official Anthropic Claude Code
+        #   if [ -f ~/.claude/mcp-config.json ]; then
+        #     exec ${lib.getExe pkgs.claude-code} --mcp-config ~/.claude/mcp-config.json "$@"
+        #   else
+        #     exec ${lib.getExe pkgs.claude-code} "$@"
+        #   fi
+        # '')
 
-      # Official Claude Code wrapper (preserves default behavior)
-      # Note: claude-code package already provides 'claude' binary
-      # This wrapper is commented out to avoid conflicts
-      # (writeShellScriptBin "claude" ''
-      #   #!/usr/bin/env bash
-      #   # Official Anthropic Claude Code
-      #   if [ -f ~/.claude/mcp-config.json ]; then
-      #     exec ${lib.getExe pkgs.claude-code} --mcp-config ~/.claude/mcp-config.json "$@"
-      #   else
-      #     exec ${lib.getExe pkgs.claude-code} "$@"
-      #   fi
-      # '')
+        # Helper to start Claude with MCP config
+        (writeShellScriptBin "claude-mcp" ''
+          #!/usr/bin/env bash
+          if [ -f ~/.claude/mcp-config.json ]; then
+            exec claude --mcp-config ~/.claude/mcp-config.json "$@"
+          else
+            echo "MCP config not found. Run 'claude-setup' first."
+            exit 1
+          fi
+        '')
+      ])
+      ++ lib.optionals cfg.glm.enable [
+        # GLM (Z.AI) wrapper script
+        (pkgs.writeShellScriptBin "glm" ''
+          #!/usr/bin/env bash
+          # GLM-powered Claude Code via Z.AI
+          export ANTHROPIC_BASE_URL="${cfg.glm.baseUrl}"
+          export ANTHROPIC_AUTH_TOKEN="${cfg.glm.apiKey}"
+          export ANTHROPIC_DEFAULT_HAIKU_MODEL="${cfg.glm.fastModel}"
+          export ANTHROPIC_DEFAULT_SONNET_MODEL="${cfg.glm.defaultModel}"
+          export ANTHROPIC_DEFAULT_OPUS_MODEL="${cfg.glm.defaultModel}"
 
-      # Helper to start Claude with MCP config
-      (writeShellScriptBin "claude-mcp" ''
-        #!/usr/bin/env bash
-        if [ -f ~/.claude/mcp-config.json ]; then
-          exec claude --mcp-config ~/.claude/mcp-config.json "$@"
-        else
-          echo "MCP config not found. Run 'claude-setup' first."
-          exit 1
-        fi
-      '')
-    ]) ++ lib.optionals cfg.glm.enable [
-      # GLM (Z.AI) wrapper script
-      (pkgs.writeShellScriptBin "glm" ''
-        #!/usr/bin/env bash
-        # GLM-powered Claude Code via Z.AI
-        export ANTHROPIC_BASE_URL="${cfg.glm.baseUrl}"
-        export ANTHROPIC_AUTH_TOKEN="${cfg.glm.apiKey}"
-        export ANTHROPIC_DEFAULT_HAIKU_MODEL="${cfg.glm.fastModel}"
-        export ANTHROPIC_DEFAULT_SONNET_MODEL="${cfg.glm.defaultModel}"
-        export ANTHROPIC_DEFAULT_OPUS_MODEL="${cfg.glm.defaultModel}"
-
-        if [ -f ~/.claude/mcp-config.json ]; then
-          exec ${lib.getExe pkgs.claude-code} --mcp-config ~/.claude/mcp-config.json "$@"
-        else
-          exec ${lib.getExe pkgs.claude-code} "$@"
-        fi
-      '')
-    ];
+          if [ -f ~/.claude/mcp-config.json ]; then
+            exec ${lib.getExe pkgs.claude-code} --mcp-config ~/.claude/mcp-config.json "$@"
+          else
+            exec ${lib.getExe pkgs.claude-code} "$@"
+          fi
+        '')
+      ];
 
     # Add activation script
     home.activation.claudeCodeSetup = lib.mkIf (cfg.statusline.enable || cfg.mcp.enable || cfg.glm.enable) (
@@ -632,7 +653,7 @@ in
           $DRY_RUN_CMD echo "Run 'claude-setup' for setup instructions."
           ${lib.optionalString cfg.glm.enable ''
           $DRY_RUN_CMD echo "GLM wrapper available as 'glm' command."
-          ''}
+        ''}
           $DRY_RUN_CMD touch "$HOME/.claude/.nix_configured"
         fi
       ''

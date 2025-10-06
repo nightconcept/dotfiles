@@ -1,12 +1,12 @@
 # Locale and timezone configuration module
-{ config, lib, ... }:
-
-with lib;
-
-let
-  cfg = config.modules.nixos.core.locale;
-in
 {
+  config,
+  lib,
+  ...
+}:
+with lib; let
+  cfg = config.modules.nixos.core.locale;
+in {
   options.modules.nixos.core.locale = {
     enable = mkOption {
       type = types.bool;

@@ -1,21 +1,26 @@
-{ config, lib, pkgs, inputs, osConfig ? {}, ... }:
-
-with lib;
-let
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  osConfig ? {},
+  ...
+}:
+with lib; let
   cfg = config.modules.home.programs.nvim;
 
   # Distribution packages abstraction
   distroPackages = {
-    basic = [ pkgs.neovim ];
-    nvchad = [ inputs.nvchad.packages.${pkgs.system}.nvchad ];
-    lazyvim = [ inputs.lazyvim-nixvim.packages.${pkgs.system}.default ];
+    basic = [pkgs.neovim];
+    nvchad = [inputs.nvchad.packages.${pkgs.system}.nvchad];
+    lazyvim = [inputs.lazyvim-nixvim.packages.${pkgs.system}.default];
   };
 in {
   options.modules.home.programs.nvim = {
     enable = mkEnableOption "neovim configuration";
 
     distro = mkOption {
-      type = types.enum [ "basic" "nvchad" "lazyvim" ];
+      type = types.enum ["basic" "nvchad" "lazyvim"];
       default = "basic";
       description = "The neovim distribution to use";
     };
@@ -40,7 +45,6 @@ in {
         description = "Create 'vi' alias for nvim";
       };
     };
-
   };
 
   config = mkIf cfg.enable (mkMerge [
@@ -51,20 +55,20 @@ in {
         ++ cfg.extraPackages;
 
       # Create shell aliases if requested
-    programs.fish.shellAliases = mkIf config.programs.fish.enable {
-      vim = mkIf cfg.aliases.vim (mkForce "nvim");
-      vi = mkIf cfg.aliases.vi (mkForce "nvim");
-    };
+      programs.fish.shellAliases = mkIf config.programs.fish.enable {
+        vim = mkIf cfg.aliases.vim (mkForce "nvim");
+        vi = mkIf cfg.aliases.vi (mkForce "nvim");
+      };
 
-    programs.bash.shellAliases = mkIf config.programs.bash.enable {
-      vim = mkIf cfg.aliases.vim (mkForce "nvim");
-      vi = mkIf cfg.aliases.vi (mkForce "nvim");
-    };
+      programs.bash.shellAliases = mkIf config.programs.bash.enable {
+        vim = mkIf cfg.aliases.vim (mkForce "nvim");
+        vi = mkIf cfg.aliases.vi (mkForce "nvim");
+      };
 
-    programs.zsh.shellAliases = mkIf config.programs.zsh.enable {
-      vim = mkIf cfg.aliases.vim (mkForce "nvim");
-      vi = mkIf cfg.aliases.vi (mkForce "nvim");
-    };
+      programs.zsh.shellAliases = mkIf config.programs.zsh.enable {
+        vim = mkIf cfg.aliases.vim (mkForce "nvim");
+        vi = mkIf cfg.aliases.vi (mkForce "nvim");
+      };
 
       # Set default editor
       home.sessionVariables = {
@@ -72,6 +76,5 @@ in {
         VISUAL = "nvim";
       };
     }
-
   ]);
 }

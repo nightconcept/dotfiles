@@ -60,8 +60,6 @@
       url = "github:azuwis/lazyvim-nixvim";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-
   };
 
   outputs = {
@@ -70,7 +68,7 @@
     home-manager,
     ...
   } @ inputs: let
-    lib = import ./lib/lib.nix { inherit inputs; };
+    lib = import ./lib/lib.nix {inherit inputs;};
     pkgs = inputs.nixpkgs.legacyPackages.x86_64-linux;
   in {
     nixosConfigurations = {
@@ -100,6 +98,14 @@
       modules = [
         ./iso/tidus-persist-installer.nix
       ];
+    };
+
+    # Formatters for different systems
+    formatter = {
+      x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.alejandra;
+      aarch64-linux = nixpkgs.legacyPackages.aarch64-linux.alejandra;
+      x86_64-darwin = nixpkgs.legacyPackages.x86_64-darwin.alejandra;
+      aarch64-darwin = nixpkgs.legacyPackages.aarch64-darwin.alejandra;
     };
   };
 }

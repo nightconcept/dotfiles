@@ -1,6 +1,10 @@
 # Recovery and safety options for tidus impermanence setup
-{ config, pkgs, lib, ... }:
 {
+  config,
+  pkgs,
+  lib,
+  ...
+}: {
   # Boot menu entries for recovery
   boot.loader.grub.extraEntries = lib.mkIf config.boot.loader.grub.enable ''
     menuentry "NixOS - Skip Root Rollback" {
@@ -22,7 +26,7 @@
   environment.systemPackages = with pkgs; [
     # BTRFS recovery tools
     btrfs-progs
-    compsize  # Check compression ratio
+    compsize # Check compression ratio
 
     # Recovery script
     (writeShellScriptBin "tidus-recovery" ''
@@ -148,9 +152,9 @@
   # Safety: Ensure we can always boot even if rollback fails
   boot.initrd.systemd.services.rollback-root = lib.mkForce {
     description = "Rollback BTRFS root subvolume to blank state";
-    wantedBy = [ "initrd.target" ];
-    after = [ "device-dev-mapper-cryptroot.device" ];
-    before = [ "sysroot.mount" ];
+    wantedBy = ["initrd.target"];
+    after = ["device-dev-mapper-cryptroot.device"];
+    before = ["sysroot.mount"];
     unitConfig = {
       DefaultDependencies = "no";
       # Don't fail boot if rollback fails
@@ -212,7 +216,7 @@
   # Create emergency shell accessible without rollback
   systemd.services.emergency-shell = {
     description = "Emergency Shell (bypasses rollback)";
-    after = [ "rescue.service" ];
+    after = ["rescue.service"];
     unitConfig = {
       DefaultDependencies = false;
     };

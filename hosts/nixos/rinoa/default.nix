@@ -5,8 +5,7 @@
   lib,
   inputs,
   ...
-}:
-{
+}: {
   imports = [
     ./hardware-configuration.nix
     # TODO: Add after pushing changes: ./dokploy-routing.nix  # Route traffic to Vincent's Dokploy
@@ -55,7 +54,6 @@
     };
   };
 
-
   # Enable Docker
   modules.nixos.docker.enable = true;
 
@@ -70,7 +68,7 @@
       # Enable Dokploy routing to Vincent
       dokployIntegration = {
         enable = true;
-        host = "vincent.local";  # Use mDNS hostname
+        host = "vincent.local"; # Use mDNS hostname
         dashboardSubdomain = "dokploy";
         appsSubdomain = "apps";
       };

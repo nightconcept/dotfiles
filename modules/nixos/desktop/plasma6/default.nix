@@ -1,12 +1,12 @@
 # KDE Plasma 6 desktop environment module
-{ config, lib, ... }:
-
-with lib;
-
-let
-  cfg = config.modules.nixos.desktop.plasma6;
-in
 {
+  config,
+  lib,
+  ...
+}:
+with lib; let
+  cfg = config.modules.nixos.desktop.plasma6;
+in {
   options.modules.nixos.desktop.plasma6 = {
     enable = mkEnableOption "KDE Plasma 6 desktop environment";
   };

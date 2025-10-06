@@ -1,12 +1,14 @@
 # Audiobookshelf audiobook and podcast server module
-{ config, lib, pkgs, ... }:
-
-let
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
   cfg = config.modules.nixos.docker.containers.audiobookshelf;
   containerName = "audiobookshelf";
   containerPath = "/var/lib/docker-containers/${containerName}";
-in
-{
+in {
   options.modules.nixos.docker.containers.audiobookshelf = {
     enable = lib.mkEnableOption "Audiobookshelf audiobook and podcast server";
 
@@ -54,28 +56,29 @@ in
     # Audiobookshelf container service
     systemd.services."docker-container-${containerName}" = {
       description = "Audiobookshelf Audiobook and Podcast Server Container";
-      after = [ "docker.service" "docker-network-proxy.service" "mnt-titan.mount" ];
+      after = ["docker.service" "docker-network-proxy.service" "mnt-titan.mount"];
       # Make Titan mount a hard requirement if paths use it
-      requires = if (lib.hasPrefix "/mnt/titan" cfg.audiobooksPath || lib.hasPrefix "/mnt/titan" cfg.podcastsPath)
-        then [ "docker.service" "docker-network-proxy.service" "mnt-titan.mount" ]
-        else [ "docker.service" "docker-network-proxy.service" ];
-      wantedBy = [ "multi-user.target" ];
+      requires =
+        if (lib.hasPrefix "/mnt/titan" cfg.audiobooksPath || lib.hasPrefix "/mnt/titan" cfg.podcastsPath)
+        then ["docker.service" "docker-network-proxy.service" "mnt-titan.mount"]
+        else ["docker.service" "docker-network-proxy.service"];
+      wantedBy = ["multi-user.target"];
 
       preStart = ''
         # Wait for mount paths to be available
         ${lib.optionalString (lib.hasPrefix "/mnt/titan" cfg.audiobooksPath) ''
-        echo "Waiting for audiobooks path: ${cfg.audiobooksPath}"
-        while [ ! -d "${cfg.audiobooksPath}" ]; do
-          echo "Path not available yet, waiting..."
-          sleep 2
-        done
+          echo "Waiting for audiobooks path: ${cfg.audiobooksPath}"
+          while [ ! -d "${cfg.audiobooksPath}" ]; do
+            echo "Path not available yet, waiting..."
+            sleep 2
+          done
         ''}
         ${lib.optionalString (lib.hasPrefix "/mnt/titan" cfg.podcastsPath) ''
-        echo "Waiting for podcasts path: ${cfg.podcastsPath}"
-        while [ ! -d "${cfg.podcastsPath}" ]; do
-          echo "Path not available yet, waiting..."
-          sleep 2
-        done
+          echo "Waiting for podcasts path: ${cfg.podcastsPath}"
+          while [ ! -d "${cfg.podcastsPath}" ]; do
+            echo "Path not available yet, waiting..."
+            sleep 2
+          done
         ''}
 
         # Copy docker-compose.yml to runtime directory

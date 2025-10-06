@@ -3,13 +3,11 @@
   lib,
   pkgs,
   ...
-}:
-let
+}: let
   # Import our custom lib functions
-  moduleLib = import ../../../../lib/module { inherit lib; };
+  moduleLib = import ../../../../lib/module {inherit lib;};
   inherit (moduleLib) mkBoolOpt enabled disabled;
-in
-{
+in {
   options.modules.home.programs.shell.starship = {
     enable = mkBoolOpt false "Enable Starship prompt";
   };

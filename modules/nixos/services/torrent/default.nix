@@ -3,16 +3,14 @@
   lib,
   pkgs,
   ...
-}:
-let
+}: let
   inherit (lib) mkIf mkMerge;
   cfg = config.modules.nixos.services.torrent;
 
   # Import our custom lib functions
-  moduleLib = import ../../../../lib/module { inherit lib; };
+  moduleLib = import ../../../../lib/module {inherit lib;};
   inherit (moduleLib) mkBoolOpt mkOpt enabled disabled;
-in
-{
+in {
   options.modules.nixos.services.torrent = {
     enable = mkBoolOpt false "Enable qBittorrent torrent service with privacy settings";
 
@@ -81,7 +79,7 @@ in
         "d ${cfg.configDir}/qbittorrent/qBittorrent/config 0755 ${cfg.user} users -"
         "d ${cfg.configDir}/qbittorrent/qBittorrent/data 0755 ${cfg.user} users -"
         "d ${cfg.configDir}/qbittorrent/qBittorrent/data/logs 0755 ${cfg.user} users -"
-        "d ${cfg.downloadDir} 0755 ${cfg.user} users -"  # Create download directory
+        "d ${cfg.downloadDir} 0755 ${cfg.user} users -" # Create download directory
       ];
     }
 
@@ -90,9 +88,9 @@ in
       # qBittorrent-nox service (headless with web UI)
       systemd.services.qbittorrent = {
         description = "qBittorrent-nox service";
-        after = [ "network.target" "mnt-titan.mount" ];
-        requires = [ "mnt-titan.mount" ];  # Ensure titan mount is available
-        wantedBy = [ "multi-user.target" ];
+        after = ["network.target" "mnt-titan.mount"];
+        requires = ["mnt-titan.mount"]; # Ensure titan mount is available
+        wantedBy = ["multi-user.target"];
 
         preStart = lib.mkIf (cfg.qbittorrent.passwordHashFile != null) ''
           # Ensure config directory exists
@@ -124,30 +122,54 @@ in
 
           [BitTorrent]
           Session\\AddTorrentStopped=false
-          Session\\AnonymousMode=${if cfg.qbittorrent.anonymousMode then "true" else "false"}
+          Session\\AnonymousMode=${
+            if cfg.qbittorrent.anonymousMode
+            then "true"
+            else "false"
+          }
           Session\\DefaultSavePath=${cfg.downloadDir}
-          Session\\DHTEnabled=${if cfg.qbittorrent.disableDHT then "false" else "true"}
-          Session\\Encryption=${if cfg.qbittorrent.encryption then "1" else "0"}
+          Session\\DHTEnabled=${
+            if cfg.qbittorrent.disableDHT
+            then "false"
+            else "true"
+          }
+          Session\\Encryption=${
+            if cfg.qbittorrent.encryption
+            then "1"
+            else "0"
+          }
           Session\\GlobalMaxRatio=${toString cfg.qbittorrent.maxRatio}
           Session\\GlobalUPSpeedLimit=${toString cfg.qbittorrent.uploadRateLimit}
           Session\\GlobalDLSpeedLimit=${toString cfg.qbittorrent.downloadRateLimit}
           ${lib.optionalString (cfg.qbittorrent.vpnInterface != null) ''
-          Session\\Interface=${cfg.qbittorrent.vpnInterface}
-          Session\\InterfaceName=${cfg.qbittorrent.vpnInterface}
+            Session\\Interface=${cfg.qbittorrent.vpnInterface}
+            Session\\InterfaceName=${cfg.qbittorrent.vpnInterface}
           ''}
           ${lib.optionalString cfg.ipfilter.enable ''
-          Session\\IPFilteringEnabled=true
-          Session\\IPFilterFile=${cfg.configDir}/qbittorrent/qBittorrent/data/ipfilter.dat
-          Session\\IPFilterTrackers=true
+            Session\\IPFilteringEnabled=true
+            Session\\IPFilterFile=${cfg.configDir}/qbittorrent/qBittorrent/data/ipfilter.dat
+            Session\\IPFilterTrackers=true
           ''}
-          Session\\LSDEnabled=${if cfg.qbittorrent.disableLSD then "false" else "true"}
+          Session\\LSDEnabled=${
+            if cfg.qbittorrent.disableLSD
+            then "false"
+            else "true"
+          }
           Session\\MaxActiveDownloads=${toString cfg.qbittorrent.maxActiveDownloads}
           Session\\MaxConnections=${toString cfg.qbittorrent.maxConnections}
           Session\\MaxConnectionsPerTorrent=${toString cfg.qbittorrent.maxConnectionsPerTorrent}
-          Session\\PeXEnabled=${if cfg.qbittorrent.disablePEX then "false" else "true"}
+          Session\\PeXEnabled=${
+            if cfg.qbittorrent.disablePEX
+            then "false"
+            else "true"
+          }
           Session\\Port=''${RANDOM_PORT:-${toString cfg.qbittorrent.torrentPort}}
           Session\\QueueingSystemEnabled=true
-          Session\\RequireEncryption=${if cfg.qbittorrent.encryption then "true" else "false"}
+          Session\\RequireEncryption=${
+            if cfg.qbittorrent.encryption
+            then "true"
+            else "false"
+          }
           Session\\ShareLimitAction=Stop
 
           [Core]
@@ -192,8 +214,8 @@ in
         serviceConfig = {
           Type = "simple";
           User = cfg.user;
-          Group = "users";  # Use the 'users' group instead of username
-          PermissionsStartOnly = true;  # Allow preStart to run as root
+          Group = "users"; # Use the 'users' group instead of username
+          PermissionsStartOnly = true; # Allow preStart to run as root
 
           # Configure qBittorrent with download directory and profile location
           ExecStart = ''
@@ -213,7 +235,7 @@ in
           ReadWritePaths = [
             cfg.configDir
             cfg.downloadDir
-            "/mnt/titan"  # Ensure access to titan mount
+            "/mnt/titan" # Ensure access to titan mount
           ];
           NoNewPrivileges = true;
         };
@@ -266,7 +288,7 @@ in
       ]);
     in {
       # Install Python environment with autoremove-torrents
-      environment.systemPackages = [ pythonEnv ];
+      environment.systemPackages = [pythonEnv];
 
       # Create directories
       systemd.tmpfiles.rules = [
@@ -277,8 +299,8 @@ in
       # Generate config at runtime with the actual password
       systemd.services.autoremove-torrents-config = {
         description = "Generate autoremove-torrents configuration";
-        wantedBy = [ "autoremove-torrents.service" ];
-        before = [ "autoremove-torrents.service" ];
+        wantedBy = ["autoremove-torrents.service"];
+        before = ["autoremove-torrents.service"];
 
         script = lib.mkIf (cfg.qbittorrent.passwordFile != null) ''
           # Read password from SOPS
@@ -298,8 +320,13 @@ in
             ${lib.concatStringsSep "\n" (lib.mapAttrsToList (name: strategy: ''
               echo "      ${name}:" >> /etc/autoremove-torrents/config.yml
               echo "        remove: '${strategy.remove}'" >> /etc/autoremove-torrents/config.yml
-              echo "        delete_data: ${if strategy.delete_data then "true" else "false"}" >> /etc/autoremove-torrents/config.yml
-            '') cfg.autoremove.strategies)}
+              echo "        delete_data: ${
+                if strategy.delete_data
+                then "true"
+                else "false"
+              }" >> /etc/autoremove-torrents/config.yml
+            '')
+            cfg.autoremove.strategies)}
           fi
         '';
 
@@ -312,8 +339,8 @@ in
       # Autoremove-torrents systemd service
       systemd.services.autoremove-torrents = {
         description = "Remove torrents automatically according to configured strategies";
-        after = [ "qbittorrent.service" ];
-        wants = [ "qbittorrent.service" ];
+        after = ["qbittorrent.service"];
+        wants = ["qbittorrent.service"];
 
         serviceConfig = {
           Type = "oneshot";
@@ -340,7 +367,7 @@ in
       # Systemd timer for periodic execution
       systemd.timers.autoremove-torrents = {
         description = "Run autoremove-torrents every ${toString cfg.autoremove.intervalMinutes} minutes";
-        wantedBy = [ "timers.target" ];
+        wantedBy = ["timers.target"];
 
         timerConfig = {
           OnBootSec = "${toString cfg.autoremove.intervalMinutes}min";
@@ -362,10 +389,10 @@ in
       # IP Filter update script
       systemd.services.qbittorrent-ipfilter-update = {
         description = "Update qBittorrent IP filters";
-        after = [ "network-online.target" ];
-        wants = [ "network-online.target" ];
+        after = ["network-online.target"];
+        wants = ["network-online.target"];
 
-        path = with pkgs; [ curl gzip unzip coreutils gnugrep gawk findutils ];
+        path = with pkgs; [curl gzip unzip coreutils gnugrep gawk findutils];
 
         script = ''
           set -euo pipefail
@@ -530,15 +557,14 @@ in
       # Timer for periodic updates
       systemd.timers.qbittorrent-ipfilter-update = {
         description = "Update qBittorrent IP filters every ${toString cfg.ipfilter.updateIntervalHours} hours";
-        wantedBy = [ "timers.target" ];
+        wantedBy = ["timers.target"];
 
         timerConfig = {
-          OnBootSec = "5min";  # Run 5 minutes after boot
+          OnBootSec = "5min"; # Run 5 minutes after boot
           OnUnitActiveSec = "${toString cfg.ipfilter.updateIntervalHours}h";
           Unit = "qbittorrent-ipfilter-update.service";
         };
       };
-
     })
   ]);
 }

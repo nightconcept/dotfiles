@@ -1,12 +1,13 @@
 # Graphics/OpenGL configuration module
-{ config, lib, pkgs, ... }:
-
-with lib;
-
-let
-  cfg = config.modules.nixos.hardware.graphics;
-in
 {
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+with lib; let
+  cfg = config.modules.nixos.hardware.graphics;
+in {
   options.modules.nixos.hardware.graphics = {
     enable = mkEnableOption "Graphics/OpenGL support";
   };

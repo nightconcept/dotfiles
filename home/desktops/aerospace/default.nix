@@ -4,8 +4,7 @@
   lib,
   pkgs,
   ...
-}:
-{
+}: {
   options.desktops.aerospace = {
     enable = lib.mkEnableOption "AeroSpace window manager desktop environment for macOS";
   };
@@ -146,7 +145,7 @@
     xdg.configFile."borders/bordersrc" = {
       text = ''
         #!/bin/bash
-        
+
         # JankyBorders configuration - Tokyo Night default theme
         # Colors from Tokyo Night default color palette
         options=(
@@ -156,7 +155,7 @@
             active_color=0xff7aa2f7     # Tokyo Night blue - active window border
             inactive_color=0xff565f89   # Tokyo Night grey - inactive window border
         )
-        
+
         borders "''${options[@]}"
       '';
       executable = true;

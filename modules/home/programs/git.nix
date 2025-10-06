@@ -2,13 +2,11 @@
   config,
   lib,
   ...
-}:
-let
+}: let
   # Import our custom lib functions
-  moduleLib = import ../../../lib/module { inherit lib; };
+  moduleLib = import ../../../lib/module {inherit lib;};
   inherit (moduleLib) mkBoolOpt enabled disabled;
-in
-{
+in {
   options.modules.home.programs.git = {
     enable = mkBoolOpt true "Enable git with comprehensive configuration";
   };
@@ -32,15 +30,15 @@ in
           format = "ssh";
           ssh.allowedSignersFile = "~/.ssh/allowed_signers";
         };
-        
+
         tag = {
-          gpgSign = true;  # Also sign tags
+          gpgSign = true; # Also sign tags
         };
-        
+
         commit = {
-          gpgSign = true;  # Ensure commits are signed
+          gpgSign = true; # Ensure commits are signed
         };
-        
+
         github = {
           user = "nightconcept";
         };
@@ -132,7 +130,7 @@ in
         };
       };
     };
-    
+
     # Create the allowed signers file for SSH signing verification
     home.file.".ssh/allowed_signers".text = ''
       dark@nightconcept.net ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMJKTm63zFmYfGauCBlUWq7lvHFq+NVPT5RqIfjLM7MN danny@solivan.dev

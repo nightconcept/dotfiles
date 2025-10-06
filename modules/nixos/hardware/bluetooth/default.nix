@@ -1,12 +1,13 @@
 # Bluetooth configuration module
-{ config, lib, pkgs, ... }:
-
-with lib;
-
-let
-  cfg = config.modules.nixos.hardware.bluetooth;
-in
 {
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+with lib; let
+  cfg = config.modules.nixos.hardware.bluetooth;
+in {
   options.modules.nixos.hardware.bluetooth = {
     enable = mkEnableOption "Bluetooth support";
   };

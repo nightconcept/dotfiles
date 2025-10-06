@@ -4,19 +4,17 @@
   pkgs,
   inputs,
   ...
-}:
-let
+}: let
   inherit (lib) mkIf mkMerge;
   cfg = config.modules.nixos.services.nordvpn;
 
   # Import our custom lib functions
-  moduleLib = import ../../../../lib/module { inherit lib; };
+  moduleLib = import ../../../../lib/module {inherit lib;};
   inherit (moduleLib) mkBoolOpt mkOpt enabled disabled;
 
   # Use the nordvpn package from the flake
   nordVpnPkg = inputs.nordvpn-flake.packages.${pkgs.system}.default;
-in
-{
+in {
   options.modules.nixos.services.nordvpn = {
     enable = mkBoolOpt false "Enable the NordVPN daemon and CLI client from nordvpn-flake";
 
@@ -38,24 +36,24 @@ in
   config = mkIf cfg.enable {
     # Required firewall configuration for NordVPN
     networking.firewall = {
-      checkReversePath = "loose";  # Required for NordVPN
-      allowedTCPPorts = [ 443 ];
-      allowedUDPPorts = [ 1194 ];
+      checkReversePath = "loose"; # Required for NordVPN
+      allowedTCPPorts = [443];
+      allowedUDPPorts = [1194];
     };
 
     # Install NordVPN package from flake
-    environment.systemPackages = [ nordVpnPkg ];
+    environment.systemPackages = [nordVpnPkg];
 
     # Create nordvpn group and add user
     users.groups.nordvpn = {};
-    users.users.${cfg.user}.extraGroups = [ "nordvpn" ];
+    users.users.${cfg.user}.extraGroups = ["nordvpn"];
 
     # NordVPN daemon service
     systemd.services.nordvpn = {
       description = "NordVPN daemon";
-      wantedBy = [ "multi-user.target" ];
-      after = [ "network-online.target" ];
-      wants = [ "network-online.target" ];
+      wantedBy = ["multi-user.target"];
+      after = ["network-online.target"];
+      wants = ["network-online.target"];
 
       serviceConfig = {
         ExecStart = "${nordVpnPkg}/bin/nordvpnd";
@@ -78,9 +76,9 @@ in
     # Post-start configuration service
     systemd.services.nordvpn-configure = mkIf (cfg.tokenFile != null) {
       description = "Configure NordVPN settings";
-      after = [ "nordvpn.service" ];
-      wants = [ "nordvpn.service" ];
-      wantedBy = [ "multi-user.target" ];
+      after = ["nordvpn.service"];
+      wants = ["nordvpn.service"];
+      wantedBy = ["multi-user.target"];
 
       script = ''
         # Wait for daemon to be ready

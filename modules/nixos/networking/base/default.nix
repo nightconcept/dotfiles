@@ -1,12 +1,12 @@
 # Basic networking configuration module
-{ config, lib, ... }:
-
-with lib;
-
-let
-  cfg = config.modules.nixos.networking.base;
-in
 {
+  config,
+  lib,
+  ...
+}:
+with lib; let
+  cfg = config.modules.nixos.networking.base;
+in {
   options.modules.nixos.networking.base = {
     enable = mkOption {
       type = types.bool;
@@ -25,7 +25,7 @@ in
     networking.hostName = cfg.hostName;
     networking.networkmanager.enable = true;
     networking.firewall.enable = true;
-    networking.firewall.allowedTCPPorts = [ ];
-    networking.firewall.allowedUDPPorts = [ ];
+    networking.firewall.allowedTCPPorts = [];
+    networking.firewall.allowedUDPPorts = [];
   };
 }

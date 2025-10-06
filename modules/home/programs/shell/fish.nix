@@ -3,29 +3,33 @@
   lib,
   pkgs,
   ...
-}:
-let
+}: let
   # Import our custom lib functions
-  moduleLib = import ../../../../lib/module { inherit lib; };
+  moduleLib = import ../../../../lib/module {inherit lib;};
   inherit (moduleLib) mkBoolOpt enabled disabled;
 
   # Dotfiles directory constant - change this if the repo moves
   dot_dir = "$HOME/git/dotfiles";
-in
-{
+in {
   options.modules.home.programs.shell.fish = {
     enable = mkBoolOpt false "Enable Fish shell";
   };
 
   config = lib.mkIf config.modules.home.programs.shell.fish.enable {
-    home.sessionPath = [
-      "/home/danny/.local/bin"
-      "/opt/nvim-linux64/bin"
-    ] ++ (if pkgs.stdenv.isDarwin then [
-      "/usr/local/bin"
-      "/opt/homebrew/bin"  
-      "/Users/danny/.local/bin"
-    ] else []);
+    home.sessionPath =
+      [
+        "/home/danny/.local/bin"
+        "/opt/nvim-linux64/bin"
+      ]
+      ++ (
+        if pkgs.stdenv.isDarwin
+        then [
+          "/usr/local/bin"
+          "/opt/homebrew/bin"
+          "/Users/danny/.local/bin"
+        ]
+        else []
+      );
 
     programs.fish = {
       enable = true;
@@ -70,7 +74,6 @@ in
           mkdir = "${pkgs.coreutils}/bin/mkdir -p";
           cp = "${pkgs.coreutils}/bin/cp -r";
           fishclear = "echo \"\" > ~/.local/share/fish/fish_history";
-
         }
         // (
           if pkgs.stdenv.isLinux
@@ -88,31 +91,39 @@ in
         set -gx LANG en_US.UTF-8
         set -gx VISUAL nvim
         set -gx GPG_TTY (tty)
-        ${if pkgs.stdenv.isDarwin then ''
-          set -gx XDG_DATA_DIRS /Users/danny/.nix-profile/share $XDG_DATA_DIRS
-        '' else ''
-          set -gx XDG_DATA_DIRS /home/danny/.nix-profile/share $XDG_DATA_DIRS
-        ''}
+        ${
+          if pkgs.stdenv.isDarwin
+          then ''
+            set -gx XDG_DATA_DIRS /Users/danny/.nix-profile/share $XDG_DATA_DIRS
+          ''
+          else ''
+            set -gx XDG_DATA_DIRS /home/danny/.nix-profile/share $XDG_DATA_DIRS
+          ''
+        }
 
         # Ensure Nix is in PATH
         if test -d "/nix/var/nix/profiles/default/bin"
             fish_add_path --prepend /nix/var/nix/profiles/default/bin
         end
-        ${if pkgs.stdenv.isDarwin then ''
-          if test -d "/Users/danny/.nix-profile/bin"
-              fish_add_path --prepend /Users/danny/.nix-profile/bin
-          end
-          if test -d "/etc/profiles/per-user/danny/bin"
-              fish_add_path --prepend /etc/profiles/per-user/danny/bin
-          end
-          if test -d "/run/current-system/sw/bin"
-              fish_add_path --prepend /run/current-system/sw/bin
-          end
-        '' else ''
-          if test -d "/home/danny/.nix-profile/bin"
-              fish_add_path --prepend /home/danny/.nix-profile/bin
-          end
-        ''}
+        ${
+          if pkgs.stdenv.isDarwin
+          then ''
+            if test -d "/Users/danny/.nix-profile/bin"
+                fish_add_path --prepend /Users/danny/.nix-profile/bin
+            end
+            if test -d "/etc/profiles/per-user/danny/bin"
+                fish_add_path --prepend /etc/profiles/per-user/danny/bin
+            end
+            if test -d "/run/current-system/sw/bin"
+                fish_add_path --prepend /run/current-system/sw/bin
+            end
+          ''
+          else ''
+            if test -d "/home/danny/.nix-profile/bin"
+                fish_add_path --prepend /home/danny/.nix-profile/bin
+            end
+          ''
+        }
 
         # Load API keys from sops if available
         if test -r "$XDG_RUNTIME_DIR/secrets/gemini_api_key"
@@ -162,7 +173,7 @@ in
           description = "Greeting to show when starting a fish shell";
           body = "";
         };
-        
+
         flake-rebuild = {
           description = "Smart flake rebuild that auto-detects system and hostname";
           body = ''
@@ -270,17 +281,17 @@ in
                     end
                 end
             end
-            
+
             # Run the appropriate rebuild command
             echo "Running $config_type rebuild for $host..."
             # Run in background to prevent shell lockup during rebuild
             eval $rebuild_cmd --flake "$flake_dir#$host" &
-            
+
             # Wait for the background job to complete
             set rebuild_pid $last_pid
             wait $rebuild_pid
             set rebuild_status $status
-            
+
             # Return the rebuild exit status
             return $rebuild_status
           '';

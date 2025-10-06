@@ -3,13 +3,11 @@
   lib,
   pkgs,
   ...
-}:
-let
+}: let
   # Import our custom lib functions
-  moduleLib = import ../../../lib/module { inherit lib; };
+  moduleLib = import ../../../lib/module {inherit lib;};
   inherit (moduleLib) mkBoolOpt enabled disabled;
-in
-{
+in {
   options.modules.home.secrets.sops = {
     enable = mkBoolOpt true "Enable SOPS secrets management for home-manager";
   };
@@ -19,14 +17,13 @@ in
     sops = {
       # Use the user's age key (converted from SSH key)
       age.keyFile = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
-      
-      
+
       # Default secrets file
       defaultSopsFile = ./user.yaml;
-      
+
       # Validate files
       validateSopsFiles = true;
-      
+
       # User-level secrets
       secrets = {
         # Gemini API key - deployed to a file that shell can source
@@ -60,7 +57,7 @@ in
         # Other user secrets can be added here
       };
     };
-    
+
     # Ensure the age keys directory exists
     home.file.".config/sops/age/.keep".text = "";
   };

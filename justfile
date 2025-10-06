@@ -10,7 +10,7 @@ check-home:
     NIXPKGS_ALLOW_UNFREE=1 nix build .#homeConfigurations.laptop.activationPackage --dry-run --impure
     NIXPKGS_ALLOW_UNFREE=1 nix build .#homeConfigurations.server.activationPackage --dry-run --impure
 
-# Check NixOS configurations only (may fail due to lix issues)
+# Check NixOS configurations only
 check-nixos:
     NIXPKGS_ALLOW_UNFREE=1 nix build .#nixosConfigurations.tidus.config.system.build.toplevel --dry-run --impure
     NIXPKGS_ALLOW_UNFREE=1 nix build .#nixosConfigurations.aerith.config.system.build.toplevel --dry-run --impure
@@ -59,4 +59,4 @@ clean:
 
 # Format all Nix files
 fmt:
-    nix fmt
+    find . -name "*.nix" -type f | xargs nix fmt

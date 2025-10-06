@@ -1,12 +1,14 @@
 # Radarr Movie Manager Container Module
-{ config, lib, pkgs, ... }:
-
-let
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
   cfg = config.modules.nixos.docker.containers.radarr;
   containerName = "radarr";
   containerPath = "/var/lib/docker-containers/${containerName}";
-in
-{
+in {
   options.modules.nixos.docker.containers.radarr = {
     enable = lib.mkEnableOption "Radarr movie manager container";
 
@@ -79,28 +81,29 @@ in
     # Container service
     systemd.services."docker-container-${containerName}" = {
       description = "Radarr Movie Manager Container";
-      after = [ "docker.service" "docker-network-proxy.service" "mnt-titan.mount" ];
+      after = ["docker.service" "docker-network-proxy.service" "mnt-titan.mount"];
       # Make Titan mount a hard requirement if paths use it
-      requires = if (lib.hasPrefix "/mnt/titan" cfg.downloadsPath || lib.hasPrefix "/mnt/titan" cfg.moviesPath)
-        then [ "docker.service" "docker-network-proxy.service" "mnt-titan.mount" ]
-        else [ "docker.service" "docker-network-proxy.service" ];
-      wantedBy = [ "multi-user.target" ];
+      requires =
+        if (lib.hasPrefix "/mnt/titan" cfg.downloadsPath || lib.hasPrefix "/mnt/titan" cfg.moviesPath)
+        then ["docker.service" "docker-network-proxy.service" "mnt-titan.mount"]
+        else ["docker.service" "docker-network-proxy.service"];
+      wantedBy = ["multi-user.target"];
 
       preStart = ''
         # Wait for mount paths to be available
         ${lib.optionalString (lib.hasPrefix "/mnt/titan" cfg.downloadsPath) ''
-        echo "Waiting for downloads path: ${cfg.downloadsPath}"
-        while [ ! -d "${cfg.downloadsPath}" ]; do
-          echo "Path not available yet, waiting..."
-          sleep 2
-        done
+          echo "Waiting for downloads path: ${cfg.downloadsPath}"
+          while [ ! -d "${cfg.downloadsPath}" ]; do
+            echo "Path not available yet, waiting..."
+            sleep 2
+          done
         ''}
         ${lib.optionalString (lib.hasPrefix "/mnt/titan" cfg.moviesPath) ''
-        echo "Waiting for movies path: ${cfg.moviesPath}"
-        while [ ! -d "${cfg.moviesPath}" ]; do
-          echo "Path not available yet, waiting..."
-          sleep 2
-        done
+          echo "Waiting for movies path: ${cfg.moviesPath}"
+          while [ ! -d "${cfg.moviesPath}" ]; do
+            echo "Path not available yet, waiting..."
+            sleep 2
+          done
         ''}
 
         # Copy docker-compose.yml to runtime directory

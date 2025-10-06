@@ -14,27 +14,26 @@
   # Networking
   modules.nixos.networking.base.hostName = "tidus";
 
-    # Desktop environment
-    modules.nixos.desktop.hyprland.enable = true;
+  # Desktop environment
+  modules.nixos.desktop.hyprland.enable = true;
 
-    
-    # Hardware features
-    modules.nixos.hardware = {
-      bluetooth.enable = true;
-      power.enable = true;
-      sound.enable = true;
-      graphics.enable = true;
-      usbAutomount.enable = true;
-    };
-    
-    # Storage
-    modules.nixos.storage.networkDrives.enable = true;
-    
-    # Kernel configuration
-    modules.nixos.kernel.type = "zen";
+  # Hardware features
+  modules.nixos.hardware = {
+    bluetooth.enable = true;
+    power.enable = true;
+    sound.enable = true;
+    graphics.enable = true;
+    usbAutomount.enable = true;
+  };
 
-    # Programs
-    modules.nixos.programs.nomachine.enable = true;
+  # Storage
+  modules.nixos.storage.networkDrives.enable = true;
 
-    system.stateVersion = "23.11";
+  # Kernel configuration
+  modules.nixos.kernel.type = "zen";
+
+  # Programs
+  modules.nixos.programs.nomachine.enable = true;
+
+  system.stateVersion = "23.11";
 }
