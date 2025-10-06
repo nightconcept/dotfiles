@@ -94,9 +94,18 @@
     jellyfin.enable = true;
     homepage.enable = true;
     uptime-kuma.enable = true;
-    forgejo.enable = true;
+    forgejo = {
+      enable = true;
+      signingKey = "1C5E44D950920340";  # Your GPG key ID
+      signingName = "Danny Solivan";
+      signingEmail = "dark@nightconcept.net";
+    };
     freshrss.enable = true;
     blog.enable = true;
+    obsidian-sync = {
+      enable = true;
+      dataPath = "/var/lib/obsidian-sync";
+    };
   };
 
   # System packages for server management

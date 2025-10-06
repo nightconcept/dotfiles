@@ -48,6 +48,30 @@ in {
       description = "Default Actions URL (github.com for GitHub Actions compatibility, data.forgejo.org for FOSS actions)";
     };
 
+    enableCommitSigning = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "Enable GPG/SSH commit signing for web interface commits";
+    };
+
+    signingKey = lib.mkOption {
+      type = lib.types.str;
+      default = "default";
+      description = "GPG signing key (default = use Forgejo server key, or specify key ID)";
+    };
+
+    signingName = lib.mkOption {
+      type = lib.types.str;
+      default = "Forgejo";
+      description = "Name to use for signed commits";
+    };
+
+    signingEmail = lib.mkOption {
+      type = lib.types.str;
+      default = "noreply@forgejo.local";
+      description = "Email to use for signed commits";
+    };
+
     localDbPath = lib.mkOption {
       type = lib.types.str;
       default = "${containerPath}/db";
@@ -68,6 +92,8 @@ in {
       "d ${containerPath} 0755 root root -"
       "d ${cfg.localDbPath} 0755 999 999 -"
       "d ${cfg.remoteDataPath} 0755 1000 1000 -"
+      "d ${cfg.remoteDataPath}/git 0755 1000 1000 -"
+      "d ${cfg.remoteDataPath}/git/.ssh 0700 1000 1000 -"
     ];
 
     systemd.services."docker-container-${containerName}" = {
@@ -79,6 +105,13 @@ in {
       preStart = ''
         # Copy docker-compose.yml to runtime directory
         cp ${./docker-compose.yml} ${containerPath}/docker-compose.yml
+
+        # Create SSH signing key for Forgejo
+        cat > ${cfg.remoteDataPath}/git/.ssh/signing_key.pub <<EOF
+        ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMJKTm63zFmYfGauCBlUWq7lvHFq+NVPT5RqIfjLM7MN danny@solivan.dev
+        EOF
+        chown 1000:1000 ${cfg.remoteDataPath}/git/.ssh/signing_key.pub
+        chmod 0644 ${cfg.remoteDataPath}/git/.ssh/signing_key.pub
 
         # Generate .env file with proper environment variables
         cat > ${containerPath}/.env <<EOF
@@ -94,6 +127,10 @@ in {
           else "false"
         }
         FORGEJO_ACTIONS_URL=${cfg.actionsUrl}
+        FORGEJO_SIGNING_ENABLED=${if cfg.enableCommitSigning then "true" else "false"}
+        FORGEJO_SIGNING_KEY=${cfg.signingKey}
+        FORGEJO_SIGNING_NAME=${cfg.signingName}
+        FORGEJO_SIGNING_EMAIL=${cfg.signingEmail}
         EOF
       '';
 

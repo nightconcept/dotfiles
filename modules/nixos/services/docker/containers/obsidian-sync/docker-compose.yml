@@ -1,0 +1,39 @@
+services:
+  obsidian-couchdb:
+    image: couchdb:3.5
+    container_name: obsidian-couchdb
+    restart: unless-stopped
+    networks:
+      - proxy
+    volumes:
+      - ${DATA_PATH}/couchdb/data:/opt/couchdb/data
+      - ${DATA_PATH}/couchdb/etc:/opt/couchdb/etc/local.d
+    environment:
+      - TZ=${TZ}
+      - COUCHDB_USER=${COUCHDB_USER}
+      - COUCHDB_PASSWORD=${COUCHDB_PASSWORD}
+    ports:
+      - "${COUCHDB_PORT}:5984"
+    healthcheck:
+      test: curl --fail -s http://localhost:5984/_up | grep -Eo '\"status\":\"ok\"' || exit 1
+      start_period: 60s
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.obsidian-couchdb.entrypoints=http"
+      - "traefik.http.routers.obsidian-couchdb.rule=Host(`${COUCHDB_DOMAIN}`)"
+      - "traefik.http.middlewares.obsidian-couchdb-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.obsidian-couchdb.middlewares=obsidian-couchdb-https-redirect"
+      - "traefik.http.routers.obsidian-couchdb-secure.entrypoints=https"
+      - "traefik.http.routers.obsidian-couchdb-secure.rule=Host(`${COUCHDB_DOMAIN}`)"
+      - "traefik.http.routers.obsidian-couchdb-secure.tls=true"
+      - "traefik.http.routers.obsidian-couchdb-secure.service=obsidian-couchdb"
+      - "traefik.http.services.obsidian-couchdb.loadbalancer.server.port=5984"
+      - "traefik.docker.network=proxy"
+      - "com.centurylinklabs.watchtower.enable=${WATCHTOWER_ENABLE}"
+
+networks:
+  proxy:
+    external: true

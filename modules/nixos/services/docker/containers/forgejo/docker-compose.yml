@@ -50,6 +50,14 @@ services:
       - FORGEJO__server__SSH_PORT=22
       - FORGEJO__actions__ENABLED=${FORGEJO_ACTIONS_ENABLED:-true}
       - FORGEJO__actions__DEFAULT_ACTIONS_URL=${FORGEJO_ACTIONS_URL:-https://github.com}
+      - FORGEJO__repository.signing__FORMAT=ssh
+      - FORGEJO__repository.signing__SIGNING_KEY=/data/git/.ssh/signing_key.pub
+      - FORGEJO__repository.signing__SIGNING_NAME=${FORGEJO_SIGNING_NAME:-Danny Solivan}
+      - FORGEJO__repository.signing__SIGNING_EMAIL=${FORGEJO_SIGNING_EMAIL:-dark@nightconcept.net}
+      - FORGEJO__repository.signing__INITIAL_COMMIT=pubkey
+      - FORGEJO__repository.signing__CRUD_ACTIONS=pubkey
+      - FORGEJO__repository.signing__WIKI=pubkey
+      - FORGEJO__repository.signing__MERGES=pubkey
     ports:
       - "2222:22"  # SSH port for git operations
     labels:

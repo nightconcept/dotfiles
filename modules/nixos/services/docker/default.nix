@@ -40,6 +40,7 @@ in {
     ./containers/immich
     # ./containers/minecraft
     ./containers/nextcloud
+    ./containers/obsidian-sync
     # ./containers/open-webui
     # ./containers/palworld
     ./containers/prowlarr-abb
