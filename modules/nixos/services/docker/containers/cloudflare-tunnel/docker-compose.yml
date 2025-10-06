@@ -6,12 +6,6 @@ services:
     environment:
       - TUNNEL_TOKEN=$TUNNEL_TOKEN
     command: tunnel --no-autoupdate run
-    healthcheck:
-      test: ["CMD-SHELL", "pgrep cloudflared || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 30s
     networks:
       - proxy
     labels:
