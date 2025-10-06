@@ -12,7 +12,7 @@ in
 
     domain = lib.mkOption {
       type = lib.types.str;
-      default = "local.solivan.dev";
+      default = "solivan.dev";
       description = "Base domain for CouchDB";
     };
 

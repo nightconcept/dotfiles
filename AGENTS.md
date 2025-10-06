@@ -268,3 +268,74 @@ User services (home-manager) should use:
 1. Edit the encrypted YAML file using `sops` command
 2. Add the secret definition in the appropriate module's sops configuration
 3. Follow the path conventions above for consistency
+
+## CrowdSec Security Configuration
+
+CrowdSec provides intrusion prevention for publicly accessible services through behavior analysis and IP blocking.
+
+### Architecture
+- **CrowdSec Engine**: Analyzes logs and detects malicious behavior
+- **Traefik Bouncer**: Middleware that blocks malicious IPs at the reverse proxy level
+- Configured in `/modules/nixos/services/docker/containers/traefik/`
+
+### Adding CrowdSec Protection to a Service
+
+When exposing a service to the internet (not just local network), add CrowdSec protection:
+
+#### 1. Update Docker Compose Labels
+
+In the service's `docker-compose.yml`, add the CrowdSec middleware to the secure router:
+
+```yaml
+labels:
+  - "traefik.http.routers.myservice-secure.middlewares=crowdsec-bouncer@docker"
+```
+
+**Complete example** (from vaultwarden/obsidian-sync):
+```yaml
+labels:
+  - "traefik.enable=true"
+  - "traefik.http.routers.myservice.entrypoints=http"
+  - "traefik.http.routers.myservice.rule=Host(`myservice.local.solivan.dev`)"
+  - "traefik.http.middlewares.myservice-https-redirect.redirectscheme.scheme=https"
+  - "traefik.http.routers.myservice.middlewares=myservice-https-redirect"
+  - "traefik.http.routers.myservice-secure.entrypoints=https"
+  - "traefik.http.routers.myservice-secure.rule=Host(`myservice.local.solivan.dev`) || Host(`myservice.solivan.dev`)"
+  - "traefik.http.routers.myservice-secure.tls=true"
+  - "traefik.http.routers.myservice-secure.middlewares=crowdsec-bouncer@docker"
+  - "traefik.http.routers.myservice-secure.service=myservice"
+  - "traefik.http.services.myservice.loadbalancer.server.port=80"
+  - "traefik.docker.network=proxy"
+```
+
+#### 2. Configure External Access
+
+Ensure the service is accessible via both local and external domains:
+- **Local**: `myservice.local.solivan.dev` (internal network only)
+- **External**: `myservice.solivan.dev` (publicly accessible with CrowdSec protection)
+
+#### 3. Key Points
+
+- **Always use `crowdsec-bouncer@docker`** for externally accessible services
+- The middleware is defined in `/modules/nixos/services/docker/containers/traefik/config/config.yml`
+- CrowdSec automatically shares threat intelligence with the community
+- Protected services will block IPs flagged by CrowdSec's behavior analysis
+
+#### 4. Services Currently Protected
+
+- **vaultwarden**: Password manager (vaultwarden.solivan.dev)
+- **obsidian-sync**: Obsidian CouchDB sync (obsidian-db.solivan.dev)
+
+### Monitoring CrowdSec
+
+Check CrowdSec status and decisions:
+```bash
+# View active bans
+docker exec crowdsec cscli decisions list
+
+# View metrics
+docker exec crowdsec cscli metrics
+
+# View alerts
+docker exec crowdsec cscli alerts list
+```
