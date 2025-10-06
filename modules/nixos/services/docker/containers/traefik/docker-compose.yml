@@ -2,6 +2,7 @@ services:
   traefik:
     image: traefik:latest
     container_name: traefik
+    command: --configFile=/traefik.yml
     restart: always
     networks:
       - proxy
