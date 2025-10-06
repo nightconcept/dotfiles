@@ -46,6 +46,10 @@ in {
       lib.hm.dag.entryAfter ["writeBoundary"] ''
         $DRY_RUN_CMD mkdir -p $HOME/.ssh
         $DRY_RUN_CMD chmod 700 $HOME/.ssh
+        # Remove symlink if it exists (from previous configurations)
+        if [ -L $HOME/.ssh/authorized_keys ]; then
+          $DRY_RUN_CMD rm $HOME/.ssh/authorized_keys
+        fi
         $DRY_RUN_CMD cat > $HOME/.ssh/authorized_keys <<'EOF'
         # Standard development key for remote access
         ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMJKTm63zFmYfGauCBlUWq7lvHFq+NVPT5RqIfjLM7MN danny@solivan.dev
