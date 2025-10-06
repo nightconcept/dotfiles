@@ -56,5 +56,8 @@
 
   programs.home-manager.enable = true;
 
+  # Enable VSCode Server for remote development
+  services.vscode-server.enable = true;
+
   news.display = "silent";
 }

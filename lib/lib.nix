@@ -22,6 +22,7 @@ in {
               stylix.homeModules.stylix
               spicetify-nix.homeManagerModules.default
               sops-nix.homeManagerModules.sops
+              vscode-server.homeModules.default
             ];
             extraSpecialArgs = {
               inherit inputs;
@@ -53,6 +54,7 @@ in {
               ../home
               stylix.homeModules.stylix
               sops-nix.homeManagerModules.sops
+              vscode-server.homeModules.default
             ];
             extraSpecialArgs = {
               inherit inputs;
@@ -60,14 +62,6 @@ in {
             };
           };
         }
-        vscode-server.nixosModules.default
-        ({
-          config,
-          pkgs,
-          ...
-        }: {
-          services.vscode-server.enable = true;
-        })
       ];
     };
 
@@ -92,6 +86,7 @@ in {
               ../home
               stylix.homeModules.stylix
               sops-nix.homeManagerModules.sops
+              vscode-server.homeModules.default
             ];
             extraSpecialArgs = {
               inherit inputs;
