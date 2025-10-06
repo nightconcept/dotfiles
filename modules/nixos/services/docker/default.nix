@@ -36,7 +36,6 @@ in {
     ./containers/forgejo
     ./containers/freshrss
     ./containers/homepage
-    ./containers/knot
     ./containers/immich
     # ./containers/minecraft
     ./containers/nextcloud
