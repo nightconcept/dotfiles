@@ -7,9 +7,8 @@ http:
       rule: "Host(`pihole.local.solivan.dev`)"
       middlewares:
         - authelia
-        - redirectregex-pihole
+        - redirect-pihole-root
         - default-headers
-        - addprefix-pihole
         - https-redirectscheme
       tls: {}
       service: pihole
@@ -19,9 +18,8 @@ http:
       rule: "Host(`pihole-proxy.local.solivan.dev`)"
       middlewares:
         - authelia
-        - redirectregex-pihole
+        - redirect-pihole-root
         - default-headers
-        - addprefix-pihole
         - https-redirectscheme
       tls: {}
       service: pihole-proxy
@@ -225,10 +223,10 @@ http:
       redirectScheme:
         scheme: https
         permanent: true
-    redirectregex-pihole:
+    redirect-pihole-root:
       redirectRegex:
-        regex: /admin/$
-        replacement: /
+        regex: ^/$
+        replacement: /admin/
 
     default-headers:
       headers:
