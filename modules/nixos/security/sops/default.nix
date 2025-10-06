@@ -143,6 +143,15 @@ in {
           owner = "root";
           mode = "0400";
         };
+
+        "services/crowdsec/bouncer_key" = {
+          owner = "root";
+          mode = "0400";
+        };
+        "services/crowdsec/enroll_key" = {
+          owner = "root";
+          mode = "0400";
+        };
       };
     };
   };

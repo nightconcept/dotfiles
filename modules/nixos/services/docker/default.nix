@@ -11,6 +11,7 @@ in {
     ./containers/traefik
     ./containers/portainer
     ./containers/watchtower
+    ./containers/crowdsec
 
     # CI/CD runners
     ./containers/forgejo-runner

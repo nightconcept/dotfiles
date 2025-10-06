@@ -73,6 +73,11 @@
         appsSubdomain = "apps";
       };
     };
+    crowdsec = {
+      enable = true;
+      domain = "local.solivan.dev";
+      subdomain = "crowdsec";
+    };
     authelia = {
       enable = true;
       domain = "local.solivan.dev";

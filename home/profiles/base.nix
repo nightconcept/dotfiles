@@ -52,6 +52,9 @@
   home = {
     username = "danny";
     stateVersion = "23.11";
+    packages = with pkgs; [
+      sops # Secret management
+    ];
   };
 
   programs.home-manager.enable = true;

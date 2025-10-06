@@ -259,6 +259,6 @@ http:
         address: "http://authelia:9091/api/verify?rd=https://auth.local.solivan.dev"
         
     crowdsec-bouncer:
-      forwardauth:
-        address: http://bouncer-traefik:8080/api/v1/forwardAuth
+      forwardAuth:
+        address: http://crowdsec-bouncer-traefik:8080/api/v1/forwardAuth
         trustForwardHeader: true

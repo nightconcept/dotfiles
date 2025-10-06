@@ -1,0 +1,56 @@
+services:
+  crowdsec:
+    image: crowdsecurity/crowdsec:latest
+    container_name: crowdsec
+    restart: always
+    networks:
+      - proxy
+    environment:
+      - COLLECTIONS=crowdsecurity/traefik crowdsecurity/http-cve crowdsecurity/whitelist-good-actors
+      - GID=1000
+      - ENROLL_KEY=${ENROLL_KEY}
+    volumes:
+      - type: bind
+        source: ${CONFIG_PATH}/acquis.yaml
+        target: /etc/crowdsec/acquis.yaml
+        read_only: true
+      - type: bind
+        source: ${TRAEFIK_LOG_PATH}
+        target: /var/log/traefik
+        read_only: true
+      - type: bind
+        source: /var/log
+        target: /var/log/host
+        read_only: true
+      - crowdsec-db:/var/lib/crowdsec/data/
+      - crowdsec-config:/etc/crowdsec/
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  bouncer-traefik:
+    image: fbonalair/traefik-crowdsec-bouncer:latest
+    container_name: crowdsec-bouncer-traefik
+    restart: always
+    networks:
+      - proxy
+    environment:
+      - CROWDSEC_BOUNCER_API_KEY=${BOUNCER_KEY}
+      - CROWDSEC_AGENT_HOST=crowdsec:8080
+      - GIN_MODE=release
+    depends_on:
+      - crowdsec
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.crowdsec-bouncer.loadbalancer.server.port=8080"
+      - "traefik.http.middlewares.crowdsec-bouncer.forwardauth.address=http://crowdsec-bouncer-traefik:8080/api/v1/forwardAuth"
+      - "traefik.http.middlewares.crowdsec-bouncer.forwardauth.trustForwardHeader=true"
+      - "traefik.docker.network=proxy"
+      - "com.centurylinklabs.watchtower.enable=true"
+
+networks:
+  proxy:
+    external: true
+
+volumes:
+  crowdsec-db:
+  crowdsec-config:
