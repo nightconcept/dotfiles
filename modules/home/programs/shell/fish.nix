@@ -143,6 +143,11 @@ in {
                 end
             end
         end
+
+        # NPM global bin path for claude-sandbox
+        if test -d "/home/danny/.npm-global/bin"
+            fish_add_path --prepend /home/danny/.npm-global/bin
+        end
       '';
 
       plugins = [
