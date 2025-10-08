@@ -59,6 +59,7 @@ in {
         [
           "calibre"
           "discord"
+          "docker"
           "firefox"
           "github"
           "hiddenbar"

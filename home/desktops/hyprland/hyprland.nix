@@ -211,10 +211,9 @@
           "$mod, T, exec, $terminal" # Super+T also opens new terminal
           "$mod, B, exec, $browser"
           "$mod SHIFT, B, exec, wofi-bluetooth" # Bluetooth menu
-          "$mod, E, exec, $filemanager"
           "$mod, Q, killactive"
           "$mod SHIFT, M, exec, loginctl terminate-user \"\""
-          "$mod, V, exec, ${pkgs.vscode}/bin/code"
+          "$mod, E, exec, ${pkgs.vscode}/bin/code"
           "$mod SHIFT, V, togglefloating"
           "$mod, SPACE, exec, $applauncher"
           "$mod, F, fullscreen"
