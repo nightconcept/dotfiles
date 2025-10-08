@@ -15,7 +15,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.obsidian-couchdb.entrypoints=http"
-      - "traefik.http.routers.obsidian-couchdb.rule=Host(`obsidian-db.local.solivan.dev`) || Host(`obsidian-couchdb.solivan.dev`)"
+      - "traefik.http.routers.obsidian-couchdb.rule=Host(`obsidian-db.local.solivan.dev`) || Host(`obsidian-db.solivan.dev`)"
       - "traefik.http.middlewares.obsidian-couchdb-https-redirect.redirectscheme.scheme=https"
       - "traefik.http.routers.obsidian-couchdb.middlewares=obsidian-couchdb-https-redirect"
       - "traefik.http.routers.obsidian-couchdb-secure.entrypoints=https"

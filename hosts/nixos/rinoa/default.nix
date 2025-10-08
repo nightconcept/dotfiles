@@ -107,10 +107,7 @@
     };
     freshrss.enable = true;
     blog.enable = true;
-    obsidian-sync = {
-      enable = true;
-      dataPath = "/var/lib/obsidian-sync";
-    };
+    obsidian-sync.enable = false;
   };
 
   # System packages for server management
