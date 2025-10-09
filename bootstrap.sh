@@ -584,20 +584,18 @@ apply_nixos_config() {
     print_success "NixOS configuration applied!"
 }
 
-# Install Home Manager standalone
-install_home_manager() {
-    print_info "Setting up Home Manager..."
-    
-    # Check if home-manager is already available
-    if command -v home-manager &> /dev/null; then
-        print_info "Home Manager is already installed"
-    else
-        print_info "Installing Home Manager..."
-        nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager
-        nix-channel --update
-        export NIX_PATH=$HOME/.nix-defexpr/channels${NIX_PATH:+:}$NIX_PATH
-        nix-shell '<home-manager>' -A install
-    fi
+# Apply Home Manager configuration directly from flake
+apply_home_manager_from_flake() {
+    local profile=$1
+
+    print_info "Applying Home Manager configuration from flake: $profile"
+
+    # Use nix run to apply home-manager configuration directly from the flake
+    # This doesn't require home-manager to be pre-installed
+    nix run home-manager/master -- switch --flake ".#$profile"
+
+    print_success "Home Manager configuration applied!"
+    print_info "The 'home-manager' command is now available for future updates"
 }
 
 # Migrate from Lix to upstream Nix on macOS
@@ -1003,40 +1001,49 @@ show_macos_manual_instructions() {
 # Apply Home Manager configuration
 apply_home_config() {
     local profile=$1
-    
+
     print_info "Available Home Manager profiles:"
     echo "  1) desktop - Full desktop environment"
     echo "  2) laptop  - Laptop configuration"
     echo "  3) server  - Minimal server configuration"
     echo "  4) Skip    - Don't apply Home Manager configuration"
     echo
-    
-    read -p "Select profile (1-4): " -n 1 -r
-    echo
-    
-    case "$REPLY" in
-        1)
-            profile="desktop"
-            ;;
-        2)
-            profile="laptop"
-            ;;
-        3)
+
+    # Handle non-interactive environments
+    if [[ ! -r /dev/tty ]] || [[ ! -w /dev/tty ]]; then
+        print_warning "/dev/tty not available, defaulting to server profile"
+        profile="server"
+    else
+        read -p "Select profile (1-4): " -n 1 -r </dev/tty || {
+            print_warning "Failed to read input, defaulting to server profile"
             profile="server"
-            ;;
-        4)
-            return
-            ;;
-        *)
-            print_error "Invalid selection"
-            apply_home_config
-            return
-            ;;
-    esac
-    
-    print_info "Applying Home Manager configuration: $profile"
-    home-manager switch --flake ".#$profile"
-    print_success "Home Manager configuration applied!"
+        }
+        echo
+
+        case "$REPLY" in
+            1)
+                profile="desktop"
+                ;;
+            2)
+                profile="laptop"
+                ;;
+            3)
+                profile="server"
+                ;;
+            4)
+                print_info "Skipping Home Manager configuration"
+                return
+                ;;
+            *)
+                print_error "Invalid selection"
+                apply_home_config
+                return
+                ;;
+        esac
+    fi
+
+    # Apply configuration using the flake-based approach
+    apply_home_manager_from_flake "$profile"
 }
 
 # Partition and format disk for fresh install
@@ -1462,12 +1469,11 @@ main() {
             
             # Install Nix
             install_nix
-            
+
             # Clone flake
             clone_flake
-            
-            # Install and configure Home Manager
-            install_home_manager
+
+            # Apply Home Manager configuration directly from flake
             apply_home_config
             ;;
             
