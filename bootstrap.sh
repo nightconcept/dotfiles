@@ -34,8 +34,8 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configuration
-FLAKE_REPO="https://github.com/nightconcept/dotfiles-nix"
-FLAKE_DIR="$HOME/git/dotfiles-nix"
+FLAKE_REPO="https://forge.solivan.dev/nightconcept/dotfiles"
+FLAKE_DIR="$HOME/git/dotfiles"
 
 # Print colored output
 print_info() { echo -e "${BLUE}[INFO]${NC} $1"; }
@@ -94,6 +94,8 @@ detect_package_manager() {
         echo "zypper"
     elif command -v apk &> /dev/null; then
         echo "apk"
+    elif command -v emerge &> /dev/null; then
+        echo "emerge"
     else
         echo "unknown"
     fi
@@ -143,9 +145,21 @@ backup_file() {
 # Install prerequisites based on package manager
 install_prerequisites() {
     local pkg_manager=$1
-    
+
+    # Check if essential tools are already available
+    local missing_tools=()
+    command -v curl &> /dev/null || missing_tools+=("curl")
+    command -v git &> /dev/null || missing_tools+=("git")
+    command -v xz &> /dev/null || missing_tools+=("xz")
+
+    # If all tools are present, no need to install
+    if [[ ${#missing_tools[@]} -eq 0 ]]; then
+        print_info "All prerequisites already installed"
+        return
+    fi
+
     print_info "Installing prerequisites..."
-    
+
     case "$pkg_manager" in
         apt)
             sudo apt-get update
@@ -163,8 +177,12 @@ install_prerequisites() {
         apk)
             sudo apk add --no-cache curl git xz
             ;;
+        emerge)
+            sudo emerge --ask=n dev-vcs/git net-misc/curl app-arch/xz-utils
+            ;;
         *)
-            print_warning "Unknown package manager. Please ensure curl, git, and xz are installed."
+            print_warning "Unknown package manager. Missing tools: ${missing_tools[*]}"
+            print_info "Please install missing tools manually, then re-run this script."
             read -p "Continue anyway? (y/n): " -n 1 -r </dev/tty
             echo
             [[ ! $REPLY =~ ^[Yy]$ ]] && exit 1
