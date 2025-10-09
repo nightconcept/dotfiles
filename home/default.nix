@@ -85,7 +85,7 @@
 
     # Default fallback
     default = {
-      profiles = [./profiles/linux-desktop.nix];
+      profiles = [./profiles/server.nix];
       homeDirectory = "/home/danny";
       extraImports = [];
       extraConfig = {

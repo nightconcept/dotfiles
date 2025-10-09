@@ -655,6 +655,33 @@ apply_home_manager_from_flake() {
         fi
     fi
 
+    # Change default shell to fish for desktop and server profiles
+    if [[ "$profile" == "desktop" || "$profile" == "server" ]]; then
+        local fish_path="$HOME/.nix-profile/bin/fish"
+
+        if [[ -x "$fish_path" ]]; then
+            print_info "Setting default shell to fish..."
+
+            # Add fish to /etc/shells if not already present
+            if ! grep -q "^$fish_path$" /etc/shells 2>/dev/null; then
+                print_info "Adding fish to /etc/shells..."
+                echo "$fish_path" | sudo tee -a /etc/shells > /dev/null
+            fi
+
+            # Change default shell
+            if command -v chsh &> /dev/null; then
+                chsh -s "$fish_path"
+                print_success "Default shell changed to fish"
+                print_info "Please log out and log back in for shell change to take effect"
+            else
+                print_warning "chsh command not found, cannot change default shell"
+                print_info "To change shell manually later, run: chsh -s $fish_path"
+            fi
+        else
+            print_warning "Fish shell not found at expected path: $fish_path"
+        fi
+    fi
+
     print_success "Home Manager configuration applied!"
     print_info "The 'home-manager' command is now available for future updates"
     print_info "Restart your shell or run: source ~/.nix-profile/etc/profile.d/hm-session-vars.sh"
@@ -1521,19 +1548,22 @@ main() {
             
         linux)
             print_info "Running on Linux (non-NixOS)"
-            
+
             # Detect and use package manager
             PKG_MANAGER=$(detect_package_manager)
             print_info "Detected package manager: $PKG_MANAGER"
-            
+
             # Install prerequisites
             install_prerequisites "$PKG_MANAGER"
-            
+
             # Install Nix
             install_nix
 
             # Clone flake
             clone_flake
+
+            # Setup age keys (required for SOPS secrets)
+            setup_age_keys
 
             # Apply Home Manager configuration directly from flake
             apply_home_config

@@ -1,4 +1,4 @@
-# snowdots
+# dotfiles
 
 NixOS, macOS, and Linux system configurations managed by [Nix](https://nixos.org/) and (soon) Windows system configurations managed by Yuki (WIP).
 
@@ -43,7 +43,7 @@ NixOS, macOS, and Linux system configurations managed by [Nix](https://nixos.org
 
 ```bash
 # Universal bootstrap
-wget -qO- https://raw.githubusercontent.com/nightconcept/dotfiles-nix/main/bootstrap.sh | bash
+wget -qO- https://forge.solivan.dev/nightconcept/dotfiles/raw/branch/main/bootstrap.sh | bash
 ```
 
 For fresh NixOS server installations, see the [Server Setup Runbook](docs/server-setup-runbook.md) which covers pre-bootstrap steps like enabling SSH and setting up networking.
