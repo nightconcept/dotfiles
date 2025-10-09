@@ -641,6 +641,7 @@ in {
           ${lib.optionalString cfg.glm.enable ''
           $DRY_RUN_CMD echo "GLM wrapper available as 'glm' command."
         ''}
+          $DRY_RUN_CMD mkdir -p "$HOME/.claude"
           $DRY_RUN_CMD touch "$HOME/.claude/.nix_configured"
         fi
       ''
