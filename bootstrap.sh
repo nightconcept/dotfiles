@@ -641,10 +641,23 @@ apply_home_manager_from_flake() {
 
     # Use nix run to apply home-manager configuration directly from the flake
     # This doesn't require home-manager to be pre-installed
-    nix run home-manager/master -- switch --flake ".#$profile"
+    nix run home-manager/master -- switch --flake ".#$profile" -b backup
+
+    # Fix .nix-profile symlink if it's pointing to the wrong location
+    if [[ -L "$HOME/.nix-profile" ]]; then
+        local current_target=$(readlink -f "$HOME/.nix-profile")
+        local expected_target="$HOME/.local/state/nix/profiles/home-manager"
+
+        if [[ "$current_target" != "$expected_target" && -d "$HOME/.local/state/nix/profiles/home-manager" ]]; then
+            print_info "Fixing .nix-profile symlink..."
+            rm -f "$HOME/.nix-profile"
+            ln -sf "$HOME/.local/state/nix/profiles/home-manager" "$HOME/.nix-profile"
+        fi
+    fi
 
     print_success "Home Manager configuration applied!"
     print_info "The 'home-manager' command is now available for future updates"
+    print_info "Restart your shell or run: source ~/.nix-profile/etc/profile.d/hm-session-vars.sh"
 }
 
 # Migrate from Lix to upstream Nix on macOS
