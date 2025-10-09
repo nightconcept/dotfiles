@@ -199,8 +199,41 @@ install_prerequisites() {
     esac
 }
 
+# Detect if running in WSL
+is_wsl() {
+    if [[ -f /proc/version ]] && grep -qi microsoft /proc/version; then
+        return 0
+    fi
+    return 1
+}
+
 # Setup OpenRC service for Nix daemon (Gentoo and other OpenRC systems)
 setup_nix_openrc() {
+    # Check if we're on WSL - OpenRC doesn't work there
+    if is_wsl; then
+        print_warning "Detected WSL environment - OpenRC services not supported"
+        print_info "Starting nix-daemon directly..."
+
+        # Start daemon directly
+        sudo /nix/var/nix/profiles/default/bin/nix-daemon &
+        sleep 2
+
+        # Create a helper script for future sessions
+        cat > "$HOME/.nix-daemon-wsl.sh" <<'EOF'
+#!/bin/bash
+# Auto-start nix-daemon in WSL if not running
+if ! pgrep -x nix-daemon > /dev/null 2>&1; then
+    sudo /nix/var/nix/profiles/default/bin/nix-daemon > /dev/null 2>&1 &
+fi
+EOF
+        chmod +x "$HOME/.nix-daemon-wsl.sh"
+
+        print_success "nix-daemon started"
+        print_info "To auto-start the daemon in future sessions, add this to your shell RC file:"
+        print_info "  source ~/.nix-daemon-wsl.sh"
+        return
+    fi
+
     # Check if we're on an OpenRC system
     if ! command -v rc-update &> /dev/null; then
         return
