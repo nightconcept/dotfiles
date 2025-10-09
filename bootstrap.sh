@@ -265,16 +265,32 @@ install_nix() {
     fi
 
     # Enable flakes and nix-command features
+    local config_changed=false
     if [[ -f /etc/nix/nix.conf ]]; then
         if ! grep -q "experimental-features" /etc/nix/nix.conf; then
             print_info "Enabling flakes and nix-command features..."
             echo "experimental-features = nix-command flakes" | sudo tee -a /etc/nix/nix.conf
+            config_changed=true
         fi
 
         # Add user to trusted users
         if ! grep -q "trusted-users.*$USER" /etc/nix/nix.conf; then
             print_info "Adding $USER to trusted users..."
             echo "trusted-users = root $USER" | sudo tee -a /etc/nix/nix.conf
+            config_changed=true
+        fi
+    fi
+
+    # Restart nix-daemon to apply configuration changes
+    if [[ "$config_changed" == "true" ]]; then
+        print_info "Restarting nix-daemon to apply configuration..."
+        if command -v systemctl &> /dev/null; then
+            sudo systemctl restart nix-daemon
+        elif command -v rc-service &> /dev/null; then
+            sudo rc-service nix-daemon restart
+        else
+            print_warning "Could not restart nix-daemon automatically"
+            print_info "Please restart the nix-daemon service manually"
         fi
     fi
 }
