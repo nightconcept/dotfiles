@@ -98,6 +98,13 @@ in {
           ''
           else ''
             set -gx XDG_DATA_DIRS /home/danny/.nix-profile/share $XDG_DATA_DIRS
+
+            # Auto-start nix-daemon on WSL (OpenRC doesn't work in WSL)
+            if test -f /proc/version; and string match -q -r -i microsoft (cat /proc/version)
+                if not pgrep -x nix-daemon > /dev/null 2>&1
+                    sudo /nix/var/nix/profiles/default/bin/nix-daemon > /dev/null 2>&1 &
+                end
+            end
           ''
         }
 
