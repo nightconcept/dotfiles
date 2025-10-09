@@ -151,6 +151,7 @@ install_prerequisites() {
     command -v curl &> /dev/null || missing_tools+=("curl")
     command -v git &> /dev/null || missing_tools+=("git")
     command -v xz &> /dev/null || missing_tools+=("xz")
+    command -v sudo &> /dev/null || missing_tools+=("sudo")
 
     # If all tools are present, no need to install
     if [[ ${#missing_tools[@]} -eq 0 ]]; then
@@ -163,21 +164,29 @@ install_prerequisites() {
     case "$pkg_manager" in
         apt)
             sudo apt-get update
-            sudo apt-get install -y curl git xz-utils
+            sudo apt-get install -y curl git xz-utils sudo
             ;;
         dnf|yum)
-            sudo ${pkg_manager} install -y curl git xz
+            sudo ${pkg_manager} install -y curl git xz sudo
             ;;
         pacman)
-            sudo pacman -Syu --noconfirm curl git xz
+            sudo pacman -Syu --noconfirm curl git xz sudo
             ;;
         zypper)
-            sudo zypper install -y curl git xz
+            sudo zypper install -y curl git xz sudo
             ;;
         apk)
-            sudo apk add --no-cache curl git xz
+            sudo apk add --no-cache curl git xz sudo
             ;;
         emerge)
+            # For Gentoo, we need to handle sudo separately if not present
+            if ! command -v sudo &> /dev/null; then
+                print_error "sudo is required but not installed."
+                print_info "Please install sudo first:"
+                print_info "  su -c 'emerge --ask=n app-admin/sudo'"
+                print_info "Then configure sudo access for your user and re-run this script."
+                exit 1
+            fi
             sudo emerge --ask=n dev-vcs/git net-misc/curl app-arch/xz-utils
             ;;
         *)
@@ -190,15 +199,58 @@ install_prerequisites() {
     esac
 }
 
+# Setup OpenRC service for Nix daemon (Gentoo and other OpenRC systems)
+setup_nix_openrc() {
+    # Check if we're on an OpenRC system
+    if ! command -v rc-update &> /dev/null; then
+        return
+    fi
+
+    print_info "Detected OpenRC init system"
+
+    # Check if nix-daemon service already exists
+    if rc-update show default | grep -q nix-daemon; then
+        print_info "nix-daemon service already enabled"
+        return
+    fi
+
+    print_info "Setting up nix-daemon service for OpenRC..."
+
+    # Create the service file
+    sudo tee /etc/init.d/nix-daemon > /dev/null <<'EOF'
+#!/sbin/openrc-run
+
+name=$RC_SVCNAME
+description="Nix Daemon"
+supervisor="supervise-daemon"
+command="/nix/var/nix/profiles/default/bin/nix-daemon"
+command_args="--daemon"
+EOF
+
+    # Make it executable
+    sudo chmod +x /etc/init.d/nix-daemon
+
+    # Enable the service
+    print_info "Enabling nix-daemon service..."
+    sudo rc-update add nix-daemon default
+
+    # Start the service
+    print_info "Starting nix-daemon service..."
+    sudo rc-service nix-daemon start
+
+    print_success "OpenRC nix-daemon service configured and started"
+    print_warning "It's recommended to reboot after installing Nix on OpenRC systems"
+}
+
 # Install Nix on non-NixOS systems
 install_nix() {
     if command -v nix &> /dev/null; then
         print_info "Nix is already installed"
         return
     fi
-    
+
     print_info "Installing Nix..."
-    
+
     # Try Determinate Systems installer first (recommended)
     if curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install; then
         print_success "Nix installed via Determinate Systems installer"
@@ -207,14 +259,17 @@ install_nix() {
         print_warning "Determinate installer failed, trying official installer..."
         sh <(curl -L https://nixos.org/nix/install) --daemon
     fi
-    
+
+    # Setup OpenRC service if needed
+    setup_nix_openrc
+
     # Source Nix
     if [[ -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
         . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
     elif [[ -f "$HOME/.nix-profile/etc/profile.d/nix.sh" ]]; then
         . "$HOME/.nix-profile/etc/profile.d/nix.sh"
     fi
-    
+
     # Add user to trusted users
     if [[ -f /etc/nix/nix.conf ]]; then
         if ! grep -q "trusted-users.*$USER" /etc/nix/nix.conf; then
