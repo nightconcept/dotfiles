@@ -26,7 +26,8 @@ in {
       eza
       fastfetch
       gnupg
-      just # Task runner for command organization
+      jq
+      just
       lazygit
       lua51Packages.lua
       ncdu
