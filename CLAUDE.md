@@ -1,1 +1,341 @@
-AGENTS.md
+# AGENTS.md
+
+This file provides guidance to AI agents when working with code in this repository.
+
+## Project Overview
+
+This is a Nix flake configuration for personal dotfiles supporting multiple platforms:
+- **NixOS**: Full system configurations for Linux desktops and servers
+- **nix-darwin**: macOS system configurations
+- **home-manager**: User-level configurations for any system
+
+### Nixpkgs Strategy
+- **All systems**: Use `nixpkgs-unstable` for latest features
+- No overlays directory - packages are managed through module options
+
+## Common Commands
+
+### NixOS System Rebuild
+```bash
+# Switch to a NixOS configuration
+nixos-rebuild switch --flake .#<CONFIG-NAME>
+
+# Example configurations:
+nixos-rebuild switch --flake .#tidus
+nixos-rebuild switch --flake .#aerith
+nixos-rebuild switch --flake .#barrett
+```
+
+### Darwin System Rebuild
+```bash
+# Switch to a Darwin configuration
+sudo darwin-rebuild switch --flake .#<CONFIG-NAME>
+
+# Example configurations:
+sudo darwin-rebuild switch --flake .#waver
+sudo darwin-rebuild switch --flake .#merlin
+```
+
+### Home Manager
+```bash
+# Standalone configurations
+home-manager switch --flake '.#desktop'
+home-manager switch --flake '.#laptop'
+home-manager switch --flake '.#server'
+```
+
+### Flake Operations
+```bash
+# Update flake inputs
+nix flake update
+
+# Check flake configuration
+nix flake check
+
+# Show flake outputs
+nix flake show
+```
+
+## Architecture
+
+### Directory Structure
+
+- `/flake.nix` - Main flake configuration defining all system outputs
+- `/lib/lib.nix` - Helper functions (mkNixos, mkNixosServer, mkDarwin, mkHome)
+- `/modules/` - Reusable configuration modules organized by platform
+  - `nixos/` - NixOS system modules
+    - `core/` - Core system configuration (bootloader, locale, nix, packages, users)
+    - `desktop/` - Desktop environment modules (hyprland, plasma6)
+    - `hardware/` - Hardware configurations (bluetooth, graphics, power, printing, sound, usb-automount)
+    - `kernel/` - Kernel configuration
+    - `network/` - Network configuration
+    - `networking/` - Network services and base configuration
+    - `programs/` - System programs
+    - `security/` - Security configuration (sops)
+    - `services/` - System services (docker, nordvpn, openssh, plex, torrent)
+    - `storage/` - Storage configuration (impermanence, network-drives)
+  - `darwin/` - macOS system modules
+    - `core/` - Core Darwin configuration
+    - `homebrew/` - Homebrew package management
+    - `system-settings/` - macOS system settings
+  - `home/` - Home Manager modules
+    - `programs/` - Program modules (nvim, shell, wezterm)
+    - `secrets/` - User-level sops secrets
+    - `themes/` - Theme configuration
+- `/home/` - Home Manager user configurations
+  - `default.nix` - Profile selector based on hostname
+  - `profiles/` - Composable configuration profiles
+    - `base.nix` - Common to all systems
+    - `linux-desktop.nix` - Generic Linux desktop
+    - `nixos-laptop.nix` - NixOS laptop (Hyprland)
+    - `darwin-laptop.nix` - macOS laptop
+    - `darwin-desktop.nix` - macOS desktop
+    - `server.nix` - Minimal server config
+  - `programs/` - Application configurations
+  - `desktops/` - Desktop environment configs (hyprland)
+- `/hosts/` - Host-specific configurations (no subdirectories, hosts defined directly in flake.nix)
+  - Note: Currently no host-specific files, hosts are configured through modules
+- `/shared/` - Shared resources (e.g., starship.toml)
+- `/iso/` - Custom installer ISO configurations
+- `/scripts/` - Bootstrap and utility scripts
+- `/windows/` - Windows-specific configurations (powershell, winutils)
+- `/wallpaper/` - Wallpaper images for theming
+
+### Configuration Hierarchy
+
+#### NixOS Systems
+1. `flake.nix` calls `lib.mkNixos` or `lib.mkNixosServer`
+2. Imports `./modules/nixos` (base NixOS modules)
+3. Imports `./hosts/nixos/<hostname>` (host-specific config if exists)
+4. Includes Home Manager with `./home` (uses default.nix selector)
+
+#### Darwin Systems
+1. `flake.nix` calls `lib.mkDarwin`
+2. Imports `./modules/darwin` (base Darwin modules)
+3. Imports `./hosts/darwin/<hostname>` (host-specific config if exists)
+4. Includes Home Manager with `./home` (uses default.nix selector)
+
+#### Home Manager Standalone
+1. `flake.nix` calls `lib.mkHome`
+2. Imports `./home` with hostname parameter
+3. `default.nix` selects appropriate profiles based on hostname
+
+### Profile System
+
+The home configuration uses a profile-based system where `home/default.nix` selects the appropriate profiles based on hostname:
+
+- **tidus**: `base + nixos-laptop` (Dell Latitude 7420 with Hyprland)
+- **tidus-persist**: `base + nixos-laptop` (Impermanence variant)
+- **aerith**: `base + server` (Plex media server)
+- **barrett**: `base + server` (VPN torrent server)
+- **rinoa**: `base + server` (Docker services)
+- **vincent**: `base + server` (CI/CD runner with Docker)
+- **waver**: `base + darwin-laptop` (MacBook Pro M1)
+- **merlin**: `base + darwin-desktop` (Mac Mini M1)
+- **desktop/laptop/server**: Generic standalone profiles
+
+### Key Components
+- **Modules**: Self-contained feature modules in `/modules/{nixos,darwin,home}/`
+- **Hosts**: Individual machine configs referenced in `flake.nix`
+- **Programs**: User application configs in `/home/programs/`
+- **Desktops**: Desktop environment configs in `/home/desktops/`
+- **Themes**: Stylix theming in `modules/home/themes/`
+- **Wallpapers**: Wallpaper images in `/wallpaper/`
+- **Secrets**: SOPS-managed secrets in `modules/{nixos,home}/security/sops/`
+
+### Module Options Pattern
+
+Modules expose enable options and package options for flexibility:
+```nix
+options.modules.nixos.services.plex = {
+  enable = mkEnableOption "Plex Media Server";
+  package = mkOpt lib.types.package pkgs.plex "The plex package to use";
+};
+```
+
+### Host Configurations
+
+#### Active NixOS Hosts
+- `tidus` - Dell Latitude 7420 laptop with Hyprland desktop
+- `tidus-persist` - Same as tidus but with impermanence for root filesystem
+- `aerith` - Plex media server
+- `barrett` - VPN torrent server with NordVPN
+- `rinoa` - General purpose server (Docker services)
+- `vincent` - CI/CD runner host with Docker and Forgejo runner
+
+#### Active Darwin Hosts
+- `waver` - MacBook Pro M1
+- `merlin` - Mac Mini M1 HTPC
+
+### Docker Container Configuration
+
+Docker services are managed as Nix modules in `/modules/nixos/services/docker/containers/`. Each container has its own module that defines:
+- Docker compose configuration
+- Environment variables
+- Volume mounts
+- Network configuration
+- Traefik labels for reverse proxy
+
+Available container modules include:
+- **Media**: jellyfin, plex
+- ***arr Stack**: sonarr, radarr, prowlarr, readarr, flaresolverr
+- **Books**: audiobookshelf, calibre, calibre-web, readarr-books
+- **Home Automation**: homepage, uptime-kuma
+- **Infrastructure**: traefik, portainer, watchtower, cloudflare-tunnel
+- **Authentication**: authelia, vaultwarden
+- **Development**: forgejo, forgejo-runner
+- **Gaming**: minecraft, enshrouded, palworld
+- **Utilities**: freshrss, nextcloud, open-webui, searxng, wg-easy, ddclient, knot
+
+Docker networks:
+- `proxy` - Shared network for services behind Traefik reverse proxy
+
+## Development Workflow
+
+1. Make changes to relevant configuration files
+2. Test changes locally with rebuild commands
+3. Commit changes to git
+4. The flake.lock should be updated periodically with `nix flake update`
+
+## Hyprland Desktop Environment
+
+The Hyprland configuration is modular and includes:
+
+### Core Components (`/home/desktops/hyprland/`)
+- `hyprland.nix` - Main Hyprland window manager configuration
+- `waybar.nix` - Status bar configuration with Tokyo Night theme
+- `hypridle.nix` - Idle management with power-aware timeouts
+- `hyprlock.nix` - Lock screen with Mac-style interface
+- `wlogout.nix` - Power menu with Stylix colors
+- `wofi.nix` - Application launcher with Tokyo Night theme
+- `mako.nix` - Notification daemon
+- `gtk-settings.nix` - GTK theming
+
+### Theming
+- Uses Stylix with Tokyo Night color scheme
+- Consistent theming across all applications
+- Custom wallpaper support in `/wallpaper/`
+
+### Key Bindings
+- `Super+Return/T` - Open terminal (WezTerm)
+- `Super+Space` - Application launcher (wofi)
+- `Super+L` - Lock screen (hyprlock)
+- `Super+Backspace` - Power menu (wlogout)
+- `Alt+Tab` - Cycle windows
+- `F1-F4` - Audio controls
+- `F6-F7` - Brightness controls
+- Print screen variations for screenshots
+
+## Bootstrap Process
+
+New systems can be bootstrapped using:
+```bash
+wget -qO- https://raw.githubusercontent.com/nightconcept/dotfiles-nix/main/bootstrap.sh | bash
+```
+
+The bootstrap script:
+- Detects OS (NixOS, Linux, macOS)
+- Installs Nix if needed
+- Clones this repository
+- On NixOS: Offers host selection (tidus/aerith)
+- On Linux: Sets up Home Manager with profile selection
+- On macOS: Provides manual instructions
+
+## SOPS Secret Management
+
+Secrets are managed using sops-nix:
+- System secrets configured in `/modules/nixos/security/sops/`
+- User secrets configured in `/modules/home/secrets/`
+- Age keys derived from SSH keys
+- Automatic deployment to runtime directories
+
+### Secret Storage Conventions
+
+#### SOPS Encryption Key
+**ALWAYS use `danny_personal` age key for all secrets** - Do not use host-specific keys as the personal key provides access across all systems.
+
+#### Deployed Secret Paths
+System services (NixOS) should use:
+- `/run/secrets/<service>-<secret>` - Standard SOPS deployment path
+- Example: `/run/secrets/nordvpn-token`
+
+User services (home-manager) should use:
+- `$XDG_RUNTIME_DIR/secrets/<secret>` - User runtime directory (tmpfs)
+- Expands to `/run/user/1000/secrets/<secret>`
+- Example: `/run/user/1000/secrets/gemini_api_key`
+
+#### Adding New Secrets
+1. Edit the encrypted YAML file using `sops` command
+2. Add the secret definition in the appropriate module's sops configuration
+3. Follow the path conventions above for consistency
+
+## CrowdSec Security Configuration
+
+CrowdSec provides intrusion prevention for publicly accessible services through behavior analysis and IP blocking.
+
+### Architecture
+- **CrowdSec Engine**: Analyzes logs and detects malicious behavior
+- **Traefik Bouncer**: Middleware that blocks malicious IPs at the reverse proxy level
+- Configured in `/modules/nixos/services/docker/containers/traefik/`
+
+### Adding CrowdSec Protection to a Service
+
+When exposing a service to the internet (not just local network), add CrowdSec protection:
+
+#### 1. Update Docker Compose Labels
+
+In the service's `docker-compose.yml`, add the CrowdSec middleware to the secure router:
+
+```yaml
+labels:
+  - "traefik.http.routers.myservice-secure.middlewares=crowdsec-bouncer@docker"
+```
+
+**Complete example** (from vaultwarden/obsidian-sync):
+```yaml
+labels:
+  - "traefik.enable=true"
+  - "traefik.http.routers.myservice.entrypoints=http"
+  - "traefik.http.routers.myservice.rule=Host(`myservice.local.solivan.dev`)"
+  - "traefik.http.middlewares.myservice-https-redirect.redirectscheme.scheme=https"
+  - "traefik.http.routers.myservice.middlewares=myservice-https-redirect"
+  - "traefik.http.routers.myservice-secure.entrypoints=https"
+  - "traefik.http.routers.myservice-secure.rule=Host(`myservice.local.solivan.dev`) || Host(`myservice.solivan.dev`)"
+  - "traefik.http.routers.myservice-secure.tls=true"
+  - "traefik.http.routers.myservice-secure.middlewares=crowdsec-bouncer@docker"
+  - "traefik.http.routers.myservice-secure.service=myservice"
+  - "traefik.http.services.myservice.loadbalancer.server.port=80"
+  - "traefik.docker.network=proxy"
+```
+
+#### 2. Configure External Access
+
+Ensure the service is accessible via both local and external domains:
+- **Local**: `myservice.local.solivan.dev` (internal network only)
+- **External**: `myservice.solivan.dev` (publicly accessible with CrowdSec protection)
+
+#### 3. Key Points
+
+- **Always use `crowdsec-bouncer@docker`** for externally accessible services
+- The middleware is defined in `/modules/nixos/services/docker/containers/traefik/config/config.yml`
+- CrowdSec automatically shares threat intelligence with the community
+- Protected services will block IPs flagged by CrowdSec's behavior analysis
+
+#### 4. Services Currently Protected
+
+- **vaultwarden**: Password manager (vaultwarden.solivan.dev)
+- **obsidian-sync**: Obsidian CouchDB sync (obsidian-db.solivan.dev)
+
+### Monitoring CrowdSec
+
+Check CrowdSec status and decisions:
+```bash
+# View active bans
+docker exec crowdsec cscli decisions list
+
+# View metrics
+docker exec crowdsec cscli metrics
+
+# View alerts
+docker exec crowdsec cscli alerts list
+```
