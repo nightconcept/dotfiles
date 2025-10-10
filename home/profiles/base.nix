@@ -18,12 +18,6 @@
           enable = true;
           manageSettings = true;
         };
-        # Enable GLM wrapper for Z.AI integration
-        glm = {
-          enable = true;
-          # API key should be updated with actual Z.AI key
-          apiKey = "YOUR_ZAI_API_KEY";
-        };
         # Enable MCP servers that don't require API keys by default
         mcp = {
           sequential-thinking.enable = true;

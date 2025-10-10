@@ -589,19 +589,6 @@ in {
           echo "  claude mcp list"
         '')
 
-        # Official Claude Code wrapper (preserves default behavior)
-        # Note: claude-code package already provides 'claude' binary
-        # This wrapper is commented out to avoid conflicts
-        # (writeShellScriptBin "claude" ''
-        #   #!/usr/bin/env bash
-        #   # Official Anthropic Claude Code
-        #   if [ -f ~/.claude/mcp-config.json ]; then
-        #     exec ${lib.getExe pkgs.claude-code} --mcp-config ~/.claude/mcp-config.json "$@"
-        #   else
-        #     exec ${lib.getExe pkgs.claude-code} "$@"
-        #   fi
-        # '')
-
         # Helper to start Claude with MCP config
         (writeShellScriptBin "claude-mcp" ''
           #!/usr/bin/env bash
@@ -631,20 +618,5 @@ in {
           fi
         '')
       ];
-
-    # Add activation script
-    home.activation.claudeCodeSetup = lib.mkIf (cfg.statusline.enable || cfg.mcp.enable || cfg.glm.enable) (
-      lib.hm.dag.entryAfter ["writeBoundary"] ''
-        if [ ! -f "$HOME/.claude/.nix_configured" ]; then
-          $DRY_RUN_CMD echo "Claude Code configuration available."
-          $DRY_RUN_CMD echo "Run 'claude-setup' for setup instructions."
-          ${lib.optionalString cfg.glm.enable ''
-          $DRY_RUN_CMD echo "GLM wrapper available as 'glm' command."
-        ''}
-          $DRY_RUN_CMD mkdir -p "$HOME/.claude"
-          $DRY_RUN_CMD touch "$HOME/.claude/.nix_configured"
-        fi
-      ''
-    );
   };
 }
