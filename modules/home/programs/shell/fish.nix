@@ -126,6 +126,9 @@ in {
             end
           ''
           else ''
+            if test -d "/home/danny/.nix-profile/home-path/bin"
+                fish_add_path --prepend /home/danny/.nix-profile/home-path/bin
+            end
             if test -d "/home/danny/.nix-profile/bin"
                 fish_add_path --prepend /home/danny/.nix-profile/bin
             end
