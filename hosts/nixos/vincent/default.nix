@@ -51,7 +51,7 @@
   };
 
   # Forgejo Runners
-  services.forgejo-runners = {
+  modules.nixos.docker.containers.forgejo-runner = {
     enable = true;
     replicas = 3;
     labels = ["docker" "amd64" "linux" "vincent" "ubuntu-latest"];

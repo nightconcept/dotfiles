@@ -1,21 +1,17 @@
 # Forgejo Runner Container Module
-# Manages Forgejo runners in Docker containers
+# Manages Forgejo Actions runners in Docker containers with privileged mode for ISO building
 {
   config,
   lib,
   pkgs,
   ...
 }: let
-  cfg = config.services.forgejo-runners;
+  cfg = config.modules.nixos.docker.containers.forgejo-runner;
+  containerName = "forgejo-runners";
+  containerPath = "/var/lib/docker-containers/${containerName}";
 in {
-  options.services.forgejo-runners = {
+  options.modules.nixos.docker.containers.forgejo-runner = {
     enable = lib.mkEnableOption "Forgejo Actions runners";
-
-    workingDirectory = lib.mkOption {
-      type = lib.types.path;
-      default = "/var/lib/forgejo-runners";
-      description = "Base directory for Forgejo runner data";
-    };
 
     image = lib.mkOption {
       type = lib.types.str;
@@ -59,6 +55,12 @@ in {
       default = {};
       description = "Additional environment variables for runners";
     };
+
+    enablePrivileged = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "Enable privileged mode for containers (required for ISO building with mkarchiso)";
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -67,101 +69,123 @@ in {
 
     # Create required directories with proper permissions
     systemd.tmpfiles.rules = [
-      "d ${cfg.workingDirectory} 0755 root root -"
+      "d ${containerPath} 0755 root root -"
     ];
 
     # Forgejo Runners Service
-    systemd.services.forgejo-runners = {
+    systemd.services."docker-container-${containerName}" = {
       description = "Forgejo Actions Runners";
-      after = ["network.target" "docker.service"];
+      after = ["docker.service" "network.target"];
       requires = ["docker.service"];
       wantedBy = ["multi-user.target"];
+
+      preStart = ''
+        # Generate config.yml with privileged mode enabled
+        mkdir -p ${containerPath}/config
+        cat > ${containerPath}/config/config.yml <<'EOF'
+        log:
+          level: info
+
+        runner:
+          file: .runner
+          capacity: 1
+          timeout: 3h
+          insecure: false
+          fetch_timeout: 5s
+          fetch_interval: 2s
+          labels: []
+
+        cache:
+          enabled: true
+          dir: ""
+          host: ""
+          port: 0
+          external_server: ""
+
+        container:
+          network: ""
+          privileged: ${if cfg.enablePrivileged then "true" else "false"}
+          options: ""
+          workdir_parent: ""
+          valid_volumes: []
+          docker_host: ""
+          force_pull: false
+
+        host:
+          workdir_parent: ""
+        EOF
+
+        # Generate docker-compose.yml
+        cat > ${containerPath}/docker-compose.yml <<'EOF'
+        services:
+          docker-in-docker:
+            image: docker:dind
+            container_name: forgejo-dind
+            privileged: true
+            command: ['dockerd', '-H', 'tcp://0.0.0.0:2375', '--tls=false']
+            restart: unless-stopped
+            networks:
+              - runner-network
+
+        ${lib.concatStringsSep "\n" (lib.genList (i: let
+          runnerNum = i + 1;
+        in ''
+          forgejo-runner-${toString runnerNum}:
+            image: ${cfg.image}
+            container_name: forgejo-runner-${toString runnerNum}
+            restart: unless-stopped
+            depends_on:
+              - docker-in-docker
+            environment:
+              DOCKER_HOST: 'tcp://docker-in-docker:2375'
+              FORGEJO_INSTANCE_URL: '${cfg.instanceUrl}'
+              FORGEJO_RUNNER_NAME: '${cfg.runnerName}-${toString runnerNum}'
+              FORGEJO_RUNNER_LABELS: '${lib.concatStringsSep "," cfg.labels}'
+        ${lib.concatStringsSep "\n" (lib.mapAttrsToList (name: value: "      ${name}: '${value}'") cfg.environment)}
+            env_file:
+              - ${containerPath}/.env
+            volumes:
+              - forgejo-runner-data-${toString runnerNum}:/data
+              - ${containerPath}/config/config.yml:/data/config.yml:ro
+            networks:
+              - runner-network
+            user: "0:0"
+            command:
+              - sh
+              - -c
+              - |
+                cd /data
+                if [ ! -f .runner ]; then
+                  sleep 5
+                  echo "Registering runner: ${cfg.runnerName}-${toString runnerNum}"
+                  forgejo-runner register --no-interactive \
+                    --instance "${cfg.instanceUrl}" \
+                    --token "''${FORGEJO_RUNNER_REGISTRATION_TOKEN}" \
+                    --name "${cfg.runnerName}-${toString runnerNum}" \
+                    --labels "${lib.concatStringsSep "," cfg.labels}"
+                fi
+                forgejo-runner daemon --config /data/config.yml
+        '')
+        cfg.replicas)}
+
+        volumes:
+        ${lib.concatStringsSep "\n" (lib.genList (i: "  forgejo-runner-data-${toString (i + 1)}:") cfg.replicas)}
+
+        networks:
+          runner-network:
+            driver: bridge
+        EOF
+
+        # Generate .env file with registration token
+        echo "FORGEJO_RUNNER_REGISTRATION_TOKEN=$(cat ${cfg.tokenFile})" > ${containerPath}/.env
+      '';
 
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
-        WorkingDirectory = cfg.workingDirectory;
-        ExecStartPre = "${pkgs.coreutils}/bin/mkdir -p ${cfg.workingDirectory}";
-        ExecStart = let
-          # Build environment variables with proper indentation
-          baseEnvVars = [
-            "      FORGEJO_INSTANCE_URL: '${cfg.instanceUrl}'"
-            "      FORGEJO_RUNNER_NAME: '${cfg.runnerName}'"
-            "      FORGEJO_RUNNER_LABELS: '${lib.concatStringsSep "," cfg.labels}'"
-          ];
-          customEnvVars = lib.mapAttrsToList (name: value: "      ${name}: '${value}'") cfg.environment;
-          envVars = lib.concatStringsSep "\n" (baseEnvVars ++ customEnvVars);
-
-          # Generate individual runner services
-          runnerServices = lib.concatStringsSep "\n" (lib.genList (i: let
-              runnerNum = i + 1;
-            in ''
-                forgejo-runner-${toString runnerNum}:
-                  image: ${cfg.image}
-                  restart: unless-stopped
-                  depends_on:
-                    - docker-in-docker
-                  environment:
-              ${envVars}
-                    DOCKER_HOST: 'tcp://docker-in-docker:2375'
-                  env_file:
-                    - ${cfg.workingDirectory}/.env
-                  volumes:
-                    - forgejo-runner-data-${toString runnerNum}:/data
-                  networks:
-                    - runner-network
-                  user: "0:0"
-                  command:
-                    - sh
-                    - -c
-                    - |
-                      cd /data
-                      if [ ! -f .runner ]; then
-                        sleep 5
-                        RUNNER_NAME="${cfg.runnerName}-${toString runnerNum}"
-                        echo "Registering runner: ''${RUNNER_NAME}"
-                        forgejo-runner register --no-interactive \
-                          --instance "${cfg.instanceUrl}" \
-                          --token "''${FORGEJO_RUNNER_REGISTRATION_TOKEN}" \
-                          --name "''${RUNNER_NAME}" \
-                          --labels "${lib.concatStringsSep "," cfg.labels}"
-                      fi
-                      forgejo-runner daemon
-            '')
-            cfg.replicas);
-
-          # Generate volume definitions
-          runnerVolumes = lib.concatStringsSep "\n" (lib.genList (i: "  forgejo-runner-data-${toString (i + 1)}:") cfg.replicas);
-
-          dockerComposeFile = pkgs.writeText "forgejo-docker-compose.yml" ''
-            services:
-              docker-in-docker:
-                image: docker:dind
-                privileged: true
-                command: ['dockerd', '-H', 'tcp://0.0.0.0:2375', '--tls=false']
-                restart: unless-stopped
-                networks:
-                  - runner-network
-
-            ${runnerServices}
-
-            volumes:
-            ${runnerVolumes}
-
-            networks:
-              runner-network:
-                driver: bridge
-          '';
-        in
-          pkgs.writeScript "start-forgejo-runners" ''
-            #!${pkgs.bash}/bin/bash
-            ${pkgs.coreutils}/bin/cp ${dockerComposeFile} ${cfg.workingDirectory}/docker-compose.yml
-            echo "FORGEJO_RUNNER_REGISTRATION_TOKEN=$(cat ${cfg.tokenFile})" > ${cfg.workingDirectory}/.env
-            ${pkgs.docker-compose}/bin/docker-compose -f ${cfg.workingDirectory}/docker-compose.yml up -d
-          '';
-        ExecStop = ''
-          ${pkgs.docker-compose}/bin/docker-compose -f ${cfg.workingDirectory}/docker-compose.yml down
-        '';
+        WorkingDirectory = containerPath;
+        ExecStart = "${pkgs.docker-compose}/bin/docker-compose up -d";
+        ExecStop = "${pkgs.docker-compose}/bin/docker-compose down";
         Restart = "on-failure";
       };
     };
