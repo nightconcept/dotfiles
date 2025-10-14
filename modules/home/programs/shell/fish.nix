@@ -98,17 +98,6 @@ in {
           ''
           else ''
             set -gx XDG_DATA_DIRS /home/danny/.nix-profile/share $XDG_DATA_DIRS
-
-            # Auto-start nix-daemon on WSL when systemd is not available
-            # Check if we're on WSL and systemd is NOT running (e.g., Gentoo with OpenRC)
-            if test -f /proc/version; and string match -q -r -i microsoft (cat /proc/version)
-                # Only manually start nix-daemon if systemd isn't managing it
-                if not test -d /run/systemd/system
-                    if not pgrep -x nix-daemon > /dev/null 2>&1
-                        sudo /nix/var/nix/profiles/default/bin/nix-daemon > /dev/null 2>&1 &
-                    end
-                end
-            end
           ''
         }
 
