@@ -8,6 +8,7 @@
     ./firefox.nix
     ./gaming.nix
     ./gemini-cli.nix
+    ./ghostty
     ./git.nix
     ./nvim
     ./rofi.nix

@@ -11,8 +11,9 @@
   ];
 
   modules.home.programs = {
+    ghostty.configOnly = true;
     spotify.enable = true;
-    wezterm.configOnly = true;
+    # wezterm.configOnly = true; # Replaced by ghostty
     xdg.enable = true;
     shell = {
       fish.enable = true;

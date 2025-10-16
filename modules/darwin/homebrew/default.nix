@@ -61,6 +61,7 @@ in {
           "discord"
           "docker"
           "firefox"
+          "ghostty"
           "github"
           "hiddenbar"
           "jellyfin-media-player"
