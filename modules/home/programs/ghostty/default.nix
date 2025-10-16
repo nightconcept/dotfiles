@@ -25,8 +25,8 @@ in {
         font-family = "FiraMono Nerd Font Mono";
         font-size = 14;
 
-        # Theme - Tokyo Night to match wezterm
-        theme = "tokyo-night";
+        # Theme - Tokyo Night to match wezterm (tokyonight, tokyonight-day, tokyonight-storm, tokyonight-moon)
+        theme = "tokyonight";
         background-opacity = 0.97;
 
         # General Settings
@@ -44,8 +44,8 @@ in {
         # Mouse Configuration
         mouse-hide-while-typing = true;
 
-        # Shell Integration
-        shell-integration = true;
+        # Shell Integration - explicitly set to fish
+        shell-integration = "fish";
         shell-integration-features = "cursor,sudo,title";
 
         # Clipboard
