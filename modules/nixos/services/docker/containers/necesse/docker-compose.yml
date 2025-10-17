@@ -1,0 +1,32 @@
+services:
+  necesse-server:
+    container_name: necesse-server
+    image: brammys/necesse-server:latest
+    restart: unless-stopped
+    network_mode: "host"
+    ports:
+      - "14159:14159/udp"
+    environment:
+      # Server configuration
+      WORLD: "world"
+      SLOTS: "10"
+      PASSWORD: "${SERVER_PASSWORD}"
+      OWNER: "${OWNER_USERNAME}"
+
+      # Server behavior
+      PAUSE: "0"          # 0 = don't pause when empty, 1 = pause when empty
+      LOGGING: "1"        # 0 = disable logging, 1 = enable logging
+      ZIP: "1"            # 0 = disable compression, 1 = enable compression
+
+      # Optional settings
+      # JVMARGS: "-Xmx2G"  # Custom JVM arguments for memory allocation
+      # MOTD: "Welcome to the Necesse Server!"  # Message of the Day
+    volumes:
+      - type: bind
+        source: ~/config/necesse/saves
+        target: /necesse/saves
+      - type: bind
+        source: ~/config/necesse/logs
+        target: /necesse/logs
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"  # Enable automatic updates
