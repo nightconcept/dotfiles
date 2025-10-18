@@ -14,7 +14,7 @@
         "$mod" = "SUPER";
 
         # Default applications
-        "$terminal" = "wezterm";
+        "$terminal" = "ghostty";
         "$filemanager" = "";
         "$applauncher" = "rofi -show drun";
         "$browser" = "firefox";

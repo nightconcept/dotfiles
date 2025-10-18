@@ -22,7 +22,7 @@ in {
 
       settings = {
         # Font Configuration - matching wezterm
-        font-family = "FiraMono Nerd Font Mono";
+        font-family = "FiraCode Nerd Font Propo";
         font-size = 14;
 
         # Theme - Tokyo Night to match wezterm (tokyonight, tokyonight-day, tokyonight-storm, tokyonight-moon)

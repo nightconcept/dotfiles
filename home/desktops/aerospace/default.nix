@@ -55,7 +55,7 @@
           ctrl-shift-c = "close";
 
           # Application launching (keeping cmd for these as they're app shortcuts)
-          ctrl-enter = "exec-and-forget open -n /Applications/WezTerm.app";
+          ctrl-enter = "exec-and-forget open -n /Applications/Ghostty.app";
           ctrl-b = "exec-and-forget open -a 'Firefox'";
           ctrl-e = "exec-and-forget open -a 'Visual Studio Code'";
           ctrl-f = "exec-and-forget open -a 'Finder'";
