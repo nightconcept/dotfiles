@@ -54,7 +54,7 @@
           ctrl-q = "close";
           ctrl-shift-c = "close";
 
-          # Application launching (keeping cmd for these as they're app shortcuts)
+          # Application launching
           ctrl-enter = "exec-and-forget open -n /Applications/Ghostty.app";
           ctrl-b = "exec-and-forget open -a 'Firefox'";
           ctrl-e = "exec-and-forget open -a 'Visual Studio Code'";

@@ -18,7 +18,7 @@ in {
       enable = true;
       # On macOS, use configOnly mode since ghostty is installed via Homebrew
       # On Linux, install the package via Nix
-      package = lib.mkIf (pkgs.stdenv.isDarwin || config.modules.home.programs.ghostty.configOnly) (pkgs.emptyDirectory or (pkgs.runCommand "empty" {} "mkdir $out"));
+      package = lib.mkIf (pkgs.stdenv.isDarwin || config.modules.home.programs.ghostty.configOnly) (pkgs.runCommand "empty-directory" {} "mkdir $out");
 
       settings = {
         # Font Configuration - matching wezterm
@@ -37,9 +37,13 @@ in {
         # URL/Link handling (cmd+click on macOS, ctrl+click on Linux is built-in)
         link-url = true;
 
-        # Tab Bar
+        # Tab Bar - disable macOS native tabs to work with tiling window managers
         window-decoration = true;
         gtk-tabs-location = "top";
+
+        # macOS-specific: Disable native tabs to prevent window manager conflicts
+        macos-non-native-fullscreen = true;
+        macos-titlebar-style = "tabs";
 
         # Mouse Configuration
         mouse-hide-while-typing = true;
@@ -66,7 +70,8 @@ in {
         # Platform-specific keybindings
         keybind = if pkgs.stdenv.isDarwin then [
           # macOS keybindings (CMD modifier)
-          "cmd+t=new_tab"
+          # Disable new_tab to avoid conflicts with tiling window managers (use splits instead)
+          "cmd+t=unbind"
           "cmd+w=close_surface"
           "cmd+enter=toggle_fullscreen"
           "cmd+shift+left_bracket=previous_tab"

@@ -59,7 +59,7 @@ in {
         [
           "calibre"
           "discord"
-          "docker"
+          "docker-desktop"
           "firefox"
           "ghostty"
           "github"

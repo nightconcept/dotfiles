@@ -16,7 +16,7 @@ in {
   config = lib.mkIf (config.modules.home.programs.wezterm.enable || config.modules.home.programs.wezterm.configOnly) {
     programs.wezterm = {
       enable = true;
-      package = lib.mkIf config.modules.home.programs.wezterm.configOnly (pkgs.emptyDirectory or (pkgs.runCommand "empty" {} "mkdir $out"));
+      package = lib.mkIf config.modules.home.programs.wezterm.configOnly (pkgs.runCommand "empty-directory" {} "mkdir $out");
       enableZshIntegration = true;
       extraConfig = builtins.readFile ./config.lua;
     };
