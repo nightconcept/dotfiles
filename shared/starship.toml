@@ -6,7 +6,6 @@ format = """
 [ $os ](bg:blue fg:bg-dark)\
 $username\
 $hostname\
-[ ](bg:blue fg:blue)\
 $directory\
 [ ](fg:blue bg:bg-medium)\
 $git_branch\
@@ -34,7 +33,7 @@ fg-light = "#a9b1d6"
 
 [directory]
 style = "fg:bg-dark bg:blue bold"
-format = "[$path ]($style)"
+format = "[ $path ]($style)"
 truncation_length = 3
 truncation_symbol = "…/"
 fish_style_pwd_dir_length = 1
@@ -90,7 +89,7 @@ Windows = ''
 [git_branch]
 symbol = ""
 style = "bg:bg-medium"
-format = '[[ $symbol $branch ](fg:blue bg:bg-medium)]($style)'
+format = '[[$symbol $branch ](fg:blue bg:bg-medium)]($style)'
 
 [git_status]
 style = "bg:bg-medium"
@@ -133,4 +132,4 @@ format = '[[ $symbol ($version) ](fg:blue bg:bg-dark)]($style)'
 disabled = false
 time_format = "%R"                                      # Hour:Minute Format
 style = "bg:bg-darker"
-format = '[[  $time ](fg:fg-light bg:bg-darker)]($style)'
+format = '[[ $time ](fg:fg-light bg:bg-darker)]($style)'
