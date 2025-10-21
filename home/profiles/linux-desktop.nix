@@ -10,17 +10,25 @@
     ../../modules/home
   ];
 
-  # Configure nixGL for OpenGL support on non-NixOS systems
-  nixGL.defaultWrapper = "mesa"; # Use mesa wrapper for Intel/AMD/Nouveau
-  nixGL.installScripts = ["mesa"]; # Install mesa wrapper scripts
-
-  # Wrap ghostty with nixGL for OpenGL support
-  programs.ghostty.package = config.lib.nixGL.wrap pkgs.ghostty;
+  # Reminder to install ghostty manually via native package manager
+  home.activation.checkGhostty = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    if ! command -v ghostty &> /dev/null; then
+      echo "NOTE: Ghostty is not installed. Please install it manually:"
+      if [ -f /etc/arch-release ]; then
+        echo "  Arch Linux: yay -S ghostty"
+      elif [ -f /etc/debian_version ]; then
+        echo "  Debian/Ubuntu: Run ./scripts/install-terminal-debian.sh"
+      else
+        echo "  Visit https://ghostty.org for installation instructions"
+      fi
+    fi
+  '';
 
   modules.home.programs = {
-    ghostty.enable = true;
+    # Use configOnly - install ghostty manually via native package manager
+    ghostty.configOnly = true;
     spotify.enable = true;
-    # wezterm.configOnly = true; # Replaced by ghostty
+    # wezterm.configOnly = true; # Replaced by ghostty - install manually if needed
     xdg.enable = true;
     shell = {
       fish.enable = true;

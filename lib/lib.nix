@@ -1,5 +1,5 @@
 {inputs}: let
-  inherit (inputs) nixpkgs home-manager nix-darwin vscode-server stylix spicetify-nix sops-nix disko lix-module nixgl;
+  inherit (inputs) nixpkgs home-manager nix-darwin vscode-server stylix spicetify-nix sops-nix disko lix-module;
 in {
   mkNixos = pkgs: hostname:
     pkgs.lib.nixosSystem {
@@ -108,9 +108,6 @@ in {
         stylix.homeModules.stylix
         spicetify-nix.homeManagerModules.default
         sops-nix.homeManagerModules.sops
-        {
-          nixGL.packages = nixgl.packages;
-        }
       ];
       extraSpecialArgs = {inherit inputs hostname;};
     };

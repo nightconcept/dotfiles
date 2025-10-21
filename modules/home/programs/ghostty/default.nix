@@ -16,17 +16,24 @@ in {
   config = lib.mkIf (config.modules.home.programs.ghostty.enable || config.modules.home.programs.ghostty.configOnly) {
     programs.ghostty = {
       enable = true;
-      # On macOS, use configOnly mode since ghostty is installed via Homebrew
-      # On Linux, install the package via Nix
-      package = lib.mkIf (pkgs.stdenv.isDarwin || config.modules.home.programs.ghostty.configOnly) (pkgs.runCommand "empty-directory" {} "mkdir $out");
+      # On macOS and non-NixOS Linux, use configOnly mode since ghostty is installed externally
+      package = lib.mkIf (pkgs.stdenv.isDarwin || config.modules.home.programs.ghostty.configOnly) (
+        pkgs.runCommand "ghostty-dummy" {
+          meta.mainProgram = "ghostty";
+        } ''
+          mkdir -p $out/bin
+          touch $out/bin/ghostty
+          chmod +x $out/bin/ghostty
+        ''
+      );
 
       settings = {
         # Font Configuration - matching wezterm
         font-family = "FiraCode Nerd Font Propo";
         font-size = 14;
 
-        # Theme - Tokyo Night to match wezterm (tokyonight, tokyonight-day, tokyonight-storm, tokyonight-moon)
-        theme = "tokyonight";
+        # Theme - Tokyo Night to match wezterm
+        theme = "TokyoNight";
         background-opacity = 0.97;
 
         # General Settings
