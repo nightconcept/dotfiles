@@ -60,3 +60,11 @@ clean:
 # Format all Nix files
 fmt:
     find . -name "*.nix" -type f | xargs nix fmt
+
+# Test starship configuration without rebuilding
+test-starship:
+    rm -f ~/.config/starship.toml
+    cp shared/starship.toml ~/.config/starship.toml
+    @echo "✓ Starship config copied!"
+    @echo "Press Enter in your terminal to reload (starship reloads automatically on each prompt)"
+    @echo "Or run: exec fish"

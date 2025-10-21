@@ -1,55 +1,136 @@
+# Tokyo Night color palette
+palette = "tokyo-night"
+
 format = """
-[░▒▓](#7aa2f7)\
-[ 󰌽 ](bg:#7aa2f7 fg:#1a1b26)\
-[](bg:#7aa2f7 fg:#7aa2f7)\
+[░▒▓](blue)\
+[ $os ](bg:blue fg:bg-dark)\
+$username\
+$hostname\
+[ ](bg:blue fg:blue)\
 $directory\
-[](fg:#7aa2f7 bg:#292e42)\
+[ ](fg:blue bg:bg-medium)\
 $git_branch\
 $git_status\
-[](fg:#292e42 bg:#1a1b26)\
+[ ](fg:bg-medium bg:bg-dark)\
 $nix_shell\
-[](fg:#1a1b26 bg:#16161e)\
+[ ](fg:bg-dark bg:bg-darker)\
 $time\
-[ ](fg:#16161e)\
+[  ](fg:bg-darker)\
 \n$character"""
 
+[palettes.tokyo-night]
+# Background colors
+bg-darker = "#16161e"
+bg-dark = "#1a1b26"
+bg-medium = "#292e42"
+
+# Accent colors
+blue = "#7aa2f7"
+red = "#f7768e"
+green = "#5fd700"
+yellow = "#d7af00"
+red-bright = "#d70000"
+fg-light = "#a9b1d6"
+
 [directory]
-style = "fg:#1a1b26 bg:#7aa2f7 bold"
-format = "[ $path ]($style)"
+style = "fg:bg-dark bg:blue bold"
+format = "[$path ]($style)"
 truncation_length = 3
 truncation_symbol = "…/"
 fish_style_pwd_dir_length = 1
-truncate_to_repo = false
+
+# Username - only show on SSH
+[username]
+show_always = false
+style_user = "fg:bg-dark bg:blue bold"
+style_root = "fg:red bg:blue bold"
+format = "[ $user]($style)"
+
+# Hostname - only show on SSH
+[hostname]
+ssh_only = true
+style = "fg:bg-dark bg:blue bold"
+format = "[@$hostname ]($style)"
+
+[os]
+disabled = false
+style = "fg:bg-dark bg:blue"
+format = '[$symbol]($style)'
+
+[os.symbols]
+Alpine = ''
+Amazon = ''
+Android = ''
+Arch = '󰣇'
+Artix = "󰣇"
+CentOS = ''
+Debian = ''
+EndeavourOS = ''
+Fedora = ''
+FreeBSD = ''
+Garuda = ''
+Gentoo = ''
+Linux = "󰌽"
+Macos = ''
+Manjaro = ''
+Mint = ''
+NetBSD = ''
+NixOS = ''
+OpenBSD = ''
+openSUSE = ''
+Pop = ''
+Raspbian = ''
+Redhat = "󱄛"
+RedHatEnterprise = "󱄛"
+SUSE = ''
+Ubuntu = "󰕈"
+Unknown = ''
+Windows = ''
 
 [git_branch]
 symbol = ""
-style = "bg:#292e42"
-format = '[[ $symbol $branch ](fg:#7aa2f7 bg:#292e42)]($style)'
+style = "bg:bg-medium"
+format = '[[ $symbol $branch ](fg:blue bg:bg-medium)]($style)'
 
 [git_status]
-style = "bg:#292e42"
-format = '[[$all_status$ahead_behind](bg:#292e42)]($style)'
-conflicted = "[~$count ](fg:#5fd700 bg:#292e42)"
-ahead = "[⇡$count ](fg:#5fd700 bg:#292e42)"
-behind = "[⇣$count ](fg:#5fd700 bg:#292e42)"
-diverged = "[⇡$ahead_count ⇣$behind_count ](fg:#5fd700 bg:#292e42)"
+style = "bg:bg-medium"
+format = '[[$all_status$ahead_behind](bg:bg-medium)]($style)'
+conflicted = "[~$count ](fg:green bg:bg-medium)"
+ahead = "[⇡$count ](fg:green bg:bg-medium)"
+behind = "[⇣$count ](fg:green bg:bg-medium)"
+diverged = "[⇡$ahead_count ⇣$behind_count ](fg:green bg:bg-medium)"
 up_to_date = ""
-untracked = "[?$count ](fg:#d7af00 bg:#292e42)"
-stashed = "[*$count ](fg:#5fd700 bg:#292e42)"
-modified = "[!$count ](fg:#d7af00 bg:#292e42)"
-staged = "[+$count ](fg:#d7af00 bg:#292e42)"
-renamed = "[»$count ](fg:#d7af00 bg:#292e42)"
-deleted = "[✘$count ](fg:#d70000 bg:#292e42)"
+untracked = "[?$count ](fg:yellow bg:bg-medium)"
+stashed = "[*$count ](fg:green bg:bg-medium)"
+modified = "[!$count ](fg:yellow bg:bg-medium)"
+staged = "[+$count ](fg:yellow bg:bg-medium)"
+renamed = "[»$count ](fg:yellow bg:bg-medium)"
+deleted = "[✘$count ](fg:red-bright bg:bg-medium)"
 
 [nix_shell]
-style = "bg:#1a1b26"
-format = '[[ $state ](fg:#7aa2f7 bg:#1a1b26)]($style)'
+style = "bg:bg-dark"
+format = '[[ $state ](fg:blue bg:bg-dark)]($style)'
 impure_msg = "impure "
 pure_msg = "pure "
 unknown_msg = ""
 
+[nodejs]
+symbol = ""
+style = "bg:bg-dark"
+format = '[[ $symbol ($version) ](fg:blue bg:bg-dark)]($style)'
+
+[rust]
+symbol = ""
+style = "bg:bg-dark"
+format = '[[ $symbol ($version) ](fg:blue bg:bg-dark)]($style)'
+
+[python]
+symbol = ""
+style = "bg:bg-dark"
+format = '[[ $symbol ($version) ](fg:blue bg:bg-dark)]($style)'
+
 [time]
 disabled = false
 time_format = "%R"                                      # Hour:Minute Format
-style = "bg:#16161e"
-format = '[[  $time ](fg:#a9b1d6 bg:#16161e)]($style)'
+style = "bg:bg-darker"
+format = '[[  $time ](fg:fg-light bg:bg-darker)]($style)'
