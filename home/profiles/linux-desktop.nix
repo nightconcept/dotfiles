@@ -10,8 +10,15 @@
     ../../modules/home
   ];
 
+  # Configure nixGL for OpenGL support on non-NixOS systems
+  nixGL.defaultWrapper = "mesa"; # Use mesa wrapper for Intel/AMD/Nouveau
+  nixGL.installScripts = ["mesa"]; # Install mesa wrapper scripts
+
+  # Wrap ghostty with nixGL for OpenGL support
+  programs.ghostty.package = config.lib.nixGL.wrap pkgs.ghostty;
+
   modules.home.programs = {
-    ghostty.configOnly = true;
+    ghostty.enable = true;
     spotify.enable = true;
     # wezterm.configOnly = true; # Replaced by ghostty
     xdg.enable = true;
