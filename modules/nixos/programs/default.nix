@@ -2,5 +2,6 @@
 {
   imports = [
     ./nomachine.nix
+    ./steam.nix
   ];
 }

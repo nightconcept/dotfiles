@@ -34,6 +34,7 @@
 
   # Programs
   modules.nixos.programs.nomachine.enable = true;
+  modules.nixos.programs.steam.enable = true;
 
   # Services
   modules.nixos.docker.enable = true;

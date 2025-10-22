@@ -66,6 +66,7 @@ in {
         gtk.enable = true; # Enable GTK theming for dark mode
         gnome.enable = false;
         vscode.enable = false;
+        starship.enable = false; # Disable Stylix starship theming (using custom config)
         firefox = {
           enable = true; # Let Stylix handle Firefox theming
           profileNames = ["danny"]; # Specify the profile to theme

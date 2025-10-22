@@ -44,12 +44,12 @@
       enable = true;
 
       # Use proper Tokyo Night GTK theme for readable buttons
-      theme = {
+      theme = lib.mkForce {
         name = "Tokyonight-Dark-B";
         package = pkgs.tokyo-night-gtk;
       };
 
-      iconTheme = {
+      iconTheme = lib.mkForce {
         name = "Papirus-Dark";
         package = pkgs.papirus-icon-theme;
       };
