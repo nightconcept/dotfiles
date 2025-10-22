@@ -35,5 +35,8 @@
   # Programs
   modules.nixos.programs.nomachine.enable = true;
 
+  # Services
+  modules.nixos.docker.enable = true;
+
   system.stateVersion = "23.11";
 }
