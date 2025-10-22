@@ -15,7 +15,7 @@
 
         # Default applications
         "$terminal" = "ghostty";
-        "$filemanager" = "";
+        "$filemanager" = "thunar";
         "$applauncher" = "rofi -show drun";
         "$browser" = "firefox";
         "$idlehandler" = "hypridle";
@@ -208,7 +208,7 @@
         bind = [
           # Main keybinds
           "$mod, RETURN, exec, $terminal"
-          "$mod, T, exec, $terminal" # Super+T also opens new terminal
+          "$mod, T, exec, $filemanager"
           "$mod, B, exec, $browser"
           "$mod SHIFT, B, exec, wofi-bluetooth" # Bluetooth menu
           "$mod, Q, killactive"

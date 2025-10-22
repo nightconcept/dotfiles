@@ -58,7 +58,7 @@
           ctrl-enter = "exec-and-forget open -n /Applications/Ghostty.app";
           ctrl-b = "exec-and-forget open -a 'Firefox'";
           ctrl-e = "exec-and-forget open -a 'Visual Studio Code'";
-          ctrl-f = "exec-and-forget open -a 'Finder'";
+          ctrl-t = "exec-and-forget open -a 'Finder'";
 
           # Navigation - vim-style jkl;
           ctrl-j = ["focus left" "move-mouse window-lazy-center"];
@@ -105,7 +105,7 @@
           ctrl-shift-tab = "workspace prev";
 
           # Tiling controls
-          ctrl-shift-f = "fullscreen";
+          ctrl-f = "fullscreen";
           ctrl-shift-w = "layout floating tiling";
           ctrl-shift-s = "layout v_accordion";
           ctrl-shift-t = "layout h_accordion";
