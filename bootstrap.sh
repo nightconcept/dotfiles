@@ -268,6 +268,59 @@ EOF
     print_warning "It's recommended to reboot after installing Nix on OpenRC systems"
 }
 
+# Ensure Nix experimental features are enabled
+ensure_nix_config() {
+    print_info "Checking Nix configuration..."
+
+    # Source Nix if not already available
+    if ! command -v nix &> /dev/null; then
+        if [[ -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
+            . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+        elif [[ -f "$HOME/.nix-profile/etc/profile.d/nix.sh" ]]; then
+            . "$HOME/.nix-profile/etc/profile.d/nix.sh"
+        fi
+    fi
+
+    local config_changed=false
+
+    # Try to configure system-level config first
+    if [[ -f /etc/nix/nix.conf ]] && command -v sudo &> /dev/null; then
+        if ! grep -q "experimental-features" /etc/nix/nix.conf; then
+            print_info "Enabling experimental features in system config..."
+            echo "experimental-features = nix-command flakes" | sudo tee -a /etc/nix/nix.conf
+            config_changed=true
+        fi
+
+        # Add user to trusted users
+        if ! grep -q "trusted-users.*$USER" /etc/nix/nix.conf; then
+            print_info "Adding $USER to trusted users..."
+            echo "trusted-users = root $USER" | sudo tee -a /etc/nix/nix.conf
+            config_changed=true
+        fi
+    else
+        # Fallback to user-level config
+        print_info "Configuring user-level Nix settings..."
+        mkdir -p "$HOME/.config/nix"
+        if [[ ! -f "$HOME/.config/nix/nix.conf" ]] || ! grep -q "experimental-features" "$HOME/.config/nix/nix.conf"; then
+            echo "experimental-features = nix-command flakes" >> "$HOME/.config/nix/nix.conf"
+            config_changed=true
+        fi
+    fi
+
+    # Restart nix-daemon to apply configuration changes
+    if [[ "$config_changed" == "true" ]]; then
+        print_info "Restarting nix-daemon to apply configuration..."
+        if command -v systemctl &> /dev/null; then
+            sudo systemctl restart nix-daemon 2>/dev/null || print_warning "Could not restart nix-daemon with systemctl"
+        elif command -v rc-service &> /dev/null; then
+            sudo rc-service nix-daemon restart 2>/dev/null || print_warning "Could not restart nix-daemon with rc-service"
+        else
+            print_warning "Could not restart nix-daemon automatically"
+            print_info "Please restart the nix-daemon service manually or log out and back in"
+        fi
+    fi
+}
+
 # Install Nix on non-NixOS systems
 install_nix() {
     if command -v nix &> /dev/null; then
@@ -288,36 +341,6 @@ install_nix() {
         . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
     elif [[ -f "$HOME/.nix-profile/etc/profile.d/nix.sh" ]]; then
         . "$HOME/.nix-profile/etc/profile.d/nix.sh"
-    fi
-
-    # Enable flakes and nix-command features
-    local config_changed=false
-    if [[ -f /etc/nix/nix.conf ]]; then
-        if ! grep -q "experimental-features" /etc/nix/nix.conf; then
-            print_info "Enabling flakes and nix-command features..."
-            echo "experimental-features = nix-command flakes" | sudo tee -a /etc/nix/nix.conf
-            config_changed=true
-        fi
-
-        # Add user to trusted users
-        if ! grep -q "trusted-users.*$USER" /etc/nix/nix.conf; then
-            print_info "Adding $USER to trusted users..."
-            echo "trusted-users = root $USER" | sudo tee -a /etc/nix/nix.conf
-            config_changed=true
-        fi
-    fi
-
-    # Restart nix-daemon to apply configuration changes
-    if [[ "$config_changed" == "true" ]]; then
-        print_info "Restarting nix-daemon to apply configuration..."
-        if command -v systemctl &> /dev/null; then
-            sudo systemctl restart nix-daemon
-        elif command -v rc-service &> /dev/null; then
-            sudo rc-service nix-daemon restart
-        else
-            print_warning "Could not restart nix-daemon automatically"
-            print_info "Please restart the nix-daemon service manually"
-        fi
     fi
 }
 
@@ -701,6 +724,9 @@ bootstrap_macos() {
     else
         print_success "Nix already installed"
     fi
+
+    # Ensure Nix configuration is correct
+    ensure_nix_config
 
     # Install/update nix-darwin
     print_info "Installing nix-darwin..."
@@ -1174,6 +1200,9 @@ main() {
 
             # Install Nix
             install_nix
+
+            # Ensure Nix configuration is correct
+            ensure_nix_config
 
             # Clone flake
             clone_flake
