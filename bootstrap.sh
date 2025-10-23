@@ -325,11 +325,20 @@ install_nix() {
 clone_flake() {
     if [[ -d "$FLAKE_DIR" ]]; then
         print_info "Flake directory already exists at $FLAKE_DIR"
-        read -p "Pull latest changes? (y/n): " -n 1 -r
-        echo
-        if [[ $REPLY =~ ^[Yy]$ ]]; then
+
+        # Check if /dev/tty is available for interactive input
+        if [[ -r /dev/tty ]] && [[ -w /dev/tty ]]; then
+            read -p "Pull latest changes? (y/n): " -n 1 -r </dev/tty || REPLY="y"
+            echo
+            if [[ $REPLY =~ ^[Yy]$ ]]; then
+                cd "$FLAKE_DIR"
+                git pull
+            fi
+        else
+            # Non-interactive mode: always pull latest changes
+            print_info "Non-interactive mode: pulling latest changes..."
             cd "$FLAKE_DIR"
-            git pull
+            git pull || print_warning "Failed to pull, continuing with existing version"
         fi
     else
         print_info "Cloning flake repository..."

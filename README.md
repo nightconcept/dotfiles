@@ -1,6 +1,6 @@
 # dotfiles
 
-NixOS, macOS, and Linux system configurations managed by [Nix](https://nixos.org/) and (soon) Windows system configurations managed by Yuki (WIP).
+NixOS, macOS, and Linux system configurations managed by [Nix](https://nixos.org/) and (soon) Windows system configurations managed by Ame (WIP).
 
 ## Uses
 
@@ -42,7 +42,6 @@ NixOS, macOS, and Linux system configurations managed by [Nix](https://nixos.org
 ## Quick Start
 
 ```bash
-# Universal bootstrap
 wget -qO- https://forge.solivan.dev/nightconcept/dotfiles/raw/branch/main/bootstrap.sh | bash
 ```
 
@@ -64,20 +63,9 @@ sudo darwin-rebuild switch --flake .#merlin
 
 ### Home Manager (standalone)
 ```bash
-home-manager switch --flake .#desktop
-home-manager switch --flake .#server
+nix run home-manager/master -- switch --flake .#desktop
+nix run home-manager/master -- switch --flake .#server
 ```
-
-## Structure
-
-- `/flake.nix` - Main flake configuration
-- `/lib/` - Helper functions for system builders
-- `/home/` - User configurations and programs
-  - `/profiles/` - Composable configuration profiles
-  - `/programs/` - Application configs
-  - `/desktops/` - Desktop environments
-- `/hosts/` - Machine-specific configurations
-- `/systems/` - Platform configurations (NixOS/Darwin)
 
 ## License
 
