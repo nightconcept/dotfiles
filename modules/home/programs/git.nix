@@ -17,15 +17,17 @@ in {
 
     programs.git = {
       enable = true;
-      userName = "Danny Solivan";
-      userEmail = "dark@nightconcept.net";
 
       signing = {
         key = "~/.ssh/id_sdev.pub";
         signByDefault = true;
       };
 
-      extraConfig = {
+      settings = {
+        user = {
+          name = "Danny Solivan";
+          email = "dark@nightconcept.net";
+        };
         gpg = {
           format = "ssh";
           ssh.allowedSignersFile = "~/.ssh/allowed_signers";
