@@ -154,14 +154,10 @@ in {
       '';
 
       plugins = [
-        {
-          name = "tide";
-          src = pkgs.fishPlugins.tide.src;
-        }
-        {
-          name = "done";
-          src = pkgs.fishPlugins.done.src;
-        }
+        # {
+        #   name = "done";
+        #   src = pkgs.fishPlugins.done.src;
+        # }
         {
           name = "fzf-fish";
           src = pkgs.fishPlugins.fzf-fish.src;
@@ -170,10 +166,10 @@ in {
           name = "autopair";
           src = pkgs.fishPlugins.autopair.src;
         }
-        {
-          name = "sponge";
-          src = pkgs.fishPlugins.sponge.src;
-        }
+        # {
+        #   name = "sponge";
+        #   src = pkgs.fishPlugins.sponge.src;
+        # }
       ];
 
       functions = {

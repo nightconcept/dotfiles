@@ -20,6 +20,7 @@ in {
       enable = true;
       # Use external TOML configuration file from shared directory
       # This allows the same config to be used across Nix, non-Nix, and Windows systems
+      # Fancy version optimized: starship.toml (6ms, OS module disabled)
       settings = lib.mkForce (builtins.fromTOML (builtins.readFile ../../../../shared/starship.toml));
     };
   };
