@@ -92,7 +92,7 @@ style = "bg:bg-medium"
 format = '[[$symbol $branch ](fg:blue bg:bg-medium)]($style)'
 
 [git_status]
-disabled = true
+disabled = false
 style = "bg:bg-medium"
 format = '[[$all_status$ahead_behind](bg:bg-medium)]($style)'
 conflicted = "[~$count ](fg:green bg:bg-medium)"
