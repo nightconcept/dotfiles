@@ -93,19 +93,15 @@
     prowlarr.enable = true;
     sonarr.enable = true;
     radarr.enable = true;
+    jellyfin.enable = true;
     audiobookshelf.enable = true;
     nextcloud.enable = false;
-    immich.enable = true;
-    jellyfin.enable = true;
-    homepage.enable = true;
-    uptime-kuma.enable = true;
     forgejo = {
       enable = true;
       signingKey = "1C5E44D950920340";  # Your GPG key ID
       signingName = "Danny Solivan";
       signingEmail = "dark@nightconcept.net";
     };
-    freshrss.enable = true;
     blog.enable = true;
     obsidian-sync.enable = false;
   };
