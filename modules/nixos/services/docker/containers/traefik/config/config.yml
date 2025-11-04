@@ -139,7 +139,7 @@ http:
     pihole:
       loadBalancer:
         servers:
-          - url: "http://192.168.1.101:80"
+          - url: "http://192.168.1.101:8089"
         passHostHeader: true
 
     plex:
@@ -225,8 +225,9 @@ http:
         permanent: true
     redirect-pihole-root:
       redirectRegex:
-        regex: ^/$
-        replacement: /admin/
+        regex: ^https?://([^/]+)/?$
+        replacement: https://$1/admin/
+        permanent: true
 
     default-headers:
       headers:
