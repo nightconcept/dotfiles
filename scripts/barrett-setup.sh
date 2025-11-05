@@ -129,8 +129,10 @@ setup_ssh() {
 
     info "Configuring SSH..."
 
-    # Backup original config
-    cp /etc/ssh/sshd_config /etc/ssh/sshd_config.backup
+    # Backup original config if not already backed up
+    if [[ ! -f /etc/ssh/sshd_config.backup ]]; then
+        cp /etc/ssh/sshd_config /etc/ssh/sshd_config.backup
+    fi
 
     # Apply secure SSH settings
     cat > /etc/ssh/sshd_config.d/barrett.conf << 'EOF'
@@ -150,8 +152,8 @@ LogLevel INFO
 EOF
 
     # Enable and restart SSH
-    systemctl enable ssh
-    systemctl restart ssh
+    systemctl enable ssh || true
+    systemctl restart ssh || true
 
     mark_complete "$step"
 }
@@ -175,29 +177,37 @@ setup_nordvpn() {
 
     # Unmask, enable, and start NordVPN daemon
     systemctl unmask nordvpn || true
-    systemctl enable nordvpn
-    systemctl start nordvpn
+    systemctl enable nordvpn || true
+    systemctl restart nordvpn || systemctl start nordvpn
 
     # Wait for daemon to be ready
-    sleep 3
+    sleep 5
 
     # Check if token file exists
     if [[ -f /root/.nordvpn-token ]]; then
         info "Configuring NordVPN with token..."
         TOKEN=$(cat /root/.nordvpn-token)
 
-        # Login with token
-        nordvpn login --token "$TOKEN" || true
+        # Login with token if not already logged in
+        if ! nordvpn account &>/dev/null; then
+            nordvpn login --token "$TOKEN" || warning "NordVPN login failed, may already be logged in"
+        else
+            info "Already logged in to NordVPN"
+        fi
 
-        # Configure settings
-        nordvpn set killswitch on
-        nordvpn set technology NordLynx
-        nordvpn set lan-discovery enable
-        nordvpn set dns 103.86.96.100 103.86.99.100
-        nordvpn set autoconnect on
+        # Configure settings (these are idempotent)
+        nordvpn set killswitch on || true
+        nordvpn set technology NordLynx || true
+        nordvpn set lan-discovery enable || true
+        nordvpn set dns 103.86.96.100 103.86.99.100 || true
+        nordvpn set autoconnect on || true
 
-        # Connect to P2P server
-        nordvpn connect p2p
+        # Connect to P2P server if not already connected
+        if ! nordvpn status | grep -q "Status: Connected"; then
+            nordvpn connect p2p || warning "Failed to connect to VPN"
+        else
+            info "Already connected to VPN"
+        fi
     else
         warning "NordVPN token not found at /root/.nordvpn-token"
         warning "Please create the file with your token and run: nordvpn login --token \$(cat /root/.nordvpn-token)"
@@ -265,8 +275,8 @@ EOF
 
     # Enable automount
     systemctl daemon-reload
-    systemctl enable mnt-titan.automount
-    systemctl start mnt-titan.automount
+    systemctl enable mnt-titan.automount || true
+    systemctl restart mnt-titan.automount || systemctl start mnt-titan.automount
 
     # Create downloads directory
     mkdir -p /mnt/titan/downloads
@@ -372,15 +382,15 @@ QBCONF
 
     # Configure firewall (if ufw is installed)
     if command -v ufw &>/dev/null; then
-        ufw allow 8112/tcp
-        ufw allow 6881/tcp
-        ufw allow 6881/udp
+        ufw allow 8112/tcp || true
+        ufw allow 6881/tcp || true
+        ufw allow 6881/udp || true
     fi
 
     # Enable and start service
     systemctl daemon-reload
-    systemctl enable qbittorrent
-    systemctl start qbittorrent
+    systemctl enable qbittorrent || true
+    systemctl restart qbittorrent || systemctl start qbittorrent
 
     mark_complete "$step"
 }
@@ -455,8 +465,8 @@ EOF
 
     # Enable timer
     systemctl daemon-reload
-    systemctl enable autoremove-torrents.timer
-    systemctl start autoremove-torrents.timer
+    systemctl enable autoremove-torrents.timer || true
+    systemctl restart autoremove-torrents.timer || systemctl start autoremove-torrents.timer
 
     mark_complete "$step"
 }
@@ -553,10 +563,10 @@ EOF
 
     # Enable timer
     systemctl daemon-reload
-    systemctl enable qbittorrent-ipfilter-update.timer
-    systemctl start qbittorrent-ipfilter-update.timer
+    systemctl enable qbittorrent-ipfilter-update.timer || true
+    systemctl restart qbittorrent-ipfilter-update.timer || systemctl start qbittorrent-ipfilter-update.timer
 
-    # Run initial update
+    # Run initial update (may already be running)
     systemctl start qbittorrent-ipfilter-update.service || true
 
     mark_complete "$step"
@@ -572,12 +582,12 @@ setup_network() {
     info "Configuring network..."
 
     # Enable NetworkManager
-    systemctl enable NetworkManager
-    systemctl start NetworkManager
+    systemctl enable NetworkManager || true
+    systemctl restart NetworkManager || systemctl start NetworkManager
 
     # Enable mDNS/Avahi
-    systemctl enable avahi-daemon
-    systemctl start avahi-daemon
+    systemctl enable avahi-daemon || true
+    systemctl restart avahi-daemon || systemctl start avahi-daemon
 
     mark_complete "$step"
 }
@@ -596,9 +606,9 @@ final_setup() {
         apt-get install -y ufw
     fi
 
-    ufw --force enable
-    ufw allow ssh
-    ufw allow 8112/tcp  # qBittorrent Web UI
+    ufw --force enable || true
+    ufw allow ssh || true
+    ufw allow 8112/tcp || true  # qBittorrent Web UI
 
     # Set timezone
     timedatectl set-timezone America/Los_Angeles || true
