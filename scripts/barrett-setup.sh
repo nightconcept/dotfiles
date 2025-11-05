@@ -83,6 +83,19 @@ setup_base_system() {
         avahi-daemon libnss-mdns \
         network-manager
 
+    # Install Node.js (for Claude Code)
+    if ! command -v node &>/dev/null; then
+        info "Installing Node.js..."
+        curl -fsSL https://deb.nodesource.com/setup_lts.x | bash -
+        apt-get install -y nodejs
+    fi
+
+    # Install Starship prompt
+    if ! command -v starship &>/dev/null; then
+        info "Installing Starship..."
+        curl -sS https://starship.rs/install.sh | sh -s -- --yes
+    fi
+
     # Set hostname
     hostnamectl set-hostname barrett
 
@@ -121,7 +134,52 @@ EOF
 }
 
 # ============================================================================
-# STEP 3: SSH Configuration
+# STEP 3: Shell and Development Tools Setup
+# ============================================================================
+setup_shell_tools() {
+    local step="shell_tools"
+    skip_if_complete "$step" && return
+
+    info "Setting up shell and development tools..."
+
+    # Install Claude Code CLI
+    if ! command -v claude &>/dev/null; then
+        info "Installing Claude Code CLI..."
+        npm install -g @anthropic-ai/claude-code
+    fi
+
+    # Set up Starship configuration
+    mkdir -p "/home/$SETUP_USER/.config"
+
+    # Copy starship.toml from dotfiles if this script is in the dotfiles repo
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    DOTFILES_DIR="$(dirname "$SCRIPT_DIR")"
+
+    if [[ -f "$DOTFILES_DIR/shared/starship.toml" ]]; then
+        info "Copying Starship configuration..."
+        cp "$DOTFILES_DIR/shared/starship.toml" "/home/$SETUP_USER/.config/starship.toml"
+        chown "$SETUP_USER:$SETUP_USER" "/home/$SETUP_USER/.config/starship.toml"
+    else
+        warning "starship.toml not found at $DOTFILES_DIR/shared/starship.toml"
+    fi
+
+    # Set up Fish shell to use Starship
+    mkdir -p "/home/$SETUP_USER/.config/fish"
+    if ! grep -q "starship init fish" "/home/$SETUP_USER/.config/fish/config.fish" 2>/dev/null; then
+        info "Configuring Fish to use Starship..."
+        cat >> "/home/$SETUP_USER/.config/fish/config.fish" << 'EOF'
+
+# Initialize Starship prompt
+starship init fish | source
+EOF
+        chown -R "$SETUP_USER:$SETUP_USER" "/home/$SETUP_USER/.config/fish"
+    fi
+
+    mark_complete "$step"
+}
+
+# ============================================================================
+# STEP 4: SSH Configuration
 # ============================================================================
 setup_ssh() {
     local step="ssh_config"
@@ -159,7 +217,7 @@ EOF
 }
 
 # ============================================================================
-# STEP 4: NordVPN Setup
+# STEP 5: NordVPN Setup
 # ============================================================================
 setup_nordvpn() {
     local step="nordvpn_setup"
@@ -217,7 +275,7 @@ setup_nordvpn() {
 }
 
 # ============================================================================
-# STEP 5: Network Drives (Titan Mount)
+# STEP 6: Network Drives (Titan Mount)
 # ============================================================================
 setup_network_drives() {
     local step="network_drives"
@@ -286,7 +344,7 @@ EOF
 }
 
 # ============================================================================
-# STEP 6: qBittorrent Setup
+# STEP 7: qBittorrent Setup
 # ============================================================================
 setup_qbittorrent() {
     local step="qbittorrent_setup"
@@ -396,7 +454,7 @@ QBCONF
 }
 
 # ============================================================================
-# STEP 7: Autoremove-torrents Setup
+# STEP 8: Autoremove-torrents Setup
 # ============================================================================
 setup_autoremove_torrents() {
     local step="autoremove_torrents"
@@ -472,7 +530,7 @@ EOF
 }
 
 # ============================================================================
-# STEP 8: IP Filter Setup
+# STEP 9: IP Filter Setup
 # ============================================================================
 setup_ipfilter() {
     local step="ipfilter_setup"
@@ -573,7 +631,7 @@ EOF
 }
 
 # ============================================================================
-# STEP 9: Network Configuration
+# STEP 10: Network Configuration
 # ============================================================================
 setup_network() {
     local step="network_config"
@@ -593,7 +651,7 @@ setup_network() {
 }
 
 # ============================================================================
-# STEP 10: Final Configuration
+# STEP 11: Final Configuration
 # ============================================================================
 final_setup() {
     local step="final_setup"
@@ -679,6 +737,7 @@ main() {
     # Run all setup steps
     setup_base_system
     setup_user
+    setup_shell_tools
     setup_ssh
     setup_network
     setup_network_drives
