@@ -175,17 +175,10 @@ setup_nordvpn() {
     # Add user to nordvpn group
     usermod -aG nordvpn "$SETUP_USER"
 
-    # Unmask the service (it's often masked after install)
-    info "Unmasking NordVPN service..."
-    systemctl unmask nordvpn.service
-    systemctl unmask nordvpn
-
-    # Reload systemd to pick up the unmask
-    systemctl daemon-reload
-
-    # Enable and start NordVPN daemon
-    systemctl enable nordvpn
-    systemctl restart nordvpn 2>/dev/null || systemctl start nordvpn
+    # Enable and start NordVPN daemon (note: the service is nordvpnd, not nordvpn)
+    # nordvpn.service is a dummy symlink to /dev/null - the real service is nordvpnd
+    systemctl enable nordvpnd.service nordvpnd.socket
+    systemctl restart nordvpnd.service 2>/dev/null || systemctl start nordvpnd.service
 
     # Wait for daemon to be ready
     sleep 5
@@ -240,9 +233,9 @@ setup_network_drives() {
         warning "Titan credentials not found at /root/.titan-credentials"
         warning "Please create the file with the following format:"
         cat << 'EOF'
-username=YOUR_USERNAME
+username=danny
+domain=mog
 password=YOUR_PASSWORD
-domain=WORKGROUP
 EOF
         warning "Then run: chmod 600 /root/.titan-credentials"
         mark_complete "$step"
