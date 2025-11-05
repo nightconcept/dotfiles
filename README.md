@@ -22,15 +22,22 @@ NixOS, macOS, and Linux system configurations managed by [Nix](https://nixos.org
 
 ## Hosts
 
+### NixOS & Darwin Hosts
+
 | Host | Type | Hardware | Purpose |
 |------|------|----------|---------|
 | `tidus` | NixOS | Dell Latitude 7420 | Linux Laptop with Hyprland DE |
 | `aerith` | NixOS | VM | Plex media server |
-| `barrett` | NixOS | VM | VPN torrent server |
 | `rinoa` | NixOS | VM | General purpose server |
 | `vincent` | NixOS | VM | CI/CD runner host |
 | `waver` | Darwin | MacBook Pro M1 | macOS Laptop with Aerospace DE |
 | `merlin` | Darwin | Mac Mini M1 | macOS Desktop HTPC |
+
+### Imperative Setups (Non-Nix)
+
+| Host | Type | Hardware | Purpose |
+|------|------|----------|---------|
+| `barrett` | Debian | VM | VPN torrent server |
 
 ## Homes
 
@@ -53,6 +60,8 @@ For fresh NixOS server installations, see the [Server Setup Runbook](docs/server
 ```bash
 nixos-rebuild switch --flake .#tidus
 nixos-rebuild switch --flake .#aerith
+nixos-rebuild switch --flake .#rinoa
+nixos-rebuild switch --flake .#vincent
 ```
 
 ### Darwin
@@ -65,6 +74,12 @@ sudo darwin-rebuild switch --flake .#merlin
 ```bash
 nix run home-manager/master -- switch --flake .#desktop
 nix run home-manager/master -- switch --flake .#server
+```
+
+### Barrett (Debian - Imperative Setup)
+```bash
+# Run the setup script (will print further instructions)
+sudo bash ./scripts/barrett-setup.sh
 ```
 
 ## License
