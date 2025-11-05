@@ -173,7 +173,8 @@ setup_nordvpn() {
     # Add user to nordvpn group
     usermod -aG nordvpn "$SETUP_USER"
 
-    # Enable NordVPN daemon
+    # Unmask, enable, and start NordVPN daemon
+    systemctl unmask nordvpn || true
     systemctl enable nordvpn
     systemctl start nordvpn
 
