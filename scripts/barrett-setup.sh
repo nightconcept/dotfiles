@@ -180,6 +180,9 @@ setup_nordvpn() {
     systemctl unmask nordvpn.service
     systemctl unmask nordvpn
 
+    # Reload systemd to pick up the unmask
+    systemctl daemon-reload
+
     # Enable and start NordVPN daemon
     systemctl enable nordvpn
     systemctl restart nordvpn 2>/dev/null || systemctl start nordvpn
