@@ -313,8 +313,8 @@ setup_qbittorrent() {
     cat > /etc/systemd/system/qbittorrent.service << EOF
 [Unit]
 Description=qBittorrent-nox service
-After=network.target mnt-titan.mount
-Requires=mnt-titan.mount
+After=network.target mnt-titan.automount
+# Note: We use automount, which will trigger the mount when qBittorrent accesses /mnt/titan
 
 [Service]
 Type=simple
