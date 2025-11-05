@@ -163,17 +163,115 @@ setup_shell_tools() {
         warning "starship.toml not found at $DOTFILES_DIR/shared/starship.toml"
     fi
 
-    # Set up Fish shell to use Starship
+    # Set up Fish shell configuration
     mkdir -p "/home/$SETUP_USER/.config/fish"
-    if ! grep -q "starship init fish" "/home/$SETUP_USER/.config/fish/config.fish" 2>/dev/null; then
-        info "Configuring Fish to use Starship..."
-        cat >> "/home/$SETUP_USER/.config/fish/config.fish" << 'EOF'
+    mkdir -p "/home/$SETUP_USER/.config/fish/functions"
 
+    info "Configuring Fish shell..."
+    cat > "/home/$SETUP_USER/.config/fish/config.fish" << 'EOF'
+# Fish Shell Configuration for Barrett
+
+# ============================================================================
+# Environment Variables
+# ============================================================================
+set -gx EDITOR nvim
+set -gx VISUAL nvim
+set -gx BROWSER firefox
+set -gx TERMINAL wezterm
+set -gx LANG en_US.UTF-8
+set -gx GPG_TTY (tty)
+
+# ============================================================================
+# Path Configuration
+# ============================================================================
+fish_add_path --prepend /home/danny/.local/bin
+fish_add_path --prepend /usr/local/bin
+
+# NPM global bin path
+if test -d "/home/danny/.npm-global/bin"
+    fish_add_path --prepend /home/danny/.npm-global/bin
+end
+
+# UV tool path setup
+if test -d "/home/danny/.local/share/uv/tools"
+    for tool_dir in /home/danny/.local/share/uv/tools/*/bin
+        if test -d "$tool_dir"
+            fish_add_path --prepend "$tool_dir"
+        end
+    end
+end
+
+# ============================================================================
+# Aliases - Git
+# ============================================================================
+alias gs='git status -sb'
+alias gcm='git checkout master'
+alias gaa='git add --all'
+alias gc='git commit -m'
+alias push='git push'
+alias gpo='git push origin'
+alias pull='git pull'
+alias clone='git clone'
+alias stash='git stash'
+alias pop='git stash pop'
+alias ga='git add'
+alias gb='git branch'
+alias gl="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
+alias gm='git merge'
+
+# ============================================================================
+# Aliases - General
+# ============================================================================
+alias e='$EDITOR'
+alias .='z .'
+alias ..='z ..'
+alias ...='z ../../'
+alias ....='z ../../../'
+alias .....='z ../../../../'
+alias cd='z'
+alias cls='clear'
+
+# eza (better ls)
+alias ls='eza -F --color=auto'
+alias ll='eza -l'
+alias ll.='eza -la'
+alias lls='eza -la --sort=size'
+alias llt='eza -la --sort=time'
+
+# bat (better cat)
+alias cat='bat'
+
+# Safe defaults
+alias rm='rm -iv'
+alias mkdir='mkdir -p'
+alias cp='cp -r'
+
+# Debian-specific
+alias apt='sudo apt'
+
+# Fish specific
+alias fishclear='echo "" > ~/.local/share/fish/fish_history'
+
+# ============================================================================
 # Initialize Starship prompt
+# ============================================================================
 starship init fish | source
+
+# ============================================================================
+# Zoxide (better cd)
+# ============================================================================
+zoxide init fish | source
 EOF
-        chown -R "$SETUP_USER:$SETUP_USER" "/home/$SETUP_USER/.config/fish"
-    fi
+
+    # Create fish_greeting function (empty greeting)
+    cat > "/home/$SETUP_USER/.config/fish/functions/fish_greeting.fish" << 'EOF'
+function fish_greeting
+    # No greeting message
+end
+EOF
+
+    # Set ownership
+    chown -R "$SETUP_USER:$SETUP_USER" "/home/$SETUP_USER/.config/fish"
 
     mark_complete "$step"
 }
