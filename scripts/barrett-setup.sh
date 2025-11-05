@@ -83,19 +83,6 @@ setup_base_system() {
         avahi-daemon libnss-mdns \
         network-manager
 
-    # Install Node.js (for Claude Code)
-    if ! command -v node &>/dev/null; then
-        info "Installing Node.js..."
-        curl -fsSL https://deb.nodesource.com/setup_lts.x | bash -
-        apt-get install -y nodejs
-    fi
-
-    # Install Starship prompt
-    if ! command -v starship &>/dev/null; then
-        info "Installing Starship..."
-        curl -sS https://starship.rs/install.sh | sh -s -- --yes
-    fi
-
     # Set hostname
     hostnamectl set-hostname barrett
 
@@ -141,6 +128,19 @@ setup_shell_tools() {
     skip_if_complete "$step" && return
 
     info "Setting up shell and development tools..."
+
+    # Install Node.js (required for Claude Code)
+    if ! command -v node &>/dev/null; then
+        info "Installing Node.js..."
+        curl -fsSL https://deb.nodesource.com/setup_lts.x | bash -
+        apt-get install -y nodejs
+    fi
+
+    # Install Starship prompt
+    if ! command -v starship &>/dev/null; then
+        info "Installing Starship..."
+        curl -sS https://starship.rs/install.sh | sh -s -- --yes
+    fi
 
     # Install Claude Code CLI
     if ! command -v claude &>/dev/null; then
