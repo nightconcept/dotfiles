@@ -39,7 +39,7 @@ in {
       packages = with pkgs; [
         noto-fonts
         noto-fonts-cjk-sans
-        noto-fonts-emoji
+        noto-fonts-color-emoji
         liberation_ttf
         fira-code
         fira-code-symbols
@@ -47,7 +47,7 @@ in {
         dina-font
         proggyfonts
         roboto
-        ubuntu_font_family
+        ubuntu-classic
         nerd-fonts.jetbrains-mono
         nerd-fonts.fira-code
         inter

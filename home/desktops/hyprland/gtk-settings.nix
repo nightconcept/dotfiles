@@ -46,7 +46,7 @@
       # Use proper Tokyo Night GTK theme for readable buttons
       theme = lib.mkForce {
         name = "Tokyonight-Dark-B";
-        package = pkgs.tokyo-night-gtk;
+        package = pkgs.tokyonight-gtk-theme;
       };
 
       iconTheme = lib.mkForce {
