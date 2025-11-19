@@ -57,7 +57,8 @@ in {
 
         # Shell Integration - explicitly set to fish
         shell-integration = "fish";
-        shell-integration-features = "cursor,sudo,title";
+        # Available features: cursor, sudo, title, ssh-env, ssh-terminfo
+        shell-integration-features = "cursor,sudo,title,ssh-env,ssh-terminfo";
 
         # Clipboard
         clipboard-read = "allow";
