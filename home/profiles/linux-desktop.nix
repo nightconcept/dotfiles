@@ -24,8 +24,15 @@
     fi
   '';
 
+  # Reminder to set up VNC if needed
+  home.activation.checkTigerVNC = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    if ! command -v tigervncserver &> /dev/null; then
+      echo "NOTE: TigerVNC is not installed. To set up VNC remote access:"
+      echo "  Run: ./scripts/setup-vnc.sh"
+    fi
+  '';
+
   modules.home.programs = {
-    chrome.enable = true;
     # Use configOnly - install ghostty manually via native package manager
     ghostty.configOnly = true;
     spotify.enable = true;
