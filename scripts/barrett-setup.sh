@@ -645,47 +645,36 @@ setup_ipfilter() {
 #!/usr/bin/env bash
 set -euo pipefail
 
-CACHE_DIR="/var/cache/qbittorrent-ipfilter"
 OUTPUT_FILE="/var/lib/torrent/qbittorrent/qBittorrent/data/ipfilter.dat"
 TEMP_FILE=$(mktemp)
-BLOCKLIST_DIR="$CACHE_DIR/blocklists"
+IPFILTER_URL="https://github.com/DavidMoore/ipfilter/releases/download/lists/ipfilter.dat"
 
-mkdir -p "$BLOCKLIST_DIR"
-cd "$BLOCKLIST_DIR"
+echo "Downloading IP filter from GitHub..."
 
-echo "Starting IP filter update..."
+# Download the pre-built ipfilter.dat
+if curl -sSL "$IPFILTER_URL" -o "$TEMP_FILE" --connect-timeout 30 --max-time 300; then
+    # Count rules
+    RULE_COUNT=$(wc -l < "$TEMP_FILE" 2>/dev/null || echo 0)
 
-# Download blocklists
-curl -sSL "http://list.iblocklist.com/?list=ydxerpxkpcfqjaybcssw&fileformat=p2p&archiveformat=gz" -o "level1.gz" || true
-curl -sSL "https://www.biglybt.com/blocklist/level1.gz" -o "biglybt.gz" || true
+    if [ "$RULE_COUNT" -gt 0 ]; then
+        # Move to final location
+        mv "$TEMP_FILE" "$OUTPUT_FILE"
+        chown danny:users "$OUTPUT_FILE"
+        chmod 644 "$OUTPUT_FILE"
 
-echo "Processing blocklists..."
-
-# Extract and process
-for file in *.gz; do
-    [[ -f "$file" ]] && zcat "$file" | grep -oE '([0-9]{1,3}\.){3}[0-9]{1,3}' >> "$TEMP_FILE" || true
-done
-
-# Sort and deduplicate
-sort -u "$TEMP_FILE" -o "$TEMP_FILE.sorted"
-FINAL_COUNT=$(wc -l < "$TEMP_FILE.sorted" || echo 0)
-
-# Create IP filter file
-{
-    echo "# qBittorrent IP Filter"
-    echo "# Updated: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
-    echo "# Total unique IPs: $FINAL_COUNT"
-    echo ""
-
-    while IFS= read -r ip; do
-        echo "$ip-$ip,1"
-    done < "$TEMP_FILE.sorted"
-} > "$OUTPUT_FILE"
-
-chown danny:users "$OUTPUT_FILE"
-rm -f "$TEMP_FILE" "$TEMP_FILE.sorted"
-
-echo "IP filter update complete! Total IPs: $FINAL_COUNT"
+        echo "IP filter update complete!"
+        echo "Total rules: $RULE_COUNT"
+        echo "File: $OUTPUT_FILE"
+    else
+        echo "Error: Downloaded file is empty"
+        rm -f "$TEMP_FILE"
+        exit 1
+    fi
+else
+    echo "Error: Failed to download IP filter"
+    rm -f "$TEMP_FILE"
+    exit 1
+fi
 IPFILTER_SCRIPT
 
     chmod +x /usr/local/bin/update-qbittorrent-ipfilter
