@@ -9,26 +9,39 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - CONFIG_PATH=~/config/calibre
       - TZ=America/Los_Angeles
       - PASSWORD= #optional
       - CLI_ARGS= #optional
     volumes:
       - type: bind
-        source: ~/config/calibre
+        source: ~/docker/calibre
         target: /config
+      - type: bind
+        source: /mnt/titan/calibre-library
+        target: /library
       - type: bind
         source: /mnt/titan/Books
         target: /books
       - type: bind
-        source: /mnt/titan/Comics/
+        source: /mnt/titan/Comics
         target: /comics
     ports:
-      - 8080:8080
+      - 8085:8080
       - 8181:8181
-      - 8081:8081
+      - 8086:8081
     restart: unless-stopped
     labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.calibre.entrypoints=http"
+      - "traefik.http.routers.calibre.rule=Host(`calibre.local.solivan.dev`)"
+      - "traefik.http.middlewares.calibre-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.calibre.middlewares=calibre-https-redirect"
+      - "traefik.http.routers.calibre-secure.entrypoints=https"
+      - "traefik.http.routers.calibre-secure.rule=Host(`calibre.local.solivan.dev`)"
+      - "traefik.http.routers.calibre-secure.tls=true"
+      - "traefik.http.routers.calibre-secure.service=calibre"
+      - "traefik.http.services.calibre.loadbalancer.server.port=8080"
+      - "traefik.docker.network=proxy"
       - "com.centurylinklabs.watchtower.enable=true"
 
 networks:

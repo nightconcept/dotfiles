@@ -15,10 +15,10 @@ services:
     image: linuxserver/calibre-web:latest
     volumes:
       - type: bind
-        source: ~/config/calibre-web
+        source: ~/docker/calibre-web
         target: /config
       - type: bind
-        source: ~/config/calibre
+        source: /mnt/titan/calibre-library
         target: /books
       - type: bind
         source: /mnt/titan
