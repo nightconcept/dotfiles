@@ -12,8 +12,8 @@ with lib; let
   # Distribution packages abstraction
   distroPackages = {
     basic = [pkgs.neovim];
-    nvchad = [inputs.nvchad.packages.${pkgs.system}.nvchad];
-    lazyvim = [inputs.lazyvim-nixvim.packages.${pkgs.system}.default];
+    nvchad = [inputs.nvchad.packages.${pkgs.stdenv.hostPlatform.system}.nvchad];
+    lazyvim = [inputs.lazyvim-nixvim.packages.${pkgs.stdenv.hostPlatform.system}.default];
   };
 in {
   options.modules.home.programs.nvim = {

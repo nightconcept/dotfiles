@@ -347,51 +347,51 @@
           ", switch:off:Lid Switch, exec, hyprctl dispatch dpms on"
         ];
 
-        # Window rules from CachyOS
+        # Window rules from CachyOS (v0.53 syntax)
         windowrule = [
           # Float necessary windows
-          "float, class:^(org.pulseaudio.pavucontrol)"
-          "float, class:^()$,title:^(Picture in picture)$"
-          "float, class:^()$,title:^(Save File)$"
-          "float, class:^()$,title:^(Open File)$"
-          "float, class:^(LibreWolf)$,title:^(Picture-in-Picture)$"
-          "float, class:^(blueman-manager)$"
-          "float, class:^(xdg-desktop-portal-gtk|xdg-desktop-portal-kde|xdg-desktop-portal-hyprland)(.*)$"
-          "float, class:^(polkit-gnome-authentication-agent-1|hyprpolkitagent|org.org.kde.polkit-kde-authentication-agent-1)(.*)$"
-          "float, class:^(CachyOSHello)$"
-          "float, class:^(zenity)$"
-          "float, class:^()$,title:^(Steam - Self Updater)$"
+          "float on, match:class ^(org.pulseaudio.pavucontrol)"
+          "float on, match:class ^()$, match:title ^(Picture in picture)$"
+          "float on, match:class ^()$, match:title ^(Save File)$"
+          "float on, match:class ^()$, match:title ^(Open File)$"
+          "float on, match:class ^(LibreWolf)$, match:title ^(Picture-in-Picture)$"
+          "float on, match:class ^(blueman-manager)$"
+          "float on, match:class ^(xdg-desktop-portal-gtk|xdg-desktop-portal-kde|xdg-desktop-portal-hyprland)(.*)$"
+          "float on, match:class ^(polkit-gnome-authentication-agent-1|hyprpolkitagent|org.org.kde.polkit-kde-authentication-agent-1)(.*)$"
+          "float on, match:class ^(CachyOSHello)$"
+          "float on, match:class ^(zenity)$"
+          "float on, match:class ^()$, match:title ^(Steam - Self Updater)$"
 
           # Opacity rules
-          "opacity 0.92, class:^(thunar|nemo)$"
-          "opacity 0.96, class:^(discord|armcord|webcord)$"
-          "opacity 0.95, title:^(QQ|Telegram)$"
-          "opacity 0.95, title:^(NetEase Cloud Music Gtk4)$"
+          "opacity 0.92, match:class ^(thunar|nemo)$"
+          "opacity 0.96, match:class ^(discord|armcord|webcord)$"
+          "opacity 0.95, match:title ^(QQ|Telegram)$"
+          "opacity 0.95, match:title ^(NetEase Cloud Music Gtk4)$"
 
           # Picture-in-Picture rules
-          "float, title:^(Picture-in-Picture)$"
-          "size 960 540, title:^(Picture-in-Picture)$"
-          "move 25%-, title:^(Picture-in-Picture)$"
+          "float on, match:title ^(Picture-in-Picture)$"
+          "size 960 540, match:title ^(Picture-in-Picture)$"
+          "move 25%-, match:title ^(Picture-in-Picture)$"
 
           # Media and file manager rules
-          "float, title:^(imv|mpv|danmufloat|termfloat|nemo|ncmpcpp)$"
-          "move 25%-, title:^(imv|mpv|danmufloat|termfloat|nemo|ncmpcpp)$"
-          "size 960 540, title:^(imv|mpv|danmufloat|termfloat|nemo|ncmpcpp)$"
-          "pin, title:^(danmufloat)$"
-          "rounding 5, title:^(danmufloat|termfloat)$"
+          "float on, match:title ^(imv|mpv|danmufloat|termfloat|nemo|ncmpcpp)$"
+          "move 25%-, match:title ^(imv|mpv|danmufloat|termfloat|nemo|ncmpcpp)$"
+          "size 960 540, match:title ^(imv|mpv|danmufloat|termfloat|nemo|ncmpcpp)$"
+          "pin on, match:title ^(danmufloat)$"
+          "rounding 5, match:title ^(danmufloat|termfloat)$"
 
           # Animation rules
-          "animation slide right, class:^(kitty|Alacritty)$"
-          "noblur, class:^(org.mozilla.firefox)$"
+          "animation slide right, match:class ^(kitty|Alacritty)$"
+          "no_blur on, match:class ^(org.mozilla.firefox)$"
 
           # Floating window decorations on workspaces 1-10
-          "bordersize 2, floating:1, onworkspace:w[fv1-10]"
-          "bordercolor $tokyonight_cyan, floating:1, onworkspace:w[fv1-10]"
-          "rounding 8, floating:1, onworkspace:w[fv1-10]"
+          "border_size 2, match:float true, match:workspace w[fv1-10]"
+          "border_color $tokyonight_cyan, match:float true, match:workspace w[fv1-10]"
+          "rounding 8, match:float true, match:workspace w[fv1-10]"
 
           # Tiling window decorations on workspaces 1-10
-          "bordersize 3, floating:0, onworkspace:f[1-10]"
-          "rounding 4, floating:0, onworkspace:f[1-10]"
+          "border_size 3, match:float false, match:workspace f[1-10]"
+          "rounding 4, match:float false, match:workspace f[1-10]"
         ];
 
         # Workspace rules from CachyOS
@@ -403,11 +403,11 @@
 
         # Layer rules from CachyOS
         layerrule = [
-          "animation slide top, logout_dialog"
-          "animation slide down, waybar"
-          "animation fade 50%, wallpaper"
-          "blur, rofi"
-          "ignorealpha 0, rofi"
+          "animation slide top, match:namespace logout_dialog"
+          "animation slide down, match:namespace waybar"
+          "animation fade 50%, match:namespace wallpaper"
+          "blur on, match:namespace rofi"
+          "ignore_alpha 0, match:namespace rofi"
         ];
       };
 

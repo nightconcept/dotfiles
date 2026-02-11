@@ -94,8 +94,8 @@
 
     # Custom installer ISO for tidus-persist
     nixosConfigurations.tidus-persist-installer = inputs.nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
       modules = [
+        {nixpkgs.hostPlatform = "x86_64-linux";}
         ./iso/tidus-persist-installer.nix
       ];
     };

@@ -53,7 +53,7 @@
       dmenu
 
       # File manager
-      xfce.thunar
+      thunar
 
       # Network manager applet
       networkmanagerapplet

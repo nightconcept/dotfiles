@@ -3,7 +3,6 @@
 in {
   mkNixos = pkgs: hostname:
     pkgs.lib.nixosSystem {
-      system = "x86_64-linux";
       specialArgs = {inherit inputs;};
       modules = [
         ../modules/nixos
@@ -20,6 +19,7 @@ in {
             users.danny.imports = [
               ../home
               stylix.homeModules.stylix
+              {stylix.overlays.enable = false;}
               spicetify-nix.homeManagerModules.default
               sops-nix.homeManagerModules.sops
               vscode-server.homeModules.default
@@ -35,7 +35,6 @@ in {
 
   mkNixosServer = pkgs: hostname:
     pkgs.lib.nixosSystem {
-      system = "x86_64-linux";
       specialArgs = {inherit inputs;};
       modules = [
         ../modules/nixos
@@ -53,6 +52,7 @@ in {
             users.danny.imports = [
               ../home
               stylix.homeModules.stylix
+              {stylix.overlays.enable = false;}
               sops-nix.homeManagerModules.sops
               vscode-server.homeModules.default
             ];
@@ -67,7 +67,6 @@ in {
 
   mkDarwin = pkgs: hostname:
     nix-darwin.lib.darwinSystem {
-      system = "aarch64-darwin";
       specialArgs = {
         inherit inputs;
       };
@@ -85,6 +84,7 @@ in {
             users.danny.imports = [
               ../home
               stylix.homeModules.stylix
+              {stylix.overlays.enable = false;}
               sops-nix.homeManagerModules.sops
               vscode-server.homeModules.default
             ];
@@ -100,7 +100,7 @@ in {
   mkHome = hostname:
     home-manager.lib.homeManagerConfiguration {
       pkgs = import nixpkgs {
-        system = "x86_64-linux";
+        localSystem = "x86_64-linux";
         config.allowUnfree = true;
       };
       modules = [

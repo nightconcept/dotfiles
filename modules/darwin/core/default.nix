@@ -47,7 +47,10 @@ in {
         '';
     };
 
-    nixpkgs.config.allowUnfree = true;
+    nixpkgs = {
+      hostPlatform = lib.mkDefault "aarch64-darwin";
+      config.allowUnfree = true;
+    };
 
     system = {
       primaryUser = cfg.user;
