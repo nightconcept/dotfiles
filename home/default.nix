@@ -40,6 +40,13 @@
       extraConfig = {};
     };
 
+    vincent = {
+      profiles = [./profiles/server.nix];
+      homeDirectory = "/home/danny";
+      extraImports = [];
+      extraConfig = {};
+    };
+
     # Darwin hosts
     waver = {
       profiles = [./profiles/darwin-laptop.nix];
@@ -78,9 +85,7 @@
       profiles = [./profiles/server.nix];
       homeDirectory = "/home/danny";
       extraImports = [];
-      extraConfig = {
-        targets.genericLinux.enable = true;
-      };
+      extraConfig = {};
     };
 
     # Default fallback
@@ -88,9 +93,7 @@
       profiles = [./profiles/server.nix];
       homeDirectory = "/home/danny";
       extraImports = [];
-      extraConfig = {
-        targets.genericLinux.enable = true;
-      };
+      extraConfig = {};
     };
   };
 
