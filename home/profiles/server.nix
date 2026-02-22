@@ -9,10 +9,13 @@
     ./base.nix
   ];
 
-  modules.home.programs.shell = {
-    fish.enable = true;
-    starship.enable = true;
-    zoxide.enable = true;
+  modules.home.programs = {
+    openclaw.enable = true;
+    shell = {
+      fish.enable = true;
+      starship.enable = true;
+      zoxide.enable = true;
+    };
   };
 
   # Additional server-specific packages

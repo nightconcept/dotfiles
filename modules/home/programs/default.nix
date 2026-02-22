@@ -12,6 +12,7 @@
     ./ghostty
     ./git.nix
     ./nvim
+    ./openclaw.nix
     ./rofi.nix
     ./shell
     ./spotify.nix
