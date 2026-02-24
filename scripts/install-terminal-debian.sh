@@ -13,44 +13,12 @@ echo "Terminal Emulator Installation Script"
 echo "====================================="
 echo
 echo "Which terminal emulator would you like to install?"
-echo "1) Ghostty (removes WezTerm if installed)"
-echo "2) WezTerm (removes Ghostty if installed)"
+echo "1) Ghostty"
+echo "2) WezTerm"
 echo "3) Both"
 echo "0) Exit"
 echo
 read -p "Enter your choice (0-3): " choice
-
-remove_ghostty() {
-    echo
-    echo "Removing Ghostty and its repository..."
-
-    # Remove package
-    if dpkg -l | grep -q ghostty; then
-        sudo apt remove -y ghostty
-    fi
-
-    # Remove repository
-    sudo rm -f /etc/apt/sources.list.d/debian.griffo.io.list
-    sudo rm -f /etc/apt/trusted.gpg.d/debian.griffo.io.gpg
-
-    echo "Ghostty removed."
-}
-
-remove_wezterm() {
-    echo
-    echo "Removing WezTerm and its repository..."
-
-    # Remove packages (both stable and nightly)
-    if dpkg -l | grep -q wezterm; then
-        sudo apt remove -y wezterm wezterm-nightly 2>/dev/null || true
-    fi
-
-    # Remove repository
-    sudo rm -f /etc/apt/sources.list.d/wezterm.list
-    sudo rm -f /usr/share/keyrings/wezterm-fury.gpg
-
-    echo "WezTerm removed."
-}
 
 install_ghostty() {
     echo
@@ -139,11 +107,9 @@ case $choice in
         exit 0
         ;;
     1)
-        remove_wezterm
         install_ghostty
         ;;
     2)
-        remove_ghostty
         install_wezterm
         ;;
     3)
