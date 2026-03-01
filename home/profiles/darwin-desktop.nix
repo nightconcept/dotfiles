@@ -23,5 +23,6 @@
 
   home.packages = with pkgs; [
     karabiner-elements
+    mise
   ];
 }

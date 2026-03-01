@@ -151,6 +151,8 @@ in {
         if test -d "/home/danny/.npm-global/bin"
             fish_add_path --prepend /home/danny/.npm-global/bin
         end
+
+        mise activate fish | source
       '';
 
       plugins = [
