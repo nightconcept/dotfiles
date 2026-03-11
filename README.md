@@ -82,6 +82,26 @@ nix run home-manager/master -- switch --flake .#server
 sudo bash ./scripts/barrett-setup.sh
 ```
 
+## devenv Base Environment
+
+This repo is a shared [devenv](https://devenv.sh/) base. Sibling repos at `~/git/*` import it for common tooling (`just`) and a pinned nixpkgs. The import is optional — it silently no-ops if `../dotfiles` doesn't exist.
+
+### Downstream usage
+
+In any sibling repo's `devenv.nix`:
+```nix
+{ pkgs, lib, ... }:
+
+let dotfilesDevenv = ../dotfiles/devenv.nix; in
+{
+  imports = lib.optional (builtins.pathExists dotfilesDevenv) dotfilesDevenv;
+
+  # project-specific config below
+}
+```
+
+No `devenv.yaml` changes required.
+
 ## License
 
 [MIT](LICENSE)
