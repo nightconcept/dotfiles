@@ -16,6 +16,9 @@ in {
   config = lib.mkIf (config.modules.home.programs.ghostty.enable || config.modules.home.programs.ghostty.configOnly) {
     programs.ghostty = {
       enable = true;
+      # On non-NixOS Linux, disable systemd integration — the system-installed Ghostty
+      # already ships its own valid service file in /usr/share/systemd/user/
+      systemd.enable = lib.mkIf config.modules.home.programs.ghostty.configOnly false;
       # On macOS and non-NixOS Linux, use configOnly mode since ghostty is installed externally
       package = lib.mkIf (pkgs.stdenv.isDarwin || config.modules.home.programs.ghostty.configOnly) (
         pkgs.runCommand "ghostty-dummy" {

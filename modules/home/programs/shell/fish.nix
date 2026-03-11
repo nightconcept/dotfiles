@@ -152,7 +152,9 @@ in {
             fish_add_path --prepend /home/danny/.npm-global/bin
         end
 
-        mise activate fish | source
+        if command -q mise
+            mise activate fish | source
+        end
       '';
 
       plugins = [
