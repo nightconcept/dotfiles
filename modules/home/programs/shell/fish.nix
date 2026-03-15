@@ -128,11 +128,6 @@ in {
           ''
         }
 
-        # Load API keys from sops if available
-        if test -r "$XDG_RUNTIME_DIR/secrets/gemini_api_key"
-            set -gx GEMINI_API_KEY (cat "$XDG_RUNTIME_DIR/secrets/gemini_api_key")
-        end
-
         # Conditional brew setup
         if test -d "/home/linuxbrew/"
             eval (/home/linuxbrew/.linuxbrew/bin/brew shellenv)

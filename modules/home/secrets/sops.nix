@@ -26,13 +26,6 @@ in {
 
       # User-level secrets
       secrets = {
-        # Gemini API key - deployed to a file that shell can source
-        "gemini_api_key" = {
-          # Use XDG runtime dir for better security (tmpfs, user-only access)
-          path = "%r/secrets/gemini_api_key";
-          mode = "0400";
-        };
-
         # Forgejo git personal access token
         "forgejo_git_token" = {
           # Use home directory path on macOS since XDG_RUNTIME_DIR isn't standard
