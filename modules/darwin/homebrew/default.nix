@@ -75,7 +75,6 @@ in {
           "visual-studio-code"
           "vlc"
           "wezterm@nightly"
-          "zoom"
         ]
         ++ optionals (cfg.systemType == "desktop") [
           "alt-tab"
