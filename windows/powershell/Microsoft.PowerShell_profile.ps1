@@ -165,6 +165,22 @@ function lazyg {
     git commit -m "$args"
     git push
 }
+function gaa {
+    git add --all
+}
+
+function gco {
+  git commit -m "$args"
+}
+
+function gdev {
+  git checkout main && git fetch origin --prune && git reset --hard origin/main && git branch dev && git checkout dev && git reset --hard main && git push origin dev --force
+}
+
+function push {
+  git push
+}
+
 function Get-PubIP {
     (Invoke-WebRequest http://ifconfig.me/ip ).Content
 }
@@ -236,9 +252,6 @@ if (Test-Path($ChocolateyProfile)) {
 
 ## Enable zoxide calls
 Invoke-Expression (& { (zoxide init powershell | Out-String) })
-
-## Allow fnm calls
-fnm env --use-on-cd | Out-String | Invoke-Expression
 
 ## Final Line to set prompt
 oh-my-posh init pwsh --config https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/powerlevel10k_rainbow.omp.json | Invoke-Expression
