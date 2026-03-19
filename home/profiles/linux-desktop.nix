@@ -33,6 +33,7 @@
   '';
 
   modules.home.programs = {
+    mise.enable = true;
     # Use configOnly - install ghostty manually via native package manager
     ghostty.configOnly = true;
     spotify.enable = true;

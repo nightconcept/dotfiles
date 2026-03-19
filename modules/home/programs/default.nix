@@ -10,6 +10,7 @@
     ./gaming.nix
     ./gemini-cli.nix
     ./ghostty
+    ./mise.nix
     ./git.nix
     ./nvim
     ./openclaw.nix
