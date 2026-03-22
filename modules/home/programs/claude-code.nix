@@ -13,6 +13,24 @@
 
   cfg = config.modules.home.programs.claude-code;
 
+  # ccstatusline package (pre-built from npm tarball, no build step needed)
+  ccstatuslinePkg = pkgs.stdenv.mkDerivation {
+    pname = "ccstatusline";
+    version = "2.2.7";
+    src = pkgs.fetchurl {
+      url = "https://registry.npmjs.org/ccstatusline/-/ccstatusline-2.2.7.tgz";
+      hash = "sha256-vMAoLVLSpY+cov1doxX7247c79H+3fQlxUAffYqfD/Q=";
+    };
+    buildInputs = [pkgs.nodejs];
+    dontBuild = true;
+    installPhase = ''
+      mkdir -p $out/bin
+      cp dist/ccstatusline.js $out/bin/ccstatusline
+      chmod +x $out/bin/ccstatusline
+      patchShebangs $out/bin/ccstatusline
+    '';
+  };
+
   # Claude Code settings.json configuration
   claudeSettingsConfig = pkgs.writeText "claude-settings.json" (builtins.toJSON (
     if cfg.statusline.enable
@@ -20,7 +38,7 @@
       model = "sonnet";
       statusLine = {
         type = "command";
-        command = "bash $HOME/.claude/statusline-command.sh";
+        command = "${ccstatuslinePkg}/bin/ccstatusline";
       };
     }
     else {
@@ -538,6 +556,7 @@ in {
     # Install Claude Code package and additional scripts
     home.packages =
       [pkgs.claude-code]
+      ++ lib.optionals cfg.statusline.enable [ccstatuslinePkg]
       ++ (with pkgs; [
         (writeShellScriptBin "claude-setup" ''
           #!/usr/bin/env bash

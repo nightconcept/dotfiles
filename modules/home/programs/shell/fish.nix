@@ -18,7 +18,7 @@ in {
   config = lib.mkIf config.modules.home.programs.shell.fish.enable {
     home.sessionPath =
       [
-        "/home/danny/.local/bin"
+        "${config.home.homeDirectory}/.local/bin"
         "/opt/nvim-linux64/bin"
       ]
       ++ (
@@ -26,7 +26,6 @@ in {
         then [
           "/usr/local/bin"
           "/opt/homebrew/bin"
-          "/Users/danny/.local/bin"
         ]
         else []
       );
@@ -91,15 +90,7 @@ in {
         set -gx LANG en_US.UTF-8
         set -gx VISUAL nvim
         set -gx GPG_TTY (tty)
-        ${
-          if pkgs.stdenv.isDarwin
-          then ''
-            set -gx XDG_DATA_DIRS /Users/danny/.nix-profile/share $XDG_DATA_DIRS
-          ''
-          else ''
-            set -gx XDG_DATA_DIRS /home/danny/.nix-profile/share $XDG_DATA_DIRS
-          ''
-        }
+        set -gx XDG_DATA_DIRS ${config.home.homeDirectory}/.nix-profile/share $XDG_DATA_DIRS
 
         # Ensure Nix is in PATH
         if test -d "/nix/var/nix/profiles/default/bin"
@@ -108,22 +99,22 @@ in {
         ${
           if pkgs.stdenv.isDarwin
           then ''
-            if test -d "/Users/danny/.nix-profile/bin"
-                fish_add_path --prepend /Users/danny/.nix-profile/bin
+            if test -d "${config.home.homeDirectory}/.nix-profile/bin"
+                fish_add_path --prepend ${config.home.homeDirectory}/.nix-profile/bin
             end
-            if test -d "/etc/profiles/per-user/danny/bin"
-                fish_add_path --prepend /etc/profiles/per-user/danny/bin
+            if test -d "/etc/profiles/per-user/${config.home.username}/bin"
+                fish_add_path --prepend /etc/profiles/per-user/${config.home.username}/bin
             end
             if test -d "/run/current-system/sw/bin"
                 fish_add_path --prepend /run/current-system/sw/bin
             end
           ''
           else ''
-            if test -d "/home/danny/.nix-profile/home-path/bin"
-                fish_add_path --prepend /home/danny/.nix-profile/home-path/bin
+            if test -d "${config.home.homeDirectory}/.nix-profile/home-path/bin"
+                fish_add_path --prepend ${config.home.homeDirectory}/.nix-profile/home-path/bin
             end
-            if test -d "/home/danny/.nix-profile/bin"
-                fish_add_path --prepend /home/danny/.nix-profile/bin
+            if test -d "${config.home.homeDirectory}/.nix-profile/bin"
+                fish_add_path --prepend ${config.home.homeDirectory}/.nix-profile/bin
             end
           ''
         }
@@ -134,8 +125,8 @@ in {
         end
 
         # UV tool path setup
-        if test -d "/home/danny/.local/share/uv/tools"
-            for tool_dir in /home/danny/.local/share/uv/tools/*/bin
+        if test -d "${config.home.homeDirectory}/.local/share/uv/tools"
+            for tool_dir in ${config.home.homeDirectory}/.local/share/uv/tools/*/bin
                 if test -d "$tool_dir"
                     fish_add_path --prepend "$tool_dir"
                 end
@@ -143,8 +134,8 @@ in {
         end
 
         # NPM global bin path for claude-sandbox
-        if test -d "/home/danny/.npm-global/bin"
-            fish_add_path --prepend /home/danny/.npm-global/bin
+        if test -d "${config.home.homeDirectory}/.npm-global/bin"
+            fish_add_path --prepend ${config.home.homeDirectory}/.npm-global/bin
         end
 
         if command -q mise
@@ -224,7 +215,7 @@ in {
                 set rebuild_cmd "home-manager switch"
             else
                 # Try user@host format for home-manager
-                set user_host "danny@$host"
+                set user_host (whoami)@$host
                 if contains $user_host $home_configs
                     echo "Found Home Manager configuration for $user_host"
                     set host $user_host

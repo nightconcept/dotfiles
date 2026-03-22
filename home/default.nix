@@ -65,7 +65,7 @@
     # Generic standalone home-manager configurations
     desktop = {
       profiles = [./profiles/linux-desktop.nix];
-      homeDirectory = "/home/danny";
+      homeDirectory = null;
       extraImports = [];
       extraConfig = {
         targets.genericLinux.enable = true;
@@ -74,7 +74,7 @@
 
     laptop = {
       profiles = [./profiles/nixos-laptop.nix];
-      homeDirectory = "/home/danny";
+      homeDirectory = null;
       extraImports = [];
       extraConfig = {
         targets.genericLinux.enable = true;
@@ -83,7 +83,7 @@
 
     server = {
       profiles = [./profiles/server.nix];
-      homeDirectory = "/home/danny";
+      homeDirectory = null;
       extraImports = [];
       extraConfig = {};
     };
@@ -91,7 +91,7 @@
     # Default fallback
     default = {
       profiles = [./profiles/server.nix];
-      homeDirectory = "/home/danny";
+      homeDirectory = null;
       extraImports = [];
       extraConfig = {};
     };
@@ -105,7 +105,8 @@ in
       [./profiles/base.nix]
       ++ hostConfig.profiles
       ++ hostConfig.extraImports;
-
-    home.homeDirectory = lib.mkForce hostConfig.homeDirectory;
   }
+  // (lib.optionalAttrs (hostConfig.homeDirectory != null) {
+    home.homeDirectory = lib.mkForce hostConfig.homeDirectory;
+  })
   // hostConfig.extraConfig
