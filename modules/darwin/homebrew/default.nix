@@ -41,12 +41,10 @@ in {
 
       taps = [
         "FelixKratz/formulae"
-        "atlassian-labs/acli"
       ];
 
       brews =
         [
-          "acli"
           "borders"
           "gettext"
           "pinentry-mac"
@@ -62,9 +60,7 @@ in {
           "docker-desktop"
           "firefox"
           "ghostty"
-          "github"
           "hiddenbar"
-          "jellyfin-media-player"
           "mos"
           "nomachine"
           "obsidian"
@@ -74,7 +70,6 @@ in {
           "stretchly"
           "visual-studio-code"
           "vlc"
-          "wezterm@nightly"
         ]
         ++ optionals (cfg.systemType == "desktop") [
           "alt-tab"
