@@ -34,7 +34,7 @@ in {
       ncdu
       nix-prefetch-github
       nmap
-      nodejs_22
+      nodejs_24
       rsync
       uv
       vim

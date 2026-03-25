@@ -60,6 +60,7 @@ in {
           "docker-desktop"
           "firefox"
           "ghostty"
+          "gitbutler"
           "hiddenbar"
           "mos"
           "nomachine"
