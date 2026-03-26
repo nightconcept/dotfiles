@@ -85,7 +85,7 @@
     };
     ddclient.enable = true;
     portainer.enable = true;
-    watchtower.enable = true;
+    watchtower.enable = false;
     flaresolverr.enable = true;
     cloudflare-tunnel.enable = true;
     vaultwarden.enable = true;
