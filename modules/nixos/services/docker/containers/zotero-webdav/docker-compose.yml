@@ -2,7 +2,7 @@ services:
   zotero-webdav:
     container_name: zotero-webdav
     hostname: zotero-webdav
-    image: louisaslett/zotero-webdav:latest
+    image: ghcr.io/louisaslett/zotero-webdav:latest
     restart: always
     networks:
       - proxy
@@ -14,7 +14,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - ${DATA_PATH}:/var/lib/dav
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:80/"]
+      test: ["CMD", "python3", "-c", "import socket; s=socket.create_connection(('localhost', 80), timeout=5); s.close()"]
       interval: 30s
       timeout: 10s
       retries: 3
