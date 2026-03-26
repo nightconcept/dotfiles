@@ -10,7 +10,6 @@
   ];
 
   modules.home.programs = {
-    openclaw.enable = true;
     shell = {
       fish.enable = true;
       starship.enable = true;
