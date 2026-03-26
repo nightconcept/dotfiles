@@ -40,7 +40,6 @@ in {
     ./containers/immich
     # ./containers/minecraft
     ./containers/nextcloud
-    ./containers/obsidian-sync
     # ./containers/open-webui
     # ./containers/palworld
     ./containers/prowlarr-abb
@@ -50,6 +49,7 @@ in {
     ./containers/uptime-kuma
     ./containers/vaultwarden
     # ./containers/wg-easy
+    ./containers/zotero-webdav
   ];
 
   options.modules.nixos.docker = {

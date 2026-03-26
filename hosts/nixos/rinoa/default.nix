@@ -105,7 +105,7 @@
       signingEmail = "dark@nightconcept.net";
     };
     blog.enable = true;
-    obsidian-sync.enable = false;
+    zotero-webdav.enable = true;
   };
 
   # System packages for server management

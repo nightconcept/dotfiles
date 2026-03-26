@@ -37,6 +37,7 @@
     # Use configOnly - install ghostty manually via native package manager
     ghostty.configOnly = true;
     spotify.enable = true;
+    zotero.enable = true;
     # wezterm.configOnly = true; # Replaced by ghostty - install manually if needed
     xdg.enable = true;
     shell = {

@@ -1,0 +1,39 @@
+services:
+  zotero-webdav:
+    container_name: zotero-webdav
+    hostname: zotero-webdav
+    image: louisaslett/zotero-webdav:latest
+    restart: always
+    networks:
+      - proxy
+    environment:
+      - AUTH_TYPE=${AUTH_TYPE}
+      - USERNAME=${USERNAME}
+      - PASSWORD=${PASSWORD}
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${DATA_PATH}:/var/lib/dav
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.zotero-webdav.entrypoints=http"
+      - "traefik.http.routers.zotero-webdav.rule=Host(`${SUBDOMAIN}.${DOMAIN}`)"
+      - "traefik.http.middlewares.zotero-webdav-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.zotero-webdav.middlewares=zotero-webdav-https-redirect"
+      - "traefik.http.routers.zotero-webdav-secure.entrypoints=https"
+      - "traefik.http.routers.zotero-webdav-secure.rule=Host(`${SUBDOMAIN}.${DOMAIN}`) || Host(`${SUBDOMAIN}.solivan.dev`)"
+      - "traefik.http.routers.zotero-webdav-secure.tls=true"
+      - "traefik.http.routers.zotero-webdav-secure.middlewares=crowdsec-bouncer@docker"
+      - "traefik.http.routers.zotero-webdav-secure.service=zotero-webdav"
+      - "traefik.http.services.zotero-webdav.loadbalancer.server.port=80"
+      - "traefik.docker.network=proxy"
+      - "com.centurylinklabs.watchtower.enable=true"
+
+networks:
+  proxy:
+    external: true

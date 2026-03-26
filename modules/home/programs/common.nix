@@ -19,7 +19,6 @@ in {
       bat
       btop
       claude-code
-      codex
       delta
       desktop-file-utils
       devenv

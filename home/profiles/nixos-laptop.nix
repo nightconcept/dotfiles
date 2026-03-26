@@ -16,6 +16,7 @@
     ghostty.enable = true;
     rofi.enable = true;
     spotify.enable = true;
+    zotero.enable = true;
     # wezterm.enable = true; # Replaced by ghostty
     xdg.enable = true;
     shell = {
