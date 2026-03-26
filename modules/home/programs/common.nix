@@ -35,6 +35,7 @@ in {
       nmap
       nodejs_24
       rsync
+      sops
       uv
       vim
       wget
