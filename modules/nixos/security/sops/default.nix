@@ -152,6 +152,15 @@ in {
           owner = "root";
           mode = "0400";
         };
+
+        "services/zotero/username" = {
+          owner = "root";
+          mode = "0400";
+        };
+        "services/zotero/password" = {
+          owner = "root";
+          mode = "0400";
+        };
       };
     };
   };

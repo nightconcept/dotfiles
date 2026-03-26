@@ -61,6 +61,10 @@ clean:
 fmt:
     find . -name "*.nix" -type f | xargs nix fmt
 
+# Edit SOPS secrets
+edit-sops:
+    SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt sops modules/nixos/security/sops/common.yaml
+
 # Test starship configuration without rebuilding
 test-starship:
     rm -f ~/.config/starship.toml

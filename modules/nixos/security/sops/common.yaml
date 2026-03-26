@@ -41,6 +41,9 @@ services:
     crowdsec:
         bouncer_key: ENC[AES256_GCM,data:P42cLl3QjNlfW6QPPe7lIK9/bcpoQrkJ3YtdoZef/ssGatHwdf2bGVRoMg==,iv:2/iqDdbquBsq6Lc3Y/DL7Oox+nGfxjIc//CPUqJHpy8=,tag:scqD7eO+hHjBFDUpkMlZMQ==,type:str]
         enroll_key: ENC[AES256_GCM,data:CPy7nneb9ozaEMV/nupXwFs5JrwGQT6bvg==,iv:TNeqizeEzu4PjtgKkGQ46bmnd9rfKK9z8H80eiYfXRY=,tag:zc7ptmercsgs1hB/n+DClw==,type:str]
+    zotero:
+        username: ENC[AES256_GCM,data:wHHQMaA=,iv:fFggNy9372Rkou/xhMRJtbOD3s5ZtpVaGXgAP+NhM8g=,tag:B7lxJoFfF/onRwgxWkQHgQ==,type:str]
+        password: ENC[AES256_GCM,data:cAmb9tcVJ0qtq5QInXI=,iv:gCNTq3+AgeNze6t8fi3YlfxOOz/pTeWpUuygDeE2jQ0=,tag:wrQ4SHJIqvjCObYDuDicBw==,type:str]
 sops:
     age:
         - recipient: age1a6p0xdsk0z9h6r4l43nfc63mwaukfju7cljhgvqd2wxc0ukves9swqlvfn
@@ -52,7 +55,7 @@ sops:
             T3drYkFrMnpuMU5rRDM1b2dMcjcvSjAKTYIOj6uKZbeye2hjtkqb9N1tCx+T3AUF
             PymQGGlvnKRozcrkbDTCFI/gyY2A/MJTGWgPU2k+cHzu29sZGjCC4A==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-10-06T21:02:50Z"
-    mac: ENC[AES256_GCM,data:bFrnMy72TftvAiCMthZ9xDyb69EYvv6lmHjroiZIE5aeQ4ybKnbFSwk/7MlJf7b+v59XxEjtfeGQr+QZgRd8gDQWGHc08rp1tdgiwXDJrvQV0a4BOQXzz8anEtzju9z3JK5ISeRNADQNMz8Zl6reLG7nGufCuVt1/HctgcYIGKY=,iv:h6um03BbfgxHUdJ6diE8Z/x+OMXFpeC6LQRkTpKBlgY=,tag:edjpo/NFkC5z2Lmcr2KXVg==,type:str]
+    lastmodified: "2026-03-26T14:04:54Z"
+    mac: ENC[AES256_GCM,data:9DOtRpWfqNbtfU2hhnfwIedzOpKva3gRlP0ZFAc4RrB5KC6iiGfxyC65mcRkbyjdGRBUDUfjkSmWJWbuMzw5C6jJ7tqwrVPKPwK+FTfk57q9BcrkKa0y6/CplTbD3gjU8D+Vrazm8Sb5nU0CmZ4PTctV1WSNml72lD0XCf9wJZs=,iv:/G6vJp3zqGMIfBZ5w5pkpZSa59UH6hx+B7OJ6F9qxbc=,tag:bHI8O4plTtHfOpBAX3K8hw==,type:str]
     unencrypted_suffix: _unencrypted
     version: 3.11.0
