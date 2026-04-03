@@ -45,6 +45,7 @@
 
   home = {
     username = lib.mkDefault (builtins.getEnv "USER");
+    homeDirectory = lib.mkDefault (builtins.getEnv "HOME");
     stateVersion = "23.11";
 
     # Essential system packages

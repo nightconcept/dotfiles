@@ -196,9 +196,9 @@ in {
             end
 
             # Check what configurations are available in the flake for this hostname
-            set nixos_configs (nix eval $flake_dir#nixosConfigurations --apply 'x: builtins.attrNames x' 2>/dev/null | tr -d '[]"' | tr ' ' '\n')
-            set darwin_configs (nix eval $flake_dir#darwinConfigurations --apply 'x: builtins.attrNames x' 2>/dev/null | tr -d '[]"' | tr ' ' '\n')
-            set home_configs (nix eval $flake_dir#homeConfigurations --apply 'x: builtins.attrNames x' 2>/dev/null | tr -d '[]"' | tr ' ' '\n')
+            set nixos_configs (nix eval --impure $flake_dir#nixosConfigurations --apply 'x: builtins.attrNames x' 2>/dev/null | tr -d '[]"' | tr ' ' '\n')
+            set darwin_configs (nix eval --impure $flake_dir#darwinConfigurations --apply 'x: builtins.attrNames x' 2>/dev/null | tr -d '[]"' | tr ' ' '\n')
+            set home_configs (nix eval --impure $flake_dir#homeConfigurations --apply 'x: builtins.attrNames x' 2>/dev/null | tr -d '[]"' | tr ' ' '\n')
 
             # Check if hostname exists in any configuration type
             if contains $host $nixos_configs
@@ -212,7 +212,7 @@ in {
             else if contains $host $home_configs
                 echo "Found Home Manager configuration for $host"
                 set config_type "homeConfigurations"
-                set rebuild_cmd "home-manager switch"
+                set rebuild_cmd "home-manager switch --impure"
             else
                 # Try user@host format for home-manager
                 set user_host (whoami)@$host
@@ -220,7 +220,7 @@ in {
                     echo "Found Home Manager configuration for $user_host"
                     set host $user_host
                     set config_type "homeConfigurations"
-                    set rebuild_cmd "home-manager switch"
+                    set rebuild_cmd "home-manager switch --impure"
                 else
                     # No exact match found, show available configurations
                     echo "Error: No configuration found for hostname '$host'"

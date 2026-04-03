@@ -9,6 +9,9 @@
     ./base.nix
   ];
 
+  # Disable sops for standalone server config (no known homeDirectory)
+  modules.home.secrets.sops.enable = lib.mkForce false;
+
   modules.home.programs = {
     shell = {
       fish.enable = true;

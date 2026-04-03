@@ -21,6 +21,7 @@ in {
       signing = {
         key = "~/.ssh/id_sdev.pub";
         signByDefault = true;
+        format = "openpgp";
       };
 
       settings = {
