@@ -28,7 +28,6 @@ in {
       secrets = {
         # Forgejo git personal access token
         "forgejo_git_token" = {
-          # Use home directory path on macOS since XDG_RUNTIME_DIR isn't standard
           path = "${config.home.homeDirectory}/.local/share/sops/secrets/forgejo_git_token";
           mode = "0400";
         };

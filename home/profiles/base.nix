@@ -45,7 +45,10 @@
 
   home = {
     username = lib.mkDefault (builtins.getEnv "USER");
-    homeDirectory = lib.mkDefault (builtins.getEnv "HOME");
+    homeDirectory = lib.mkDefault (
+      let home = builtins.getEnv "HOME";
+      in if home != "" then home else "/var/empty"
+    );
     stateVersion = "23.11";
 
     # Essential system packages
