@@ -28,7 +28,7 @@ install_ghostty() {
     # Download and add the GPG key
     echo "Adding GPG key..."
     curl -sS https://debian.griffo.io/EA0F721D231FDD3A0A17B9AC7808B4DD62C41256.asc | \
-        sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/debian.griffo.io.gpg
+        sudo gpg --yes --dearmor -o /etc/apt/trusted.gpg.d/debian.griffo.io.gpg
 
     # Add the repository
     echo "Adding repository..."
