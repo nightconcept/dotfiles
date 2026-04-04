@@ -61,7 +61,8 @@ in {
       };
       gc = {
         automatic = true;
-        options = "--delete-older-than 7d --max-generations 10";
+        dates = "weekly";
+        options = "--delete-older-than 30d";
       };
     };
 
