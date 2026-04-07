@@ -7,6 +7,7 @@
     ./common.nix
     ./direnv.nix
     ./firefox.nix
+    ./librewolf.nix
     ./gaming.nix
     ./gemini-cli.nix
     ./ghostty

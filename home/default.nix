@@ -65,7 +65,7 @@
     # Generic standalone home-manager configurations
     desktop = {
       profiles = [./profiles/linux-desktop.nix];
-      homeDirectory = null;
+      homeDirectory = builtins.getEnv "HOME";
       extraImports = [];
       extraConfig = {
         targets.genericLinux.enable = true;
@@ -74,7 +74,7 @@
 
     laptop = {
       profiles = [./profiles/nixos-laptop.nix];
-      homeDirectory = null;
+      homeDirectory = builtins.getEnv "HOME";
       extraImports = [];
       extraConfig = {
         targets.genericLinux.enable = true;
@@ -83,7 +83,7 @@
 
     server = {
       profiles = [./profiles/server.nix];
-      homeDirectory = null;
+      homeDirectory = builtins.getEnv "HOME";
       extraImports = [];
       extraConfig = {};
     };
@@ -91,7 +91,7 @@
     # Default fallback
     default = {
       profiles = [./profiles/server.nix];
-      homeDirectory = null;
+      homeDirectory = builtins.getEnv "HOME";
       extraImports = [];
       extraConfig = {};
     };
@@ -106,7 +106,7 @@ in
       ++ hostConfig.profiles
       ++ hostConfig.extraImports;
   }
-  // (lib.optionalAttrs (hostConfig.homeDirectory != null) {
+  // (lib.optionalAttrs (hostConfig.homeDirectory != "") {
     home.homeDirectory = lib.mkForce hostConfig.homeDirectory;
   })
   // hostConfig.extraConfig

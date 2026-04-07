@@ -279,7 +279,12 @@ in {
             # Run the appropriate rebuild command
             echo "Running $config_type rebuild for $host..."
             # Run in background to prevent shell lockup during rebuild
-            eval $rebuild_cmd --flake "$flake_dir#$host" &
+            # home-manager standalone configs use --impure so builtins.getEnv works for user-agnostic profiles
+            if test "$config_type" = "homeConfigurations"
+                eval $rebuild_cmd --flake "$flake_dir#$host" --impure &
+            else
+                eval $rebuild_cmd --flake "$flake_dir#$host" &
+            end
 
             # Wait for the background job to complete
             set rebuild_pid $last_pid

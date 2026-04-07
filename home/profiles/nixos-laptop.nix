@@ -32,6 +32,7 @@
 
   home.packages = with pkgs; [
     firefox
+    librewolf
     github-desktop
     kdePackages.xdg-desktop-portal-kde
     nerd-fonts.fira-code
