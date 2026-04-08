@@ -10,9 +10,12 @@
     ../../modules/home
   ];
 
+  # Disable GPU driver management from targets.genericLinux (not needed on this system)
+  targets.genericLinux.gpu.enable = false;
+
   # Reminder to install ghostty manually via native package manager
   home.activation.checkGhostty = lib.hm.dag.entryAfter ["writeBoundary"] ''
-    if ! command -v ghostty &> /dev/null; then
+    if ! [ -x /usr/bin/ghostty ] && ! [ -x /usr/local/bin/ghostty ]; then
       echo "NOTE: Ghostty is not installed. Please install it manually:"
       if [ -f /etc/arch-release ]; then
         echo "  Arch Linux: yay -S ghostty"
@@ -21,14 +24,6 @@
       else
         echo "  Visit https://ghostty.org for installation instructions"
       fi
-    fi
-  '';
-
-  # Reminder to set up VNC if needed
-  home.activation.checkTigerVNC = lib.hm.dag.entryAfter ["writeBoundary"] ''
-    if ! command -v tigervncserver &> /dev/null; then
-      echo "NOTE: TigerVNC is not installed. To set up VNC remote access:"
-      echo "  Run: ./scripts/setup-vnc.sh"
     fi
   '';
 

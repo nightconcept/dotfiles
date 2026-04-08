@@ -5,11 +5,11 @@ NixOS, macOS, and Linux system configurations managed by [Nix](https://nixos.org
 ## Uses
 
 - **Shell**: fish
-- **Terminal**: wezterm
-- **Editor**: neovim/vscode
+- **Terminal**: ghostty
+- **Editor**: vscode
 - **Desktop**: Hyprland (NixOS)
 - **Theme**: Tokyo Night
-- **Font**: Inter Nerd Font/Fira Code Nerd Font
+- **Font**: Fira Code Nerd Font
 
 
 ## Configuration Paths
@@ -76,9 +76,8 @@ nix run home-manager/master -- switch --flake .#desktop
 nix run home-manager/master -- switch --flake .#server
 ```
 
-### Barrett (Debian - Imperative Setup)
+### Debian
 ```bash
-# Run the setup script (will print further instructions)
 sudo bash ./scripts/barrett-setup.sh
 ```
 
