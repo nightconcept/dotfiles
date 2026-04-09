@@ -1,84 +1,88 @@
-# PowerShell script generated from 'scoop list' output
-# Generated on: 2025-06-22 09:07:04
+# PowerShell script generated from 'scoop export' output
+# Generated on: 2026-04-08 21:33:36
 
 # Add required buckets (if not already added)
-scoop bucket add anderlli0053_DEV-tools
 scoop bucket add extras
-scoop bucket add java
 scoop bucket add nerd-fonts
-scoop bucket add nonportable
 scoop bucket add versions
 
 # Install applications
 scoop install main/7zip
-scoop install extras/aimp
+scoop install extras/antigravity
+scoop install extras/autohotkey
 scoop install main/bat
+scoop install main/biome
 scoop install extras/calibre
+scoop install extras/cc-switch
+scoop install main/codex
 scoop install extras/cpu-z
-scoop install extras/cursor
 scoop install extras/discord
-scoop install main/doxygen
 scoop install main/duf
+scoop install extras/etcher
 scoop install main/eza
+scoop install main/fastfetch
+scoop install extras/figma
 scoop install nerd-fonts/FiraCode-NF
 scoop install nerd-fonts/FiraCode-NF-Mono
 scoop install nerd-fonts/FiraCode-NF-Propo
 scoop install nerd-fonts/FiraMono-NF
 scoop install nerd-fonts/FiraMono-NF-Mono
 scoop install nerd-fonts/FiraMono-NF-Propo
-scoop install main/gcc
-scoop install main/gh
+scoop install extras/flow-launcher
+scoop install extras/foobar2000
 scoop install main/git
 scoop install extras/gitextensions
 scoop install extras/github
-scoop install extras/godot-manager
 scoop install main/gpg
 scoop install extras/gpg4win
 scoop install extras/handbrake
 scoop install extras/hexchat
 scoop install extras/hwinfo
-scoop install extras/imageglass
-scoop install anderlli0053_DEV-tools/innounp
-scoop install extras/kdiff3
+scoop install main/hyperfine
+scoop install main/innounp
+scoop install main/just
 scoop install extras/kitty
+scoop install extras/libreoffice
 scoop install extras/love
 scoop install main/lua
 scoop install versions/lua51
-scoop install main/luajit
 scoop install main/luarocks
 scoop install main/mise
 scoop install extras/msedgeredirect
-scoop install main/msys2
-scoop install neovim
+scoop install main/neovim
 scoop install main/nodejs-lts
 scoop install extras/notepadplusplus
+scoop install extras/obs-studio
 scoop install extras/obsidian
-scoop install oh-my-posh
-scoop install java/openjdk17
+scoop install main/oh-my-posh
+scoop install main/ollama
+scoop install extras/ollama-full
+scoop install versions/ollama-rocm
 scoop install main/openssh
 scoop install main/pipx
-scoop install plex-desktop
 scoop install main/pnpm
-scoop install extras/postman
 scoop install extras/qbittorrent
 scoop install extras/rufus
+scoop install main/rustup
 scoop install main/sed
 scoop install extras/sharex
 scoop install extras/slack
 scoop install extras/spotify
 scoop install extras/stretchly
 scoop install extras/subtitleedit
-scoop install sumatrapdf
+scoop install extras/sumatrapdf
 scoop install main/syncthing
 scoop install extras/terminal-icons
-scoop install extras/theia-ide
+scoop install extras/tightvnc
+scoop install main/typst
 scoop install extras/ungoogled-chromium
+scoop install extras/vial
 scoop install extras/vlc
 scoop install extras/vscode
 scoop install versions/wezterm-nightly
 scoop install extras/windirstat
-scoop install extras/winmerge
-scoop install anderlli0053_DEV-tools/winscp
-scoop install extras/xc
+scoop install main/yt-dlp
+scoop install main/zig
 scoop install extras/zoom
+scoop install extras/zotero
 scoop install main/zoxide
