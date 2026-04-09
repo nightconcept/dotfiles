@@ -1,6 +1,6 @@
 # dotfiles
 
-NixOS, macOS, and Linux system configurations managed by [Nix](https://nixos.org/) and (soon) Windows system configurations managed by Ame (WIP).
+NixOS, macOS, and Linux system configurations managed by [Nix](https://nixos.org/). Windows is managed by [yuki](windows/), a personal declarative tool wrapping all Windows package manager frontends (Scoop, winget, etc.).
 
 ## Uses
 
