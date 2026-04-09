@@ -26,6 +26,7 @@
     # GTK 4 Configuration
     gtk.gtk4 = {
       enable = true;
+      theme = config.gtk.theme;
 
       # Extra GTK4 settings
       extraConfig = {
