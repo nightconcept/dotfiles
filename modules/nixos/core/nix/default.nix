@@ -53,6 +53,7 @@ in {
         # Enable parallel downloading
         http-connections = 25;
         max-substitution-jobs = 50;
+        download-buffer-size = 524288000; # 500 MiB (default 64 MiB)
 
         # Additional performance optimizations
         build-poll-interval = 0;
