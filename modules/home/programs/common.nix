@@ -35,6 +35,7 @@ in {
       nix-prefetch-github
       nmap
       nodejs_24
+      ripgrep
       rsync
       sops
       uv
