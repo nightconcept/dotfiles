@@ -40,7 +40,7 @@ in {
 
     labels = lib.mkOption {
       type = lib.types.listOf lib.types.str;
-      default = ["docker" "amd64" "linux" "ubuntu-latest"];
+      default = ["ubuntu-latest:docker://ubuntu:22.04" "docker:host" "linux" "amd64"];
       description = "Labels for the Forgejo runners";
     };
 
