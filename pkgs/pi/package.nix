@@ -1,5 +1,6 @@
 {
   lib,
+  makeWrapper,
   stdenvNoCC,
   fetchurl,
 }: let
@@ -36,12 +37,15 @@ in
 
     sourceRoot = "pi";
 
+    nativeBuildInputs = [makeWrapper];
+
     installPhase = ''
       runHook preInstall
 
-      mkdir -p $out/bin $out/share/pi
-      cp -R ./* $out/share/pi/
-      install -Dm755 pi $out/bin/pi
+      mkdir -p $out/bin $out/libexec/pi
+      cp -R ./* $out/libexec/pi/
+      chmod +x $out/libexec/pi/pi
+      makeWrapper $out/libexec/pi/pi $out/bin/pi
 
       runHook postInstall
     '';

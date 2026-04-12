@@ -27,6 +27,7 @@ in {
       duf
       eza
       fastfetch
+      fd
       gnupg
       jq
       just
