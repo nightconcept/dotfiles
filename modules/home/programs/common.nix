@@ -7,6 +7,7 @@
   # Import our custom lib functions
   moduleLib = import ../../../lib/module {inherit lib;};
   inherit (moduleLib) mkBoolOpt enabled disabled;
+  pi = pkgs.callPackage ../../../pkgs/pi/package.nix {};
 in {
   options.modules.home.programs.common = {
     enable = mkBoolOpt true "Enable common programs for all systems";
@@ -35,6 +36,8 @@ in {
       nix-prefetch-github
       nmap
       nodejs_24
+      opencode
+      pi
       ripgrep
       rsync
       sops
