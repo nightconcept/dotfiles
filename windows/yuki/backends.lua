@@ -3,4 +3,5 @@ yuki.backends {
     enabled = true,
     buckets = { "extras", "nerd-fonts", "versions" },
   },
+  npm = { enabled = true },
 }
