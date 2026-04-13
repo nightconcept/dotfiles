@@ -9,7 +9,6 @@
     ./firefox.nix
     ./librewolf.nix
     ./gaming.nix
-    ./gemini-cli.nix
     ./ghostty
     ./mise.nix
     ./git.nix

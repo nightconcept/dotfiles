@@ -11,7 +11,7 @@ Secrets managed via sops-nix. Age keys derived from SSH keys.
 | Type | Path pattern | Example |
 |------|-------------|---------|
 | NixOS system | `/run/secrets/<service>-<secret>` | `/run/secrets/nordvpn-token` |
-| Home Manager | `$XDG_RUNTIME_DIR/secrets/<secret>` | `/run/user/1000/secrets/gemini_api_key` |
+| Home Manager | `$XDG_RUNTIME_DIR/secrets/<secret>` | `/run/user/1000/secrets/brave_api_key` |
 
 ## Adding a Secret
 

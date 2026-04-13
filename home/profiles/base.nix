@@ -30,7 +30,6 @@
       };
       common.enable = true;
       direnv.enable = true;
-      gemini-cli.enable = true; # Uses bin version by default
       git.enable = true;
       nvim = {
         enable = true;

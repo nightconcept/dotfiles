@@ -310,7 +310,7 @@ System services (NixOS) should use:
 User services (home-manager) should use:
 - `$XDG_RUNTIME_DIR/secrets/<secret>` - User runtime directory (tmpfs)
 - Expands to `/run/user/1000/secrets/<secret>`
-- Example: `/run/user/1000/secrets/gemini_api_key`
+- Example: `/run/user/1000/secrets/brave_api_key`
 
 #### Adding New Secrets
 1. Edit the encrypted YAML file using `sops`

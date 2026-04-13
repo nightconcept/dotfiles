@@ -28,6 +28,7 @@ in {
       eza
       fastfetch
       fd
+      gemini-cli
       gnupg
       jq
       just
