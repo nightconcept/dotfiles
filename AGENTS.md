@@ -2,7 +2,7 @@
 
 Personal dotfiles as a Nix flake supporting NixOS, nix-darwin (macOS), and home-manager. All systems use `nixpkgs-unstable`.
 
-**Windows** is its own island, managed by **yuki**, a personal declarative tool that wraps Windows package manager frontends. See `windows/`.
+**Windows** is its own island, managed by **yuki**, a personal declarative tool that wraps Windows package manager frontends. See `windows/`. Key packages include `opencode`, `vscode`, and `neovim`.
 
 Each major directory has a `CLAUDE.md` with context specific to that area. Treat it as the `AGENTS.md` for that directory and read it when working there.
 
@@ -58,6 +58,13 @@ nix flake check
 
 # Show flake outputs
 nix flake show
+```
+
+### Windows (yuki)
+```powershell
+# Install/update all yuki packages (Scoop, npm, etc.)
+# Run from windows/ directory
+yuki
 ```
 
 ## Architecture

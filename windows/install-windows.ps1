@@ -31,30 +31,40 @@ else {
     Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser; Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
 }
 
+##############
+# Install yuki
+##############
+if (-not (Get-Command -Name 'yuki' -ErrorAction SilentlyContinue)) {
+    Write-Verbose "Installing yuki..." -Verbose
+    irm https://forge.solivan.dev/nightconcept/yuki/raw/branch/main/scripts/install-yuki.ps1 | iex
+    
+    # Ensure the newly added path is available in the current session
+    $yukiPath = "$HOME\.local\bin"
+    if ($env:Path -notlike "*$yukiPath*") {
+        $env:Path = "$env:Path;$yukiPath"
+    }
+}
+
 ####################################
 # Install Scoop managed applications
 ####################################
-$url = "https://raw.githubusercontent.com/nightconcept/dotfiles/main/scoop-install-script.ps1"
-$file = "${HOME}\scoop-install-script.ps1"
-(New-Object -TypeName System.Net.WebClient).DownloadFile($url, $file)
-$file
 
-$scoopInstallScript = ".\scoop-install-script.ps1"
-Write-Host "Calling $pathToSecondScript..."
-$result = & $scoopInstallScript
-
+# Run yuki from the current directory
+# Assuming the script is being run from the windows/ directory
+# If not, it will try to find it
+$currentDir = Get-ScriptDirectory
+if (Test-Path "$currentDir\yuki.lua") {
+    Push-Location $currentDir
+    yuki
+    Pop-Location
+} else {
+    Write-Warning "Could not find yuki.lua in $currentDir. Please run yuki manually."
+}
 
 #######
 # Interactive section where the user is expected to interact or things won't work right
 # Manually edited scripts
 #######
-
-# interactive scoop installs
-scoop install nonportable/k-lite-codec-pack-full-np
-scoop install anderlli0053_DEV-tools/freefilesync
-# freefilsync will fail the first time because there will be a hash mismatch
-# it just needs to be run again to install
-scoop install anderlli0053_DEV-tools/freefilesync
 
 # install contexts (interactive)
 Invoke-Item "$HOME/scoop/apps/vscode/current/install-context.reg" -Confirm
