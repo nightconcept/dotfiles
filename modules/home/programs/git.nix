@@ -21,7 +21,7 @@ in {
       signing = {
         key = "~/.ssh/id_sdev.pub";
         signByDefault = true;
-        format = "openpgp";
+        format = "ssh";
       };
 
       settings = {
@@ -30,7 +30,6 @@ in {
           email = "dark@nightconcept.net";
         };
         gpg = {
-          format = "ssh";
           ssh.allowedSignersFile = "~/.ssh/allowed_signers";
         };
 

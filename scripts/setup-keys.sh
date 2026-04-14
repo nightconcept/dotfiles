@@ -34,6 +34,45 @@ cleanup() {
 }
 trap cleanup EXIT
 
+configure_git_signing() {
+    local ssh_pub_path="$HOME/.ssh/id_sdev.pub"
+    local allowed_signers_path="$HOME/.ssh/allowed_signers"
+
+    if [ -L "$ssh_pub_path" ] || [ -f "$ssh_pub_path" ]; then
+        print_info "Using existing ~/.ssh/id_sdev.pub"
+    elif ssh-keygen -y -f "$HOME/.ssh/id_sdev" > "$ssh_pub_path"; then
+        chmod 644 "$ssh_pub_path"
+        print_success "✓ Generated SSH public key at ~/.ssh/id_sdev.pub"
+    else
+        print_warning "Could not generate ~/.ssh/id_sdev.pub automatically"
+    fi
+
+    if [ -L "$allowed_signers_path" ] || [ -f "$allowed_signers_path" ]; then
+        print_info "Using existing ~/.ssh/allowed_signers"
+    else
+        cat > "$allowed_signers_path" <<'EOF'
+dark@nightconcept.net ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMJKTm63zFmYfGauCBlUWq7lvHFq+NVPT5RqIfjLM7MN danny@solivan.dev
+EOF
+        chmod 644 "$allowed_signers_path"
+        print_success "✓ Wrote ~/.ssh/allowed_signers"
+    fi
+
+    if command -v git >/dev/null 2>&1; then
+        print_info "🔏 Configuring git for SSH commit signing..."
+        git config --global user.name "Danny Solivan"
+        git config --global user.email "dark@nightconcept.net"
+        git config --global gpg.format ssh
+        git config --global user.signingkey "$ssh_pub_path"
+        git config --global gpg.ssh.allowedSignersFile "$allowed_signers_path"
+        git config --global commit.gpgsign true
+        git config --global tag.gpgsign true
+        git config --global --unset-all gpg.program >/dev/null 2>&1 || true
+        print_success "✓ Git configured for SSH signing"
+    else
+        print_warning "git not found; skipping git signing configuration"
+    fi
+}
+
 
 main() {
     print_info "🔑 SSH and Age Key Setup"
@@ -105,6 +144,8 @@ main() {
     cp "age_keys_extracted" "$HOME/.config/sops/age/keys.txt"
     chmod 600 "$HOME/.config/sops/age/keys.txt"
     print_success "✓ Deployed age key to ~/.config/sops/age/keys.txt"
+
+    configure_git_signing
 
     echo
     print_success "🎉 Key setup complete!"
