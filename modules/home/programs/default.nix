@@ -13,6 +13,7 @@
     ./mise.nix
     ./git.nix
     ./nvim
+    ./pi.nix
     ./rofi.nix
     ./shell
     ./spotify.nix
