@@ -54,7 +54,7 @@
   modules.nixos.docker.containers.forgejo-runner = {
     enable = true;
     replicas = 3;
-    labels = ["docker" "amd64" "linux" "vincent" "ubuntu-latest"];
+    labels = ["docker" "amd64" "linux" "vincent" "ubuntu-latest:docker://ghcr.io/catthehacker/ubuntu:act-22.04"];
   };
 
   # Additional container management
