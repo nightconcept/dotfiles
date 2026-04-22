@@ -19,7 +19,7 @@ services:
       start_period: 30s
 
   forgejo:
-    image: codeberg.org/forgejo/forgejo:11
+    image: codeberg.org/forgejo/forgejo:15
     container_name: forgejo
     restart: always
     networks:
