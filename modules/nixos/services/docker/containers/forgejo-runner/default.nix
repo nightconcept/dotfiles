@@ -109,7 +109,7 @@ in {
           workdir_parent: ""
           valid_volumes: []
           docker_host: ""
-          force_pull: false
+          force_pull: true
 
         host:
           workdir_parent: ""
