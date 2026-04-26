@@ -138,6 +138,9 @@ in {
             fish_add_path --prepend ${config.home.homeDirectory}/.npm-global/bin
         end
 
+        # Enable OpenCode built-in Exa web search (no API key required)
+        set -gx OPENCODE_ENABLE_EXA true
+
         if command -q mise
             mise activate fish | source
         end
