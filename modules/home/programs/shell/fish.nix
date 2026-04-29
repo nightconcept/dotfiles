@@ -171,6 +171,43 @@ in {
           body = "";
         };
 
+        garbage-collect = {
+          description = "Free disk space: clean Nix garbage and Rust build artifacts";
+          body = ''
+            # Snapshot available space across /nix and $HOME filesystems (deduped by device)
+            set before (df -Pk $HOME /nix 2>/dev/null | tail -n +2 | sort -u -k1,1 | awk '{sum+=$4} END{print sum+0}')
+
+            # Nix garbage collection (remove old generations + collect garbage)
+            nix-collect-garbage -d > /dev/null 2>&1
+
+            # Clean Rust and other build artifacts in ~/git
+            if test -d $HOME/git
+                ${pkgs.kondo}/bin/kondo --all -qq $HOME/git 2>/dev/null
+            end
+
+            # Snapshot available space after cleanup
+            set after (df -Pk $HOME /nix 2>/dev/null | tail -n +2 | sort -u -k1,1 | awk '{sum+=$4} END{print sum+0}')
+
+            # Calculate freed space in KB (available space increased)
+            set freed_kb (math $after - $before)
+
+            if test $freed_kb -le 0
+                echo "No disk space freed"
+                return 0
+            end
+
+            if test $freed_kb -ge 1048576
+                set amount (math --scale=1 $freed_kb / 1048576)
+                echo "Freed "$amount" GB"
+            else if test $freed_kb -ge 1024
+                set amount (math --scale=1 $freed_kb / 1024)
+                echo "Freed "$amount" MB"
+            else
+                echo "Freed "$freed_kb" KB"
+            end
+          '';
+        };
+
         flake-rebuild = {
           description = "Smart flake rebuild that auto-detects system and hostname";
           body = ''

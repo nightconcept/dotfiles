@@ -53,6 +53,7 @@
     # Essential system packages
     packages = with pkgs; [
       openssh  # Needed for git commit signing with SSH keys
+      kondo
     ];
   };
 
