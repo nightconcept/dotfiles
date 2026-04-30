@@ -172,10 +172,10 @@ in {
         };
 
         garbage-collect = {
-          description = "Free disk space: clean Nix garbage and Rust build artifacts";
+          description = "Free disk space: clean Nix garbage, Rust build artifacts, and /tmp";
           body = ''
-            # Snapshot available space across /nix and $HOME filesystems (deduped by device)
-            set before (df -Pk $HOME /nix 2>/dev/null | tail -n +2 | sort -u -k1,1 | awk '{sum+=$4} END{print sum+0}')
+            # Snapshot available space across /nix, $HOME, and /tmp filesystems (deduped by device)
+            set before (df -Pk $HOME /nix /tmp 2>/dev/null | tail -n +2 | sort -u -k1,1 | awk '{sum+=$4} END{print sum+0}')
 
             # Nix garbage collection (remove old generations + collect garbage)
             nix-collect-garbage -d > /dev/null 2>&1
@@ -185,8 +185,12 @@ in {
                 ${pkgs.kondo}/bin/kondo --all -qq $HOME/git 2>/dev/null
             end
 
+            # Clean stale user-owned /tmp files: Claude session dirs, cargo artifacts, core dumps, files >1 day old
+            find /tmp -maxdepth 1 -user $USER \( -name "claude-*" -o -name "cargo-*" -o -name "core" -o -name "*.core" \) -exec rm -rf {} + 2>/dev/null
+            find /tmp -maxdepth 1 -user $USER -mtime +1 -exec rm -rf {} + 2>/dev/null
+
             # Snapshot available space after cleanup
-            set after (df -Pk $HOME /nix 2>/dev/null | tail -n +2 | sort -u -k1,1 | awk '{sum+=$4} END{print sum+0}')
+            set after (df -Pk $HOME /nix /tmp 2>/dev/null | tail -n +2 | sort -u -k1,1 | awk '{sum+=$4} END{print sum+0}')
 
             # Calculate freed space in KB (available space increased)
             set freed_kb (math $after - $before)

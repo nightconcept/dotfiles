@@ -51,7 +51,6 @@
     nerd-fonts.fira-code
     nerd-fonts.fira-mono
     obsidian
-    uv
     vlc
     vscode
     xdg-utils
