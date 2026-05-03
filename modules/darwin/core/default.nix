@@ -50,6 +50,19 @@ in {
     nixpkgs = {
       hostPlatform = lib.mkDefault "aarch64-darwin";
       config.allowUnfree = true;
+      overlays = [
+        (final: prev: {
+          direnv = prev.direnv.overrideAttrs (old: {
+            postPatch = (old.postPatch or "") + ''
+              substituteInPlace GNUmakefile \
+                --replace "-linkmode=external" ""
+            '';
+            dontCheckBrokenSymlinks = true;
+            doCheck = false;
+            doInstallCheck = false;
+          });
+        })
+      ];
     };
 
     system = {

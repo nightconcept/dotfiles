@@ -73,7 +73,7 @@
   in {
     nixosConfigurations = {
       tidus = lib.mkNixos inputs.nixpkgs "tidus";
-      tidus-persist = lib.mkNixos inputs.nixpkgs "tidus-persist";
+      # tidus-persist = lib.mkNixos inputs.nixpkgs "tidus-persist";
       aerith = lib.mkNixosServer inputs.nixpkgs "aerith";
       barrett = lib.mkNixosServer inputs.nixpkgs "barrett";
       rinoa = lib.mkNixosServer inputs.nixpkgs "rinoa";
