@@ -6,6 +6,9 @@
     homebrew = {
       enable = true;
       systemType = "desktop";
+      extraCasks = [
+        "ungoogled-chromium"
+      ];
     };
     systemSettings = {
       enable = true;

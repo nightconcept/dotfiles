@@ -46,7 +46,7 @@ in {
           mode = "0400";
         };
 
-        # Ollama cloud API key for pi agent (GLM-5.1 cloud model)
+        # Ollama cloud API key for pi agent (GLM-5.1, DeepSeek V4 Pro cloud models)
         "ollama_api_key" = {
           path = "${config.home.homeDirectory}/.local/share/sops/secrets/ollama_api_key";
           mode = "0400";
