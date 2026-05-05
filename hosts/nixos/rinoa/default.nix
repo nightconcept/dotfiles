@@ -106,6 +106,7 @@
     };
     blog.enable = true;
     zotero-webdav.enable = true;
+    opengist.enable = true;
   };
 
   # System packages for server management

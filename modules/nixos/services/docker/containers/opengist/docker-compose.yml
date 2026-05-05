@@ -1,0 +1,32 @@
+services:
+  opengist:
+    container_name: opengist
+    hostname: opengist
+    image: thomiceli/opengist:latest
+    restart: always
+    networks:
+      - proxy
+    environment:
+      - OG_EXTERNAL_URL=https://${SUBDOMAIN}.${DOMAIN}
+      - OG_REGISTRATION_ENABLED=false
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${DATA_PATH}:/opengist/data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.opengist.entrypoints=http"
+      - "traefik.http.routers.opengist.rule=Host(`${SUBDOMAIN}.${LOCAL_DOMAIN}`)"
+      - "traefik.http.middlewares.opengist-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.opengist.middlewares=opengist-https-redirect"
+      - "traefik.http.routers.opengist-secure.entrypoints=https"
+      - "traefik.http.routers.opengist-secure.rule=Host(`${SUBDOMAIN}.${LOCAL_DOMAIN}`) || Host(`${SUBDOMAIN}.${DOMAIN}`)"
+      - "traefik.http.routers.opengist-secure.tls=true"
+      - "traefik.http.routers.opengist-secure.middlewares=authelia@docker,crowdsec-bouncer@docker"
+      - "traefik.http.routers.opengist-secure.service=opengist"
+      - "traefik.http.services.opengist.loadbalancer.server.port=6157"
+      - "traefik.docker.network=proxy"
+      - "com.centurylinklabs.watchtower.enable=true"
+
+networks:
+  proxy:
+    external: true
