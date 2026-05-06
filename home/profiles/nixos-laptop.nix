@@ -12,6 +12,7 @@
   ];
 
   modules.home.programs = {
+    chromium.enable = true;
     gaming.enable = true;
     ghostty.enable = true;
     rofi.enable = true;
@@ -38,7 +39,6 @@
     nerd-fonts.fira-code
     nerd-fonts.fira-mono
     obsidian
-    ungoogled-chromium
     uv
     vlc
     vscode

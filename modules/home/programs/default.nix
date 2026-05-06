@@ -3,6 +3,7 @@
   imports = [
     ./alacritty.nix
     ./chrome.nix
+    ./chromium.nix
     ./claude-code.nix
     ./common.nix
     ./direnv.nix
