@@ -19,8 +19,8 @@
       echo "NOTE: Ghostty is not installed. Please install it manually:"
       if [ -f /etc/arch-release ]; then
         echo "  Arch Linux: yay -S ghostty"
-      elif [ -f /etc/debian_version ]; then
-        echo "  Debian/Ubuntu: Run ./scripts/install-terminal-debian.sh"
+      elif [ -f /etc/debian_version ] || [ -f /etc/lsb-release ]; then
+        echo "  Debian/Ubuntu: Run ./scripts/install-terminal.sh"
       else
         echo "  Visit https://ghostty.org for installation instructions"
       fi

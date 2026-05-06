@@ -22,6 +22,6 @@ The script:
 | `add-host-to-sops.sh` | Register a new host's key with SOPS |
 | `barrett-setup.sh` | Initial barrett server setup |
 | `setup-keys.sh` | SSH key setup |
-| `install-terminal-debian.sh` | Install terminal emulator on Debian/Ubuntu |
+| `install-terminal.sh` | Install terminal emulator (Ghostty/WezTerm) |
 | `build-tidus-persist-iso.sh` | Build custom NixOS installer ISO |
 | `switch-to-upstream-nix.sh` | Switch from distro Nix to upstream |
