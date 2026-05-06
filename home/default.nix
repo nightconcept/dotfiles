@@ -72,8 +72,8 @@
     # Generic standalone home-manager configurations
     desktop = {
       profiles = [./profiles/linux-desktop.nix];
-      username = let envUser = builtins.getEnv "USER"; in if envUser != "" then envUser else "danny";
-      homeDirectory = let envHome = builtins.getEnv "HOME"; in if envHome != "" then envHome else "/home/danny";
+      username = builtins.getEnv "USER";
+      homeDirectory = builtins.getEnv "HOME";
       extraImports = [];
       extraConfig = {
         targets.genericLinux.enable = true;
@@ -82,8 +82,8 @@
 
     laptop = {
       profiles = [./profiles/nixos-laptop.nix];
-      username = let envUser = builtins.getEnv "USER"; in if envUser != "" then envUser else "danny";
-      homeDirectory = let envHome = builtins.getEnv "HOME"; in if envHome != "" then envHome else "/home/danny";
+      username = builtins.getEnv "USER";
+      homeDirectory = builtins.getEnv "HOME";
       extraImports = [];
       extraConfig = {
         targets.genericLinux.enable = true;
@@ -92,8 +92,8 @@
 
     server = {
       profiles = [./profiles/server.nix];
-      username = let envUser = builtins.getEnv "USER"; in if envUser != "" then envUser else "danny";
-      homeDirectory = let envHome = builtins.getEnv "HOME"; in if envHome != "" then envHome else "/home/danny";
+      username = builtins.getEnv "USER";
+      homeDirectory = builtins.getEnv "HOME";
       extraImports = [];
       extraConfig = {};
     };
@@ -101,8 +101,8 @@
     # Default fallback
     default = {
       profiles = [./profiles/server.nix];
-      username = let envUser = builtins.getEnv "USER"; in if envUser != "" then envUser else "danny";
-      homeDirectory = let envHome = builtins.getEnv "HOME"; in if envHome != "" then envHome else "/home/danny";
+      username = builtins.getEnv "USER";
+      homeDirectory = builtins.getEnv "HOME";
       extraImports = [];
       extraConfig = {};
     };
@@ -117,8 +117,9 @@ in
       ++ hostConfig.profiles
       ++ hostConfig.extraImports;
 
-    home = {
+    home = lib.optionalAttrs (hostConfig.username != "") {
       username = lib.mkForce hostConfig.username;
+    } // lib.optionalAttrs (hostConfig.homeDirectory != "") {
       homeDirectory = lib.mkForce hostConfig.homeDirectory;
     };
   }

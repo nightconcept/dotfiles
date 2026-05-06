@@ -43,10 +43,10 @@
   };
 
   home = {
-    username = lib.mkDefault (let envUser = builtins.getEnv "USER"; in if envUser != "" then envUser else "danny");
+    username = lib.mkDefault (builtins.getEnv "USER");
     homeDirectory = lib.mkDefault (
-      let envHome = builtins.getEnv "HOME";
-      in if envHome != "" then envHome else "/home/danny"
+      let home = builtins.getEnv "HOME";
+      in if home != "" then home else "/var/empty"
     );
     stateVersion = "23.11";
 
