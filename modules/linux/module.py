@@ -20,13 +20,18 @@ class HostModule(ABC):
         """Remove orphan or obsolete artifacts. Optional."""
         pass
 
+    def service(self):
+        """Configure and enable persistent system service(s). Optional."""
+        pass
+
     @abstractmethod
     def remove(self):
         """Remove the module's components."""
         pass
 
     def deploy(self):
-        """Standard deployment flow: install, update, and cleanup."""
+        """Standard deployment flow: install, update, service, and cleanup."""
         self.install()
         self.update()
+        self.service()
         self.cleanup()

@@ -1,10 +1,39 @@
 """Llama.cpp module for host configuration."""
 
+import io
 import os
 
-from pyinfra.operations import files, git, server
+from pyinfra.operations import files, git, server, systemd
 
 from ..module import HostModule
+
+_SERVICE_UNIT = """\
+[Unit]
+Description=llama.cpp inference server
+After=network.target
+
+[Service]
+Type=simple
+User={user}
+Environment=ROCM_PATH=/opt/rocm
+Environment=LD_LIBRARY_PATH=/opt/llama-cpp:/opt/rocm/lib:/opt/rocm/lib64
+ExecStart=/opt/llama-cpp/llama-server \\
+    -m /opt/llm-models/Qwen3.6-35B-A3B-UD-Q5_K_XL.gguf \\
+    -c 131072 \\
+    -ngl all \\
+    -fa on \\
+    -ctk f16 \\
+    -ctv f16 \\
+    --no-mmproj \\
+    --jinja \\
+    --host 0.0.0.0 \\
+    --port 8080
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+"""
 
 
 class LlamaCppModule(HostModule):
@@ -137,6 +166,25 @@ class LlamaCppModule(HostModule):
                 fi
                 """
             ],
+        )
+
+    def service(self):
+        """Deploy and enable the llama-server systemd service."""
+        unit = _SERVICE_UNIT.format(user=os.environ.get("USER", "danny"))
+        files.put(
+            name="Deploy llama-server systemd unit",
+            src=io.StringIO(unit),
+            dest="/etc/systemd/system/llama-server.service",
+            mode="644",
+            _sudo=True,
+        )
+        systemd.service(
+            name="Enable and start llama-server",
+            service="llama-server",
+            running=True,
+            enabled=True,
+            daemon_reload=True,
+            _sudo=True,
         )
 
     def remove(self):

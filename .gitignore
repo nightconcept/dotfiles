@@ -8,3 +8,7 @@ MIGRATION_LOOP.md
 
 # devenv
 .devenv/
+
+# Python bytecode
+__pycache__/
+*.pyc
