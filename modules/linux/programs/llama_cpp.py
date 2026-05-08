@@ -16,7 +16,7 @@ class LlamaCppModule(HostModule):
         self.build_dir = os.path.join(self.git_dir, "build-pyinfra-hip")
         self.bin_dir = "/opt/llama-cpp"
         self.local_bin = os.path.expanduser("~/.local/bin")
-        self.required_rocm_packages = "rocm-dev hipblas-dev rocblas-dev"
+        self.required_rocm_packages = "rocm-dev hipblas-dev rocblas-dev rocwmma-dev"
 
     def install(self):
         """Ensure ROCm dev packages and llama.cpp source are present."""
@@ -98,9 +98,11 @@ class LlamaCppModule(HostModule):
                         exit 1
                     fi
                     
+                    # Enable rocWMMA Flash Attention kernels for RDNA4 HIP builds.
                     HIPCXX="$(hipconfig -l)/clang" HIP_PATH="$(hipconfig -R)" \
                     cmake -S . -B "$BUILD_DIR" \
                           -DGGML_HIP=ON \
+                          -DGGML_HIP_ROCWMMA_FATTN=ON \
                           -DGPU_TARGETS="$GPU_ARCH" \
                           -DLLAMA_BUILD_TESTS=OFF \
                           -DLLAMA_BUILD_EXAMPLES=OFF \
