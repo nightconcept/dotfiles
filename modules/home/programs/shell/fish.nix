@@ -124,6 +124,18 @@ in {
             eval (/home/linuxbrew/.linuxbrew/bin/brew shellenv)
         end
 
+        # ROCm setup (Ubuntu/Manual installs)
+        if test -d "/opt/rocm"
+            fish_add_path --prepend /opt/rocm/bin
+            if set -q LD_LIBRARY_PATH
+                set -gx LD_LIBRARY_PATH "/opt/rocm/lib:$LD_LIBRARY_PATH"
+            else
+                set -gx LD_LIBRARY_PATH "/opt/rocm/lib"
+            end
+            set -gx ROCM_PATH "/opt/rocm"
+            set -gx HIP_CLANG_PATH "/opt/rocm/llvm/bin"
+        end
+
         # UV tool path setup
         if test -d "${config.home.homeDirectory}/.local/share/uv/tools"
             for tool_dir in ${config.home.homeDirectory}/.local/share/uv/tools/*/bin

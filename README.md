@@ -33,11 +33,12 @@ NixOS, macOS, and Linux system configurations managed by [Nix](https://nixos.org
 | `waver` | Darwin | MacBook Pro M1 | macOS Laptop with Aerospace DE |
 | `merlin` | Darwin | Mac Mini M1 | macOS Desktop HTPC |
 
-### Imperative Setups (Non-Nix)
+### Imperative & Declarative Setups (Non-Nix)
 
-| Host | Type | Hardware | Purpose |
-|------|------|----------|---------|
-| `barrett` | Debian | VM | VPN torrent server |
+| Host | Type | Hardware | Purpose | Management |
+|------|------|----------|---------|------------|
+| `terra` | Ubuntu | Desktop PC | AI/ML Workstation | [pyinfra](hosts/linux/terra/) |
+| `barrett` | Debian | VM | VPN torrent server | script |
 
 ## Homes
 
@@ -72,8 +73,8 @@ sudo darwin-rebuild switch --flake .#merlin
 
 ### Home Manager (standalone)
 ```bash
-nix run home-manager/master -- switch --flake .#desktop
-nix run home-manager/master -- switch --flake .#server
+nix run home-manager/master -- switch --flake .#desktop --impure
+nix run home-manager/master -- switch --flake .#server --impure
 ```
 
 ### Debian

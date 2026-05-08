@@ -13,9 +13,11 @@ dotfiles-nix/
 │   ├── nixos/
 │   │   ├── tidus/    # Just declares what modules to enable
 │   │   └── aerith/
-│   └── darwin/
-│       ├── waver/
-│       └── merlin/
+│   ├── darwin/
+│   │   ├── waver/
+│   │   └── merlin/
+│   └── linux/
+│       └── terra/    # Non-Nix Ubuntu managed via pyinfra
 ├── home/             # Profile-based configurations
 │   ├── profiles/     # Composable profiles (base, desktop, laptop, server)
 │   └── default.nix   # Profile selector for standalone home-manager
@@ -59,6 +61,14 @@ dotfiles-nix/
 - Simplify `lib.nix` to just `mkSystem` and `mkDarwin` (no special server/laptop variants)
 - Hosts become simple manifests declaring what they want
 - Home-manager integration is standard for all NixOS/Darwin configs
+
+## Non-Nix Host Management
+
+For systems where NixOS isn't suitable or installed (e.g., standard Ubuntu desktops), we use **pyinfra** for declarative management.
+
+- **Location**: `hosts/linux/<hostname>/`
+- **Structure**: `main.py` entry point with a `modules/` subdirectory for feature-specific classes inheriting from `HostModule`.
+- **Workflow**: `uv run pyinfra @local main.py`
 
 ## Current Progress
 

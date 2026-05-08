@@ -1,5 +1,8 @@
 # Just commands for dotfiles-nix
 
+default:
+    @just --list
+
 # Check all flake configurations
 check:
     NIXPKGS_ALLOW_UNFREE=1 nix flake check --impure
@@ -57,9 +60,22 @@ switch-home config:
 clean:
     sudo nix-collect-garbage -d
 
+# Deploy Terra host (Ubuntu) using pyinfra
+terra:
+    uv run --with pyinfra --with requests pyinfra -y @local hosts/linux/terra/main.py
+
 # Format all Nix files
 fmt:
     find . -name "*.nix" -type f | xargs nix fmt
+
+# Format and lint Python files
+py-fmt:
+    uv run ruff format .
+    uv run ruff check --fix .
+
+# Type check Python files
+py-check:
+    uv run ty check .
 
 # Edit SOPS secrets
 edit-sops:

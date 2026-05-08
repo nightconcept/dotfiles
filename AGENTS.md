@@ -316,3 +316,8 @@ User services (home-manager) should use:
 1. Edit the encrypted YAML file using `sops`
 2. Add the secret definition in the appropriate module's sops configuration
 3. Follow the path conventions above for consistency
+
+## Engineering Standards
+
+- **Python**: Follow [Google's Python Style Guide](https://google.github.io/styleguide/pyguide.html). Use **Ruff** for linting/formatting and **ty** for type checking.
+- **Credential Protection**: Never log, print, or commit secrets, API keys, or sensitive credentials. Rigorously protect `.env` files, `.git`, and system configuration folders.
