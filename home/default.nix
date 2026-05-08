@@ -52,6 +52,16 @@
       extraConfig = {};
     };
 
+    terra = {
+      profiles = [./profiles/server.nix];
+      username = "danny";
+      homeDirectory = "/home/danny";
+      extraImports = [];
+      extraConfig = {
+        targets.genericLinux.enable = true;
+      };
+    };
+
     # Darwin hosts
     waver = {
       profiles = [./profiles/darwin-laptop.nix];

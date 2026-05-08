@@ -1,78 +1,81 @@
-# Desired Module-Based Architecture
+# Architecture
 
-## Core Structure
+## Directory Structure
 
-```
-dotfiles-nix/
-├── modules/          # All reusable modules
-│   ├── nixos/        # NixOS system modules
-│   ├── darwin/       # Darwin system modules
-│   ├── home/         # Home-manager modules
-│   └── shared/       # Cross-platform modules
-├── hosts/            # Individual machine configurations
-│   ├── nixos/
-│   │   ├── tidus/    # Just declares what modules to enable
-│   │   └── aerith/
-│   ├── darwin/
-│   │   ├── waver/
-│   │   └── merlin/
-│   └── linux/
-│       └── terra/    # Non-Nix Ubuntu managed via pyinfra
-├── home/             # Profile-based configurations
-│   ├── profiles/     # Composable profiles (base, desktop, laptop, server)
-│   └── default.nix   # Profile selector for standalone home-manager
-└── lib/              # Helper functions
-    ├── lib.nix       # Simplified mkSystem/mkDarwin functions
-    └── module/       # Module helpers (mkOpt, mkBoolOpt, enabled, disabled)
-```
+- `/flake.nix` - Main flake configuration defining all system outputs
+- `/lib/lib.nix` - Helper functions (`mkNixos`, `mkNixosServer`, `mkDarwin`, `mkHome`)
+- `/modules/` - Reusable configuration modules organized by platform
+  - `nixos/` - NixOS system modules
+  - `darwin/` - macOS system modules
+  - `home/` - Home Manager modules
+  - `linux/` - Non-Nix Linux modules (pyinfra)
+- `/home/` - Home Manager user configurations
+- `/hosts/` - Host-specific configurations
+  - `nixos/` - NixOS hosts
+  - `darwin/` - macOS hosts
+  - `linux/` - Non-Nix Linux hosts (Ubuntu, etc.)
+- `/shared/` - Shared resources (e.g., starship.toml)
+- `/iso/` - Custom installer ISO configurations
+- `/scripts/` - Bootstrap and utility scripts
+- `/windows/` - Windows-specific configurations (powershell, winutils)
+- `/wallpaper/` - Wallpaper images for theming
+- `/docs/` - Architecture and migration docs
 
-## Key Principles
+## Configuration Hierarchy
 
-1. **Modules are self-contained features** - Each module defines its own options using helper functions
-2. **Hosts become declarative** - Just enable/disable modules, no complex imports
-3. **Smart dependencies** - Modules can enable other modules (e.g., laptop.enable → desktop.enable)
-4. **Platform-aware** - Modules use mkIf conditions to handle platform differences
-5. **Single source of truth** - Each feature lives in ONE module directory
+### NixOS Systems
+1. `flake.nix` calls `lib.mkNixos` or `lib.mkNixosServer`
+2. Imports `./modules/nixos` (base NixOS modules)
+3. Imports `./hosts/nixos/<hostname>` (host-specific config if exists)
+4. Includes Home Manager with `./home` (uses `default.nix` selector)
 
-## Example Host Configuration
+### Darwin Systems
+1. `flake.nix` calls `lib.mkDarwin`
+2. Imports `./modules/darwin` (base Darwin modules)
+3. Imports `./hosts/darwin/<hostname>` (host-specific config if exists)
+4. Includes Home Manager with `./home` (uses `default.nix` selector)
 
-```nix
-# hosts/nixos/aerith/default.nix
-{
-  networking.hostName = "aerith";
+### Home Manager Standalone
+1. `flake.nix` calls `lib.mkHome`
+2. Imports `./home` with hostname parameter
+3. `default.nix` selects appropriate profiles based on hostname
 
-  modules = {
-    server.enable = true;         # Auto-configures SSH, no GUI, etc.
-    services.plex.enable = true;  # Just turn on features
-    kernel.type = "lts";
-  };
-}
-```
+### Linux Systems (Hybrid Management)
+1. **System Layer**: Managed via **pyinfra** for declarative configuration of system-level tasks (e.g., packages, services, builds) on standard Linux distros (e.g., Ubuntu).
+   - Deployed using `just <hostname>` (e.g., `just terra`).
+2. **User Layer**: Managed via **Home Manager** for declarative user environment configuration (dotfiles, user tools).
+   - Deployed using `home-manager switch --flake .#<hostname>` (e.g., `home-manager switch --flake .#terra`).
+3. Uses `hosts/linux/<hostname>/main.py` for pyinfra entry point.
+4. Leverages `modules/linux/` for system features and `home/profiles/` for user features.
 
-## Module Organization Pattern
+## Profile System
 
-- Applications that span system/user boundaries use coordinating modules
-- Example: VSCode would have `modules/nixos/programs/vscode/`, `modules/darwin/programs/vscode/`, and `modules/home/programs/vscode/`
-- Single enable flag can activate across all layers
+The home configuration uses a profile-based system where `home/default.nix` selects the appropriate profiles based on hostname:
 
-## End Goal
+- **tidus**: `base + nixos-laptop` (Dell Latitude 7420 with Hyprland)
+- **tidus-persist**: `base + nixos-laptop` (Impermanence variant)
+- **aerith**: `base + server` (Plex media server)
+- **barrett**: `base + server` (VPN torrent server)
+- **rinoa**: `base + server` (Docker services)
+- **vincent**: `base + server` (CI/CD runner with Docker)
+- **waver**: `base + darwin-laptop` (MacBook Pro M1)
+- **merlin**: `base + darwin-desktop` (Mac Mini M1)
+- **desktop/laptop/server**: Generic standalone profiles
 
-- Remove `systems/` folder entirely (contents → modules)
-- Simplify `lib.nix` to just `mkSystem` and `mkDarwin` (no special server/laptop variants)
-- Hosts become simple manifests declaring what they want
-- Home-manager integration is standard for all NixOS/Darwin configs
+## Host Configurations
 
-## Non-Nix Host Management
+### Active NixOS Hosts
+- `tidus` - Dell Latitude 7420 laptop with Hyprland desktop
+- `tidus-persist` - Same as tidus but with impermanence for root filesystem
+- `aerith` - Plex media server
+- `barrett` - VPN torrent server with NordVPN
+- `rinoa` - General purpose server (Docker services)
+- `vincent` - CI/CD runner host with Docker and Forgejo runner
 
-For systems where NixOS isn't suitable or installed (e.g., standard Ubuntu desktops), we use **pyinfra** for declarative management.
+### Active Darwin Hosts
+- `waver` - MacBook Pro M1
+- `merlin` - Mac Mini M1 HTPC
 
-- **Location**: `hosts/linux/<hostname>/`
-- **Structure**: `main.py` entry point with a `modules/` subdirectory for feature-specific classes inheriting from `HostModule`.
-- **Workflow**: `uv run pyinfra @local main.py`
-
-## Current Progress
-
-- Created `lib/module/` with helper functions
-- Started with `modules/nixos/` containing kernel, network, and Plex service modules
-- Successfully refactored aerith host to use new module system
-- Removed unnecessary `services.xserver.enable` from headless server
+### Active Linux Hosts (Non-Nix)
+- `terra` - Ubuntu-based LLM inference server (managed via pyinfra)
+  - Deploy with: `just terra`

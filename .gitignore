@@ -4,7 +4,6 @@ result-*
 
 # Environment files
 .env
-MIGRATION_LOOP.md
 
 # devenv
 .devenv/
@@ -12,3 +11,7 @@ MIGRATION_LOOP.md
 # Python bytecode
 __pycache__/
 *.pyc
+
+.gemini/
+.ruff_cache/
+.venv
