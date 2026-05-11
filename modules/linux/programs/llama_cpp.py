@@ -18,12 +18,12 @@ User={user}
 Environment=ROCM_PATH=/opt/rocm
 Environment=LD_LIBRARY_PATH=/opt/llama-cpp:/opt/rocm/lib:/opt/rocm/lib64
 ExecStart=/opt/llama-cpp/llama-server \\
-    -m /opt/llm-models/Qwen3.6-35B-A3B-UD-Q5_K_XL.gguf \\
+    -m /opt/llm-models/Qwen3.6-35B-A3B-UD-Q6_K.gguf \\
     -c 131072 \\
     -ngl all \\
     -fa on \\
-    -ctk f16 \\
-    -ctv f16 \\
+    -ctk q8_0 \\
+    -ctv q8_0 \\
     --no-mmproj \\
     --jinja \\
     --host 0.0.0.0 \\

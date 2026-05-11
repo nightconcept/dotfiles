@@ -66,7 +66,7 @@ terra:
 
 # Run the default local llama.cpp chat model
 llama:
-    llama-cli -m /opt/llm-models/Qwen3.6-35B-A3B-UD-Q5_K_XL.gguf -c 131072 -ngl all -fa on -ctk f16 -ctv f16 --no-mmproj --jinja -cnv
+    llama-cli -m /opt/llm-models/Qwen3.6-35B-A3B-UD-Q6_K.gguf -c 131072 -ngl all -fa on -ctk f16 -ctv f16 --no-mmproj --jinja -cnv
 
 # Format all Nix files
 fmt:

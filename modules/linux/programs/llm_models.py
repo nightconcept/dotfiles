@@ -8,7 +8,7 @@ from ..module import HostModule
 
 # Add models here. Format: (repo_id, filename)
 MODEL_MANIFEST = [
-    ("unsloth/Qwen3.6-35B-A3B-GGUF", "Qwen3.6-35B-A3B-UD-Q5_K_XL.gguf"),
+    ("unsloth/Qwen3.6-35B-A3B-GGUF", "Qwen3.6-35B-A3B-UD-Q6_K.gguf"),
 ]
 
 
@@ -46,25 +46,23 @@ class LLMModelsModule(HostModule):
 
     def cleanup(self):
         """Delete models in the target folder that are not in the manifest."""
-        allowed_files = [m[1] for m in MODEL_MANIFEST]
-        allowed_files.append("VERSION")
-
-        # Join for shell regex/grep
-        allowed_pattern = "|".join(allowed_files)
-
-        server.shell(
-            name="Cleanup unused models",
-            commands=[
-                f"find {self.model_dir} -maxdepth 1 -type f ! -name '.*' | "
-                f"while read -r file; do "
-                f"  base=$(basename \"$file\"); "
-                f"  if ! echo \"$base\" | grep -qE '^({allowed_pattern})$'; then "
-                f"    echo \"Removing unlisted model: $base\"; "
-                f"    rm \"$file\"; "
-                f"  fi; "
-                f"done"
-            ],
-        )
+        # Disabled — keep old models around during transitions.
+        # allowed_files = [m[1] for m in MODEL_MANIFEST]
+        # allowed_files.append("VERSION")
+        # allowed_pattern = "|".join(allowed_files)
+        # server.shell(
+        #     name="Cleanup unused models",
+        #     commands=[
+        #         f"find {self.model_dir} -maxdepth 1 -type f ! -name '.*' | "
+        #         f"while read -r file; do "
+        #         f"  base=$(basename \"$file\"); "
+        #         f"  if ! echo \"$base\" | grep -qE '^({allowed_pattern})$'; then "
+        #         f"    echo \"Removing unlisted model: $base\"; "
+        #         f"    rm \"$file\"; "
+        #         f"  fi; "
+        #         f"done"
+        #     ],
+        # )
 
     def remove(self):
         """Remove all managed models and the directory."""
