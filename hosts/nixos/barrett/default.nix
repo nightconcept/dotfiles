@@ -1,4 +1,6 @@
 # Barrett - VPN torrent server
+# DEPRECATED: Barrett is now running Debian, managed via pyinfra.
+# See hosts/linux/barrett/main.py. This NixOS config is kept for reference only.
 {
   config,
   pkgs,

@@ -13,11 +13,10 @@ check-home:
     NIXPKGS_ALLOW_UNFREE=1 nix build .#homeConfigurations.laptop.activationPackage --dry-run --impure
     NIXPKGS_ALLOW_UNFREE=1 nix build .#homeConfigurations.server.activationPackage --dry-run --impure
 
-# Check NixOS configurations only
+# Check NixOS configurations only (barrett excluded — now Debian/pyinfra)
 check-nixos:
     NIXPKGS_ALLOW_UNFREE=1 nix build .#nixosConfigurations.tidus.config.system.build.toplevel --dry-run --impure
     NIXPKGS_ALLOW_UNFREE=1 nix build .#nixosConfigurations.aerith.config.system.build.toplevel --dry-run --impure
-    NIXPKGS_ALLOW_UNFREE=1 nix build .#nixosConfigurations.barrett.config.system.build.toplevel --dry-run --impure
 
 # Check Darwin configurations only (may fail due to stylix issues)
 check-darwin:
@@ -63,6 +62,14 @@ clean:
 # Deploy Terra host (Ubuntu) using pyinfra
 terra:
     uv run --with pyinfra --with requests pyinfra -y @local hosts/linux/terra/main.py
+
+# Deploy Barrett host (Debian VPN torrent server) using pyinfra
+barrett:
+    uv run --with pyinfra --with requests pyinfra -y @local hosts/linux/barrett/main.py
+
+# Validate Barrett modules without sudo (syntax, rendered configs, correctness checks)
+barrett-check:
+    python3 scripts/barrett-validate.py
 
 # Run the default local llama.cpp chat model
 llama:

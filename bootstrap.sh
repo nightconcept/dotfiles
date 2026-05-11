@@ -272,13 +272,11 @@ EOF
 ensure_nix_config() {
     print_info "Checking Nix configuration..."
 
-    # Source Nix if not already available
-    if ! command -v nix &> /dev/null; then
-        if [[ -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
-            . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-        elif [[ -f "$HOME/.nix-profile/etc/profile.d/nix.sh" ]]; then
-            . "$HOME/.nix-profile/etc/profile.d/nix.sh"
-        fi
+    # Source Nix into PATH — always attempt this so re-runs in non-login shells work
+    if [[ -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
+        . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+    elif [[ -f "$HOME/.nix-profile/etc/profile.d/nix.sh" ]]; then
+        . "$HOME/.nix-profile/etc/profile.d/nix.sh"
     fi
 
     local config_changed=false
@@ -323,20 +321,15 @@ ensure_nix_config() {
 
 # Install Nix on non-NixOS systems
 install_nix() {
-    if command -v nix &> /dev/null; then
+    if command -v nix &> /dev/null || [ -x /nix/var/nix/profiles/default/bin/nix ]; then
         print_info "Nix is already installed"
-        return
+    else
+        print_info "Installing upstream Nix..."
+        sh <(curl -L https://nixos.org/nix/install) --daemon
+        setup_nix_openrc
     fi
 
-    print_info "Installing upstream Nix..."
-
-    # Use official upstream Nix installer (multi-user daemon mode)
-    sh <(curl -L https://nixos.org/nix/install) --daemon
-
-    # Setup OpenRC service if needed
-    setup_nix_openrc
-
-    # Source Nix
+    # Always source Nix into the current shell session
     if [[ -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
         . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
     elif [[ -f "$HOME/.nix-profile/etc/profile.d/nix.sh" ]]; then
@@ -619,8 +612,8 @@ apply_home_manager_from_flake() {
     print_info "Applying Home Manager configuration from flake: $profile"
 
     # Use nix run to apply home-manager configuration directly from the flake
-    # This doesn't require home-manager to be pre-installed
-    nix run home-manager/master -- switch --flake ".#$profile" -b backup
+    # --impure is required so builtins.getEnv "USER"/"HOME" resolve correctly
+    nix run home-manager/master -- switch --flake ".#$profile" -b backup --impure
 
     # Fix .nix-profile symlink if it's pointing to the wrong location
     if [[ -L "$HOME/.nix-profile" ]]; then
@@ -634,8 +627,8 @@ apply_home_manager_from_flake() {
         fi
     fi
 
-    # Change default shell to fish for desktop and server profiles
-    if [[ "$profile" == "desktop" || "$profile" == "server" ]]; then
+    # Change default shell to fish (all profiles use fish)
+    if true; then
         local fish_path="$HOME/.nix-profile/bin/fish"
 
         if [[ -x "$fish_path" ]]; then
