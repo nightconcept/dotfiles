@@ -5,7 +5,7 @@ import os
 
 from pyinfra.operations import files, git, server, systemd
 
-from ..module import HostModule
+from modules.linux.module import HostModule
 
 _SERVICE_UNIT = """\
 [Unit]

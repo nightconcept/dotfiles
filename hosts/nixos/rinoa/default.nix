@@ -95,8 +95,6 @@
     radarr.enable = true;
     jellyfin.enable = true;
     audiobookshelf.enable = true;
-    calibre.enable = true;
-    calibre-web.enable = false;
     nextcloud.enable = false;
     forgejo = {
       enable = true;

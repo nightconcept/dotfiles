@@ -4,7 +4,7 @@ import os
 
 from pyinfra.operations import files, server
 
-from ..module import HostModule
+from modules.linux.module import HostModule
 
 # Add models here. Format: (repo_id, filename)
 MODEL_MANIFEST = [

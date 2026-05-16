@@ -53,11 +53,11 @@ assemble_arrays() {
 }
 
 mount_arrays() {
-    # Find all active md devices
-    local md_devices=$(lsblk -dno NAME,TYPE | grep md | awk '{print $1}')
+    # Find all active md devices from /proc/mdstat
+    local md_devices=$(grep "^md" /proc/mdstat | cut -d" " -f1)
     
     if [[ -z "$md_devices" ]]; then
-        error "No active RAID (md) devices found after assembly."
+        error "No active RAID (md) devices found in /proc/mdstat."
         return 1
     fi
     

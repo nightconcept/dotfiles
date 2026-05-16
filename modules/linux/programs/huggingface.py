@@ -2,7 +2,7 @@
 
 from pyinfra.operations import server
 
-from ..module import HostModule
+from modules.linux.module import HostModule
 
 
 class HuggingFaceModule(HostModule):

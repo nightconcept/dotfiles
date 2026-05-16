@@ -28,8 +28,6 @@ in {
     ./containers/audiobookshelf
     ./containers/authelia
     ./containers/blog
-    ./containers/calibre
-    ./containers/calibre-web
     ./containers/cloudflare-tunnel
     ./containers/ddclient
     # ./containers/enshrouded
