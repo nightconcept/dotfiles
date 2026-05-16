@@ -45,6 +45,8 @@ class LlamaCppModule(HostModule):
         self.build_dir = os.path.join(self.git_dir, "build-pyinfra-hip")
         self.bin_dir = "/opt/llama-cpp"
         self.local_bin = os.path.expanduser("~/.local/bin")
+        # Pin to a known-good upstream tag unless explicitly overridden.
+        self.version = os.environ.get("LLAMA_CPP_VERSION", "b9144")
         self.required_rocm_packages = "rocm-dev hipblas-dev rocblas-dev rocwmma-dev"
 
     def install(self):
@@ -80,14 +82,12 @@ class LlamaCppModule(HostModule):
         )
 
     def update(self):
-        """Check for latest release and build/install if newer or missing."""
-        # Fetch latest version info
+        """Build/install the pinned release if it is newer or missing."""
+        # Resolve the pinned version before deciding whether a rebuild is needed.
         server.shell(
-            name="Fetch latest llama.cpp version",
+            name="Resolve llama.cpp version",
             commands=[
-                "URL='https://api.github.com/repos/ggml-org/llama.cpp/releases/latest'; "
-                f"LATEST=$(curl -s $URL | grep tag_name | cut -d '\"' -f 4); "
-                f"echo $LATEST > {self.git_dir}/LATEST_TAG"
+                f"echo {self.version} > {self.git_dir}/LATEST_TAG"
             ],
         )
 
