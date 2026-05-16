@@ -190,7 +190,7 @@ in {
             set before (df -Pk $HOME /nix /tmp 2>/dev/null | tail -n +2 | sort -u -k1,1 | awk '{sum+=$4} END{print sum+0}')
 
             # Nix garbage collection (remove old generations + collect garbage)
-            nix-collect-garbage -d > /dev/null 2>&1
+            nix-collect-garbage -d
 
             # Clean Rust and other build artifacts in ~/git
             if test -d $HOME/git

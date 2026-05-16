@@ -59,7 +59,7 @@ in {
           "discord"
           "docker-desktop"
           "firefox"
-          "librewolf"
+          # "librewolf"
           "ghostty"
           "gitbutler"
           "hiddenbar"
