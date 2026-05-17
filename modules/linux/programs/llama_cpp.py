@@ -47,6 +47,8 @@ class LlamaCppModule(HostModule):
         self.local_bin = os.path.expanduser("~/.local/bin")
         # Pin to a known-good upstream tag unless explicitly overridden.
         self.version = os.environ.get("LLAMA_CPP_VERSION", "b9144")
+        # The service only needs llama-server, not the embedded UI assets.
+        self.build_ui = os.environ.get("LLAMA_CPP_BUILD_UI", "OFF")
         self.required_rocm_packages = "rocm-dev hipblas-dev rocblas-dev rocwmma-dev"
 
     def install(self):
@@ -133,6 +135,7 @@ class LlamaCppModule(HostModule):
                           -DGGML_HIP=ON \
                           -DGGML_HIP_ROCWMMA_FATTN=ON \
                           -DGPU_TARGETS="$GPU_ARCH" \
+                          -DLLAMA_BUILD_UI={self.build_ui} \
                           -DLLAMA_BUILD_TESTS=OFF \
                           -DLLAMA_BUILD_EXAMPLES=OFF \
                           -DLLAMA_TESTS_INSTALL=OFF \
