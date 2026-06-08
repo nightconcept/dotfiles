@@ -184,7 +184,7 @@ in {
         };
 
         garbage-collect = {
-          description = "Free disk space: clean Nix garbage, Rust build artifacts, and /tmp";
+          description = "Free disk space: clean Nix garbage, repo build artifacts, caches, and /tmp";
           body = ''
             # Snapshot available space across /nix, $HOME, and /tmp filesystems (deduped by device)
             set before (df -Pk $HOME /nix /tmp 2>/dev/null | tail -n +2 | sort -u -k1,1 | awk '{sum+=$4} END{print sum+0}')
@@ -192,9 +192,35 @@ in {
             # Nix garbage collection (remove old generations + collect garbage)
             nix-collect-garbage -d
 
-            # Clean Rust and other build artifacts in ~/git
-            if test -d $HOME/git
-                ${pkgs.kondo}/bin/kondo --all -qq $HOME/git 2>/dev/null
+            # Clean Rust and other build artifacts in known repo roots.
+            for repo_root in $HOME/git $HOME/Documents/GitHub
+                if test -d "$repo_root"
+                    ${pkgs.kondo}/bin/kondo --all -qq "$repo_root" 2>/dev/null
+                end
+            end
+
+            # Clear user cache directories that are safe to recreate.
+            for cache_dir in \
+                "$HOME/Library/Caches" \
+                "$HOME/.cache" \
+                "$HOME/.npm" \
+                "$HOME/Library/pnpm/store" \
+                "$HOME/Library/Application Support/Code/CachedExtensionVSIXs" \
+                "$HOME/Library/Developer/CoreSimulator/Caches" \
+                "$HOME/Library/Application Support/discord/Cache" \
+                "$HOME/Library/Application Support/discord/Code Cache" \
+                "$HOME/Library/Application Support/discord/GPUCache" \
+                "$HOME/Library/Application Support/discord/Service Worker/CacheStorage" \
+                "$HOME/Library/Application Support/Slack/Cache" \
+                "$HOME/Library/Application Support/Slack/Service Worker/CacheStorage"
+                if test -d "$cache_dir"
+                    find "$cache_dir" -mindepth 1 -maxdepth 1 -exec rm -rf {} + 2>/dev/null
+                end
+            end
+
+            # Prune unavailable simulator devices after clearing simulator caches.
+            if command -q xcrun
+                xcrun simctl delete unavailable >/dev/null 2>&1
             end
 
             # Clean stale user-owned /tmp files: Claude session dirs, cargo artifacts, core dumps, files >1 day old
