@@ -17,22 +17,22 @@ in {
       enable = true;
       enableDefaultConfig = false;
 
-      matchBlocks = {
+      settings = {
         "*" = {
-          identityFile = "${config.home.homeDirectory}/.ssh/id_sdev";
+          IdentityFile = "${config.home.homeDirectory}/.ssh/id_sdev";
         };
 
         "github.com" = {
-          hostname = "ssh.github.com";
-          port = 443;
-          user = "git";
-          identityFile = "${config.home.homeDirectory}/.ssh/id_sdev";
+          HostName = "ssh.github.com";
+          Port = 443;
+          User = "git";
+          IdentityFile = "${config.home.homeDirectory}/.ssh/id_sdev";
         };
 
         "siren.nclabs.net" = {
-          hostname = "siren.nclabs.net";
-          user = "danny";
-          identityFile = "${config.home.homeDirectory}/.ssh/id_sdev";
+          HostName = "siren.nclabs.net";
+          User = "danny";
+          IdentityFile = "${config.home.homeDirectory}/.ssh/id_sdev";
         };
       };
     };
