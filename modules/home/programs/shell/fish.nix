@@ -377,6 +377,84 @@ in {
             return $rebuild_status
           '';
         };
+
+        flake-boot = {
+          description = "Boot a NixOS flake configuration that will be activated after reboot";
+          body = ''
+            # Parse arguments - check if host was provided
+            if test (count $argv) -gt 0
+                set host $argv[1]
+                echo "Using specified host: $host"
+            else
+                # Auto-detect hostname
+                set host (hostname -s)
+                echo "Auto-detected host: $host"
+            end
+
+            # Determine flake directory
+            if set -q FLAKE_DIR
+                set flake_dir $FLAKE_DIR
+            else
+                set flake_dir "${dot_dir}"
+            end
+
+            # Verify flake directory exists
+            if not test -d $flake_dir
+                echo "Error: Flake directory not found at $flake_dir"
+                echo "Set FLAKE_DIR environment variable or ensure ${dot_dir} exists"
+                return 1
+            end
+
+            # Check what NixOS configurations are available in the flake for this hostname
+            set nixos_configs (nix eval --impure $flake_dir#nixosConfigurations --apply 'x: builtins.attrNames x' 2>/dev/null | tr -d '[]"' | tr ' ' '\n')
+
+            if not contains $host $nixos_configs
+                echo "Error: No NixOS configuration found for hostname '$host'"
+                echo ""
+                if test (count $nixos_configs) -gt 0
+                    echo "Available NixOS configurations:"
+                    for conf in $nixos_configs
+                        echo "  - $conf"
+                    end
+                end
+                echo ""
+                echo "Usage: flake-boot [hostname]"
+                return 1
+            end
+
+            echo "Found NixOS configuration for $host"
+            echo "Authenticating sudo..."
+            sudo -v
+            if test $status -ne 0
+                echo "sudo authentication failed"
+                return 1
+            end
+
+            # Setup system-level SOPS age key if needed
+            if not test -f /var/lib/sops-nix/key.txt
+                if test -f ~/.config/sops/age/keys.txt
+                    echo "Setting up system-level SOPS age key..."
+                    sudo mkdir -p /var/lib/sops-nix
+                    sudo cp ~/.config/sops/age/keys.txt /var/lib/sops-nix/key.txt
+                    sudo chmod 600 /var/lib/sops-nix/key.txt
+                    sudo chown root:root /var/lib/sops-nix/key.txt
+                    echo "System-level age key configured"
+                else
+                    echo "Warning: No user age key found at ~/.config/sops/age/keys.txt"
+                    echo "System secrets will not be available until age key is configured"
+                end
+            end
+
+            echo "Running nixosConfigurations boot for $host..."
+            eval sudo nixos-rebuild boot --flake "$flake_dir#$host" &
+
+            set rebuild_pid $last_pid
+            wait $rebuild_pid
+            set rebuild_status $status
+
+            return $rebuild_status
+          '';
+        };
       };
     };
   };
