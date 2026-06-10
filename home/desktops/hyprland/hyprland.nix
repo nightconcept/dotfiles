@@ -7,6 +7,7 @@
   config = lib.mkIf (config.desktops.hyprland.enable or false) {
     wayland.windowManager.hyprland = {
       enable = true;
+      configType = "hyprlang";
       xwayland.enable = true;
 
       settings = {
@@ -124,7 +125,6 @@
         # Dwindle layout configuration
         dwindle = {
           special_scale_factor = 0.8;
-          pseudotile = true;
           preserve_split = true;
         };
 
@@ -218,7 +218,7 @@
           "$mod, SPACE, exec, $applauncher"
           "$mod, F, fullscreen"
           "$mod, Y, pin"
-          "$mod, J, togglesplit"
+          "$mod, J, layoutmsg, togglesplit"
 
           # Screenshots
           ", Print, exec, $shot-region"
@@ -371,11 +371,11 @@
           # Picture-in-Picture rules
           "float on, match:title ^(Picture-in-Picture)$"
           "size 960 540, match:title ^(Picture-in-Picture)$"
-          "move 25%-, match:title ^(Picture-in-Picture)$"
+          "move 25%- 25%-, match:title ^(Picture-in-Picture)$"
 
           # Media and file manager rules
           "float on, match:title ^(imv|mpv|danmufloat|termfloat|nemo|ncmpcpp)$"
-          "move 25%-, match:title ^(imv|mpv|danmufloat|termfloat|nemo|ncmpcpp)$"
+          "move 25%- 25%-, match:title ^(imv|mpv|danmufloat|termfloat|nemo|ncmpcpp)$"
           "size 960 540, match:title ^(imv|mpv|danmufloat|termfloat|nemo|ncmpcpp)$"
           "pin on, match:title ^(danmufloat)$"
           "rounding 5, match:title ^(danmufloat|termfloat)$"
