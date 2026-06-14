@@ -254,4 +254,18 @@ if (Test-Path($ChocolateyProfile)) {
 Invoke-Expression (& { (zoxide init powershell | Out-String) })
 
 ## Final Line to set prompt
-oh-my-posh init pwsh --config https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/powerlevel10k_rainbow.omp.json | Invoke-Expression
+$starshipConfigCandidates = @(
+    if ($env:DOTFILES_DIR) { Join-Path $env:DOTFILES_DIR "shared\starship.toml" },
+    (Join-Path $HOME "git\dotfiles\shared\starship.toml"),
+    (Join-Path $env:USERPROFILE "git\dotfiles\shared\starship.toml")
+) | Where-Object { $_ -and (Test-Path $_) }
+
+if (Test-CommandExists starship) {
+    if ($starshipConfigCandidates.Count -gt 0) {
+        $env:STARSHIP_CONFIG = $starshipConfigCandidates[0]
+    }
+
+    Invoke-Expression (&starship init powershell)
+} elseif (Test-CommandExists oh-my-posh) {
+    oh-my-posh init pwsh --config https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/powerlevel10k_rainbow.omp.json | Invoke-Expression
+}
