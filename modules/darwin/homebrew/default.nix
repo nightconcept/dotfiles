@@ -41,18 +41,22 @@ in {
       };
 
       taps = [
-        "FelixKratz/formulae"
+        "felixkratz/formulae"
       ];
 
       brews =
         [
-          "borders"
           "gettext"
           "pinentry-mac"
           "uv"
           "xz"
         ]
         ++ cfg.extraBrews;
+
+      # nix-darwin does not expose Homebrew's `trusted` Brewfile option yet.
+      extraConfig = ''
+        brew "felixkratz/formulae/borders", trusted: true
+      '';
 
       casks =
         [
