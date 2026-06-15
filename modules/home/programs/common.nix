@@ -27,7 +27,7 @@ in {
       eza
       fastfetch
       fd
-      gemini-cli
+      antigravity-cli
       gnupg
       jq
       just
