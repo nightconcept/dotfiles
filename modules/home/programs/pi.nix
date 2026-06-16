@@ -31,11 +31,6 @@
     };
   });
 
-  piSettingsConfig = pkgs.writeText "pi-settings.json" (builtins.toJSON {
-    shellPath = "/usr/bin/bash";
-    defaultProvider = "local-openai";
-    defaultModel = "qwen3.6-35b-a3b";
-  });
 in {
   options.modules.home.programs.pi = {
     enable = mkBoolOpt true "Enable pi terminal coding harness";
@@ -45,6 +40,5 @@ in {
     home.packages = [pi];
 
     home.file.".pi/agent/models.json".source = piModelsConfig;
-    home.file.".pi/agent/settings.json".source = piSettingsConfig;
   };
 }
