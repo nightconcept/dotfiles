@@ -73,7 +73,7 @@ in {
       python3Packages.pygobject3
       python3Packages.dbus-python
       gobject-introspection
-      libsForQt5.qt5.qtwayland
+      qt5.qtwayland
       qt6.qtwayland
       wob
     ];
