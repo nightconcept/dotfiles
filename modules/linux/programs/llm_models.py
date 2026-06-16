@@ -9,6 +9,7 @@ from modules.linux.module import HostModule
 # Add models here. Format: (repo_id, filename)
 MODEL_MANIFEST = [
     ("unsloth/Qwen3.6-35B-A3B-GGUF", "Qwen3.6-35B-A3B-UD-Q6_K.gguf"),
+    ("havenoammo/Qwen3.6-35B-A3B-MTP-GGUF", "Qwen3.6-35B-A3B-MTP-UD-Q5_K_XL.gguf"),
 ]
 
 

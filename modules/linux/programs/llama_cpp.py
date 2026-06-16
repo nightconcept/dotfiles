@@ -18,7 +18,7 @@ User={user}
 Environment=ROCM_PATH=/opt/rocm
 Environment=LD_LIBRARY_PATH=/opt/llama-cpp:/opt/rocm/lib:/opt/rocm/lib64
 ExecStart=/opt/llama-cpp/llama-server \\
-    -m /opt/llm-models/Qwen3.6-35B-A3B-UD-Q6_K.gguf \\
+    -m /opt/llm-models/Qwen3.6-35B-A3B-MTP-UD-Q5_K_XL.gguf \\
     -c 131072 \\
     -ngl all \\
     -fa on \\
@@ -26,6 +26,8 @@ ExecStart=/opt/llama-cpp/llama-server \\
     -ctv q8_0 \\
     --no-mmproj \\
     --jinja \\
+    --spec-type draft-mtp \\
+    --spec-draft-n-max 3 \\
     --host 0.0.0.0 \\
     --port 8080
 Restart=on-failure
@@ -46,7 +48,7 @@ class LlamaCppModule(HostModule):
         self.bin_dir = "/opt/llama-cpp"
         self.local_bin = os.path.expanduser("~/.local/bin")
         # Pin to a known-good upstream tag unless explicitly overridden.
-        self.version = os.environ.get("LLAMA_CPP_VERSION", "b9144")
+        self.version = os.environ.get("LLAMA_CPP_VERSION", "b9628")
         # The service only needs llama-server, not the embedded UI assets.
         self.build_ui = os.environ.get("LLAMA_CPP_BUILD_UI", "OFF")
         self.required_rocm_packages = "rocm-dev hipblas-dev rocblas-dev rocwmma-dev"
@@ -117,7 +119,6 @@ class LlamaCppModule(HostModule):
                     echo "Starting build for version $LATEST..."
                     cd {self.git_dir}
                     git fetch --tags && git checkout $LATEST
-                    rm -rf "$BUILD_DIR"
                     mkdir -p "$BUILD_DIR"
                     
                     export ROCM_PATH=/opt/rocm
@@ -159,6 +160,7 @@ class LlamaCppModule(HostModule):
                         fi
                         sudo rsync -a --delete --exclude VERSION "$STAGE_DIR"/ {self.bin_dir}/
                         echo "$LATEST" | sudo tee $V_FILE
+                        rm -rf "$BUILD_DIR"
                         ln -sf {self.bin_dir}/llama-cli {self.local_bin}/llama-cli
                         ln -sf {self.bin_dir}/llama-server {self.local_bin}/llama-server
                     else
