@@ -93,12 +93,12 @@
     };
 
     # Custom installer ISO for tidus-persist
-    nixosConfigurations.tidus-persist-installer = inputs.nixpkgs.lib.nixosSystem {
-      modules = [
-        {nixpkgs.hostPlatform = "x86_64-linux";}
-        ./iso/tidus-persist-installer.nix
-      ];
-    };
+    # nixosConfigurations.tidus-persist-installer = inputs.nixpkgs.lib.nixosSystem {
+    #   modules = [
+    #     {nixpkgs.hostPlatform = "x86_64-linux";}
+    #     ./iso/tidus-persist-installer.nix
+    #   ];
+    # };
 
     # Formatters for different systems
     formatter = {
