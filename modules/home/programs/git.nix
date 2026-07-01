@@ -18,6 +18,8 @@ in {
     programs.git = {
       enable = true;
 
+      lfs.enable = true;
+
       signing = {
         key = "~/.ssh/id_sdev.pub";
         signByDefault = true;
@@ -124,12 +126,6 @@ in {
           helper = "!f() { echo \"username=nightconcept\"; echo \"password=$(cat ~/.local/share/sops/secrets/forgejo_git_token 2>/dev/null || echo 'token-not-found')\"; }; f";
         };
 
-        "filter \"lfs\"" = {
-          process = "git-lfs filter-process";
-          required = true;
-          clean = "git-lfs clean -- %f";
-          smudge = "git-lfs smudge -- %f";
-        };
       };
     };
 
