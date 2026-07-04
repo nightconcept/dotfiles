@@ -1,0 +1,13 @@
+services:
+  libbyrip-converter:
+    build:
+      context: ${LIBBYRIP_REPO}
+      dockerfile: webapp/Dockerfile
+    container_name: libbyrip-converter-dev
+    ports:
+      - "8080:8080"
+    volumes:
+      - ${LIBBYRIP_DATA_DIR}:/data
+      - /mnt/titan/transfer/upload_audiobooks:/data/uploads
+      - /mnt/titan/Audiobooks:/data/output
+    restart: unless-stopped

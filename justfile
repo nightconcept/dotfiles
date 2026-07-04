@@ -63,6 +63,15 @@ clean:
 terra:
     uv run --with pyinfra --with requests pyinfra -y @local hosts/linux/terra/main.py
 
+# Run the LibbyRip converter locally without Traefik
+dev:
+    mkdir -p .local/state/libbyrip-converter-dev
+    LIBBYRIP_REPO="${PWD}/../LibbyRip" LIBBYRIP_DATA_DIR="${PWD}/.local/state/libbyrip-converter-dev" docker compose -f modules/linux/programs/libbyrip_converter/docker-compose.dev.yml up -d --build
+
+# Stop the local LibbyRip converter dev container
+dev-down:
+    LIBBYRIP_REPO="${PWD}/../LibbyRip" LIBBYRIP_DATA_DIR="${PWD}/.local/state/libbyrip-converter-dev" docker compose -f modules/linux/programs/libbyrip_converter/docker-compose.dev.yml down
+
 # Deploy Barrett host (Debian VPN torrent server) using pyinfra
 barrett:
     uv run --with pyinfra --with requests pyinfra -y @local hosts/linux/barrett/main.py
