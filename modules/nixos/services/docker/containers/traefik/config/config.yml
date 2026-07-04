@@ -93,6 +93,28 @@ http:
       tls: {}
       service: calibre
 
+    books:
+      entryPoints:
+        - "https"
+      rule: "Host(`books.local.solivan.dev`)"
+      middlewares:
+        - default-whitelist
+        - default-headers
+        - https-redirectscheme
+      tls: {}
+      service: books
+
+    converter:
+      entryPoints:
+        - "https"
+      rule: "Host(`converter.local.solivan.dev`)"
+      middlewares:
+        - default-whitelist
+        - default-headers
+        - https-redirectscheme
+      tls: {}
+      service: converter
+
 #    ai:
 #      entryPoints:
 #        - "https"
@@ -193,6 +215,18 @@ http:
       loadBalancer:
         servers:
           - url: "http://192.168.1.110:8085"
+        passHostHeader: true
+
+    books:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.1.110:8083"
+        passHostHeader: true
+
+    converter:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.1.110:8086"
         passHostHeader: true
 
     ai:
