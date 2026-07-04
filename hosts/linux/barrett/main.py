@@ -10,12 +10,14 @@ Pre-requisites (place on host before running):
   /root/.qbittorrent-password-hash  — qBittorrent PBKDF2 hash (WebUI)
 """
 
+from modules.linux.programs.home_manager import HomeManagerModule
 from modules.linux.services.autoremove_torrents import AutoremoveTorrentsModule
 from modules.linux.services.ipfilter import IPFilterModule
 from modules.linux.services.nordvpn import NordVPNModule
 from modules.linux.services.qbittorrent import QBittorrentModule
 from modules.linux.services.titan_mount import TitanMountModule
 
+home_manager = HomeManagerModule(profile="server")
 nordvpn = NordVPNModule(user="danny")
 titan = TitanMountModule()
 qbittorrent = QBittorrentModule(
@@ -39,6 +41,7 @@ autoremove = AutoremoveTorrentsModule(
 )
 ipfilter = IPFilterModule()
 
+home_manager.deploy()
 nordvpn.deploy()
 titan.deploy()
 qbittorrent.deploy()

@@ -1,3 +1,4 @@
+from modules.linux.programs.home_manager import HomeManagerModule
 from modules.linux.programs.huggingface import HuggingFaceModule
 from modules.linux.programs.llama_cpp import LlamaCppModule
 from modules.linux.programs.llm_models import LLMModelsModule
@@ -10,6 +11,7 @@ from modules.linux.services.titan_mount import TitanMountModule
 
 # Initialize modules
 ssh = SSHModule()
+home_manager = HomeManagerModule(profile="desktop")
 storage = StorageModule()
 titan = TitanMountModule()
 docker = DockerModule()
@@ -21,6 +23,7 @@ models = LLMModelsModule()
 
 # Deploy system foundations
 ssh.deploy()
+home_manager.deploy()
 storage.deploy()
 titan.deploy()
 

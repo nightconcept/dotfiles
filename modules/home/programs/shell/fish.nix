@@ -251,7 +251,7 @@ in {
         };
 
         flake-rebuild = {
-          description = "Smart flake rebuild that auto-detects system and hostname";
+          description = "Smart flake rebuild that auto-detects system and hostname, deploys remotely if host differs from local";
           body = ''
             # Parse arguments - check if host was provided
             if test (count $argv) -gt 0
@@ -261,6 +261,14 @@ in {
                 # Auto-detect hostname
                 set host (hostname -s)
                 echo "Auto-detected host: $host"
+            end
+
+            # Determine if this is a remote deploy
+            set local_host (hostname -s)
+            set remote false
+            if test "$host" != "$local_host"
+                set remote true
+                echo "Remote deploy: $local_host → $host"
             end
 
             # Determine flake directory
@@ -277,6 +285,21 @@ in {
                 return 1
             end
 
+            # Check for pyinfra host first (not tracked in the flake)
+            if test -f "$flake_dir/hosts/linux/$host/main.py"
+                echo "Found pyinfra configuration for $host"
+                if test "$remote" = true
+                    echo "Running remote pyinfra deploy..."
+                    uv run --with pyinfra --with requests pyinfra -y (whoami)@$host "$flake_dir/hosts/linux/$host/main.py" &
+                else
+                    echo "Running local pyinfra deploy..."
+                    uv run --with pyinfra --with requests pyinfra -y @local "$flake_dir/hosts/linux/$host/main.py" &
+                end
+                set pyinfra_pid $last_pid
+                wait $pyinfra_pid
+                return $status
+            end
+
             # Check what configurations are available in the flake for this hostname
             set nixos_configs (nix eval --impure $flake_dir#nixosConfigurations --apply 'x: builtins.attrNames x' 2>/dev/null | tr -d '[]"' | tr ' ' '\n')
             set darwin_configs (nix eval --impure $flake_dir#darwinConfigurations --apply 'x: builtins.attrNames x' 2>/dev/null | tr -d '[]"' | tr ' ' '\n')
@@ -286,10 +309,19 @@ in {
             if contains $host $nixos_configs
                 echo "Found NixOS configuration for $host"
                 set config_type "nixosConfigurations"
-                set rebuild_cmd "sudo nixos-rebuild switch"
+                if test "$remote" = true
+                    # Build and activate on the remote host itself; avoids cross-compilation from Mac
+                    set rebuild_cmd "nixos-rebuild switch --target-host (whoami)@$host --build-host (whoami)@$host --use-remote-sudo"
+                else
+                    set rebuild_cmd "sudo nixos-rebuild switch"
+                end
             else if contains $host $darwin_configs
                 echo "Found Darwin configuration for $host"
                 set config_type "darwinConfigurations"
+                if test "$remote" = true
+                    echo "Error: Remote Darwin deploys are not supported"
+                    return 1
+                end
                 set rebuild_cmd "sudo darwin-rebuild switch"
             else if contains $host $home_configs
                 echo "Found Home Manager configuration for $host"
@@ -331,8 +363,8 @@ in {
                 end
             end
 
-            # Pre-authenticate sudo if needed (for NixOS and Darwin)
-            if test "$config_type" != "homeConfigurations"
+            # For local NixOS/Darwin deploys: pre-authenticate sudo and ensure SOPS key
+            if test "$remote" = false -a "$config_type" != "homeConfigurations"
                 echo "Authenticating sudo..."
                 sudo -v
                 if test $status -ne 0
@@ -340,7 +372,6 @@ in {
                     return 1
                 end
 
-                # Setup system-level SOPS age key if needed (NixOS only)
                 if test "$config_type" = "nixosConfigurations"
                     if not test -f /var/lib/sops-nix/key.txt
                         if test -f ~/.config/sops/age/keys.txt
@@ -360,8 +391,6 @@ in {
 
             # Run the appropriate rebuild command
             echo "Running $config_type rebuild for $host..."
-            # Run in background to prevent shell lockup during rebuild
-            # home-manager standalone configs use --impure so builtins.getEnv works for user-agnostic profiles
             if test "$config_type" = "homeConfigurations"
                 eval $rebuild_cmd --flake "$flake_dir#$host" --impure &
             else
