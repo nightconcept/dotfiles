@@ -53,7 +53,6 @@
 The home configuration uses a profile-based system where `home/default.nix` selects the appropriate profiles based on hostname:
 
 - **tidus**: `base + nixos-laptop` (Dell Latitude 7420 with Hyprland)
-- **tidus-persist**: `base + nixos-laptop` (Impermanence variant)
 - **aerith**: `base + server` (Plex media server)
 - **barrett**: `base + server` (VPN torrent server)
 - **rinoa**: `base + server` (Docker services)
@@ -66,7 +65,6 @@ The home configuration uses a profile-based system where `home/default.nix` sele
 
 ### Active NixOS Hosts
 - `tidus` - Dell Latitude 7420 laptop with Hyprland desktop
-- `tidus-persist` - Same as tidus but with impermanence for root filesystem
 - `aerith` - Plex media server
 - `barrett` - VPN torrent server with NordVPN
 - `rinoa` - General purpose server (Docker services)

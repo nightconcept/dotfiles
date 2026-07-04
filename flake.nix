@@ -73,7 +73,6 @@
   in {
     nixosConfigurations = {
       tidus = lib.mkNixos inputs.nixpkgs "tidus";
-      # tidus-persist = lib.mkNixos inputs.nixpkgs "tidus-persist";
       aerith = lib.mkNixosServer inputs.nixpkgs "aerith";
       barrett = lib.mkNixosServer inputs.nixpkgs "barrett";
       rinoa = lib.mkNixosServer inputs.nixpkgs "rinoa";
@@ -91,14 +90,6 @@
       laptop = lib.mkHome "laptop";
       server = lib.mkHome "server";
     };
-
-    # Custom installer ISO for tidus-persist
-    # nixosConfigurations.tidus-persist-installer = inputs.nixpkgs.lib.nixosSystem {
-    #   modules = [
-    #     {nixpkgs.hostPlatform = "x86_64-linux";}
-    #     ./iso/tidus-persist-installer.nix
-    #   ];
-    # };
 
     # Formatters for different systems
     formatter = {

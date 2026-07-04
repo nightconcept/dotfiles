@@ -23,5 +23,4 @@ The script:
 | `barrett-setup.sh` | Initial barrett server setup |
 | `setup-keys.sh` | SSH key setup |
 | `install-terminal.sh` | Install terminal emulator (Ghostty/WezTerm) |
-| `build-tidus-persist-iso.sh` | Build custom NixOS installer ISO |
 | `switch-to-upstream-nix.sh` | Switch from distro Nix to upstream |

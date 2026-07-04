@@ -6,7 +6,7 @@
 
 | Hostname | Profiles |
 |----------|---------|
-| `tidus`, `tidus-persist` | `base + nixos-laptop` (Dell Latitude 7420, Hyprland) |
+| `tidus` | `base + nixos-laptop` (Dell Latitude 7420, Hyprland) |
 | `aerith` | `base + server` (Plex media server) |
 | `barrett` | `base + server` (VPN torrent server) |
 | `rinoa` | `base + server` (Docker services) |

@@ -7,7 +7,6 @@ Host-specific configs live in `hosts/nixos/<hostname>/` and `hosts/darwin/<hostn
 | Hostname | Description |
 |----------|-------------|
 | `tidus` | Dell Latitude 7420 laptop, Hyprland desktop |
-| `tidus-persist` | Same as tidus with impermanence for root filesystem |
 | `aerith` | Plex media server |
 | `barrett` | VPN torrent server (NordVPN) |
 | `rinoa` | General purpose server (Docker services) |
