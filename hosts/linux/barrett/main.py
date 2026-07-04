@@ -5,7 +5,7 @@ Deploy with: just barrett
 
 Pre-requisites (place on host before running):
   /root/.nordvpn-token              — NordVPN login token
-  /root/.titan-credentials          — CIFS credentials for //192.168.1.167/titan
+  /etc/mog-secrets                  — CIFS credentials for //192.168.1.167/titan
   /root/.qbittorrent-password       — qBittorrent plain-text password (autoremove)
   /root/.qbittorrent-password-hash  — qBittorrent PBKDF2 hash (WebUI)
 """

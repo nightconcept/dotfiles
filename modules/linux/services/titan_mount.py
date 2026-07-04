@@ -1,5 +1,9 @@
 """Titan network mount module for host configuration."""
 
+from io import StringIO
+
+from pyinfra import host
+from pyinfra.facts.files import File
 from pyinfra.operations import files, server, systemd
 
 from ..module import HostModule
@@ -14,7 +18,7 @@ Wants=network-online.target
 What=//192.168.1.167/titan
 Where=/mnt/titan
 Type=cifs
-Options=credentials=/root/.titan-credentials,uid=1000,gid=100,iocharset=utf8,nofail,_netdev,x-systemd.automount,x-systemd.mount-timeout=10
+Options=credentials=/etc/mog-secrets,uid=1000,gid=100,iocharset=utf8,nofail,_netdev,x-systemd.automount,x-systemd.mount-timeout=10
 
 [Install]
 WantedBy=multi-user.target
@@ -61,18 +65,19 @@ class TitanMountModule(HostModule):
 
     def service(self):
         """Deploy systemd mount and automount units."""
-        server.shell(
-            name="Check titan credentials file exists",
-            commands=[
-                "test -f /root/.titan-credentials || "
-                "{ echo 'WARNING: /root/.titan-credentials not found — skipping mount setup'; exit 0; }"
-            ],
-            _sudo=True,
-        )
+        credentials_file = host.get_fact(File, path="/etc/mog-secrets", _sudo=True)
+        if not credentials_file:
+            server.shell(
+                name="Warn when titan credentials are missing",
+                commands=[
+                    "echo 'WARNING: /etc/mog-secrets not found - skipping titan mount setup'"
+                ],
+            )
+            return
 
         files.put(
             name="Deploy mnt-titan.mount unit",
-            src=_MOUNT_UNIT,
+            src=StringIO(_MOUNT_UNIT),
             dest="/etc/systemd/system/mnt-titan.mount",
             mode="644",
             _sudo=True,
@@ -80,7 +85,7 @@ class TitanMountModule(HostModule):
 
         files.put(
             name="Deploy mnt-titan.automount unit",
-            src=_AUTOMOUNT_UNIT,
+            src=StringIO(_AUTOMOUNT_UNIT),
             dest="/etc/systemd/system/mnt-titan.automount",
             mode="644",
             _sudo=True,

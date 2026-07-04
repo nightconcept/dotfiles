@@ -11,9 +11,8 @@ class SSHModule(HostModule):
     def install(self):
         """Ensure openssh-server is installed."""
         apt.packages(
-            name="Install OpenSSH Server",
+            name="Ensure OpenSSH Server is installed",
             packages=["openssh-server"],
-            update=True,
             _sudo=True,
         )
 
