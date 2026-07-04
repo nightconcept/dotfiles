@@ -20,3 +20,13 @@ Available container modules include:
 
 Docker networks:
 - `proxy` - Shared network for services behind Traefik reverse proxy
+
+## Adding a New Service Checklist
+
+After deploying a new container with Traefik labels, you must also add DNS records manually:
+
+**Local domain** (`*.local.solivan.dev`): Add a custom DNS record in Pi-hole.
+- Pi-hole admin → **Local DNS → DNS Records**
+- Domain: `<subdomain>.local.solivan.dev` → IP: `192.168.1.110` (rinoa)
+
+**Public domain** (`*.solivan.dev`): Add a DNS record in Cloudflare pointing to rinoa's WAN IP or Cloudflare Tunnel.
