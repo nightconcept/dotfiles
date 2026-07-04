@@ -41,12 +41,13 @@
 3. `default.nix` selects appropriate profiles based on hostname
 
 ### Linux Systems (Hybrid Management)
-1. **System Layer**: Managed via **pyinfra** for declarative configuration of system-level tasks (e.g., packages, services, builds) on standard Linux distros (e.g., Ubuntu).
-   - Deployed using `just <hostname>` (e.g., `just terra`).
-2. **User Layer**: Managed via **Home Manager** for declarative user environment configuration (dotfiles, user tools).
-   - Deployed using `home-manager switch --flake .#<hostname>` (e.g., `home-manager switch --flake .#terra`).
-3. Uses `hosts/linux/<hostname>/main.py` for pyinfra entry point.
-4. Leverages `modules/linux/` for system features and `home/profiles/` for user features.
+1. **System Layer**: Managed via **pyinfra** for declarative configuration of system-level tasks (e.g., packages, services, builds) on standard Linux distros (e.g., Ubuntu, Debian).
+   - Entry point: `hosts/linux/<hostname>/main.py`
+   - Deployed using `flake-rebuild <hostname>` (auto-detects local vs remote) or `just <hostname>` directly.
+2. **User Layer**: Managed via **Home Manager**, bootstrapped automatically by `HomeManagerModule` inside the pyinfra deploy.
+   - On first run, `HomeManagerModule` installs Nix (Determinate Systems), clones the dotfiles to `~/git/dotfiles`, installs `home-manager`, and runs `home-manager switch`.
+   - Subsequent runs pull the latest dotfiles and re-apply.
+3. Leverages `modules/linux/` for system features and `home/profiles/` for user features.
 
 ## Profile System
 
@@ -54,19 +55,19 @@ The home configuration uses a profile-based system where `home/default.nix` sele
 
 - **tidus**: `base + nixos-laptop` (Dell Latitude 7420 with Hyprland)
 - **aerith**: `base + server` (Plex media server)
-- **barrett**: `base + server` (VPN torrent server)
+- **barrett**: `base + server` (VPN torrent server) — deployed via `desktop` flake profile
 - **rinoa**: `base + server` (Docker services)
 - **vincent**: `base + server` (CI/CD runner with Docker)
 - **waver**: `base + darwin-laptop` (MacBook Pro M1)
 - **merlin**: `base + darwin-desktop` (Mac Mini M1)
-- **desktop/laptop/server**: Generic standalone profiles
+- **terra**: `base + desktop` (LLM inference server) — deployed via `desktop` flake profile
+- **desktop/laptop/server**: Generic standalone profiles used by pyinfra-managed hosts
 
 ## Host Configurations
 
 ### Active NixOS Hosts
 - `tidus` - Dell Latitude 7420 laptop with Hyprland desktop
 - `aerith` - Plex media server
-- `barrett` - VPN torrent server with NordVPN
 - `rinoa` - General purpose server (Docker services)
 - `vincent` - CI/CD runner host with Docker and Forgejo runner
 
@@ -74,6 +75,8 @@ The home configuration uses a profile-based system where `home/default.nix` sele
 - `waver` - MacBook Pro M1
 - `merlin` - Mac Mini M1 HTPC
 
-### Active Linux Hosts (Non-Nix)
-- `terra` - Ubuntu-based LLM inference server (managed via pyinfra)
-  - Deploy with: `just terra`
+### Active Linux Hosts (Non-Nix, managed via pyinfra)
+- `terra` - Ubuntu-based LLM inference server; home-manager profile: `desktop`
+- `barrett` - Debian VPN torrent server with NordVPN; home-manager profile: `server`
+
+Deploy either host with: `flake-rebuild <hostname>` (auto-detects local vs remote)
