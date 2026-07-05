@@ -5,7 +5,7 @@ from pyinfra.operations import apt, files, server
 from modules.linux.module import HostModule
 
 _MOUNT_SCRIPT = """
-set -euo pipefail
+set -eu
 mdadm --assemble --scan || true
 sleep 2
 md_devices=$(grep "^md" /proc/mdstat | cut -d" " -f1)
@@ -18,7 +18,7 @@ for dev in $md_devices; do
         echo "$dev_path already mounted at $mount_point"
     elif mount "$dev_path" "$mount_point" 2>/dev/null; then
         echo "Mounted $dev_path at $mount_point"
-    elif command -v pvs &>/dev/null && pvs "$dev_path" &>/dev/null; then
+    elif command -v pvs >/dev/null 2>&1 && pvs "$dev_path" >/dev/null 2>&1; then
         vgscan && vgchange -ay
         vg_name=$(pvs "$dev_path" --noheadings -o vg_name | tr -d ' ')
         for lv in $(lvs "$vg_name" --noheadings -o lv_name | tr -d ' '); do

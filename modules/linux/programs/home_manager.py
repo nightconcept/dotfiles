@@ -43,7 +43,7 @@ class HomeManagerModule(HostModule):
         server.shell(
             name="Install home-manager",
             commands=[
-                f"source {NIX_PROFILE} && "
+                f". {NIX_PROFILE} && "
                 "if ! command -v home-manager >/dev/null 2>&1; then "
                 "nix profile install nixpkgs#home-manager; fi"
             ],
@@ -58,7 +58,7 @@ class HomeManagerModule(HostModule):
         server.shell(
             name=f"Apply home-manager config for {self.profile}",
             commands=[
-                f"source {NIX_PROFILE} && "
+                f". {NIX_PROFILE} && "
                 f"home-manager switch --flake {DOTFILES_DIR}#{self.profile} --impure"
             ],
         )
