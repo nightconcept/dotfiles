@@ -1,6 +1,7 @@
 from modules.linux.programs.home_manager import HomeManagerModule
 from modules.linux.programs.huggingface import HuggingFaceModule
 from modules.linux.programs.llama_cpp import LlamaCppModule
+from modules.linux.programs.llama_swap import LlamaSwapModule
 from modules.linux.programs.llm_models import LLMModelsModule
 from modules.linux.programs.ssh import SSHModule
 from modules.linux.programs.storage import StorageModule
@@ -19,6 +20,7 @@ books = BooksModule()
 converter = LibbyRipConverterModule(app_port=8086)
 hf = HuggingFaceModule()
 llama = LlamaCppModule()
+llama_swap = LlamaSwapModule()
 models = LLMModelsModule()
 
 # Deploy system foundations
@@ -36,5 +38,6 @@ converter.deploy()
 
 # Deploy AI modules
 hf.deploy()
-llama.deploy()
 models.deploy()
+llama.deploy()
+llama_swap.deploy()

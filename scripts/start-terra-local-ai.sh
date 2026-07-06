@@ -2,7 +2,7 @@
 set -euo pipefail
 
 HOST_EXPECTED="terra"
-LLAMA_SERVICE="llama-server"
+LLAMA_SERVICE="llama-swap"
 LLAMA_URL="http://127.0.0.1:8080/health"
 LLAMA_TIMEOUT_SECS="${LLAMA_TIMEOUT_SECS:-900}"
 HERMES_SERVICE="hermes-gateway"
@@ -63,7 +63,7 @@ wait_for_llama() {
     now="$(date +%s)"
     if [ "$now" -ge "$deadline" ]; then
       code="$(llama_health_code)"
-      log "llama.cpp did not become healthy within ${LLAMA_TIMEOUT_SECS}s (last HTTP status: ${code:-none})"
+      log "llama-swap did not become healthy within ${LLAMA_TIMEOUT_SECS}s (last HTTP status: ${code:-none})"
       run_systemctl status "$LLAMA_SERVICE" --no-pager || true
       return 1
     fi
@@ -142,19 +142,19 @@ wait_for_hermes() {
 
 ensure_llama() {
   if llama_healthy; then
-    log "llama.cpp is already healthy on :8080"
+    log "llama-swap is already healthy on :8080"
     return 0
   fi
 
   if llama_service_active; then
-    log "llama.cpp is running but not healthy yet; waiting for model load"
+    log "llama-swap is running but not healthy yet; waiting for proxy startup"
   else
-    log "starting llama.cpp system service"
+    log "starting llama-swap system service"
     run_systemctl start "$LLAMA_SERVICE"
   fi
 
-  wait_for_llama || die "llama.cpp failed to become healthy"
-  log "llama.cpp is healthy on :8080"
+  wait_for_llama || die "llama-swap failed to become healthy"
+  log "llama-swap is healthy on :8080"
 }
 
 ensure_hermes() {

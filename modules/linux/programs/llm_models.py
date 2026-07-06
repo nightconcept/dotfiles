@@ -5,12 +5,7 @@ import os
 from pyinfra.operations import files, server
 
 from modules.linux.module import HostModule
-
-# Add models here. Format: (repo_id, filename)
-MODEL_MANIFEST = [
-    ("unsloth/Qwen3.6-35B-A3B-GGUF", "Qwen3.6-35B-A3B-UD-Q6_K.gguf"),
-    ("havenoammo/Qwen3.6-35B-A3B-MTP-GGUF", "Qwen3.6-35B-A3B-MTP-UD-Q5_K_XL.gguf"),
-]
+from modules.linux.programs.model_catalog import catalog_entries
 
 
 class LLMModelsModule(HostModule):
@@ -34,14 +29,28 @@ class LLMModelsModule(HostModule):
 
     def update(self):
         """Download models listed in the manifest using hf cli."""
-        for repo_id, filename in MODEL_MANIFEST:
-            # We check if file exists to avoid slow hf calls if already present
+        for entry in catalog_entries():
+            filename = entry["filename"]
+            local_source = entry.get("local_source")
+            if local_source:
+                server.shell(
+                    name=f"Install local model {filename}",
+                    commands=[
+                        f'test -f "{local_source}"',
+                        f'if [ ! -f "{self.model_dir}/{filename}" ]; then '
+                        f'sudo install -o "{self.user}" -g "{self.user}" -m 0644 '
+                        f'"{local_source}" "{self.model_dir}/{filename}"; fi'
+                    ],
+                )
+                continue
+
+            repo_id = entry["repo_id"]
             server.shell(
                 name=f"Download {filename}",
                 commands=[
-                    f"if [ ! -f {self.model_dir}/{filename} ]; then "
-                    f"hf download {repo_id} {filename} "
-                    f"--local-dir {self.model_dir} </dev/null; fi"
+                    f'if [ ! -f "{self.model_dir}/{filename}" ]; then '
+                    f'hf download {repo_id} {filename} '
+                    f'--local-dir {self.model_dir} </dev/null; fi'
                 ],
             )
 

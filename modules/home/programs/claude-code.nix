@@ -533,10 +533,6 @@ in {
         executable = true;
       };
 
-      ".claude/settings.json" = lib.mkIf (cfg.statusline.enable && cfg.statusline.manageSettings) {
-        source = claudeSettingsConfig;
-      };
-
       ".claude/mcp-config.json" = lib.mkIf cfg.mcp.enable {
         source = mcpConfig;
       };
@@ -637,5 +633,26 @@ in {
           fi
         '')
       ];
+
+    home.activation.claudeSettings = lib.mkIf (cfg.statusline.enable && cfg.statusline.manageSettings) (
+      lib.hm.dag.entryAfter ["writeBoundary"] ''
+        $DRY_RUN_CMD mkdir -p "$HOME/.claude"
+
+        # Replace the old immutable Home Manager symlink with a writable file.
+        if [ -L "$HOME/.claude/settings.json" ]; then
+          target="$(readlink -f "$HOME/.claude/settings.json" || true)"
+          case "$target" in
+            /nix/store/*)
+              $DRY_RUN_CMD rm "$HOME/.claude/settings.json"
+              ;;
+          esac
+        fi
+
+        if [ ! -e "$HOME/.claude/settings.json" ]; then
+          $DRY_RUN_CMD cp ${claudeSettingsConfig} "$HOME/.claude/settings.json"
+          $DRY_RUN_CMD chmod 600 "$HOME/.claude/settings.json"
+        fi
+      ''
+    );
   };
 }
