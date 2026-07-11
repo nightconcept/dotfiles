@@ -1,0 +1,40 @@
+# Palworld Server Management Commands
+
+# Start the server
+start:
+    docker compose up -d
+
+# Stop the server
+stop:
+    docker compose down
+
+# Restart the server
+restart:
+    docker compose restart
+
+# Show server logs
+logs:
+    docker logs -f palworld-dedicated-server
+
+# Show online players
+who:
+    docker exec palworld-dedicated-server restapicli players
+
+# Show server info
+info:
+    docker exec palworld-dedicated-server restapicli info
+
+# Save the world
+save:
+    docker exec palworld-dedicated-server restapicli save
+
+# Announce a message to all players
+announce MESSAGE:
+    docker exec palworld-dedicated-server restapicli announce "{{MESSAGE}}"
+
+# Backup world data
+backup:
+    @echo "Creating backup..."
+    @mkdir -p backups
+    @tar -czf backups/palworld-backup-$(date +%Y%m%d-%H%M%S).tar.gz -C ~/config/palworld Pal/Saved
+    @echo "Backup completed!"

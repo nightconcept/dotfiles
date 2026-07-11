@@ -72,6 +72,10 @@ dev:
 dev-down:
     LIBBYRIP_REPO="${PWD}/../LibbyRip" LIBBYRIP_DATA_DIR="${PWD}/.local/state/libbyrip-converter-dev" docker compose -f modules/linux/programs/libbyrip_converter/docker-compose.dev.yml down
 
+# Start the Palworld dedicated server (1.0-ready; not deployed on this machine yet)
+palworld:
+    cd modules/nixos/services/docker/containers/palworld && docker compose up -d
+
 # Deploy Barrett host (Debian VPN torrent server) using pyinfra
 barrett:
     uv run --with pyinfra --with requests pyinfra -y @local hosts/linux/barrett/main.py
