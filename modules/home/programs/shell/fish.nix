@@ -290,13 +290,11 @@ in {
                 echo "Found pyinfra configuration for $host"
                 if test "$remote" = true
                     echo "Running remote pyinfra deploy..."
-                    uv run --with pyinfra --with requests pyinfra -y (whoami)@$host "$flake_dir/hosts/linux/$host/main.py" &
+                    uv run --with pyinfra --with requests pyinfra -y (whoami)@$host "$flake_dir/hosts/linux/$host/main.py"
                 else
                     echo "Running local pyinfra deploy..."
-                    uv run --with pyinfra --with requests pyinfra -y @local "$flake_dir/hosts/linux/$host/main.py" &
+                    uv run --with pyinfra --with requests pyinfra -y @local "$flake_dir/hosts/linux/$host/main.py"
                 end
-                set pyinfra_pid $last_pid
-                wait $pyinfra_pid
                 return $status
             end
 
@@ -392,18 +390,11 @@ in {
             # Run the appropriate rebuild command
             echo "Running $config_type rebuild for $host..."
             if test "$config_type" = "homeConfigurations"
-                eval $rebuild_cmd --flake "$flake_dir#$host" --impure &
+                eval $rebuild_cmd --flake "$flake_dir#$host" --impure
             else
-                eval $rebuild_cmd --flake "$flake_dir#$host" &
+                eval $rebuild_cmd --flake "$flake_dir#$host"
             end
-
-            # Wait for the background job to complete
-            set rebuild_pid $last_pid
-            wait $rebuild_pid
-            set rebuild_status $status
-
-            # Return the rebuild exit status
-            return $rebuild_status
+            return $status
           '';
         };
 
@@ -475,13 +466,8 @@ in {
             end
 
             echo "Running nixosConfigurations boot for $host..."
-            eval sudo nixos-rebuild boot --flake "$flake_dir#$host" &
-
-            set rebuild_pid $last_pid
-            wait $rebuild_pid
-            set rebuild_status $status
-
-            return $rebuild_status
+            eval sudo nixos-rebuild boot --flake "$flake_dir#$host"
+            return $status
           '';
         };
       };
