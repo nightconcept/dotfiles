@@ -23,8 +23,8 @@
         };
         models = [
           {
-            id = "qwen3.6-35b-a3b";
-            name = "qwen3.6-35b-a3b";
+            id = "qwen3-35b-mtp";
+            name = "qwen3-35b-mtp";
           }
         ];
       };
