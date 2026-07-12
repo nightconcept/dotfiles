@@ -52,6 +52,7 @@
     nerd-fonts.fira-code
     nerd-fonts.fira-mono
     obsidian
+    qemu-user
     vlc
     vscode
     xdg-utils
