@@ -52,6 +52,8 @@
     nerd-fonts.fira-code
     nerd-fonts.fira-mono
     obsidian
+    # User-space emulator binary only. Transparent foreign ELF execution
+    # still requires system binfmt registration outside Home Manager.
     qemu-user
     vlc
     vscode

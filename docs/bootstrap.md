@@ -31,3 +31,5 @@ flake-rebuild barrett  # or: just barrett
 5. Runs `home-manager switch --flake ~/git/dotfiles#<profile>` to activate the user environment
 
 After the first successful run, `flake-rebuild` itself will be available in the host's fish shell for subsequent local deploys.
+
+On non-NixOS Linux, Home Manager packages such as `qemu-user` only provide the emulator binary on the user PATH. Transparent execution of foreign ELF binaries during local Nix builds additionally requires host-level `binfmt_misc` registration and daemon-level `extra-platforms`, which are managed here through pyinfra rather than Home Manager.
