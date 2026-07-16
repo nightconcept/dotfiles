@@ -48,8 +48,8 @@ in {
         zip
         zoxide
       ])
-      # Exclude on rinoa because antigravity-cli 1.0.7 does not build on that host.
-      ++ lib.optionals (hostname != "rinoa") (with pkgs; [
+      # Exclude on rinoa, aerith, and vincent because antigravity-cli 1.0.7 does not build on those hosts.
+      ++ lib.optionals (!(builtins.elem hostname ["rinoa" "aerith" "vincent"])) (with pkgs; [
         antigravity-cli
       ]);
   };
