@@ -15,10 +15,10 @@ services:
       retries: 3
       start_period: 40s
     volumes:
-      - /mnt/titan/Audiobooks:/audiobooks
-      - /mnt/titan/Podcasts:/podcasts
-      - ~/docker/audiobookshelf/audiobookshelf/metadata:/metadata
-      - ~/docker/audiobookshelf/audiobookshelf/config:/config
+      - ${AUDIOBOOKS_PATH}:/audiobooks
+      - ${PODCASTS_PATH}:/podcasts
+      - ${CONFIG_PATH}/metadata:/metadata
+      - ${CONFIG_PATH}/config:/config
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.audiobookshelf.entrypoints=http"

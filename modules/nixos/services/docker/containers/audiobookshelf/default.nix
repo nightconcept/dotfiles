@@ -8,6 +8,9 @@
   cfg = config.modules.nixos.docker.containers.audiobookshelf;
   containerName = "audiobookshelf";
   containerPath = "/var/lib/docker-containers/${containerName}";
+  usesTitan =
+    lib.hasPrefix "/mnt/titan" cfg.audiobooksPath
+    || lib.hasPrefix "/mnt/titan" cfg.podcastsPath;
 in {
   options.modules.nixos.docker.containers.audiobookshelf = {
     enable = lib.mkEnableOption "Audiobookshelf audiobook and podcast server";
@@ -56,15 +59,27 @@ in {
     # Audiobookshelf container service
     systemd.services."docker-container-${containerName}" = {
       description = "Audiobookshelf Audiobook and Podcast Server Container";
-      after = ["docker.service" "docker-network-proxy.service" "mnt-titan.mount"];
+      after =
+        ["docker.service" "docker-network-proxy.service"]
+        ++ lib.optionals usesTitan ["mnt-titan.mount"];
       # Make Titan mount a hard requirement if paths use it
       requires =
-        if (lib.hasPrefix "/mnt/titan" cfg.audiobooksPath || lib.hasPrefix "/mnt/titan" cfg.podcastsPath)
-        then ["docker.service" "docker-network-proxy.service" "mnt-titan.mount"]
-        else ["docker.service" "docker-network-proxy.service"];
+        ["docker.service" "docker-network-proxy.service"]
+        ++ lib.optionals usesTitan ["mnt-titan.mount"];
       wantedBy = ["multi-user.target"];
+      unitConfig = lib.mkIf usesTitan {
+        RequiresMountsFor = [cfg.audiobooksPath cfg.podcastsPath];
+      };
 
       preStart = ''
+        ${lib.optionalString usesTitan ''
+          echo "Waiting for Titan mount to become active"
+          while ! ${pkgs.util-linux}/bin/mountpoint -q /mnt/titan; do
+            echo "/mnt/titan is not mounted yet, waiting..."
+            sleep 2
+          done
+        ''}
+
         # Wait for mount paths to be available
         ${lib.optionalString (lib.hasPrefix "/mnt/titan" cfg.audiobooksPath) ''
           echo "Waiting for audiobooks path: ${cfg.audiobooksPath}"
