@@ -28,6 +28,7 @@ in {
       gnupg
       home-manager
       nix-fast-build
+      nixpkgs-review
       uv
       vim
       wget

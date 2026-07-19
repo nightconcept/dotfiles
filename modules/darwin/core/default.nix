@@ -79,6 +79,7 @@ in {
       git
       gnupg
       home-manager
+      nixpkgs-review
       wget
     ];
 
