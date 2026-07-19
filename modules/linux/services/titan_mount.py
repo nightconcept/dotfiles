@@ -30,7 +30,7 @@ Description=Automount Titan network share
 
 [Automount]
 Where=/mnt/titan
-TimeoutIdleSec=60
+TimeoutIdleSec=0
 DirectoryMode=0755
 
 [Install]

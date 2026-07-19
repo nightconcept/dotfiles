@@ -32,10 +32,10 @@ class LibbyRipConverterModule(HostModule):
             )
 
         server.shell(
-            name="Ensure Titan library paths exist",
+            name="Ensure Titan library paths exist on the live CIFS mount",
             commands=[
-                "systemctl start mnt-titan.automount || true",
-                "ls /mnt/titan >/dev/null",
+                "systemctl start mnt-titan.mount",
+                "findmnt -T /mnt/titan -n -o FSTYPE | grep -Fx cifs",
                 "mkdir -p /mnt/titan/transfer/upload_audiobooks",
                 "mkdir -p /mnt/titan/Audiobooks",
             ],
@@ -68,6 +68,16 @@ class LibbyRipConverterModule(HostModule):
                     repo_dir=self.repo_dir,
                     app_port=self.app_port,
                 )
+            ],
+            _sudo=True,
+        )
+
+        server.shell(
+            name="Require Titan CIFS mount before starting LibbyRip converter",
+            commands=[
+                "systemctl start mnt-titan.mount",
+                "findmnt -T /mnt/titan/transfer/upload_audiobooks -n -o FSTYPE | grep -Fx cifs",
+                "findmnt -T /mnt/titan/Audiobooks -n -o FSTYPE | grep -Fx cifs",
             ],
             _sudo=True,
         )
