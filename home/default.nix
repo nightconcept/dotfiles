@@ -17,6 +17,7 @@
       extraImports = [];
       extraConfig = {
         targets.genericLinux.enable = true;
+        home.pointerCursor.enable = true;
       };
     };
 
@@ -25,7 +26,9 @@
       username = "danny";
       homeDirectory = "/home/danny";
       extraImports = [];
-      extraConfig = {};
+      extraConfig = {
+        home.pointerCursor.enable = false;
+      };
     };
 
     barrett = {
