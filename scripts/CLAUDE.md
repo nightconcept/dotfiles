@@ -24,3 +24,4 @@ The script:
 | `setup-keys.sh` | SSH key setup |
 | `install-terminal.sh` | Install terminal emulator (Ghostty/WezTerm) |
 | `switch-to-upstream-nix.sh` | Switch from distro Nix to upstream |
+| `watchtower` | One-shot update for all Docker containers on local or remote host |

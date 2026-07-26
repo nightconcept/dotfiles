@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Watchtower - Update all Docker containers on local or remote host
+
+TARGET_HOST="${1:-}"
+CURRENT_HOST="$(hostname -s)"
+
+# If a target host is specified and it's not the current host, execute remotely via SSH
+if [[ -n "${TARGET_HOST}" && "${TARGET_HOST}" != "${CURRENT_HOST}" ]]; then
+  echo "==> Running Watchtower container update remotely on ${TARGET_HOST}..."
+  ssh -t "${TARGET_HOST}" "sudo docker run --rm -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower --run-once --cleanup"
+  exit 0
+fi
+
+# Local execution
+echo "==> Updating all Docker containers on ${CURRENT_HOST}..."
+
+if ! command -v docker >/dev/null 2>&1; then
+  echo "Error: docker command not found on ${CURRENT_HOST}." >&2
+  exit 1
+fi
+
+DOCKER_CMD="docker"
+if ! docker info >/dev/null 2>&1; then
+  if command -v sudo >/dev/null 2>&1; then
+    DOCKER_CMD="sudo docker"
+  fi
+fi
+
+${DOCKER_CMD} run --rm \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  containrrr/watchtower \
+  --run-once \
+  --cleanup
