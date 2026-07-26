@@ -1,20 +1,20 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Watchtower - Update all Docker containers on local or remote host
+# Watchtower - Update only running Docker containers on local or remote host
 
 TARGET_HOST="${1:-}"
 CURRENT_HOST="$(hostname -s)"
 
 # If a target host is specified and it's not the current host, execute remotely via SSH
 if [[ -n "${TARGET_HOST}" && "${TARGET_HOST}" != "${CURRENT_HOST}" ]]; then
-  echo "==> Running Watchtower container update remotely on ${TARGET_HOST}..."
-  ssh -t "${TARGET_HOST}" "sudo docker run --rm -v /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower --run-once --cleanup"
+  echo "==> Running container update remotely on ${TARGET_HOST}..."
+  ssh -t "${TARGET_HOST}" "sudo bash -s" < "$0"
   exit 0
 fi
 
 # Local execution
-echo "==> Updating all Docker containers on ${CURRENT_HOST}..."
+echo "==> Updating running Docker containers on ${CURRENT_HOST}..."
 
 if ! command -v docker >/dev/null 2>&1; then
   echo "Error: docker command not found on ${CURRENT_HOST}." >&2
@@ -28,8 +28,60 @@ if ! docker info >/dev/null 2>&1; then
   fi
 fi
 
-${DOCKER_CMD} run --rm \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  containrrr/watchtower \
-  --run-once \
-  --cleanup
+COMPOSE_CMD=""
+if ${DOCKER_CMD} compose version >/dev/null 2>&1; then
+  COMPOSE_CMD="${DOCKER_CMD} compose"
+elif command -v docker-compose >/dev/null 2>&1; then
+  COMPOSE_CMD="docker-compose"
+else
+  echo "Error: Neither 'docker compose' nor 'docker-compose' was found on ${CURRENT_HOST}." >&2
+  exit 1
+fi
+
+updated_count=0
+
+# 1. Update running Docker Compose stacks in /var/lib/docker-containers/
+if [[ -d "/var/lib/docker-containers" ]]; then
+  for dir in /var/lib/docker-containers/*; do
+    if [[ -d "$dir" && -f "$dir/docker-compose.yml" ]]; then
+      service_name="$(basename "$dir")"
+      
+      # Check if any container in this compose stack is currently running
+      running_ids="$(${COMPOSE_CMD} -f "$dir/docker-compose.yml" --project-directory "$dir" ps -q 2>/dev/null || true)"
+      if [[ -n "${running_ids}" ]]; then
+        echo "==> Updating running compose service: ${service_name}..."
+        ${COMPOSE_CMD} -f "$dir/docker-compose.yml" --project-directory "$dir" pull
+        ${COMPOSE_CMD} -f "$dir/docker-compose.yml" --project-directory "$dir" up -d
+        updated_count=$((updated_count + 1))
+      fi
+    fi
+  done
+fi
+
+# 2. Check for any other running containers not in /var/lib/docker-containers
+running_containers="$(${DOCKER_CMD} ps --format '{{.Names}}' 2>/dev/null || true)"
+if [[ -n "${running_containers}" ]]; then
+  while IFS= read -r container_name; do
+    [[ -z "${container_name}" ]] && continue
+    
+    # Skip containers already handled via /var/lib/docker-containers
+    working_dir="$(${DOCKER_CMD} inspect --format '{{ index .Config.Labels "com.docker.compose.project.working_dir" }}' "${container_name}" 2>/dev/null || true)"
+    if [[ "${working_dir}" == /var/lib/docker-containers/* ]]; then
+      continue
+    fi
+    
+    # If container is managed by docker compose in another directory
+    config_file="$(${DOCKER_CMD} inspect --format '{{ index .Config.Labels "com.docker.compose.project.config_files" }}' "${container_name}" 2>/dev/null || true)"
+    if [[ -n "${config_file}" && -f "${config_file}" && -n "${working_dir}" && -d "${working_dir}" ]]; then
+      echo "==> Updating running compose container: ${container_name} (${working_dir})..."
+      ${COMPOSE_CMD} -f "${config_file}" --project-directory "${working_dir}" pull
+      ${COMPOSE_CMD} -f "${config_file}" --project-directory "${working_dir}" up -d
+      updated_count=$((updated_count + 1))
+    fi
+  done <<< "${running_containers}"
+fi
+
+echo "==> Cleaning up unused Docker images..."
+${DOCKER_CMD} image prune -f >/dev/null 2>&1 || true
+
+echo "==> Update complete! Updated ${updated_count} running service stack(s)."
