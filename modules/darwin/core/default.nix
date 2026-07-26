@@ -3,6 +3,7 @@
   config,
   lib,
   pkgs,
+  inputs ? {},
   ...
 }:
 with lib; let
@@ -61,6 +62,13 @@ in {
             doCheck = false;
             doInstallCheck = false;
           });
+        })
+      ] ++ lib.optionals (inputs ? nixpkgs-master) [
+        (final: prev: {
+          claude-code = (import inputs.nixpkgs-master {
+            system = prev.stdenv.hostPlatform.system;
+            config.allowUnfree = true;
+          }).claude-code;
         })
       ];
     };

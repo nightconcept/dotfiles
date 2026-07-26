@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  inputs ? {},
   ...
 }: let
   # Import our custom lib functions
@@ -12,6 +13,15 @@
   mkStrOpt = default: desc: mkOpt lib.types.str default desc;
 
   cfg = config.modules.home.programs.claude-code;
+
+  claudeCodePkg =
+    if (inputs ? nixpkgs-master)
+    then
+      (import inputs.nixpkgs-master {
+        system = pkgs.stdenv.hostPlatform.system;
+        config.allowUnfree = true;
+      }).claude-code
+    else pkgs.claude-code;
 
   # ccstatusline package (pre-built from npm tarball, no build step needed)
   ccstatuslinePkg = pkgs.stdenv.mkDerivation {
@@ -551,7 +561,7 @@ in {
 
     # Install Claude Code package and additional scripts
     home.packages =
-      [pkgs.claude-code]
+      [claudeCodePkg]
       ++ lib.optionals cfg.statusline.enable [ccstatuslinePkg]
       ++ (with pkgs; [
         (writeShellScriptBin "claude-setup" ''
@@ -627,9 +637,9 @@ in {
           export ANTHROPIC_DEFAULT_OPUS_MODEL="${cfg.glm.defaultModel}"
 
           if [ -f ~/.claude/mcp-config.json ]; then
-            exec ${lib.getExe pkgs.claude-code} --mcp-config ~/.claude/mcp-config.json "$@"
+            exec ${lib.getExe claudeCodePkg} --mcp-config ~/.claude/mcp-config.json "$@"
           else
-            exec ${lib.getExe pkgs.claude-code} "$@"
+            exec ${lib.getExe claudeCodePkg} "$@"
           fi
         '')
       ];
