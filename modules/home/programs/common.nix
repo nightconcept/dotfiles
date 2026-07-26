@@ -36,6 +36,7 @@ in {
         lua51Packages.lua
         ncdu
         nix-prefetch-github
+        nixpkgs-review
         nmap
         nodejs_24
         opencode
