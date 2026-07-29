@@ -15,6 +15,7 @@
     chromium.enable = true;
     gaming.enable = true;
     ghostty.enable = true;
+    herdr.enable = true;
     rofi.enable = true;
     spotify.enable = true;
     zotero.enable = true;

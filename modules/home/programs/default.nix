@@ -11,6 +11,7 @@
     ./librewolf.nix
     ./gaming.nix
     ./ghostty
+    ./herdr.nix
     ./mise.nix
     ./git.nix
     ./nvim

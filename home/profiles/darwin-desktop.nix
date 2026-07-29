@@ -12,6 +12,7 @@
 
   modules.home.programs = {
     ghostty.enable = true;
+    herdr.enable = true;
     zotero.enable = true;
     shell = {
       fish.enable = true;
