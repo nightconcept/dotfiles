@@ -32,10 +32,12 @@
   fonts.fontconfig.enable = true;
 
   home.packages = with pkgs; [
+    beamPackages.erlang
     firefox
-    librewolf
     github-desktop
+    gleam
     kdePackages.xdg-desktop-portal-kde
+    librewolf
     nerd-fonts.fira-code
     nerd-fonts.fira-mono
     obsidian

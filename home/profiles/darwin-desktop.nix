@@ -23,6 +23,8 @@
   fonts.fontconfig.enable = true;
 
   home.packages = with pkgs; [
+    beamPackages.erlang
+    gleam
     karabiner-elements
     mise
   ];

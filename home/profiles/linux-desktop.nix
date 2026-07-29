@@ -46,8 +46,10 @@
   fonts.fontconfig.enable = true;
 
   home.packages = with pkgs; [
+    beamPackages.erlang
     github-desktop
     gitnuro
+    gleam
     kdePackages.xdg-desktop-portal-kde
     nerd-fonts.fira-code
     nerd-fonts.fira-mono
