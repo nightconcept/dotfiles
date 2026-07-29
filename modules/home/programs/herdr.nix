@@ -19,7 +19,7 @@ in {
       # https://herdr.dev/docs/configuration/
 
       [theme]
-      name = "catppuccin"
+      name = "tokyo-night"
 
       [keys]
       # prefix is ctrl+b by default — set explicitly for clarity
