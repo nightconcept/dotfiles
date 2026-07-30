@@ -70,14 +70,7 @@ in {
     nixpkgs = {
       hostPlatform = lib.mkDefault "x86_64-linux";
       config.allowUnfree = true;
-      overlays = lib.optionals (inputs ? nixpkgs-master) [
-        (final: prev: {
-          claude-code = (import inputs.nixpkgs-master {
-            system = prev.stdenv.hostPlatform.system;
-            config.allowUnfree = true;
-          }).claude-code;
-        })
-      ];
+
     };
   };
 }
