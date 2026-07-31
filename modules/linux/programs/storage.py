@@ -33,9 +33,15 @@ for dev in $md_devices; do
 done
 """
 
+_STORAGE_UUID = "19b4b338-5216-4a18-8b97-5f4a2f61970e"
+_STORAGE_MOUNT_POINT = "/mnt/storage"
+_STORAGE_FSTAB_LINE = (
+    f"UUID={_STORAGE_UUID} {_STORAGE_MOUNT_POINT} ext4 defaults,nofail 0 2"
+)
+
 
 class StorageModule(HostModule):
-    """Manages RAID storage and mounting."""
+    """Manages Terra's local storage mounts."""
 
     def install(self):
         apt.packages(
@@ -45,7 +51,7 @@ class StorageModule(HostModule):
             _sudo=True,
         )
 
-        for mount_point in ["/mnt/terra", "/mnt/jeanne"]:
+        for mount_point in ["/mnt/terra", "/mnt/jeanne", _STORAGE_MOUNT_POINT]:
             files.directory(
                 name=f"Ensure {mount_point} exists",
                 path=mount_point,
@@ -54,6 +60,18 @@ class StorageModule(HostModule):
             )
 
     def update(self):
+        server.shell(
+            name="Mount storage NVMe at /mnt/storage",
+            commands=[
+                f'''set -eu
+                fstab_line='{_STORAGE_FSTAB_LINE}'
+                grep -Fqx "$fstab_line" /etc/fstab || echo "$fstab_line" >> /etc/fstab
+                if ! mountpoint -q "{_STORAGE_MOUNT_POINT}"; then
+                    mount "{_STORAGE_MOUNT_POINT}"
+                fi'''
+            ],
+            _sudo=True,
+        )
         server.shell(
             name="Assemble and mount RAID arrays",
             commands=[_MOUNT_SCRIPT],

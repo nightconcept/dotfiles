@@ -12,6 +12,7 @@ _SERVICE_UNIT = """\
 [Unit]
 Description=llama-swap model router
 After=network.target
+RequiresMountsFor=/mnt/storage/llm-models
 
 [Service]
 Type=simple

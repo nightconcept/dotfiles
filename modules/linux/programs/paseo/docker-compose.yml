@@ -1,0 +1,16 @@
+services:
+  paseo:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: paseo-with-agents:latest
+    container_name: paseo
+    restart: unless-stopped
+    ports:
+      - "6767:6767"
+    environment:
+      PASEO_PASSWORD: "${PASEO_PASSWORD:-change-me}"
+      PASEO_HOSTNAMES: "${PASEO_HOSTNAMES:-terra,terra.local.solivan.dev,localhost,127.0.0.1}"
+    volumes:
+      - ${PASEO_HOME_DIR:-/opt/paseo/home}:/home/paseo
+      - ${WORKSPACE_DIR:-/home/danny/git}:/workspace

@@ -14,7 +14,7 @@ Available container modules include:
 - **Home Automation**: homepage, uptime-kuma
 - **Infrastructure**: traefik, portainer, watchtower, cloudflare-tunnel
 - **Authentication**: authelia, vaultwarden
-- **Development**: forgejo, forgejo-runner
+- **Development**: forgejo, forgejo-runner, paseo
 - **Gaming**: minecraft, enshrouded, palworld
 - **Utilities**: freshrss, nextcloud, open-webui, searxng, wg-easy, ddclient, knot
 

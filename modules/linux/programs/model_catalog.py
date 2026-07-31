@@ -6,7 +6,7 @@ import json
 import shlex
 from typing import Any
 
-MODEL_DIR = "/opt/llm-models"
+MODEL_DIR = "/mnt/storage/llm-models"
 LLAMA_CPP_SERVER = "/opt/llama-cpp/llama-server"
 
 

@@ -5,7 +5,7 @@ import os
 from pyinfra.operations import files, server
 
 from modules.linux.module import HostModule
-from modules.linux.programs.model_catalog import catalog_entries
+from modules.linux.programs.model_catalog import MODEL_DIR, catalog_entries
 
 
 class LLMModelsModule(HostModule):
@@ -13,11 +13,16 @@ class LLMModelsModule(HostModule):
 
     def __init__(self):
         """Initialize model paths."""
-        self.model_dir = "/opt/llm-models"
+        self.model_dir = MODEL_DIR
         self.user = os.environ.get("USER", "danny")
 
     def install(self):
         """Ensure model directory exists with correct ownership."""
+        server.shell(
+            name="Verify storage NVMe is mounted for LLM models",
+            commands=['mountpoint -q "/mnt/storage"'],
+            _sudo=True,
+        )
         files.directory(
             name=f"Ensure {self.model_dir} exists with correct ownership",
             path=self.model_dir,
@@ -28,7 +33,7 @@ class LLMModelsModule(HostModule):
         )
 
     def update(self):
-        """Download models listed in the manifest using hf cli."""
+        """Download missing models listed in the manifest using hf cli."""
         for entry in catalog_entries():
             filename = entry["filename"]
             local_source = entry.get("local_source")
