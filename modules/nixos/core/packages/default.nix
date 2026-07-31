@@ -17,6 +17,9 @@ in {
   };
 
   config = mkIf cfg.enable {
+    # System programs
+    programs.mosh.enable = true;
+
     # System packages
     environment.systemPackages = with pkgs; [
       bat

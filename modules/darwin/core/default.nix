@@ -80,6 +80,7 @@ in {
       git
       gnupg
       home-manager
+      mosh
       wget
     ];
 

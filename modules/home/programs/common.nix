@@ -33,6 +33,7 @@ in {
         just
         lazygit
         lua51Packages.lua
+        mosh
         ncdu
         nix-prefetch-github
         nixpkgs-review
