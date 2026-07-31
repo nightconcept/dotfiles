@@ -43,6 +43,7 @@
     nerd-fonts.fira-mono
     obsidian
     uv
+    vlang
     vlc
     vscode
     xdg-utils

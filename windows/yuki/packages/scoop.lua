@@ -30,6 +30,7 @@ yuki.packages {
     "starship",
     "syncthing",
     "typst",
+    "v",
     "yt-dlp",
     "zig",
     "zoxide",

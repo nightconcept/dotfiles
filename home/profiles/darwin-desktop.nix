@@ -28,5 +28,6 @@
     gleam
     karabiner-elements
     mise
+    vlang
   ];
 }

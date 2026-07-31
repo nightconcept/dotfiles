@@ -58,6 +58,7 @@
     # User-space emulator binary only. Transparent foreign ELF execution
     # still requires system binfmt registration outside Home Manager.
     qemu-user
+    vlang
     vlc
     vscode
     xdg-utils
