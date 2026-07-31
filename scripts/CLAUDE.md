@@ -21,7 +21,6 @@ The script:
 |--------|---------|
 | `add-host-to-sops.sh` | Register a new host's key with SOPS |
 | `barrett-setup.sh` | Initial barrett server setup |
-| `buzz-agents.sh` | Start/stop the codex/claude-code/goose ACP harnesses against the local Buzz relay (wraps block/buzz's own script) |
 | `setup-keys.sh` | SSH key setup |
 | `install-terminal.sh` | Install terminal emulator (Ghostty/WezTerm) |
 | `switch-to-upstream-nix.sh` | Switch from distro Nix to upstream |

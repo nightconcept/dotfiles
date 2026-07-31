@@ -12,7 +12,6 @@
     ./gaming.nix
     ./ghostty
     ./herdr.nix
-    ./goose.nix
     ./mise.nix
     ./git.nix
     ./nvim
