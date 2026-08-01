@@ -24,6 +24,7 @@ yuki.packages {
     "openssh",
     "pipx",
     "pnpm",
+    "reasonix",
     "ripgrep",
     "rustup",
     "sed",

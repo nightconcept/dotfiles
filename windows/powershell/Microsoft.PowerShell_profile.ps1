@@ -253,6 +253,11 @@ if (Test-Path($ChocolateyProfile)) {
 ## Enable zoxide calls
 Invoke-Expression (& { (zoxide init powershell | Out-String) })
 
+## Enable mise calls
+if (Test-CommandExists mise) {
+    Invoke-Expression (& mise activate pwsh | Out-String)
+}
+
 ## Final Line to set prompt
 $starshipConfigCandidates = @(
     if ($env:DOTFILES_DIR) { Join-Path $env:DOTFILES_DIR "shared\starship.toml" },
