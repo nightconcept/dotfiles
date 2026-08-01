@@ -36,7 +36,7 @@ DEFAULT_WARMUP_N_PREDICT = 64
 DEFAULT_PINNED_PORT = 8080
 DEFAULT_MASTER_PORT = 8081
 
-MODEL_PATH = Path("/opt/llm-models/Qwen3.6-35B-A3B-MTP-UD-Q5_K_XL.gguf")
+MODEL_PATH = Path("/mnt/storage/llm-models/Qwen3.6-35B-A3B-MTP-UD-Q5_K_XL.gguf")
 PINNED_SERVER = Path("/opt/llama-cpp/llama-server")
 PINNED_LIBRARY_DIR = Path("/opt/llama-cpp")
 ROCM_LIBRARY_PATH = "/opt/rocm/lib:/opt/rocm/lib64"
