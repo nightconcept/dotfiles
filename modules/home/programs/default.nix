@@ -16,6 +16,7 @@
     ./git.nix
     ./nvim
     ./pi.nix
+    ./reasonix.nix
     ./rofi.nix
     ./shell
     ./spotify.nix
