@@ -3,7 +3,7 @@ yuki.packages {
     "@anthropic-ai/claude-code",
     "@google/gemini-cli",
     "@openai/codex",
-    "@mariozechner/pi-coding-agent",
+    "@earendil-works/pi-coding-agent",
     "npm-check-updates",
   },
 }
