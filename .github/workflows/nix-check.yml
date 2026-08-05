@@ -14,15 +14,12 @@ jobs:
     env:
       NIX_CONFIG: "experimental-features = nix-command flakes"
     steps:
-      - name: Install Node (required by actions/checkout)
+      - name: Checkout
         run: |
           set -eux
-          nix profile install nixpkgs#nodejs -L
-          echo "$HOME/.nix-profile/bin" >> "$GITHUB_PATH"
-
-      - uses: actions/checkout@v4
-        with:
-          submodules: recursive
+          git clone --recursive "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}.git" "$GITHUB_WORKSPACE"
+          cd "$GITHUB_WORKSPACE"
+          git checkout "${GITHUB_SHA}"
 
       - name: Flake eval
         run: nix flake eval --json > /dev/null
