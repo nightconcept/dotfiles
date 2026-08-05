@@ -1,0 +1,23 @@
+name: Nix Flake Check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: [self-hosted, linux]
+    container:
+      image: nixos/nix:latest
+      options: --user root
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Flake check
+        run: nix flake check
+
+      - name: Format check
+        run: nix fmt --check
