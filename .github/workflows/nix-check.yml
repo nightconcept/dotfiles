@@ -14,7 +14,7 @@ jobs:
     steps:
       - name: Install Node (required by actions/checkout)
         run: |
-          nix-env -iA nixpkgs.nodejs
+          nix profile install nixpkgs#nodejs --extra-experimental-features "nix-command flakes"
           echo "$HOME/.nix-profile/bin" >> "$GITHUB_PATH"
 
       - uses: actions/checkout@v4
