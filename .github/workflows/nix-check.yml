@@ -12,6 +12,11 @@ jobs:
       image: nixos/nix:latest
       options: --user root
     steps:
+      - name: Install Node (required by actions/checkout)
+        run: |
+          nix-env -iA nixpkgs.nodejs
+          echo "$HOME/.nix-profile/bin" >> "$GITHUB_PATH"
+
       - uses: actions/checkout@v4
         with:
           submodules: recursive
