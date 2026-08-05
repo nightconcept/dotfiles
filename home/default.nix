@@ -130,10 +130,12 @@ in
       ++ hostConfig.profiles
       ++ hostConfig.extraImports;
 
-    home = lib.optionalAttrs (hostConfig.username != "") {
-      username = lib.mkForce hostConfig.username;
-    } // lib.optionalAttrs (hostConfig.homeDirectory != "") {
-      homeDirectory = lib.mkForce hostConfig.homeDirectory;
-    };
+    home =
+      lib.optionalAttrs (hostConfig.username != "") {
+        username = lib.mkForce hostConfig.username;
+      }
+      // lib.optionalAttrs (hostConfig.homeDirectory != "") {
+        homeDirectory = lib.mkForce hostConfig.homeDirectory;
+      };
   }
   // hostConfig.extraConfig

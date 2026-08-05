@@ -125,7 +125,6 @@ in {
         "credential \"https://forge.solivan.dev\"" = {
           helper = "!f() { echo \"username=nightconcept\"; echo \"password=$(cat ~/.local/share/sops/secrets/forgejo_git_token 2>/dev/null || echo 'token-not-found')\"; }; f";
         };
-
       };
     };
 

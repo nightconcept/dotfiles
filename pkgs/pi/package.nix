@@ -41,7 +41,7 @@ buildNpmPackage (finalAttrs: {
   npmWorkspace = "packages/coding-agent";
 
   # Skip native module rebuild for unneeded workspaces
-  npmRebuildFlags = [ "--ignore-scripts" ];
+  npmRebuildFlags = ["--ignore-scripts"];
 
   nativeBuildInputs = [
     makeBinaryWrapper

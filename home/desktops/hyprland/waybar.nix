@@ -15,7 +15,7 @@
 
       systemd = {
         enable = true;
-        targets = [ "hyprland-session.target" ];
+        targets = ["hyprland-session.target"];
       };
 
       settings = {

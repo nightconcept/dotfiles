@@ -127,7 +127,11 @@ in {
           else "false"
         }
         FORGEJO_ACTIONS_URL=${cfg.actionsUrl}
-        FORGEJO_SIGNING_ENABLED=${if cfg.enableCommitSigning then "true" else "false"}
+        FORGEJO_SIGNING_ENABLED=${
+          if cfg.enableCommitSigning
+          then "true"
+          else "false"
+        }
         FORGEJO_SIGNING_KEY=${cfg.signingKey}
         FORGEJO_SIGNING_NAME=${cfg.signingName}
         FORGEJO_SIGNING_EMAIL=${cfg.signingEmail}

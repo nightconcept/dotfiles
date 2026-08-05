@@ -98,7 +98,7 @@
     nextcloud.enable = false;
     forgejo = {
       enable = true;
-      signingKey = "1C5E44D950920340";  # Your GPG key ID
+      signingKey = "1C5E44D950920340"; # Your GPG key ID
       signingName = "Danny Solivan";
       signingEmail = "dark@nightconcept.net";
     };

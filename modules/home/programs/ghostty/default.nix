@@ -79,37 +79,40 @@ in {
         ];
 
         # Platform-specific keybindings
-        keybind = if pkgs.stdenv.isDarwin then [
-          # macOS keybindings (CMD modifier)
-          # Disable new_tab to avoid conflicts with tiling window managers (use splits instead)
-          "cmd+t=unbind"
-          "cmd+w=close_surface"
-          "cmd+enter=toggle_fullscreen"
-          "cmd+shift+left_bracket=previous_tab"
-          "cmd+shift+right_bracket=next_tab"
-          "cmd+k=clear_screen"
-          "cmd+r=reload_config"
+        keybind =
+          if pkgs.stdenv.isDarwin
+          then [
+            # macOS keybindings (CMD modifier)
+            # Disable new_tab to avoid conflicts with tiling window managers (use splits instead)
+            "cmd+t=unbind"
+            "cmd+w=close_surface"
+            "cmd+enter=toggle_fullscreen"
+            "cmd+shift+left_bracket=previous_tab"
+            "cmd+shift+right_bracket=next_tab"
+            "cmd+k=clear_screen"
+            "cmd+r=reload_config"
 
-          # Disable cmd+1-9 to avoid conflicts with workspace switching
-          "cmd+one=unbind"
-          "cmd+two=unbind"
-          "cmd+three=unbind"
-          "cmd+four=unbind"
-          "cmd+five=unbind"
-          "cmd+six=unbind"
-          "cmd+seven=unbind"
-          "cmd+eight=unbind"
-          "cmd+nine=unbind"
-        ] else [
-          # Linux keybindings (CTRL modifier)
-          "ctrl+shift+t=new_tab"
-          "ctrl+shift+w=close_surface"
-          "ctrl+shift+enter=toggle_fullscreen"
-          "ctrl+shift+left_bracket=previous_tab"
-          "ctrl+shift+right_bracket=next_tab"
-          "ctrl+shift+k=clear_screen"
-          "ctrl+shift+r=reload_config"
-        ];
+            # Disable cmd+1-9 to avoid conflicts with workspace switching
+            "cmd+one=unbind"
+            "cmd+two=unbind"
+            "cmd+three=unbind"
+            "cmd+four=unbind"
+            "cmd+five=unbind"
+            "cmd+six=unbind"
+            "cmd+seven=unbind"
+            "cmd+eight=unbind"
+            "cmd+nine=unbind"
+          ]
+          else [
+            # Linux keybindings (CTRL modifier)
+            "ctrl+shift+t=new_tab"
+            "ctrl+shift+w=close_surface"
+            "ctrl+shift+enter=toggle_fullscreen"
+            "ctrl+shift+left_bracket=previous_tab"
+            "ctrl+shift+right_bracket=next_tab"
+            "ctrl+shift+k=clear_screen"
+            "ctrl+shift+r=reload_config"
+          ];
       };
     };
 

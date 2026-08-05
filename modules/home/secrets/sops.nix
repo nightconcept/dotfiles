@@ -109,7 +109,7 @@ in {
         # Auto-deploy sops-nix secrets on login (WSL workaround)
         [ -f ~/.config/sops-nix/auto-deploy.sh ] && source ~/.config/sops-nix/auto-deploy.sh
       '';
-      force = true;  # Overwrite existing file
+      force = true; # Overwrite existing file
     };
 
     # For Fish: Use the proper config option
