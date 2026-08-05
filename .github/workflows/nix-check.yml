@@ -8,13 +8,13 @@ on:
 jobs:
   check:
     runs-on: linux
-    container:
-      image: nixos/nix:latest
-      options: --user root
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@v14
 
       - name: Flake check
         run: nix flake check
