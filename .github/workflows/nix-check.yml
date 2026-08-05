@@ -8,20 +8,16 @@ on:
 jobs:
   check:
     runs-on: linux
+    container:
+      image: nixos/nix:latest
+      options: --user root
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
-
-      - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@v14
 
       - name: Flake eval
         run: nix flake eval --json > /dev/null
 
       - name: Format check
         run: nix fmt -- .
-
-      - name: Flake metadata
-        run: nix flake metadata --json > /dev/null
-
