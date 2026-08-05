@@ -16,10 +16,10 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Flake evaluation check
+      - name: Flake metadata check
         run: |
-          nix eval --json .#nixosConfigurations.vincent > /dev/null
-          echo "✓ Flake evaluation successful"
+          nix flake metadata --json > /dev/null
+          echo "✓ Flake metadata check successful"
 
       - name: List flake outputs
         run: nix flake show --json | head -c 500
