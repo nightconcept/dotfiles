@@ -17,3 +17,6 @@ __pycache__/
 .venv
 pyinfra-debug.log
 reasonix.toml
+
+# Traefik ACME state (runtime-generated, contains private keys)
+modules/nixos/services/docker/containers/traefik/config/acme.json
