@@ -97,7 +97,6 @@
       signingName = "Danny Solivan";
       signingEmail = "dark@nightconcept.net";
     };
-    blog.enable = true;
     zotero-webdav.enable = true;
     opengist.enable = true;
   };
