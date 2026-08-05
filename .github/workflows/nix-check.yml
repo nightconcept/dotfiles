@@ -22,7 +22,7 @@ jobs:
           git checkout "${GITHUB_SHA}"
 
       - name: Flake check
-        run: nix flake check
+        run: nix flake check --all-systems
 
       - name: Format check
         run: nix fmt -- --check .
