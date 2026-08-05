@@ -17,13 +17,10 @@ in {
     home.packages =
       (with pkgs; [
         alejandra
-        any-nix-shell
         bat
         btop
         codex
         delta
-        desktop-file-utils
-        devenv
         duf
         eza
         fastfetch
@@ -32,13 +29,9 @@ in {
         jq
         just
         lazygit
-        lua51Packages.lua
         mosh
         ncdu
-        nix-prefetch-github
-        nixpkgs-review
         nmap
-        nodejs_24
         opencode
         ripgrep
         rsync

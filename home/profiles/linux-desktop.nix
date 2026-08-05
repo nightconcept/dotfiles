@@ -29,7 +29,8 @@
 
   modules.home.programs = {
     chromium.enable = true;
-    mise.enable = true;
+    dev-languages.enable = true;
+    dev-tools.enable = true;
     # Use configOnly - install ghostty manually via native package manager
     ghostty.configOnly = true;
     herdr.enable = true;
@@ -47,10 +48,8 @@
   fonts.fontconfig.enable = true;
 
   home.packages = with pkgs; [
-    beamPackages.erlang
     github-desktop
     gitnuro
-    gleam
     kdePackages.xdg-desktop-portal-kde
     nerd-fonts.fira-code
     nerd-fonts.fira-mono
@@ -58,7 +57,6 @@
     # User-space emulator binary only. Transparent foreign ELF execution
     # still requires system binfmt registration outside Home Manager.
     qemu-user
-    vlang
     vlc
     vscode
     xdg-utils

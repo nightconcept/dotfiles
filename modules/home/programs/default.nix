@@ -6,6 +6,8 @@
     ./chromium.nix
     ./claude-code.nix
     ./common.nix
+    ./dev-languages.nix
+    ./dev-tools.nix
     ./direnv.nix
     ./firefox.nix
     ./librewolf.nix

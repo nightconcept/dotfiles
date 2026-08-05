@@ -13,6 +13,8 @@
 
   modules.home.programs = {
     chromium.enable = true;
+    dev-languages.enable = true;
+    dev-tools.enable = true;
     gaming.enable = true;
     ghostty.enable = true;
     herdr.enable = true;
@@ -33,17 +35,13 @@
   fonts.fontconfig.enable = true;
 
   home.packages = with pkgs; [
-    beamPackages.erlang
     firefox
     github-desktop
-    gleam
     kdePackages.xdg-desktop-portal-kde
     librewolf
     nerd-fonts.fira-code
     nerd-fonts.fira-mono
     obsidian
-    uv
-    vlang
     vlc
     vscode
     xdg-utils

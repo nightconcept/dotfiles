@@ -11,6 +11,8 @@
   ];
 
   modules.home.programs = {
+    dev-languages.enable = true;
+    dev-tools.enable = true;
     ghostty.enable = true;
     herdr.enable = true;
     zotero.enable = true;
@@ -24,10 +26,6 @@
   fonts.fontconfig.enable = true;
 
   home.packages = with pkgs; [
-    beamPackages.erlang
-    gleam
     karabiner-elements
-    mise
-    vlang
   ];
 }
