@@ -11,8 +11,8 @@ jobs:
     container:
       image: nixos/nix:latest
       options: --user root
-    env:
-      NIX_CONFIG: "experimental-features = nix-command flakes"
+      env:
+        NIX_CONFIG: "experimental-features = nix-command flakes"
     steps:
       - name: Checkout
         run: |
