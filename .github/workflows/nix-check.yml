@@ -24,5 +24,20 @@ jobs:
       - name: Flake check
         run: nix flake check --all-systems
 
+      - name: Home configurations check
+        run: |
+          set -eux
+          for cfg in desktop laptop server; do
+            USER=danny HOME=/home/danny nix eval --impure --raw ".#homeConfigurations.${cfg}.activationPackage.drvPath"
+          done
+
+      - name: Darwin configurations check
+        continue-on-error: true
+        run: |
+          set -eux
+          for cfg in waver merlin; do
+            nix eval --raw ".#darwinConfigurations.${cfg}.config.system.build.toplevel.drvPath"
+          done
+
       - name: Format check
         run: nix fmt -- --check .
