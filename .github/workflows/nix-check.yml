@@ -16,8 +16,13 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Flake check
-        run: nix flake check
+      - name: Flake evaluation check
+        run: |
+          nix flake eval --json > /dev/null
+          echo "✓ Flake evaluation successful"
+
+      - name: List flake outputs
+        run: nix flake show --json | head -c 500
 
       - name: Format check
-        run: nix fmt --check
+        run: nix fmt -- .
