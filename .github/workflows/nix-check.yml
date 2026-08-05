@@ -16,8 +16,12 @@ jobs:
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@v14
 
-      - name: Flake check
-        run: nix flake check
+      - name: Flake eval
+        run: nix flake eval --json > /dev/null
 
       - name: Format check
         run: nix fmt -- .
+
+      - name: Flake metadata
+        run: nix flake metadata --json > /dev/null
+
