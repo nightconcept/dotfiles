@@ -18,7 +18,7 @@ jobs:
 
       - name: Flake evaluation check
         run: |
-          nix flake eval --json > /dev/null
+          nix eval --json .#nixosConfigurations.vincent > /dev/null
           echo "✓ Flake evaluation successful"
 
       - name: List flake outputs
