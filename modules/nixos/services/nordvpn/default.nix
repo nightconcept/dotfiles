@@ -12,8 +12,10 @@
   moduleLib = import ../../../../lib/module {inherit lib;};
   inherit (moduleLib) mkBoolOpt mkOpt enabled disabled;
 
-  # Use the nordvpn package from the flake
-  nordVpnPkg = inputs.nordvpn-flake.packages.${pkgs.stdenv.hostPlatform.system}.default;
+  # Use the nordvpn package from the flake, substituting buildFHSEnv for deprecated buildFHSEnvChroot
+  nordVpnPkg = pkgs.callPackage "${inputs.nordvpn-flake}/nordvpn.nix" {
+    buildFHSEnvChroot = pkgs.buildFHSEnv;
+  };
 in {
   options.modules.nixos.services.nordvpn = {
     enable = mkBoolOpt false "Enable the NordVPN daemon and CLI client from nordvpn-flake";
