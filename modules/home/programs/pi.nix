@@ -30,7 +30,6 @@
       };
     };
   });
-
 in {
   options.modules.home.programs.pi = {
     enable = mkBoolOpt true "Enable pi terminal coding harness";

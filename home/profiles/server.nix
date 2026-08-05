@@ -19,8 +19,8 @@
 
   # Additional server-specific packages
   home.packages = with pkgs; [
-    just       # task runner — used for pyinfra deployment recipes
+    just # task runner — used for pyinfra deployment recipes
     lazydocker
-    uv         # Python package manager — used by pyinfra invocations
+    uv # Python package manager — used by pyinfra invocations
   ];
 }

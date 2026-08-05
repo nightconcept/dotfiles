@@ -46,14 +46,18 @@
   home = {
     username = lib.mkDefault (builtins.getEnv "USER");
     homeDirectory = lib.mkDefault (
-      let home = builtins.getEnv "HOME";
-      in if home != "" then home else "/var/empty"
+      let
+        home = builtins.getEnv "HOME";
+      in
+        if home != ""
+        then home
+        else "/var/empty"
     );
     stateVersion = "23.11";
 
     # Essential system packages
     packages = with pkgs; [
-      openssh  # Needed for git commit signing with SSH keys
+      openssh # Needed for git commit signing with SSH keys
       kondo
     ];
   };

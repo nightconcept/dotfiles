@@ -104,7 +104,11 @@ in {
 
         container:
           network: ""
-          privileged: ${if cfg.enablePrivileged then "true" else "false"}
+          privileged: ${
+          if cfg.enablePrivileged
+          then "true"
+          else "false"
+        }
           options: ""
           workdir_parent: ""
           valid_volumes: []
@@ -128,45 +132,45 @@ in {
               - runner-network
 
         ${lib.concatStringsSep "\n" (lib.genList (i: let
-          runnerNum = i + 1;
-        in ''
-          forgejo-runner-${toString runnerNum}:
-            image: ${cfg.image}
-            container_name: forgejo-runner-${toString runnerNum}
-            restart: unless-stopped
-            depends_on:
-              - docker-in-docker
-            environment:
-              DOCKER_HOST: 'tcp://docker-in-docker:2375'
-              FORGEJO_INSTANCE_URL: '${cfg.instanceUrl}'
-              FORGEJO_RUNNER_NAME: '${cfg.runnerName}-${toString runnerNum}'
-              FORGEJO_RUNNER_LABELS: '${lib.concatStringsSep "," cfg.labels}'
-        ${lib.concatStringsSep "\n" (lib.mapAttrsToList (name: value: "      ${name}: '${value}'") cfg.environment)}
-            env_file:
-              - ${containerPath}/.env
-            volumes:
-              - forgejo-runner-data-${toString runnerNum}:/data
-              - ${containerPath}/config/config.yml:/data/config.yml:ro
-            networks:
-              - runner-network
-            user: "0:0"
-            command:
-              - sh
-              - -c
-              - |
-                cd /data
-                if [ ! -f .runner ]; then
-                  sleep 5
-                  echo "Registering runner: ${cfg.runnerName}-${toString runnerNum}"
-                  forgejo-runner register --no-interactive \
-                    --instance "${cfg.instanceUrl}" \
-                    --token "''${FORGEJO_RUNNER_REGISTRATION_TOKEN}" \
-                    --name "${cfg.runnerName}-${toString runnerNum}" \
-                    --labels "${lib.concatStringsSep "," cfg.labels}"
-                fi
-                forgejo-runner daemon --config /data/config.yml
-        '')
-        cfg.replicas)}
+            runnerNum = i + 1;
+          in ''
+              forgejo-runner-${toString runnerNum}:
+                image: ${cfg.image}
+                container_name: forgejo-runner-${toString runnerNum}
+                restart: unless-stopped
+                depends_on:
+                  - docker-in-docker
+                environment:
+                  DOCKER_HOST: 'tcp://docker-in-docker:2375'
+                  FORGEJO_INSTANCE_URL: '${cfg.instanceUrl}'
+                  FORGEJO_RUNNER_NAME: '${cfg.runnerName}-${toString runnerNum}'
+                  FORGEJO_RUNNER_LABELS: '${lib.concatStringsSep "," cfg.labels}'
+            ${lib.concatStringsSep "\n" (lib.mapAttrsToList (name: value: "      ${name}: '${value}'") cfg.environment)}
+                env_file:
+                  - ${containerPath}/.env
+                volumes:
+                  - forgejo-runner-data-${toString runnerNum}:/data
+                  - ${containerPath}/config/config.yml:/data/config.yml:ro
+                networks:
+                  - runner-network
+                user: "0:0"
+                command:
+                  - sh
+                  - -c
+                  - |
+                    cd /data
+                    if [ ! -f .runner ]; then
+                      sleep 5
+                      echo "Registering runner: ${cfg.runnerName}-${toString runnerNum}"
+                      forgejo-runner register --no-interactive \
+                        --instance "${cfg.instanceUrl}" \
+                        --token "''${FORGEJO_RUNNER_REGISTRATION_TOKEN}" \
+                        --name "${cfg.runnerName}-${toString runnerNum}" \
+                        --labels "${lib.concatStringsSep "," cfg.labels}"
+                    fi
+                    forgejo-runner daemon --config /data/config.yml
+          '')
+          cfg.replicas)}
 
         volumes:
         ${lib.concatStringsSep "\n" (lib.genList (i: "  forgejo-runner-data-${toString (i + 1)}:") cfg.replicas)}

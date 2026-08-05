@@ -8,8 +8,7 @@
   lib,
   stdenv,
   fetchurl,
-}:
-let
+}: let
   version = "1.18.0";
 
   bins = {
@@ -34,32 +33,32 @@ let
   system = stdenv.hostPlatform.system;
   bin = bins.${system} or (throw "reasonix: no prebuilt binary for ${system}");
 in
-stdenv.mkDerivation {
-  pname = "reasonix";
-  inherit version;
+  stdenv.mkDerivation {
+    pname = "reasonix";
+    inherit version;
 
-  src = fetchurl {
-    url = bin.url;
-    hash = bin.hash;
-  };
+    src = fetchurl {
+      url = bin.url;
+      hash = bin.hash;
+    };
 
-  # Release archives are flat (binary + docs at top level), not wrapped in a dir
-  sourceRoot = ".";
+    # Release archives are flat (binary + docs at top level), not wrapped in a dir
+    sourceRoot = ".";
 
-  dontStrip = true;
+    dontStrip = true;
 
-  installPhase = ''
-    runHook preInstall
-    install -Dm755 reasonix "$out/bin/reasonix"
-    runHook postInstall
-  '';
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 reasonix "$out/bin/reasonix"
+      runHook postInstall
+    '';
 
-  meta = {
-    description = "DeepSeek-native AI coding agent for the terminal (deepseek-reasonix)";
-    homepage = "https://github.com/esengine/DeepSeek-Reasonix";
-    changelog = "https://github.com/esengine/DeepSeek-Reasonix/releases/tag/v${version}";
-    license = lib.licenses.mit;
-    mainProgram = "reasonix";
-    platforms = builtins.attrNames bins;
-  };
-}
+    meta = {
+      description = "DeepSeek-native AI coding agent for the terminal (deepseek-reasonix)";
+      homepage = "https://github.com/esengine/DeepSeek-Reasonix";
+      changelog = "https://github.com/esengine/DeepSeek-Reasonix/releases/tag/v${version}";
+      license = lib.licenses.mit;
+      mainProgram = "reasonix";
+      platforms = builtins.attrNames bins;
+    };
+  }
