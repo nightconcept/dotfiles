@@ -95,7 +95,6 @@
     formatter = {
       x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.alejandra;
       aarch64-linux = nixpkgs.legacyPackages.aarch64-linux.alejandra;
-      x86_64-darwin = nixpkgs.legacyPackages.x86_64-darwin.alejandra;
       aarch64-darwin = nixpkgs.legacyPackages.aarch64-darwin.alejandra;
     };
   };
