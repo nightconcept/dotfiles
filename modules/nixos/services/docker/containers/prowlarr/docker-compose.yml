@@ -34,7 +34,6 @@ services:
       - "traefik.http.services.prowlarr.loadbalancer.server.port=9696"
       - "traefik.docker.network=proxy"
       - "com.centurylinklabs.watchtower.enable=true"
-      - 'traefik.http.routers.prowlarr-secure.middlewares=authelia@docker'
 
 networks:
   proxy:

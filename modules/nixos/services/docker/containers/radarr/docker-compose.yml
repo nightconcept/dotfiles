@@ -45,7 +45,6 @@ services:
       - "traefik.http.services.radarr.loadbalancer.server.port=7878"
       - "traefik.docker.network=proxy"
       - "com.centurylinklabs.watchtower.enable=true"
-      - 'traefik.http.routers.radarr-secure.middlewares=authelia@docker'
     privileged: false
 
 networks:

@@ -36,11 +36,6 @@ in {
       description = "Path to Uptime Kuma data";
     };
 
-    useAuthelia = lib.mkOption {
-      type = lib.types.bool;
-      default = false;
-      description = "Whether to use Authelia for authentication";
-    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -66,11 +61,6 @@ in {
         DATA_PATH=${cfg.dataPath}
         PORT=${toString cfg.port}
         DOMAIN=${cfg.subdomain}.${cfg.domain}
-        USE_AUTHELIA=${
-          if cfg.useAuthelia
-          then "true"
-          else "false"
-        }
         EOF
       '';
 

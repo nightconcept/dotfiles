@@ -81,26 +81,6 @@ in {
           mode = "0400";
         };
 
-        "services/authelia/jwt_secret" = {
-          owner = "root";
-          mode = "0400";
-        };
-        "services/authelia/session_secret" = {
-          owner = "root";
-          mode = "0400";
-        };
-        "services/authelia/encryption_key" = {
-          owner = "root";
-          mode = "0400";
-        };
-        "services/authelia/hmac_secret" = {
-          owner = "root";
-          mode = "0400";
-        };
-        "services/authelia/storage_encryption_key" = {
-          owner = "root";
-          mode = "0400";
-        };
 
         "services/ddclient/password" = {
           owner = "root";

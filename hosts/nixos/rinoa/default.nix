@@ -78,11 +78,6 @@
       domain = "local.solivan.dev";
       subdomain = "crowdsec";
     };
-    authelia = {
-      enable = true;
-      domain = "local.solivan.dev";
-      subdomain = "auth";
-    };
     ddclient.enable = true;
     portainer.enable = true;
     watchtower.enable = false;

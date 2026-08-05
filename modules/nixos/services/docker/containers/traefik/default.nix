@@ -32,19 +32,6 @@ in {
       };
     };
 
-    authelia = {
-      enable = lib.mkOption {
-        type = lib.types.bool;
-        default = false;
-        description = "Enable Authelia middleware";
-      };
-
-      url = lib.mkOption {
-        type = lib.types.str;
-        default = "http://authelia:9091";
-        description = "Authelia service URL";
-      };
-    };
 
     configPath = lib.mkOption {
       type = lib.types.str;

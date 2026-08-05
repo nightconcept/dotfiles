@@ -28,7 +28,6 @@ services:
       - "traefik.http.services.readarr.loadbalancer.server.port=8787"
       - "traefik.docker.network=proxy"
       - "com.centurylinklabs.watchtower.enable=true"
-      - 'traefik.http.routers.readarr-secure.middlewares=authelia@docker'
 
 networks:
   proxy:

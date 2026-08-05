@@ -60,11 +60,6 @@ in {
       description = "Enable Traefik reverse proxy integration";
     };
 
-    enableAuthelia = lib.mkOption {
-      type = lib.types.bool;
-      default = false;
-      description = "Enable Authelia authentication";
-    };
 
     enableWatchtower = lib.mkOption {
       type = lib.types.bool;
@@ -132,17 +127,7 @@ in {
           ' ${containerPath}/docker-compose.yml
         ''}
 
-        # Configure Authelia middleware
-        ${lib.optionalString (cfg.enableTraefik && cfg.enableAuthelia) ''
-          ${pkgs.yq}/bin/yq -i -y '
-            .services.prowlarr.labels[10] = "traefik.http.routers.prowlarr-secure.middlewares=authelia@docker"
-          ' ${containerPath}/docker-compose.yml
-        ''}
-        ${lib.optionalString (cfg.enableTraefik && !cfg.enableAuthelia) ''
-          ${pkgs.yq}/bin/yq -i -y '
-            del(.services.prowlarr.labels[10])
-          ' ${containerPath}/docker-compose.yml
-        ''}
+
 
         # Update Watchtower label
         ${pkgs.yq}/bin/yq -i -y '

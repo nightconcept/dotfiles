@@ -43,7 +43,6 @@ services:
       - "traefik.http.services.searxng.loadbalancer.server.port=8080"
       - "traefik.docker.network=proxy"
       - "com.centurylinklabs.watchtower.enable=true"
-      - 'traefik.http.routers.searxng-secure.middlewares=authelia@docker'
     cap_add:
       - CHOWN
       - SETGID

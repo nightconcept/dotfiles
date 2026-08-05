@@ -6,7 +6,6 @@ http:
         - "https"
       rule: "Host(`pihole.local.solivan.dev`)"
       middlewares:
-        - authelia
         - redirect-pihole-root
         - default-headers
         - https-redirectscheme
@@ -17,7 +16,6 @@ http:
         - "https"
       rule: "Host(`pihole-proxy.local.solivan.dev`)"
       middlewares:
-        - authelia
         - redirect-pihole-root
         - default-headers
         - https-redirectscheme
@@ -289,6 +287,3 @@ http:
         - default-whitelist
         - default-headers
 
-    authelia:
-      forwardAuth:
-        address: "http://authelia:9091/api/verify?rd=https://auth.local.solivan.dev"

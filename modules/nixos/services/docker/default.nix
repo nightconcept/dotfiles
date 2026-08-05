@@ -24,10 +24,10 @@ in {
     ./containers/radarr
     ./containers/sonarr
 
-    # Add other containers as default.nix files are created
     ./containers/audiobookshelf
-    ./containers/authelia
-    ./containers/blog
+
+    # Add other containers as default.nix files are created
+
     ./containers/cloudflare-tunnel
     ./containers/ddclient
     # ./containers/enshrouded
