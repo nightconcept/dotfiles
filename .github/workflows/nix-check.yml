@@ -11,10 +11,13 @@ jobs:
     container:
       image: nixos/nix:latest
       options: --user root
+    env:
+      NIX_CONFIG: "experimental-features = nix-command flakes"
     steps:
       - name: Install Node (required by actions/checkout)
         run: |
-          nix profile install nixpkgs#nodejs --extra-experimental-features "nix-command flakes"
+          set -eux
+          nix profile install nixpkgs#nodejs -L
           echo "$HOME/.nix-profile/bin" >> "$GITHUB_PATH"
 
       - uses: actions/checkout@v4
