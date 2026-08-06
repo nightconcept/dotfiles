@@ -8,7 +8,6 @@
 }: {
   imports = [
     ./hardware-configuration.nix
-    # TODO: Add after pushing changes: ./dokploy-routing.nix  # Route traffic to Vincent's Dokploy
   ];
 
   # Bootloader configuration (override any systemd-boot settings)
@@ -64,14 +63,6 @@
       domain = "local.solivan.dev";
       dashboard.enable = true;
       # cloudflareTokenFile automatically uses SOPS when sops.enable = true
-
-      # Enable Dokploy routing to Vincent
-      dokployIntegration = {
-        enable = true;
-        host = "vincent.local"; # Use mDNS hostname
-        dashboardSubdomain = "dokploy";
-        appsSubdomain = "apps";
-      };
     };
     crowdsec = {
       enable = true;

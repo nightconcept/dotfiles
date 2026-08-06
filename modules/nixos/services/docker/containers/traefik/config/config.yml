@@ -143,16 +143,6 @@ http:
       tls: {}
       service: bank
 
-    dokploy:
-      entryPoints:
-        - "https"
-      rule: "Host(`dokploy.local.solivan.dev`)"
-      middlewares:
-        - default-headers
-        - https-redirectscheme
-      tls: {}
-      service: dokploy
-
 #endregion
 #region services
   services:
@@ -237,12 +227,6 @@ http:
       loadBalancer:
         servers:
           - url: "http://192.168.1.185:8080"
-        passHostHeader: true
-
-    dokploy:
-      loadBalancer:
-        servers:
-          - url: "http://192.168.1.185:3000"
         passHostHeader: true
 
 #endregion

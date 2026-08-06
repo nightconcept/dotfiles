@@ -61,46 +61,6 @@ in {
       description = "Path to file containing Cloudflare DNS API token";
       example = "/run/secrets/cloudflare-dns-token";
     };
-
-    dokployIntegration = {
-      enable = lib.mkOption {
-        type = lib.types.bool;
-        default = false;
-        description = "Enable routing to Dokploy instance on Vincent";
-      };
-
-      host = lib.mkOption {
-        type = lib.types.str;
-        default = "vincent.local";
-        description = "Hostname of the Dokploy server";
-      };
-
-      dashboardSubdomain = lib.mkOption {
-        type = lib.types.str;
-        default = "dokploy";
-        description = "Subdomain for Dokploy dashboard";
-      };
-
-      appsSubdomain = lib.mkOption {
-        type = lib.types.str;
-        default = "apps";
-        description = "Base subdomain for Dokploy-deployed applications (*.apps.domain)";
-      };
-
-      ports = {
-        dashboard = lib.mkOption {
-          type = lib.types.int;
-          default = 3000;
-          description = "Dokploy dashboard port";
-        };
-
-        traefik = lib.mkOption {
-          type = lib.types.int;
-          default = 8443;
-          description = "Dokploy's Traefik HTTPS port";
-        };
-      };
-    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -141,54 +101,6 @@ in {
         ''}
         ${lib.optionalString (builtins.pathExists ./config/config.yml) ''
           cp -f ${./config/config.yml} ${cfg.configPath}/config.yml
-        ''}
-
-        # Generate Dokploy routing configuration if enabled
-        ${lib.optionalString cfg.dokployIntegration.enable ''
-            cat > ${cfg.configPath}/dokploy-routing.yml <<'DOKPLOY_CONFIG'
-          # Dokploy routing configuration - auto-generated
-          http:
-            services:
-              # Dokploy dashboard service
-              dokploy-dashboard:
-                loadBalancer:
-                  servers:
-                    - url: "http://${cfg.dokployIntegration.host}:${toString cfg.dokployIntegration.ports.dashboard}"
-
-              # Dokploy Traefik service (for deployed applications)
-              dokploy-apps:
-                loadBalancer:
-                  servers:
-                    - url: "https://${cfg.dokployIntegration.host}:${toString cfg.dokployIntegration.ports.traefik}"
-                  serversTransport: dokploy-transport
-
-            routers:
-              # Route for Dokploy dashboard
-              dokploy-dashboard:
-                rule: "Host(\`${cfg.dokployIntegration.dashboardSubdomain}.${cfg.domain}\`)"
-                entryPoints:
-                  - https
-                service: dokploy-dashboard
-                tls:
-                  certResolver: cloudflare
-
-              # Wildcard route for all Dokploy-deployed applications
-              dokploy-apps:
-                rule: "HostRegexp(\`{subdomain:[a-z0-9-]+}.${cfg.dokployIntegration.appsSubdomain}.${cfg.domain}\`)"
-                entryPoints:
-                  - https
-                service: dokploy-apps
-                tls:
-                  certResolver: cloudflare
-                  domains:
-                    - main: "*.${cfg.dokployIntegration.appsSubdomain}.${cfg.domain}"
-
-            serversTransports:
-              # Transport configuration for Dokploy's Traefik
-              dokploy-transport:
-                insecureSkipVerify: true  # Skip cert verification for internal traffic
-                maxIdleConnsPerHost: 10
-          DOKPLOY_CONFIG
         ''}
 
         # Ensure acme.json exists with correct permissions

@@ -43,12 +43,8 @@
     home-manager
   ];
 
-  # Enable Docker module with Swarm support for Dokploy
-  modules.nixos.docker = {
-    enable = true;
-    # Dokploy requires Docker Swarm which needs live-restore disabled
-    swarm.enable = true;
-  };
+  # Enable Docker
+  modules.nixos.docker.enable = true;
 
   # Forgejo Runners
   modules.nixos.docker.containers.forgejo-runner = {
