@@ -81,7 +81,6 @@ in {
           mode = "0400";
         };
 
-
         "services/ddclient/password" = {
           owner = "root";
           mode = "0400";

@@ -35,7 +35,6 @@ in {
       default = "${containerPath}/data";
       description = "Path to Uptime Kuma data";
     };
-
   };
 
   config = lib.mkIf cfg.enable {

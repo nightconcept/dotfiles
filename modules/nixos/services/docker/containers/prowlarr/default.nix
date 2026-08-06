@@ -60,7 +60,6 @@ in {
       description = "Enable Traefik reverse proxy integration";
     };
 
-
     enableWatchtower = lib.mkOption {
       type = lib.types.bool;
       default = true;

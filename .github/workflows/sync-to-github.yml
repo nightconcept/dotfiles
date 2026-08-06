@@ -1,0 +1,27 @@
+name: Sync to GitHub
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  sync:
+    runs-on: linux
+    steps:
+      - name: Checkout
+        run: |
+          set -eux
+          git clone --recursive "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}.git" "$GITHUB_WORKSPACE"
+          cd "$GITHUB_WORKSPACE"
+          git checkout "${GITHUB_SHA}"
+
+      - name: Push to GitHub
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          if [ -n "${GH_TOKEN:-}" ]; then
+            git remote add github "https://${GH_TOKEN}@github.com/nightconcept/dotfiles.git"
+            git push github main --force
+          else
+            echo "GH_TOKEN not set, skipping workflow sync step"
+          fi

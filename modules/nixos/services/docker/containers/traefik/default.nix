@@ -32,7 +32,6 @@ in {
       };
     };
 
-
     configPath = lib.mkOption {
       type = lib.types.str;
       default = "${containerPath}/config";
