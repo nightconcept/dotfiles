@@ -108,6 +108,9 @@ in {
 
         # Auto-deploy sops-nix secrets on login (WSL workaround)
         [ -f ~/.config/sops-nix/auto-deploy.sh ] && source ~/.config/sops-nix/auto-deploy.sh
+
+        # Launch fish for interactive sessions; non-interactive (VS Code SSH, scripts) stays bash
+        [[ $- == *i* ]] && exec fish
       '';
       force = true; # Overwrite existing file
     };
