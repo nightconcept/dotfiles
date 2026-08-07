@@ -627,30 +627,27 @@ apply_home_manager_from_flake() {
         fi
     fi
 
-    # Change default shell to fish (all profiles use fish)
+    # Set login shell to bash (fish is launched from .bash_profile for interactive sessions)
+    # This ensures tools like VS Code Remote SSH that send bash scripts over SSH work correctly.
+    # Fish is still used for all interactive terminal sessions via the exec fish in .bash_profile.
     if true; then
-        local fish_path="$HOME/.nix-profile/bin/fish"
+        local bash_path
+        bash_path=$(command -v bash 2>/dev/null || echo "/usr/bin/bash")
 
-        if [[ -x "$fish_path" ]]; then
-            print_info "Setting default shell to fish..."
+        if [[ -x "$bash_path" ]]; then
+            print_info "Setting login shell to bash (fish will still be used interactively via .bash_profile)..."
 
-            # Add fish to /etc/shells if not already present
-            if ! grep -q "^$fish_path$" /etc/shells 2>/dev/null; then
-                print_info "Adding fish to /etc/shells..."
-                echo "$fish_path" | sudo tee -a /etc/shells > /dev/null
-            fi
-
-            # Change default shell
+            # Change default shell to bash
             if command -v chsh &> /dev/null; then
-                chsh -s "$fish_path"
-                print_success "Default shell changed to fish"
-                print_info "Please log out and log back in for shell change to take effect"
+                chsh -s "$bash_path"
+                print_success "Login shell set to bash"
+                print_info "Fish will be launched automatically for interactive sessions via .bash_profile"
             else
                 print_warning "chsh command not found, cannot change default shell"
-                print_info "To change shell manually later, run: chsh -s $fish_path"
+                print_info "To set manually, run: chsh -s $bash_path"
             fi
         else
-            print_warning "Fish shell not found at expected path: $fish_path"
+            print_warning "bash not found at: $bash_path"
         fi
     fi
 
