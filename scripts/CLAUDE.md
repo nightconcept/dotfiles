@@ -25,5 +25,4 @@ The script:
 | `install-terminal.sh` | Install terminal emulator (Ghostty/WezTerm) |
 | `switch-to-upstream-nix.sh` | Switch from distro Nix to upstream |
 | `bench-muse-glimmer.sh` | Swap terra's llama-swap to Muse Glimmer 30B, benchmark vs qwen3-35b-mtp, restore config |
-| `switch-terra-default-model.sh` | Permanently deploy Muse Glimmer 30B on terra and point Hermes's default model at it |
 | `watchtower` | One-shot update for all Docker containers on local or remote host |
