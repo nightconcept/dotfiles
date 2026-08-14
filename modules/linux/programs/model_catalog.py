@@ -72,6 +72,45 @@ MODEL_CATALOG: list[dict[str, Any]] = [
         "context": 131072,
     },
     {
+        "id": "muse-glimmer-30b",
+        "repo_id": "unsloth/Muse-Glimmer-30B-GGUF",
+        "files": [
+            "Muse-Glimmer-30B-UD-Q4_K_XL.gguf",
+            "dflash-kquant.gguf",
+            "mmproj-kquant.gguf",
+        ],
+        "args": [
+            "-m",
+            f"{MODEL_DIR}/Muse-Glimmer-30B-UD-Q4_K_XL.gguf",
+            "-md",
+            f"{MODEL_DIR}/dflash-kquant.gguf",
+            "-c",
+            "131072",
+            "-ngl",
+            "all",
+            "-fa",
+            "on",
+            "-ctk",
+            "q8_0",
+            "-ctv",
+            "q8_0",
+            "--spec-type",
+            "draft-dflash",
+            "--spec-draft-n-max",
+            "8",
+            "--mmproj",
+            f"{MODEL_DIR}/mmproj-kquant.gguf",
+            "--jinja",
+            "--host",
+            "127.0.0.1",
+            "--port",
+            "${PORT}",
+        ],
+        "aliases": ["Muse-Glimmer-30B-DFlash"],
+        "context": 131072,
+        "capabilities": {"in": ["text", "image"], "out": ["text"]},
+    },
+    {
         "id": "gemma-4-26b-mtp",
         "repo_id": "ironbcc/gemma-4-26B-A4B-it-MTP-GGUF",
         "files": [
@@ -145,6 +184,7 @@ def render_llama_swap_config() -> str:
         cmd = " ".join(
             shlex.quote(part) if part != "${PORT}" else part for part in [LLAMA_CPP_SERVER, *model["args"]]
         )
+        capabilities = model.get("capabilities", {"in": ["text"], "out": ["text"]})
         lines.extend(
             [
                 f'  "{model["id"]}":',
@@ -152,8 +192,8 @@ def render_llama_swap_config() -> str:
                 f'    proxy: "http://127.0.0.1:${{PORT}}"',
                 f"    aliases: {json.dumps(model.get('aliases', []))}",
                 "    capabilities:",
-                '      in: ["text"]',
-                '      out: ["text"]',
+                f"      in: {json.dumps(capabilities['in'])}",
+                f"      out: {json.dumps(capabilities['out'])}",
                 "      tools: true",
                 f"      context: {model['context']}",
             ]

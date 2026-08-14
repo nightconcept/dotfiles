@@ -1,6 +1,7 @@
 from modules.linux.programs.books.module import BooksModule
 from modules.linux.programs.docker import DockerModule
 from modules.linux.programs.foreign_arch import ForeignArchModule
+from modules.linux.programs.hermes import HermesModule
 from modules.linux.programs.home_manager import HomeManagerModule
 from modules.linux.programs.huggingface import HuggingFaceModule
 from modules.linux.programs.libbyrip_converter.module import LibbyRipConverterModule
@@ -26,6 +27,7 @@ hf = HuggingFaceModule()
 llama = LlamaCppModule()
 llama_swap = LlamaSwapModule()
 models = LLMModelsModule()
+hermes = HermesModule()
 
 # Deploy system foundations
 ssh.deploy()
@@ -48,4 +50,5 @@ hf.deploy()
 models.deploy()
 llama.deploy()
 llama_swap.deploy()
+hermes.deploy()
 

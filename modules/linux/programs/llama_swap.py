@@ -123,9 +123,13 @@ class LlamaSwapModule(HostModule):
             _sudo=True,
         )
         systemd.service(
-            name="Enable and start llama-swap",
+            name="Enable and restart llama-swap",
             service="llama-swap",
             running=True,
+            # Config is re-rendered every deploy; a plain `running=True` only
+            # starts the unit if it's down, so it silently ignores config
+            # changes on an already-running service. Always restart instead.
+            restarted=True,
             enabled=True,
             daemon_reload=True,
             _sudo=True,
