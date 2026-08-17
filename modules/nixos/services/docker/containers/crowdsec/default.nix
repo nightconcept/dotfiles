@@ -80,8 +80,8 @@ in {
     # CrowdSec container service
     systemd.services."docker-container-${containerName}" = {
       description = "CrowdSec Security Engine Container";
-      after = ["docker.service" "docker-network-proxy.service"];
-      requires = ["docker.service" "docker-network-proxy.service"];
+      after = ["docker.service" "docker-network-proxy.service" "sops-install-secrets.service"];
+      requires = ["docker.service" "docker-network-proxy.service" "sops-install-secrets.service"];
       wantedBy = ["multi-user.target"];
 
       preStart = ''

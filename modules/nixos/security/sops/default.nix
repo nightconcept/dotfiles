@@ -36,6 +36,11 @@ in {
       defaultSopsFile = ./common.yaml;
       defaultSopsFormat = "yaml";
 
+      # Secrets live in /run and must be re-created on every boot.  Use the
+      # systemd unit rather than the switch-only activation script so services
+      # can reliably depend on them.
+      useSystemdActivation = true;
+
       # IMPORTANT: System-level SOPS requires an age key at boot time
       # The key must be placed at /var/lib/sops-nix/key.txt
       # This is handled by the bootstrap script during installation
