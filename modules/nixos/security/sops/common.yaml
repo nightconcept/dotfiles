@@ -40,8 +40,7 @@ services:
         password: ENC[AES256_GCM,data:cAmb9tcVJ0qtq5QInXI=,iv:gCNTq3+AgeNze6t8fi3YlfxOOz/pTeWpUuygDeE2jQ0=,tag:wrQ4SHJIqvjCObYDuDicBw==,type:str]
 sops:
     age:
-        - recipient: age1a6p0xdsk0z9h6r4l43nfc63mwaukfju7cljhgvqd2wxc0ukves9swqlvfn
-          enc: |
+        - enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
             YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBlV1Q1Z1ZpSFg5V0s1RENW
             bWJZeUlBZXMvUVdoRXBhbUcvbHBqTDBEd1RrCjZUc2ZqcENqMGFWSXU2dTJnZHUr
@@ -49,7 +48,8 @@ sops:
             T3drYkFrMnpuMU5rRDM1b2dMcjcvSjAKTYIOj6uKZbeye2hjtkqb9N1tCx+T3AUF
             PymQGGlvnKRozcrkbDTCFI/gyY2A/MJTGWgPU2k+cHzu29sZGjCC4A==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2026-03-26T14:04:54Z"
-    mac: ENC[AES256_GCM,data:9DOtRpWfqNbtfU2hhnfwIedzOpKva3gRlP0ZFAc4RrB5KC6iiGfxyC65mcRkbyjdGRBUDUfjkSmWJWbuMzw5C6jJ7tqwrVPKPwK+FTfk57q9BcrkKa0y6/CplTbD3gjU8D+Vrazm8Sb5nU0CmZ4PTctV1WSNml72lD0XCf9wJZs=,iv:/G6vJp3zqGMIfBZ5w5pkpZSa59UH6hx+B7OJ6F9qxbc=,tag:bHI8O4plTtHfOpBAX3K8hw==,type:str]
+          recipient: age1a6p0xdsk0z9h6r4l43nfc63mwaukfju7cljhgvqd2wxc0ukves9swqlvfn
+    lastmodified: "2026-08-18T07:04:28Z"
+    mac: ENC[AES256_GCM,data:Jnfj1ZxJ9AhjUoFXpkKB50+EFreUqD4wqXNF5CkK+YNqbSOXgk9AuQD71EAG+03o0eCRPjzho2b7qz4K5c7itd6PE6uaa+M5cD2Ul7GJ9P4G3I9C9X9tVg1DSwratlaJWObfJ8bIH9xeBZrJ75GtLFXkqHCDrHPzpRZ6vYYYMhY=,iv:c8YcKp0s23NrIN+CaW7qPoPfjANUDYnEUXpbFIPcxhA=,tag:f4EGFLlLuj0AJpAxLJ+m2Q==,type:str]
     unencrypted_suffix: _unencrypted
     version: 3.11.0

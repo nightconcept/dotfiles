@@ -8,6 +8,7 @@
   cfg = config.modules.nixos.docker.containers.forgejo;
   containerName = "forgejo";
   containerPath = "/var/lib/docker-containers/${containerName}";
+  usesTitan = lib.hasPrefix "/mnt/titan" cfg.remoteDataPath;
 in {
   options.modules.nixos.docker.containers.forgejo = {
     enable = lib.mkEnableOption "Forgejo git forge";
@@ -98,9 +99,16 @@ in {
 
     systemd.services."docker-container-${containerName}" = {
       description = "Forgejo Git Forge Container";
-      after = ["docker.service" "docker-network-proxy.service"];
-      requires = ["docker.service" "docker-network-proxy.service"];
+      after =
+        ["docker.service" "docker-network-proxy.service"]
+        ++ lib.optionals usesTitan ["mnt-titan.mount"];
+      requires =
+        ["docker.service" "docker-network-proxy.service"]
+        ++ lib.optionals usesTitan ["mnt-titan.mount"];
       wantedBy = ["multi-user.target"];
+      unitConfig = lib.mkIf usesTitan {
+        RequiresMountsFor = [cfg.remoteDataPath];
+      };
 
       preStart = ''
         # Copy docker-compose.yml to runtime directory

@@ -136,6 +136,12 @@ main() {
     mkdir -p "$HOME/.ssh" "$HOME/.config/sops/age"
 
     # Deploy SSH private key
+    # Home Manager can leave this as a dangling link to the runtime SOPS
+    # secret after a reboot. Replace only the link; regular existing keys are
+    # still protected by the confirmation above.
+    if [ -L "$HOME/.ssh/id_sdev" ]; then
+        rm "$HOME/.ssh/id_sdev"
+    fi
     cp "id_sdev_extracted" "$HOME/.ssh/id_sdev"
     chmod 600 "$HOME/.ssh/id_sdev"
     print_success "✓ Deployed SSH private key to ~/.ssh/id_sdev"
