@@ -128,6 +128,12 @@ in {
             privileged: true
             command: ['dockerd', '-H', 'tcp://0.0.0.0:2375', '--tls=false']
             restart: unless-stopped
+            healthcheck:
+              test: ['CMD', 'docker', 'info']
+              interval: 30s
+              timeout: 10s
+              retries: 3
+              start_period: 30s
             networks:
               - runner-network
 
@@ -188,7 +194,7 @@ in {
         Type = "oneshot";
         RemainAfterExit = true;
         WorkingDirectory = containerPath;
-        ExecStart = "${pkgs.docker-compose}/bin/docker-compose up -d";
+        ExecStart = "${pkgs.docker-compose}/bin/docker-compose up -d --wait --wait-timeout 180";
         ExecStop = "${pkgs.docker-compose}/bin/docker-compose down";
         Restart = "on-failure";
       };

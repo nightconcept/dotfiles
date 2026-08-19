@@ -143,6 +143,17 @@ http:
       tls: {}
       service: bank
 
+    status:
+      entryPoints:
+        - "https"
+      rule: "Host(`status.local.solivan.dev`)"
+      middlewares:
+        - default-whitelist
+        - default-headers
+        - https-redirectscheme
+      tls: {}
+      service: status
+
 #endregion
 #region services
   services:
@@ -190,7 +201,7 @@ http:
     router:
       loadBalancer:
         servers:
-          - url: "https://192.168.1.1:80"
+          - url: "https://192.168.1.1"
         passHostHeader: true
 
     qbittorrent:
@@ -227,6 +238,12 @@ http:
       loadBalancer:
         servers:
           - url: "http://192.168.1.185:8080"
+        passHostHeader: true
+
+    status:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.1.185:3001"
         passHostHeader: true
 
 #endregion
@@ -270,4 +287,3 @@ http:
         middlewares:
         - default-whitelist
         - default-headers
-

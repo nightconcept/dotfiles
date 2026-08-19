@@ -11,5 +11,11 @@ services:
     ports:
       - "${PORT:-8191}:8191"
     restart: always
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8191/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     labels:
       - "com.centurylinklabs.watchtower.enable=true"

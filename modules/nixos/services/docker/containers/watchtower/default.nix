@@ -80,7 +80,7 @@ in {
         Type = "oneshot";
         RemainAfterExit = true;
         WorkingDirectory = containerPath;
-        ExecStart = "${pkgs.docker-compose}/bin/docker-compose up -d";
+        ExecStart = "${pkgs.docker-compose}/bin/docker-compose up -d --wait --wait-timeout 180";
         ExecStop = "${pkgs.docker-compose}/bin/docker-compose down";
       };
     };

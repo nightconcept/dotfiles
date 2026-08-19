@@ -7,6 +7,8 @@
   cfg = config.modules.nixos.docker;
 in {
   imports = [
+    ./health-check.nix
+
     # Core infrastructure
     ./containers/traefik
     ./containers/portainer
