@@ -113,17 +113,6 @@ http:
       tls: {}
       service: kosync
 
-    converter:
-      entryPoints:
-        - "https"
-      rule: "Host(`converter.local.solivan.dev`)"
-      middlewares:
-        - default-whitelist
-        - default-headers
-        - https-redirectscheme
-      tls: {}
-      service: converter
-
 #    ai:
 #      entryPoints:
 #        - "https"
@@ -237,12 +226,6 @@ http:
       loadBalancer:
         servers:
           - url: "http://192.168.1.111:17200"
-        passHostHeader: true
-
-    converter:
-      loadBalancer:
-        servers:
-          - url: "http://192.168.1.111:8086"
         passHostHeader: true
 
     ai:

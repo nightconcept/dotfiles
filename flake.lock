@@ -501,6 +501,23 @@
         "type": "github"
       }
     },
+    "libbyrip": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1783264755,
+        "narHash": "sha256-y72j1xgdLBrZF5QzgrJ+S62lUEOfXH0LXpHhPkkog40=",
+        "ref": "refs/heads/main",
+        "rev": "f10d2a90b165a35916239f636a59b356b94c8327",
+        "revCount": 98,
+        "type": "git",
+        "url": "https://forge.solivan.dev/nightconcept/libbyrip.git"
+      },
+      "original": {
+        "rev": "f10d2a90b165a35916239f636a59b356b94c8327",
+        "type": "git",
+        "url": "https://forge.solivan.dev/nightconcept/libbyrip.git"
+      }
+    },
     "nix-darwin": {
       "inputs": {
         "nixpkgs": [
@@ -786,6 +803,7 @@
         "home-manager": "home-manager",
         "impermanence": "impermanence",
         "lazyvim-nixvim": "lazyvim-nixvim",
+        "libbyrip": "libbyrip",
         "nix-darwin": "nix-darwin_2",
         "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs_3",

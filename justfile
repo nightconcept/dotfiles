@@ -63,14 +63,18 @@ clean:
 terra:
     uv run --with pyinfra --with requests pyinfra -y @local hosts/linux/terra/main.py
 
+# Build locally and switch the Rinoa NixOS host over SSH
+deploy-rinoa:
+    ./scripts/deploy-rinoa.sh --yes
+
 # Run the LibbyRip converter locally without Traefik
 dev:
     mkdir -p .local/state/libbyrip-converter-dev
-    LIBBYRIP_REPO="${PWD}/../LibbyRip" LIBBYRIP_DATA_DIR="${PWD}/.local/state/libbyrip-converter-dev" docker compose -f modules/linux/programs/libbyrip_converter/docker-compose.dev.yml up -d --build
+    LIBBYRIP_REPO="${PWD}/../LibbyRip" LIBBYRIP_DATA_DIR="${PWD}/.local/state/libbyrip-converter-dev" docker compose -f modules/nixos/services/docker/containers/libbyrip-converter/docker-compose.dev.yml up -d --build
 
 # Stop the local LibbyRip converter dev container
 dev-down:
-    LIBBYRIP_REPO="${PWD}/../LibbyRip" LIBBYRIP_DATA_DIR="${PWD}/.local/state/libbyrip-converter-dev" docker compose -f modules/linux/programs/libbyrip_converter/docker-compose.dev.yml down
+    LIBBYRIP_REPO="${PWD}/../LibbyRip" LIBBYRIP_DATA_DIR="${PWD}/.local/state/libbyrip-converter-dev" docker compose -f modules/nixos/services/docker/containers/libbyrip-converter/docker-compose.dev.yml down
 
 # Start the Palworld dedicated server (1.0-ready; not deployed on this machine yet)
 palworld:

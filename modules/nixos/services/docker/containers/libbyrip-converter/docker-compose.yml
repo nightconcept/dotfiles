@@ -1,0 +1,32 @@
+services:
+  libbyrip-converter:
+    build:
+      context: ${LIBBYRIP_SOURCE}
+      dockerfile: webapp/Dockerfile
+    container_name: libbyrip-converter
+    restart: unless-stopped
+    networks:
+      - proxy
+    volumes:
+      - ${DATA_PATH}:/data
+      - ${UPLOAD_PATH}:/data/uploads
+      - ${OUTPUT_PATH}:/data/output
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/', timeout=5).read()"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.converter.entrypoints=https"
+      - "traefik.http.routers.converter.rule=Host(`${SUBDOMAIN}.${DOMAIN}`)"
+      - "traefik.http.routers.converter.tls=true"
+      - "traefik.http.routers.converter.middlewares=default-whitelist@file,default-headers@file"
+      - "traefik.http.routers.converter.service=converter"
+      - "traefik.http.services.converter.loadbalancer.server.port=8080"
+      - "traefik.docker.network=proxy"
+
+networks:
+  proxy:
+    external: true

@@ -60,6 +60,11 @@
       url = "github:azuwis/lazyvim-nixvim";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    libbyrip = {
+      url = "git+https://forge.solivan.dev/nightconcept/libbyrip.git?rev=f10d2a90b165a35916239f636a59b356b94c8327";
+      flake = false;
+    };
   };
 
   outputs = {

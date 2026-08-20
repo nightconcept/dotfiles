@@ -20,6 +20,7 @@ in {
 
     # Media services
     ./containers/jellyfin
+    ./containers/libbyrip-converter
 
     # *arr stack
     ./containers/prowlarr

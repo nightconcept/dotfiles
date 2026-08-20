@@ -1,0 +1,4 @@
+interface:
+  display_name: "Rinoa Migration"
+  short_description: "Move Docker services safely to Rinoa"
+  default_prompt: "Use $rinoa-migration to move a service to Rinoa safely."

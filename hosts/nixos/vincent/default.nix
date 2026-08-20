@@ -150,7 +150,6 @@ in {
             accepted_statuscodes = ["200-399" "401"];
           })
         (http "Terra Calibre Web direct" "http://192.168.1.111:8083/")
-        (http "Terra converter direct" "http://192.168.1.111:8086/")
         ((http "Terra Paseo direct" "http://192.168.1.111:6767/")
           // {
             accepted_statuscodes = ["200-399" "401" "403"];
