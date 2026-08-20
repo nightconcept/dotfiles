@@ -12,7 +12,7 @@ Available container modules include:
 - ***arr Stack**: sonarr, radarr, prowlarr, readarr, flaresolverr
 - **Books**: audiobookshelf, calibre, calibre-web, readarr-books
 - **Home Automation**: homepage, uptime-kuma
-- **Infrastructure**: traefik, portainer, watchtower, cloudflare-tunnel
+- **Infrastructure**: traefik, portainer, watchtower, cloudflare-tunnel, headscale
 - **Authentication**: vaultwarden
 - **Development**: forgejo, forgejo-runner, paseo
 - **Gaming**: minecraft, enshrouded, palworld

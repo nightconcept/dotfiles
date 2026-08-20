@@ -76,7 +76,7 @@ The home configuration uses a profile-based system where `home/default.nix` sele
 - `merlin` - Mac Mini M1 HTPC
 
 ### Active Linux Hosts (Non-Nix, managed via pyinfra)
-- `terra` - Ubuntu-based LLM inference server; home-manager profile: `desktop`
+- `terra` - Ubuntu-based LLM inference server; home-manager profile: `desktop`; reachable remotely via Tailscale (client) against a self-hosted Headscale control server on rinoa (no port forwarding)
 - `barrett` - Debian VPN torrent server with NordVPN; home-manager profile: `server`
 
 Deploy either host with: `flake-rebuild <hostname>` (auto-detects local vs remote)

@@ -37,6 +37,7 @@ in {
     ./containers/flaresolverr
     ./containers/forgejo
     ./containers/freshrss
+    ./containers/headscale
     ./containers/homepage
     ./containers/immich
     # ./containers/minecraft

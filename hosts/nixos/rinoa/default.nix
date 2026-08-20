@@ -81,6 +81,7 @@
       "forgejo"
       "zotero-webdav"
       "opengist"
+      "headscale"
     ];
     mounts = ["/mnt/titan"];
     httpChecks = [
@@ -198,6 +199,7 @@
     };
     zotero-webdav.enable = true;
     opengist.enable = true;
+    headscale.enable = true;
   };
 
   # System packages for server management

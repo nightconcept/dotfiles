@@ -13,6 +13,7 @@ from modules.linux.programs.paseo.module import PaseoModule
 from modules.linux.programs.ssh import SSHModule
 from modules.linux.programs.storage import StorageModule
 from modules.linux.programs.watchtower.module import WatchtowerModule
+from modules.linux.services.tailscale import TailscaleModule
 from modules.linux.services.titan_mount import TitanMountModule
 
 # Initialize modules
@@ -21,6 +22,7 @@ home_manager = HomeManagerModule(profile="desktop")
 foreign_arch = ForeignArchModule(arch="aarch64-linux")
 storage = StorageModule()
 titan = TitanMountModule()
+tailscale = TailscaleModule(login_server="https://hs.solivan.dev")
 docker = DockerModule()
 books = BooksModule()
 budget = BudgetModule()
@@ -40,6 +42,7 @@ foreign_arch.deploy()
 home_manager.update()
 storage.deploy()
 titan.deploy()
+tailscale.deploy()
 
 # Deploy infrastructure
 docker.deploy()

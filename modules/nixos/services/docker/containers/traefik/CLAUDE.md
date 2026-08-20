@@ -39,6 +39,7 @@ Local domain: `myservice.local.solivan.dev` | External: `myservice.solivan.dev`
 - **vaultwarden** — vaultwarden.solivan.dev
 - **obsidian-sync** — obsidian-db.solivan.dev
 - **opengist** — gist.solivan.dev
+- **headscale** — hs.solivan.dev
 
 ## Monitoring
 

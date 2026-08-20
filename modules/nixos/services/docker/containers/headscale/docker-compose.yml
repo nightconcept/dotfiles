@@ -1,0 +1,37 @@
+services:
+  headscale:
+    container_name: headscale
+    hostname: headscale
+    image: headscale/headscale:latest
+    restart: always
+    command: serve
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:9090/metrics"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    networks:
+      - proxy
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${CONFIG_PATH}/config.yaml:/etc/headscale/config.yaml:ro
+      - ${DATA_PATH}:/var/lib/headscale
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.headscale.entrypoints=http"
+      - "traefik.http.routers.headscale.rule=Host(`${SUBDOMAIN}.${LOCAL_DOMAIN}`)"
+      - "traefik.http.middlewares.headscale-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.headscale.middlewares=headscale-https-redirect"
+      - "traefik.http.routers.headscale-secure.entrypoints=https"
+      - "traefik.http.routers.headscale-secure.rule=Host(`${SUBDOMAIN}.${LOCAL_DOMAIN}`) || Host(`${SUBDOMAIN}.${DOMAIN}`)"
+      - "traefik.http.routers.headscale-secure.tls=true"
+      - "traefik.http.routers.headscale-secure.middlewares=crowdsec-bouncer@docker"
+      - "traefik.http.routers.headscale-secure.service=headscale"
+      - "traefik.http.services.headscale.loadbalancer.server.port=8080"
+      - "traefik.docker.network=proxy"
+      - "com.centurylinklabs.watchtower.enable=true"
+
+networks:
+  proxy:
+    external: true

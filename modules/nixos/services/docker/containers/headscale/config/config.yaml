@@ -1,0 +1,35 @@
+server_url: https://${SUBDOMAIN}.${DOMAIN}
+listen_addr: 0.0.0.0:8080
+metrics_listen_addr: 127.0.0.1:9090
+grpc_listen_addr: 0.0.0.0:50443
+grpc_allow_insecure: false
+
+private_key_path: /var/lib/headscale/private.key
+noise:
+  private_key_path: /var/lib/headscale/noise_private.key
+
+database:
+  type: sqlite
+  sqlite:
+    path: /var/lib/headscale/db.sqlite
+
+# Relay fallback uses Tailscale's public DERP servers (encrypted traffic only,
+# no coordination data). Set derp.server.enabled to run a self-hosted relay instead.
+derp:
+  server:
+    enabled: false
+  urls:
+    - https://controlplane.tailscale.com/derpmap/default
+  auto_update_enabled: true
+  update_frequency: 24h
+
+dns:
+  magic_dns: true
+  base_domain: ${MAGIC_DNS_DOMAIN}
+  nameservers:
+    global:
+      - 1.1.1.1
+      - 8.8.8.8
+
+log:
+  level: info
