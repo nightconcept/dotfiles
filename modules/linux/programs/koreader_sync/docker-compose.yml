@@ -1,0 +1,13 @@
+services:
+  kosync:
+    image: koreader/kosync:latest
+    container_name: kosync
+    volumes:
+      - /opt/kosync/logs/app:/app/koreader-sync-server/logs
+      - /opt/kosync/logs/redis:/var/log/redis
+      - /opt/kosync/data/redis:/var/lib/redis
+    ports:
+      - "17200:17200"
+    restart: unless-stopped
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"

@@ -4,6 +4,7 @@ from modules.linux.programs.foreign_arch import ForeignArchModule
 from modules.linux.programs.hermes import HermesModule
 from modules.linux.programs.home_manager import HomeManagerModule
 from modules.linux.programs.huggingface import HuggingFaceModule
+from modules.linux.programs.koreader_sync.module import KoreaderSyncModule
 from modules.linux.programs.libbyrip_converter.module import LibbyRipConverterModule
 from modules.linux.programs.llama_cpp import LlamaCppModule
 from modules.linux.programs.llama_swap import LlamaSwapModule
@@ -22,6 +23,7 @@ storage = StorageModule()
 titan = TitanMountModule()
 docker = DockerModule()
 books = BooksModule()
+kosync = KoreaderSyncModule()
 converter = LibbyRipConverterModule(app_port=8086)
 paseo = PaseoModule(port=6767)
 watchtower = WatchtowerModule()
@@ -44,6 +46,7 @@ docker.deploy()
 
 # Deploy services
 books.deploy()
+kosync.deploy()
 converter.deploy()
 paseo.deploy()
 watchtower.deploy()
