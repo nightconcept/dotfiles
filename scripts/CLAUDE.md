@@ -21,6 +21,7 @@ The script:
 |--------|---------|
 | `add-host-to-sops.sh` | Register a new host's key with SOPS |
 | `barrett-setup.sh` | Initial barrett server setup |
+| `bench-qwen38-spec.py` | Benchmark Qwen3.8 server speculation and restore Hermes |
 | `setup-keys.sh` | SSH key setup |
 | `install-terminal.sh` | Install terminal emulator (Ghostty/WezTerm) |
 | `switch-to-upstream-nix.sh` | Switch from distro Nix to upstream |
