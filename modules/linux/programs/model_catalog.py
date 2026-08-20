@@ -8,7 +8,7 @@ from typing import Any
 
 MODEL_DIR = "/mnt/storage/llm-models"
 LLAMA_CPP_SERVER = "/opt/llama-cpp/llama-server"
-DEFAULT_MODEL_ID = "qwen3.8-27b"
+DEFAULT_MODEL_ID = "ornith-1.5-35b-a3b"
 BENCHMARK_MODEL_IDS = [
     "qwen3.8-27b",
     "muse-glimmer-30b",
@@ -144,7 +144,7 @@ MODEL_CATALOG: list[dict[str, Any]] = [
             "--spec-type",
             "draft-mtp",
             "--spec-draft-n-max",
-            "3",
+            "2",
             "--host",
             "127.0.0.1",
             "--port",
