@@ -17,8 +17,8 @@ class LlamaCppModule(HostModule):
         self.bin_dir = "/opt/llama-cpp"
         self.local_bin = os.path.expanduser("~/.local/bin")
         # Pin to a known-good upstream revision unless explicitly overridden.
-        # 689e227db: includes Muse Glimmer architecture support (merged via #26841).
-        self.version = os.environ.get("LLAMA_CPP_VERSION", "689e227db485")
+        # 6d05498314db supports both Muse Glimmer and Qwen3.8's qwen35 architecture.
+        self.version = os.environ.get("LLAMA_CPP_VERSION", "6d05498314db")
         # The service only needs llama-server, not the embedded UI assets.
         self.build_ui = os.environ.get("LLAMA_CPP_BUILD_UI", "OFF")
         self.required_rocm_packages = "rocm-dev hipblas-dev rocblas-dev rocwmma-dev"
@@ -60,9 +60,7 @@ class LlamaCppModule(HostModule):
         # Resolve the pinned version before deciding whether a rebuild is needed.
         server.shell(
             name="Resolve llama.cpp version",
-            commands=[
-                f"echo {self.version} > {self.git_dir}/LATEST_TAG"
-            ],
+            commands=[f"echo {self.version} > {self.git_dir}/LATEST_TAG"],
         )
 
         # We use a trick: only run the heavy build shell if version mismatch

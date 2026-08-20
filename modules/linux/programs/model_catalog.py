@@ -8,18 +8,23 @@ from typing import Any
 
 MODEL_DIR = "/mnt/storage/llm-models"
 LLAMA_CPP_SERVER = "/opt/llama-cpp/llama-server"
+DEFAULT_MODEL_ID = "qwen3.8-27b"
+BENCHMARK_MODEL_IDS = [
+    "qwen3.8-27b",
+    "muse-glimmer-30b",
+    "qwen3-35b-mtp",
+    "ornith-1.5-35b-a3b",
+]
 
 
 MODEL_CATALOG: list[dict[str, Any]] = [
     {
-        "id": "qwen3-27b-dense",
-        "files": ["Qwen3.6-27B-Q6_K.gguf"],
-        "local_sources": {
-            "Qwen3.6-27B-Q6_K.gguf": f"{MODEL_DIR}/Qwen3.6-27B-Q6_K.gguf",
-        },
+        "id": "qwen3.8-27b",
+        "repo_id": "unsloth/Qwen3.8-27B-GGUF",
+        "files": ["Qwen3.8-27B-UD-Q5_K_XL.gguf"],
         "args": [
             "-m",
-            f"{MODEL_DIR}/Qwen3.6-27B-Q6_K.gguf",
+            f"{MODEL_DIR}/Qwen3.8-27B-UD-Q5_K_XL.gguf",
             "-c",
             "131072",
             "-ngl",
@@ -30,14 +35,19 @@ MODEL_CATALOG: list[dict[str, Any]] = [
             "q8_0",
             "-ctv",
             "q8_0",
-            "--no-mmproj",
             "--jinja",
+            "--spec-type",
+            "draft-mtp,ngram-mod",
+            "--spec-draft-n-max",
+            "2",
+            "-np",
+            "1",
             "--host",
             "127.0.0.1",
             "--port",
             "${PORT}",
         ],
-        "aliases": ["Qwen3.6-27B-Q6_K"],
+        "aliases": ["Qwen3.8-27B-UD-Q5_K_XL"],
         "context": 131072,
     },
     {
@@ -111,6 +121,39 @@ MODEL_CATALOG: list[dict[str, Any]] = [
         "capabilities": {"in": ["text", "image"], "out": ["text"]},
     },
     {
+        "id": "ornith-1.5-35b-a3b",
+        "files": ["Ornith-1.5-35B-A3B-Q4_K_M.gguf"],
+        "local_sources": {
+            "Ornith-1.5-35B-A3B-Q4_K_M.gguf": f"{MODEL_DIR}/Ornith-1.5-35B-A3B-Q4_K_M.gguf",
+        },
+        "args": [
+            "-m",
+            f"{MODEL_DIR}/Ornith-1.5-35B-A3B-Q4_K_M.gguf",
+            "-c",
+            "131072",
+            "-ngl",
+            "all",
+            "-fa",
+            "on",
+            "-ctk",
+            "q8_0",
+            "-ctv",
+            "q8_0",
+            "--no-mmproj",
+            "--jinja",
+            "--spec-type",
+            "draft-mtp",
+            "--spec-draft-n-max",
+            "3",
+            "--host",
+            "127.0.0.1",
+            "--port",
+            "${PORT}",
+        ],
+        "aliases": ["Ornith-1.5-35B-A3B-Q4_K_M"],
+        "context": 131072,
+    },
+    {
         "id": "gemma-4-26b-mtp",
         "repo_id": "ironbcc/gemma-4-26B-A4B-it-MTP-GGUF",
         "files": [
@@ -182,14 +225,15 @@ def render_llama_swap_config() -> str:
 
     for model in MODEL_CATALOG:
         cmd = " ".join(
-            shlex.quote(part) if part != "${PORT}" else part for part in [LLAMA_CPP_SERVER, *model["args"]]
+            shlex.quote(part) if part != "${PORT}" else part
+            for part in [LLAMA_CPP_SERVER, *model["args"]]
         )
         capabilities = model.get("capabilities", {"in": ["text"], "out": ["text"]})
         lines.extend(
             [
                 f'  "{model["id"]}":',
                 f"    cmd: {json.dumps(cmd)}",
-                f'    proxy: "http://127.0.0.1:${{PORT}}"',
+                '    proxy: "http://127.0.0.1:${PORT}"',
                 f"    aliases: {json.dumps(model.get('aliases', []))}",
                 "    capabilities:",
                 f"      in: {json.dumps(capabilities['in'])}",
