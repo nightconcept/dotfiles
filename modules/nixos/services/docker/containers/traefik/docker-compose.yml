@@ -2,10 +2,10 @@ services:
   traefik:
     image: traefik:latest
     container_name: traefik
-    command: --configFile=/traefik.yml --ping=true
+    command: --configFile=/traefik.yml
     restart: always
     healthcheck:
-      test: ["CMD", "traefik", "healthcheck", "--ping"]
+      test: ["CMD", "traefik", "healthcheck", "--ping", "--configFile=/traefik.yml"]
       interval: 30s
       timeout: 10s
       retries: 3
