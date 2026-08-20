@@ -11,7 +11,19 @@ sleep 2
 md_devices=$(grep "^md" /proc/mdstat | cut -d" " -f1)
 for dev in $md_devices; do
     dev_path="/dev/$dev"
-    label=$(lsblk -no LABEL "$dev_path" | head -n1 || echo "raid-$dev")
+    label=$(lsblk -dno LABEL "$dev_path" | head -n1)
+    if [ -z "$label" ]; then
+        array_name=$(
+            mdadm --detail --export "$dev_path" 2>/dev/null |
+                sed -n 's/^MD_NAME=//p' |
+                head -n1
+        )
+        label=${array_name%%:*}
+    fi
+    if ! printf '%s' "$label" | grep -Eq '^[A-Za-z0-9][A-Za-z0-9._-]*$'; then
+        echo "ERROR: refusing to mount $dev_path without a safe filesystem label or array name" >&2
+        continue
+    fi
     mount_point="/mnt/$label"
     mkdir -p "$mount_point"
     if mountpoint -q "$mount_point"; then
