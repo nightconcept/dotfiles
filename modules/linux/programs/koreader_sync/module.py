@@ -16,20 +16,15 @@ class KoreaderSyncModule(HostModule):
 
     def install(self):
         """Create necessary directories."""
-        for path in [
-            self.base_dir,
-            f"{self.base_dir}/logs/app",
-            f"{self.base_dir}/logs/redis",
-            f"{self.base_dir}/data/redis",
-        ]:
-            files.directory(
-                name=f"Ensure directory {path} exists",
-                path=path,
-                present=True,
-                _sudo=True,
-                user="danny",
-                group="danny",
-            )
+        server.shell(
+            name="Prepare kosync stack directories",
+            commands=[
+                f'mkdir -p "{self.base_dir}/logs/app" "{self.base_dir}/logs/redis" '
+                f'"{self.base_dir}/data/redis" && '
+                f'chown -R danny:danny "{self.base_dir}"',
+            ],
+            _sudo=True,
+        )
 
     def update(self):
         """Deploy docker-compose.yml and start the container."""

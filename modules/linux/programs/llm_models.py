@@ -19,45 +19,40 @@ class LLMModelsModule(HostModule):
     def install(self):
         """Ensure model directory exists with correct ownership."""
         server.shell(
-            name="Verify storage NVMe is mounted for LLM models",
-            commands=['mountpoint -q "/mnt/storage"'],
-            _sudo=True,
-        )
-        files.directory(
-            name=f"Ensure {self.model_dir} exists with correct ownership",
-            path=self.model_dir,
-            present=True,
-            user=self.user,
-            group=self.user,
+            name=f"Ensure {self.model_dir} exists on the mounted storage NVMe",
+            commands=[
+                'mountpoint -q "/mnt/storage"',
+                f'mkdir -p "{self.model_dir}" && '
+                f'chown "{self.user}:{self.user}" "{self.model_dir}"',
+            ],
             _sudo=True,
         )
 
     def update(self):
         """Download missing models listed in the manifest using hf cli."""
+        commands = []
         for entry in catalog_entries():
             filename = entry["filename"]
             local_source = entry.get("local_source")
             if local_source:
-                server.shell(
-                    name=f"Install local model {filename}",
-                    commands=[
-                        f'test -f "{local_source}"',
-                        f'if [ ! -f "{self.model_dir}/{filename}" ]; then '
-                        f'sudo install -o "{self.user}" -g "{self.user}" -m 0644 '
-                        f'"{local_source}" "{self.model_dir}/{filename}"; fi'
-                    ],
+                commands.append(
+                    f'test -f "{local_source}" && '
+                    f'if [ ! -f "{self.model_dir}/{filename}" ]; then '
+                    f'sudo install -o "{self.user}" -g "{self.user}" -m 0644 '
+                    f'"{local_source}" "{self.model_dir}/{filename}"; fi'
                 )
                 continue
 
             repo_id = entry["repo_id"]
-            server.shell(
-                name=f"Download {filename}",
-                commands=[
-                    f'if [ ! -f "{self.model_dir}/{filename}" ]; then '
-                    f'hf download {repo_id} {filename} '
-                    f'--local-dir {self.model_dir} </dev/null; fi'
-                ],
+            commands.append(
+                f'if [ ! -f "{self.model_dir}/{filename}" ]; then '
+                f'hf download {repo_id} {filename} '
+                f'--local-dir {self.model_dir} </dev/null; fi'
             )
+        server.shell(
+            name="Install and download catalog models",
+            commands=commands,
+        )
 
     def cleanup(self):
         """Delete models in the target folder that are not in the manifest."""

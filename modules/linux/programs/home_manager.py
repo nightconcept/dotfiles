@@ -23,43 +23,27 @@ class HomeManagerModule(HostModule):
         )
 
         server.shell(
-            name="Install Nix (Determinate Systems)",
+            name="Bootstrap Nix and home-manager",
             commands=[
                 "if ! command -v nix >/dev/null 2>&1; then "
                 'curl --proto "=https" --tlsv1.2 -sSf -L https://install.determinate.systems/nix '
-                "| sh -s -- install --no-confirm; fi"
-            ],
-        )
-
-        server.shell(
-            name="Clone dotfiles repository",
-            commands=[
+                "| sh -s -- install --no-confirm; fi",
                 f'if [ ! -d "{DOTFILES_DIR}/.git" ]; then '
                 'mkdir -p "$HOME/git" && '
-                f"git clone {DOTFILES_REPO} {DOTFILES_DIR}; fi"
-            ],
-        )
-
-        server.shell(
-            name="Install home-manager",
-            commands=[
+                f"git clone {DOTFILES_REPO} {DOTFILES_DIR}; fi",
                 f". {NIX_PROFILE} && "
                 "if ! command -v home-manager >/dev/null 2>&1; then "
-                "nix profile install nixpkgs#home-manager; fi"
+                "nix profile install nixpkgs#home-manager; fi",
             ],
         )
 
     def update(self):
         server.shell(
-            name="Update dotfiles repository",
-            commands=[f"git -C {DOTFILES_DIR} pull --ff-only"],
-        )
-
-        server.shell(
-            name=f"Apply home-manager config for {self.profile}",
+            name=f"Update dotfiles and apply home-manager config for {self.profile}",
             commands=[
+                f"git -C {DOTFILES_DIR} pull --ff-only",
                 f". {NIX_PROFILE} && "
-                f"home-manager switch --flake {DOTFILES_DIR}#{self.profile} --impure"
+                f"home-manager switch --flake {DOTFILES_DIR}#{self.profile} --impure",
             ],
         )
 

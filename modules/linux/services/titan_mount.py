@@ -1,7 +1,5 @@
 """Titan network mount module for host configuration."""
 
-from io import StringIO
-
 from pyinfra import host
 from pyinfra.facts.files import File
 from pyinfra.operations import files, server, systemd
@@ -44,18 +42,12 @@ class TitanMountModule(HostModule):
     def install(self):
         """Ensure cifs-utils is installed and mount point exists."""
         server.shell(
-            name="Install cifs-utils (if missing)",
+            name="Install cifs-utils and ensure /mnt/titan mount point exists",
             commands=[
                 "if ! dpkg -s cifs-utils >/dev/null 2>&1; then "
-                "apt-get update && apt-get install -y cifs-utils; fi"
+                "apt-get update && apt-get install -y cifs-utils; fi",
+                "mkdir -p /mnt/titan",
             ],
-            _sudo=True,
-        )
-
-        files.directory(
-            name="Ensure /mnt/titan mount point exists",
-            path="/mnt/titan",
-            present=True,
             _sudo=True,
         )
 
@@ -75,19 +67,13 @@ class TitanMountModule(HostModule):
             )
             return
 
-        files.put(
-            name="Deploy mnt-titan.mount unit",
-            src=StringIO(_MOUNT_UNIT),
-            dest="/etc/systemd/system/mnt-titan.mount",
-            mode="644",
-            _sudo=True,
-        )
-
-        files.put(
-            name="Deploy mnt-titan.automount unit",
-            src=StringIO(_AUTOMOUNT_UNIT),
-            dest="/etc/systemd/system/mnt-titan.automount",
-            mode="644",
+        server.shell(
+            name="Deploy Titan mount and automount units",
+            commands=[
+                f"cat > /etc/systemd/system/mnt-titan.mount <<'UNIT_EOF'\n{_MOUNT_UNIT}UNIT_EOF",
+                f"cat > /etc/systemd/system/mnt-titan.automount <<'UNIT_EOF'\n{_AUTOMOUNT_UNIT}UNIT_EOF",
+                "chmod 644 /etc/systemd/system/mnt-titan.mount /etc/systemd/system/mnt-titan.automount",
+            ],
             _sudo=True,
         )
 

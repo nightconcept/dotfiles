@@ -15,26 +15,15 @@ class BooksModule(HostModule):
 
     def install(self):
         """Create necessary directories and cleanup old ones."""
-        # Cleanup old incorrect path if it exists
         server.shell(
-            name="Cleanup old incorrect books path",
-            commands=["rm -rf /mnt/terra/data/books"],
+            name="Prepare Books stack directories",
+            commands=[
+                "rm -rf /mnt/terra/data/books",
+                f'mkdir -p "{self.base_dir}/calibre" "{self.base_dir}/calibre-web" && '
+                f'chown -R danny:danny "{self.base_dir}"',
+            ],
             _sudo=True,
         )
-
-        for path in [
-            self.base_dir,
-            f"{self.base_dir}/calibre",
-            f"{self.base_dir}/calibre-web",
-        ]:
-            files.directory(
-                name=f"Ensure directory {path} exists",
-                path=path,
-                present=True,
-                _sudo=True,
-                user="danny",
-                group="danny",
-            )
 
     def update(self):
         """Deploy docker-compose.yml and start containers."""

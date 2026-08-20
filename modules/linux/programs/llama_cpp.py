@@ -36,17 +36,12 @@ class LlamaCppModule(HostModule):
         )
 
         # Ensure directories exist
-        files.directory(
-            name="Ensure /opt/llama-cpp exists",
-            path=self.bin_dir,
-            present=True,
-            _sudo=True,
-        )
-
-        files.directory(
-            name="Ensure ~/.local/bin exists",
-            path=self.local_bin,
-            present=True,
+        server.shell(
+            name=f"Ensure {self.bin_dir} and {self.local_bin} exist",
+            commands=[
+                f"sudo mkdir -p {self.bin_dir}",
+                f"mkdir -p {self.local_bin}",
+            ],
         )
 
         git.repo(
@@ -57,17 +52,12 @@ class LlamaCppModule(HostModule):
 
     def update(self):
         """Build/install the pinned release if it is newer or missing."""
-        # Resolve the pinned version before deciding whether a rebuild is needed.
-        server.shell(
-            name="Resolve llama.cpp version",
-            commands=[f"echo {self.version} > {self.git_dir}/LATEST_TAG"],
-        )
-
         # We use a trick: only run the heavy build shell if version mismatch
         # This keeps the pyinfra plan clean and fast
         server.shell(
             name="Build and Install llama.cpp (This takes several minutes)",
             commands=[
+                f"echo {self.version} > {self.git_dir}/LATEST_TAG",
                 f"""
                 set -eu
 

@@ -1,6 +1,6 @@
 """Storage module for host configuration."""
 
-from pyinfra.operations import apt, files, server
+from pyinfra.operations import apt, server
 
 from modules.linux.module import HostModule
 
@@ -63,30 +63,24 @@ class StorageModule(HostModule):
             _sudo=True,
         )
 
-        for mount_point in ["/mnt/terra", "/mnt/jeanne", _STORAGE_MOUNT_POINT]:
-            files.directory(
-                name=f"Ensure {mount_point} exists",
-                path=mount_point,
-                present=True,
-                _sudo=True,
-            )
+        server.shell(
+            name="Ensure /mnt/terra, /mnt/jeanne and /mnt/storage exist",
+            commands=["mkdir -p /mnt/terra /mnt/jeanne " + _STORAGE_MOUNT_POINT],
+            _sudo=True,
+        )
 
     def update(self):
         server.shell(
-            name="Mount storage NVMe at /mnt/storage",
+            name="Mount storage NVMe and assemble RAID arrays",
             commands=[
                 f'''set -eu
                 fstab_line='{_STORAGE_FSTAB_LINE}'
                 grep -Fqx "$fstab_line" /etc/fstab || echo "$fstab_line" >> /etc/fstab
                 if ! mountpoint -q "{_STORAGE_MOUNT_POINT}"; then
                     mount "{_STORAGE_MOUNT_POINT}"
-                fi'''
+                fi''',
+                _MOUNT_SCRIPT,
             ],
-            _sudo=True,
-        )
-        server.shell(
-            name="Assemble and mount RAID arrays",
-            commands=[_MOUNT_SCRIPT],
             _sudo=True,
         )
 

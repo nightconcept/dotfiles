@@ -42,16 +42,9 @@ class LlamaSwapModule(HostModule):
 
     def install(self):
         """Ensure target directories exist."""
-        files.directory(
-            name=f"Ensure {self.install_dir} exists",
-            path=self.install_dir,
-            present=True,
-            _sudo=True,
-        )
-        files.directory(
-            name=f"Ensure {self.config_dir} exists",
-            path=self.config_dir,
-            present=True,
+        server.shell(
+            name=f"Ensure {self.install_dir} and {self.config_dir} exist",
+            commands=[f"mkdir -p {self.install_dir} {self.config_dir}"],
             _sudo=True,
         )
 

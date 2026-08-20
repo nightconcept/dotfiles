@@ -22,18 +22,14 @@ class PaseoModule(HostModule):
 
     def install(self):
         """Create runtime and persistent state directories."""
-        for path in [
-            self.base_dir,
-            self.home_dir,
-        ]:
-            files.directory(
-                name=f"Ensure directory {path} exists",
-                path=path,
-                present=True,
-                _sudo=True,
-                user="danny",
-                group="danny",
-            )
+        server.shell(
+            name="Prepare Paseo stack directories",
+            commands=[
+                f'mkdir -p "{self.base_dir}" "{self.home_dir}" && '
+                f'chown -R danny:danny "{self.base_dir}"',
+            ],
+            _sudo=True,
+        )
 
     def update(self):
         """Deploy Docker files and environment, then start the stack."""
@@ -54,7 +50,7 @@ class PaseoModule(HostModule):
         )
 
         server.shell(
-            name="Write Paseo environment file",
+            name="Write Paseo environment file and start the stack",
             commands=[
                 (
                     "cat > {base_dir}/.env <<'EOF'\n"
@@ -67,16 +63,9 @@ class PaseoModule(HostModule):
                     base_dir=self.base_dir,
                     home_dir=self.home_dir,
                     workspace_dir=self.workspace_dir,
-                )
-            ],
-            _sudo=True,
-        )
-
-        server.shell(
-            name="Start Paseo stack",
-            commands=[
+                ),
                 f"docker compose --env-file {self.base_dir}/.env "
-                f"-f {self.base_dir}/docker-compose.yml up -d --build"
+                f"-f {self.base_dir}/docker-compose.yml up -d --build",
             ],
             _sudo=True,
         )
