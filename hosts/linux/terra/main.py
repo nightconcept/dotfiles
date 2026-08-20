@@ -11,6 +11,7 @@ from modules.linux.programs.llm_models import LLMModelsModule
 from modules.linux.programs.paseo.module import PaseoModule
 from modules.linux.programs.ssh import SSHModule
 from modules.linux.programs.storage import StorageModule
+from modules.linux.programs.watchtower.module import WatchtowerModule
 from modules.linux.services.titan_mount import TitanMountModule
 
 # Initialize modules
@@ -23,6 +24,7 @@ docker = DockerModule()
 books = BooksModule()
 converter = LibbyRipConverterModule(app_port=8086)
 paseo = PaseoModule(port=6767)
+watchtower = WatchtowerModule()
 hf = HuggingFaceModule()
 llama = LlamaCppModule()
 llama_swap = LlamaSwapModule()
@@ -44,6 +46,7 @@ docker.deploy()
 books.deploy()
 converter.deploy()
 paseo.deploy()
+watchtower.deploy()
 
 # Deploy AI modules
 hf.deploy()

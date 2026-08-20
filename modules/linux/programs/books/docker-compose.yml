@@ -12,10 +12,14 @@ services:
     volumes:
       - /opt/books-stack/calibre:/config
       - /mnt/calibre-library:/library
+      - /mnt/titan/Books:/Books
+      - /mnt/titan/Books-Unorganized:/Books-Unorganized
     ports:
       - 8085:8080
       - 8181:8181
     restart: unless-stopped
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
 
   calibre-web:
     image: lscr.io/linuxserver/calibre-web:latest
@@ -31,3 +35,5 @@ services:
     ports:
       - 8083:8083
     restart: unless-stopped
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
