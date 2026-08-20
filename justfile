@@ -63,10 +63,6 @@ clean:
 terra:
     uv run --with pyinfra --with requests pyinfra -y @local hosts/linux/terra/main.py
 
-# Build locally and switch the Rinoa NixOS host over SSH
-deploy-rinoa:
-    ./scripts/deploy-rinoa.sh --yes
-
 # Run the LibbyRip converter locally without Traefik
 dev:
     mkdir -p .local/state/libbyrip-converter-dev

@@ -1,4 +1,5 @@
 from modules.linux.programs.books.module import BooksModule
+from modules.linux.programs.budget.module import BudgetModule
 from modules.linux.programs.docker import DockerModule
 from modules.linux.programs.foreign_arch import ForeignArchModule
 from modules.linux.programs.hermes import HermesModule
@@ -22,6 +23,7 @@ storage = StorageModule()
 titan = TitanMountModule()
 docker = DockerModule()
 books = BooksModule()
+budget = BudgetModule()
 kosync = KoreaderSyncModule()
 paseo = PaseoModule(port=6767)
 watchtower = WatchtowerModule()
@@ -43,6 +45,7 @@ titan.deploy()
 docker.deploy()
 
 # Deploy services
+budget.deploy()
 books.deploy()
 kosync.deploy()
 paseo.deploy()

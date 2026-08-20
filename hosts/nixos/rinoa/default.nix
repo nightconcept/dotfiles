@@ -133,6 +133,14 @@
         name = "OpenGist routed";
         url = "https://gist.local.solivan.dev/";
       }
+      {
+        name = "Actual Budget routed";
+        url = "https://budget.local.solivan.dev/";
+      }
+      {
+        name = "Paisa Ledger routed";
+        url = "https://ledger.local.solivan.dev/";
+      }
     ];
     afterUnits = [
       "docker-container-traefik.service"

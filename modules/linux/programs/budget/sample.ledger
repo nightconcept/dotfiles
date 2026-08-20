@@ -1,0 +1,6 @@
+commodity USD
+    format $1,000.00
+
+2026-01-01 Opening balance
+    Assets:Checking                          $1,000.00
+    Equity:Opening-Balances                 $-1,000.00

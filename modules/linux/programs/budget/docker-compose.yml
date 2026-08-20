@@ -1,0 +1,34 @@
+services:
+  actual-budget:
+    image: actualbudget/actual-server:latest
+    container_name: actual-budget
+    restart: unless-stopped
+    ports:
+      - "${TERRA_LAN_IP:-192.168.1.111}:5006:5006"
+    volumes:
+      - ${ACTUAL_DATA_PATH:-/opt/budget/actual-data}:/data
+    healthcheck:
+      test: ["CMD-SHELL", "node scripts/health-check.js"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+  paisa:
+    image: ananthakumaran/paisa:latest
+    container_name: paisa
+    restart: unless-stopped
+    ports:
+      - "${TERRA_LAN_IP:-192.168.1.111}:7500:7500"
+    environment:
+      PAISA_CONFIG: /root/Documents/paisa/paisa.yaml
+      TZ: ${TZ:-America/Los_Angeles}
+    volumes:
+      - ${PAISA_DATA_PATH:-/opt/budget/paisa-data}:/root/Documents/paisa
+      - ${LEDGER_PATH:-/opt/budget/ledger}:/journal:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget --quiet --spider http://localhost:7500/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s

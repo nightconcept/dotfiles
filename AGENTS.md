@@ -1,7 +1,7 @@
 # AGENTS.md (Hub)
 
 Personal dotfiles as a Nix flake supporting NixOS, nix-darwin, and home-manager.
-**This file must be <= 100 lines.**
+⚠ This file is hard-limited to ≤100 lines. Update spokes, not the hub.
 
 ## Documentation Hub (Spokes)
 
@@ -19,6 +19,7 @@ Personal dotfiles as a Nix flake supporting NixOS, nix-darwin, and home-manager.
 - **Darwin**: `sudo darwin-rebuild switch --flake .#<hostname>`
 - **Home Manager**: `home-manager switch --flake '.#<profile_or_hostname>'`
 - **Linux (pyinfra + home-manager)**: `flake-rebuild <hostname>` — auto-detects local vs remote; use `just <hostname>` to invoke pyinfra directly
+- Reserve `just` for host-name deployments; never add one-time deployment recipes.
 
 ### Windows (yuki)
 Run `yuki` from the `windows/` directory to manage packages.
