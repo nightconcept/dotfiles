@@ -19,7 +19,7 @@ Personal dotfiles as a Nix flake supporting NixOS, nix-darwin, and home-manager.
 - **Darwin**: `sudo darwin-rebuild switch --flake .#<hostname>`
 - **Home Manager**: `home-manager switch --flake '.#<profile_or_hostname>'`
 - **Linux (pyinfra + home-manager)**: `flake-rebuild <hostname>` — auto-detects local vs remote; use `just <hostname>` to invoke pyinfra directly
-- Reserve `just` for host-name deployments; never add one-time deployment recipes.
+- Use `just <hostname>` only to deploy the full named host. Never add or use one-off deployment entrypoints.
 
 ### Windows (yuki)
 Run `yuki` from the `windows/` directory to manage packages.

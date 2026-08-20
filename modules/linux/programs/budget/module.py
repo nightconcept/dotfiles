@@ -10,17 +10,15 @@ from modules.linux.module import HostModule
 class BudgetModule(HostModule):
     """Deploy the Actual Budget and Paisa Docker Compose stack."""
 
-    def __init__(self, terra_lan_ip: str = "192.168.1.111"):
-        """Initialize deployment paths and the address reachable from Rinoa."""
+    def __init__(self):
+        """Initialize deployment and persistent-data paths."""
         self.base_dir = "/opt/budget"
-        self.actual_data_dir = f"{self.base_dir}/actual-data"
-        self.paisa_data_dir = f"{self.base_dir}/paisa-data"
-        self.ledger_dir = f"{self.base_dir}/ledger"
-        self.terra_lan_ip = terra_lan_ip
+        self.actual_data_dir = "/home/danny/docker/actual/data"
+        self.paisa_data_dir = "/home/danny/docker/paisa/data"
+        self.ledger_dir = "/home/danny/git/ledger"
         self.local_dir = os.path.dirname(__file__)
         self.local_compose = os.path.join(self.local_dir, "docker-compose.yml")
         self.local_paisa_config = os.path.join(self.local_dir, "paisa.yaml")
-        self.local_sample_ledger = os.path.join(self.local_dir, "sample.ledger")
 
     def install(self):
         """Create persistent directories without removing existing financial data."""
@@ -28,7 +26,6 @@ class BudgetModule(HostModule):
             self.base_dir,
             self.actual_data_dir,
             self.paisa_data_dir,
-            self.ledger_dir,
         ]:
             files.directory(
                 name=f"Ensure budget directory {directory} exists",
@@ -55,17 +52,10 @@ class BudgetModule(HostModule):
             _sudo=True,
             user="danny",
         )
-        files.put(
-            name="Deploy sample Ledger journal template",
-            src=self.local_sample_ledger,
-            dest=f"{self.base_dir}/sample.ledger.template",
-            _sudo=True,
-            user="danny",
-        )
-
         server.shell(
-            name="Seed missing Paisa configuration and Ledger journal",
+            name="Require Ledger checkout and seed missing Paisa configuration",
             commands=[
+                f'test -f "{self.ledger_dir}/ledger/main.journal"',
                 (
                     f'test -e "{self.paisa_data_dir}/paisa.yaml" || '
                     f"install -o danny -g danny -m 0640 "
@@ -73,13 +63,6 @@ class BudgetModule(HostModule):
                     f'"{self.paisa_data_dir}/paisa.yaml"'
                 ),
                 (
-                    f'test -e "{self.ledger_dir}/main.ledger" || '
-                    f"install -o danny -g danny -m 0640 "
-                    f'"{self.base_dir}/sample.ledger.template" '
-                    f'"{self.ledger_dir}/main.ledger"'
-                ),
-                (
-                    f"TERRA_LAN_IP={self.terra_lan_ip} "
                     f"ACTUAL_DATA_PATH={self.actual_data_dir} "
                     f"PAISA_DATA_PATH={self.paisa_data_dir} "
                     f"LEDGER_PATH={self.ledger_dir} "

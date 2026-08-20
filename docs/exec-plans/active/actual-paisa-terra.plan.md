@@ -20,9 +20,9 @@ Deploy Actual Budget and Paisa as a Docker Compose stack on Terra. Rinoa's exist
 
 ## Approach
 
-Terra remains the application host and exposes only the two application ports on its LAN address. Rinoa remains the sole HTTPS entry point. Add static Traefik file-provider routers and services on Rinoa that proxy to Terra at ports 5006 and 7500, use the existing `secured` middleware chain, and preserve the original host header.
+Terra remains the application host and exposes only the two application ports. Rinoa remains the sole HTTPS entry point. Add static Traefik file-provider routers and services on Rinoa that proxy to `terra` at ports 5006 and 7500, use the existing `secured` middleware chain, and preserve the original host header.
 
-The Terra stack retains Actual data at `/opt/budget/actual-data`, the Paisa database/configuration at `/opt/budget/paisa-data`, and the Ledger journal at `/opt/budget/ledger`. Paisa mounts the journal read-only. The initial journal is a valid non-personal sample; the WIP Forgejo checkout replaces it only when it is ready.
+The Terra stack retains Actual data at `/home/danny/docker/actual/data`, the Paisa database/configuration at `/home/danny/docker/paisa/data`, and the Ledger checkout at `/home/danny/git/ledger`. Paisa mounts the checkout read-only and uses its `ledger/main.journal` entry point.
 
 The later synchronization work is an explicit data-integration project, not an implicit side effect of container deployment. It will first define a canonical transaction interchange record, identity keys, duplicate detection, direction of authority per field, and a reconciliation report. It must not silently implement unrestricted bidirectional writes.
 
@@ -44,14 +44,13 @@ The later synchronization work is an explicit data-integration project, not an i
 - `modules/linux/programs/budget/module.py` — add `BudgetModule` with persistent-directory setup, Compose deployment, and a non-destructive remove operation.
 - `modules/linux/programs/budget/docker-compose.yml` — run Actual on 5006 and Paisa on 7500, each with upstream-compatible health checks and restart policies.
 - `modules/linux/programs/budget/paisa.yaml` — configure a read-only Ledger journal path and a separate writable database path.
-- `modules/linux/programs/budget/sample.ledger` — provide a minimal valid non-personal journal only for initial evaluation.
 
 **Implementation notes:**
 
-- Use `actualbudget/actual-server:latest` with `/opt/budget/actual-data:/data`.
-- Use `ananthakumaran/paisa:latest`; mount `/opt/budget/paisa-data` writable and `/opt/budget/ledger` read-only.
-- Bind ports 5006 and 7500 on Terra's LAN address, not ports 80/443. Restrict direct LAN access to Rinoa where the host firewall policy supports it; Traefik is the supported client entry point.
-- Seed the sample journal only if the destination is absent. Never overwrite an existing journal, Paisa database, or Actual data.
+- Use `actualbudget/actual-server:latest` with `/home/danny/docker/actual/data:/data`.
+- Use `ananthakumaran/paisa:latest-hledger`; mount `/home/danny/docker/paisa/data` writable and `/home/danny/git/ledger` read-only.
+- Publish ports 5006 and 7500, not ports 80 or 443. Traefik is the supported client entry point.
+- Require `ledger/main.journal` to exist before startup. Never overwrite the Ledger checkout, Paisa database, or Actual data.
 - Do not commit passwords, user financial data, deploy keys, or Forgejo credentials.
 
 **Verification:**
@@ -73,12 +72,11 @@ docker compose -f modules/linux/programs/budget/docker-compose.yml config
 **Files to change:**
 
 - `hosts/linux/terra/main.py` — import, instantiate, and deploy `BudgetModule` after Docker is available.
-- `hosts/linux/terra/budget.py` — add a narrow pyinfra entry point for deploying this stack without invoking unrelated Terra modules.
 
 **Implementation notes:**
 
 - Preserve the existing deployment order other than the new call.
-- Use `uv run --with pyinfra --with requests pyinfra -y @local hosts/linux/terra/budget.py` for the initial stack rollout. It avoids the unrelated full-host deployment.
+- Deploy the stack through the complete `just terra` host configuration.
 - The module's cleanup/removal path may stop containers but must preserve all three persistent directories.
 
 **Verification:**
@@ -86,10 +84,10 @@ docker compose -f modules/linux/programs/budget/docker-compose.yml config
 ```bash
 uv run ruff check hosts/linux/terra/main.py modules/linux/programs/budget
 uv run ty check hosts/linux/terra/main.py modules/linux/programs/budget
-uv run --with pyinfra --with requests pyinfra -y @local hosts/linux/terra/budget.py
+just terra
 sudo docker compose -f /opt/budget/docker-compose.yml ps
-curl --fail http://192.168.1.111:5006
-curl --fail http://192.168.1.111:7500
+curl --fail http://terra:5006
+curl --fail http://terra:7500
 ```
 
 **Status:** [ ] in progress — code is complete; deployment requires interactive sudo.
@@ -102,7 +100,7 @@ curl --fail http://192.168.1.111:7500
 **Depends on:** Phase 2
 **Files to change:**
 
-- `modules/nixos/services/docker/containers/traefik/config/config.yml` — add HTTPS routers for the two hostnames and services targeting `http://192.168.1.111:5006` and `http://192.168.1.111:7500`.
+- `modules/nixos/services/docker/containers/traefik/config/config.yml` — add HTTPS routers for the two hostnames and services targeting `http://terra:5006` and `http://terra:7500`.
 - `hosts/nixos/rinoa/default.nix` — add routed health checks for both URLs to the Rinoa container health gate.
 - `docs/docker.md` — document access URLs, Rinoa-to-Terra backends, persistent paths, backups, and the future ledger/sync handoff.
 
@@ -186,11 +184,11 @@ Use static Python checks and Compose rendering before deployment. Validate the p
 
 ## Rollout / Integration Notes
 
-Deploy Terra first, then apply Rinoa. Local DNS must resolve both names to Rinoa, whose existing certificate covers `*.local.solivan.dev`. Back up all three `/opt/budget` directories before upgrades. Keep Watchtower disabled for these containers until restore and reconciliation procedures are proven.
+Deploy Terra first, then apply Rinoa. Local DNS must resolve both names to Rinoa, whose existing certificate covers `*.local.solivan.dev`. Back up the two data directories and the Ledger checkout before upgrades. Keep Watchtower disabled for these containers until restore and reconciliation procedures are proven.
 
 ## Known Risks
 
-- The recorded Terra address, `192.168.1.111`, must be confirmed before Rinoa routes are applied.
+- The `terra` hostname must resolve from both Rinoa and its Traefik container before routes are applied.
 - Directly published Docker ports can bypass host firewall conventions; validate that only Rinoa can reach them if stronger LAN isolation is required.
 - Actual and Paisa have different data models. Duplicate and conflict behavior must be designed and tested before any converter writes data.
 - The ledger repository is WIP and may not have a stable layout or credential path.
@@ -206,6 +204,6 @@ Deploy Terra first, then apply Rinoa. Local DNS must resolve both names to Rinoa
 
 - 2026-08-20: Revised for Rinoa-to-Terra Traefik routing and a future explicit reconciliation layer.
 - 2026-08-20: Phases 1–3 implementation completed. Ruff, ty, Compose rendering,
-  and Traefik YAML parsing pass. The targeted Terra deployment is awaiting an
+  and Traefik YAML parsing pass. The full Terra deployment is awaiting an
   interactive sudo credential; Pi-hole records and Rinoa deployment are still
   required before endpoint acceptance checks can run.

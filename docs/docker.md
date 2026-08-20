@@ -32,26 +32,23 @@ proxies the following local URLs to Terra:
 
 Persistent data stays on Terra:
 
-- `/opt/budget/actual-data` — Actual server and user files
-- `/opt/budget/paisa-data` — Paisa configuration and SQLite database
-- `/opt/budget/ledger` — Ledger journal, mounted read-only by Paisa
+- `/home/danny/docker/actual/data` — Actual server and user files
+- `/home/danny/docker/paisa/data` — Paisa configuration and SQLite database
+- `/home/danny/git/ledger` — Ledger Git checkout, mounted read-only by Paisa
 
-The first deployment seeds a non-personal Ledger journal. Replace it with the
-`nightconcept/ledger` Forgejo checkout only when that repository is ready and
-an out-of-band read-only credential is available. Back up all three directories
-before upgrades. Actual and Ledger transaction conversion is a separate future
-project; no synchronization occurs in this stack.
+Paisa uses `ledger/main.journal` from the `nightconcept/ledger` checkout and
+the hledger image. Back up all three directories before upgrades. Actual and
+Ledger transaction conversion is a separate future project; no synchronization
+occurs in this stack.
 
 Before deploying the Rinoa routes, create these Pi-hole local DNS records that
-resolve to Rinoa (`192.168.1.110`), not Terra:
+resolve to Rinoa, not Terra:
 
-- `budget.local.solivan.dev` -> `192.168.1.110`
-- `ledger.local.solivan.dev` -> `192.168.1.110`
+- `budget.local.solivan.dev` -> `rinoa`
+- `ledger.local.solivan.dev` -> `rinoa`
 
-Verify both names resolve to Rinoa before using the HTTPS URLs. The Terra
-backend address (`192.168.1.111`) is intentionally recorded in the
-Traefik file-provider configuration and the Terra deployment module; update
-both host-specific configurations together if it changes.
+Verify both names resolve to Rinoa before using the HTTPS URLs. Traefik resolves
+the Terra backend through the local hostname `terra`.
 
 ## Adding a New Service Checklist
 

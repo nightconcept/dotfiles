@@ -1,8 +1,9 @@
-journal_path: /journal/main.ledger
+journal_path: /ledger/ledger/main.journal
 db_path: /root/Documents/paisa/paisa.db
 sheets_directory: /root/Documents/paisa/sheets
 readonly: true
-ledger_cli: ledger
+ledger_cli: hledger
+strict: "yes"
 default_currency: USD
 display_precision: 2
 locale: en-US
