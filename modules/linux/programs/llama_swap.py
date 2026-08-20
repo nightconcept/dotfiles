@@ -32,9 +32,10 @@ class LlamaSwapModule(HostModule):
     """Manages llama-swap installation and service lifecycle."""
 
     def __init__(self):
+        """Initialize llama-swap paths and version."""
         self.user = os.environ.get("USER", "danny")
         self.install_dir = "/opt/llama-swap"
-        self.version = os.environ.get("LLAMA_SWAP_VERSION", "v235")
+        self.version = os.environ.get("LLAMA_SWAP_VERSION", "v250")
         self.config_dir = "/etc/llama-swap"
         self.config_path = f"{self.config_dir}/config.yaml"
         self.listen = os.environ.get("LLAMA_SWAP_LISTEN", "0.0.0.0:8080")
@@ -65,7 +66,9 @@ class LlamaSwapModule(HostModule):
                 VERSION="{self.version}"
                 VERSION_FILE="{self.install_dir}/VERSION"
 
-                if [ -f "$VERSION_FILE" ] && [ "$(cat "$VERSION_FILE")" = "$VERSION" ] && [ -x "{self.install_dir}/llama-swap" ]; then
+                if [ -f "$VERSION_FILE" ] \
+                    && [ "$(cat "$VERSION_FILE")" = "$VERSION" ] \
+                    && [ -x "{self.install_dir}/llama-swap" ]; then
                     exit 0
                 fi
 
