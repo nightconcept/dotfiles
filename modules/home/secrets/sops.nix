@@ -52,6 +52,13 @@ in {
           mode = "0400";
         };
 
+        # Actual Budget server login password, used by the ledger repo's
+        # sync_actual.py to pull transactions into hledger
+        "actual_sync_password" = {
+          path = "${config.home.homeDirectory}/.local/share/sops/secrets/actual_sync_password";
+          mode = "0400";
+        };
+
         # Other user secrets can be added here
       };
     };
