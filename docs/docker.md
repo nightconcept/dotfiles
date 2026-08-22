@@ -22,11 +22,12 @@ Available container modules include:
 Docker networks:
 - `proxy` - Shared network for services behind Traefik reverse proxy
 
-## Terra Budget Stack
+## Terra Budget and Ledger Stacks
 
-Actual Budget and Paisa run on Terra through the pyinfra-managed Docker Compose
-stack at `/opt/budget`. Rinoa's Traefik instance is the TLS endpoint and
-proxies the following local URLs to Terra:
+Actual Budget and Paisa run on Terra as separate pyinfra-managed Docker
+Compose stacks: Actual Budget at `/opt/budget` and Paisa at `/opt/ledger`.
+Rinoa's Traefik instance is the TLS endpoint and proxies the following local
+URLs to Terra:
 
 - `https://budget.local.solivan.dev` -> Actual Budget on Terra port 5006
 - `https://ledger.local.solivan.dev` -> Paisa on Terra port 7500
@@ -35,12 +36,12 @@ Persistent data stays on Terra:
 
 - `/home/danny/docker/actual/data` — Actual server and user files
 - `/home/danny/docker/paisa/data` — Paisa configuration and SQLite database
-- `/home/danny/git/ledger` — Ledger Git checkout, mounted read-only by Paisa
+- `/home/danny/git/ledger` — Ledger Git checkout, mounted read-write by Paisa
 
 Paisa uses `ledger/main.journal` from the `nightconcept/ledger` checkout and
 the hledger image. Back up all three directories before upgrades. Actual and
 Ledger transaction conversion is a separate future project; no synchronization
-occurs in this stack.
+occurs between these stacks.
 
 Before deploying the Rinoa routes, create these Pi-hole local DNS records that
 resolve to Rinoa, not Terra:

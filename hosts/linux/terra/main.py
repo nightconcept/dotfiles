@@ -6,6 +6,7 @@ from modules.linux.programs.hermes import HermesModule
 from modules.linux.programs.home_manager import HomeManagerModule
 from modules.linux.programs.huggingface import HuggingFaceModule
 from modules.linux.programs.koreader_sync.module import KoreaderSyncModule
+from modules.linux.programs.ledger.module import LedgerModule
 from modules.linux.programs.llama_cpp import LlamaCppModule
 from modules.linux.programs.llama_swap import LlamaSwapModule
 from modules.linux.programs.llm_models import LLMModelsModule
@@ -26,6 +27,7 @@ tailscale = TailscaleModule(login_server="https://hs.solivan.dev")
 docker = DockerModule()
 books = BooksModule()
 budget = BudgetModule()
+ledger = LedgerModule()
 kosync = KoreaderSyncModule()
 paseo = PaseoModule(port=6767)
 watchtower = WatchtowerModule()
@@ -49,6 +51,7 @@ docker.deploy()
 
 # Deploy services
 budget.deploy()
+ledger.deploy()
 books.deploy()
 kosync.deploy()
 paseo.deploy()
