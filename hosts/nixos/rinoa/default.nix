@@ -82,6 +82,7 @@
       "zotero-webdav"
       "opengist"
       "headscale"
+      "seerr"
     ];
     mounts = ["/mnt/titan"];
     httpChecks = [
@@ -132,7 +133,11 @@
       }
       {
         name = "OpenGist routed";
-        url = "https://gist.local.solivan.dev/";
+        url = "https://gist.local.solivan.dev/healthcheck";
+      }
+      {
+        name = "Seerr direct";
+        url = "http://127.0.0.1:5055/api/v1/settings/public";
       }
       {
         name = "Actual Budget routed";
@@ -161,6 +166,7 @@
       "docker-container-forgejo.service"
       "docker-container-zotero-webdav.service"
       "docker-container-opengist.service"
+      "docker-container-seerr.service"
     ];
   };
 
@@ -200,6 +206,7 @@
     zotero-webdav.enable = true;
     opengist.enable = true;
     headscale.enable = true;
+    seerr.enable = true;
   };
 
   # System packages for server management

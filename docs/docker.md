@@ -13,6 +13,7 @@ Available container modules include:
 - **Books**: audiobookshelf, calibre, calibre-web, readarr-books
 - **Home Automation**: homepage, uptime-kuma
 - **Infrastructure**: traefik, portainer, watchtower, cloudflare-tunnel, headscale
+- **Media requests**: seerr (the supported successor to Overseerr and Jellyseerr)
 - **Authentication**: vaultwarden
 - **Development**: forgejo, forgejo-runner, paseo
 - **Gaming**: minecraft, enshrouded, palworld

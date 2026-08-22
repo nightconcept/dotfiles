@@ -43,6 +43,7 @@ in {
     # ./containers/minecraft
     ./containers/nextcloud
     ./containers/opengist
+    ./containers/seerr
     # ./containers/open-webui
     # ./containers/palworld
     ./containers/prowlarr-abb

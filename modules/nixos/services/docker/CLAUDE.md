@@ -10,7 +10,7 @@ Docker containers are Nix modules in `containers/`. Each defines compose config,
 
 | Category | Containers |
 |----------|-----------|
-| Media | jellyfin, plex |
+| Media | jellyfin, plex, seerr |
 | *arr Stack | sonarr, radarr, prowlarr, readarr, flaresolverr |
 | Books | audiobookshelf, calibre, calibre-web, readarr-books |
 | Home Automation | homepage, uptime-kuma |

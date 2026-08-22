@@ -1,0 +1,40 @@
+services:
+  seerr:
+    image: ghcr.io/seerr-team/seerr:v3.4.1
+    container_name: seerr
+    hostname: seerr
+    init: true
+    restart: unless-stopped
+    networks:
+      - proxy
+    environment:
+      - LOG_LEVEL=info
+      - PORT=5055
+      - TZ=${TZ}
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:5055/api/v1/settings/public || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    ports:
+      - "127.0.0.1:5055:5055"
+    volumes:
+      - ${CONFIG_PATH}:/app/config
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.seerr.entrypoints=http"
+      - "traefik.http.routers.seerr.rule=Host(`${SUBDOMAIN}.${LOCAL_DOMAIN}`)"
+      - "traefik.http.middlewares.seerr-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.seerr.middlewares=seerr-https-redirect"
+      - "traefik.http.routers.seerr-secure.entrypoints=https"
+      - "traefik.http.routers.seerr-secure.rule=Host(`${SUBDOMAIN}.${LOCAL_DOMAIN}`) || Host(`${SUBDOMAIN}.${DOMAIN}`)"
+      - "traefik.http.routers.seerr-secure.tls=true"
+      - "traefik.http.routers.seerr-secure.middlewares=crowdsec-bouncer@docker"
+      - "traefik.http.routers.seerr-secure.service=seerr"
+      - "traefik.http.services.seerr.loadbalancer.server.port=5055"
+      - "traefik.docker.network=proxy"
+
+networks:
+  proxy:
+    external: true
