@@ -26,8 +26,10 @@
       set +e
 
       wait_mode=false
+      wait_timeout=${toString cfg.startupTimeout}
       if [[ "''${1:-}" == "--wait" ]]; then
         wait_mode=true
+        wait_timeout="''${2:-$wait_timeout}"
       fi
 
       check_once() {
@@ -85,7 +87,7 @@
         return 0
       }
 
-      deadline=$((SECONDS + ${toString cfg.startupTimeout}))
+      deadline=$((SECONDS + wait_timeout))
       while ! output=$(check_once 2>&1); do
         if ! $wait_mode || (( SECONDS >= deadline )); then
           echo "$output" >&2
@@ -176,6 +178,12 @@ in {
       description = "Seconds to wait for all checks to pass during boot.";
     };
 
+    recheckTimeout = mkOption {
+      type = types.ints.positive;
+      default = 60;
+      description = "Seconds to tolerate transient failures during recurring checks.";
+    };
+
     interval = mkOption {
       type = types.str;
       default = "1min";
@@ -216,11 +224,11 @@ in {
 
     systemd.services.docker-services-health = {
       description = "Recheck all required Docker services";
-      after = ["docker.service"];
+      after = ["docker.service"] ++ cfg.afterUnits;
       requires = ["docker.service"];
       serviceConfig = {
         Type = "oneshot";
-        ExecStart = "${healthChecker}/bin/docker-services-health";
+        ExecStart = "${healthChecker}/bin/docker-services-health --wait ${toString cfg.recheckTimeout}";
       };
     };
 
