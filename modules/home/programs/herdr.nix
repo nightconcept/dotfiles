@@ -24,6 +24,13 @@ in {
       [keys]
       # prefix is ctrl+b by default — set explicitly for clarity
       prefix = "ctrl+b"
+
+      [terminal]
+      # Explicit path: on non-NixOS hosts the account's /etc/passwd login shell
+      # is never updated by home-manager, so new panes would otherwise fall
+      # back to bash instead of the fish configured here.
+      default_shell = "${pkgs.fish}/bin/fish"
+      shell_mode = "login"
     '';
   };
 }
