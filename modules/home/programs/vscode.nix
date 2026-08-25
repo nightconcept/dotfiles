@@ -149,8 +149,15 @@ in {
                 version = "2.76.27";
                 sha256 = "sha256-umUbPv9jYIptRqoiU5C2yHEWFLJuM4LrU2mTLIaQBN8=";
               }
+              {
+                name = "vscode-v-analyzer";
+                publisher = "VOSCA";
+                version = "0.0.2";
+                sha256 = "sha256-Nn1ZaBRwJQoACF2MMaJvznTFzpCLXMnsevJHy0Iaws8=";
+              }
             ];
           userSettings = {
+            "v-analyzer.serverPath" = "${config.home.homeDirectory}/.config/v-analyzer/bin/v-analyzer";
             "chat.commandCenter.enabled" = false;
             "colorize.languages" = [
               "nix"

@@ -25,6 +25,10 @@
 
   fonts.fontconfig.enable = true;
 
+  home.sessionVariables = {
+    VFLAGS = "-cc clang";
+  };
+
   home.packages = with pkgs; [
     karabiner-elements
   ];

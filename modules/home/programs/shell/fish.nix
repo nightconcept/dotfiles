@@ -19,6 +19,7 @@ in {
     home.sessionPath =
       [
         "${config.home.homeDirectory}/.local/bin"
+        "${config.home.homeDirectory}/.config/v-analyzer/bin"
         "/opt/nvim-linux64/bin"
       ]
       ++ (
@@ -99,6 +100,7 @@ in {
         ${
           if pkgs.stdenv.isDarwin
           then ''
+            set -gx VFLAGS "-cc clang"
             if test -d "${config.home.homeDirectory}/.nix-profile/bin"
                 fish_add_path --prepend ${config.home.homeDirectory}/.nix-profile/bin
             end
@@ -148,6 +150,11 @@ in {
         # NPM global bin path for claude-sandbox
         if test -d "${config.home.homeDirectory}/.npm-global/bin"
             fish_add_path --prepend ${config.home.homeDirectory}/.npm-global/bin
+        end
+
+        # v-analyzer language server bin path
+        if test -d "${config.home.homeDirectory}/.config/v-analyzer/bin"
+            fish_add_path --prepend ${config.home.homeDirectory}/.config/v-analyzer/bin
         end
 
         # Enable OpenCode built-in Exa web search (no API key required)
