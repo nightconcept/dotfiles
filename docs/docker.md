@@ -22,12 +22,18 @@ Available container modules include:
 Docker networks:
 - `proxy` - Shared network for services behind Traefik reverse proxy
 
-## Terra Budget and Ledger Stacks
+## Terra Docker Compose Stacks
 
-Actual Budget and Paisa run on Terra as separate pyinfra-managed Docker
-Compose stacks: Actual Budget at `/opt/budget` and Paisa at `/opt/ledger`.
-Rinoa's Traefik instance is the TLS endpoint and proxies the following local
-URLs to Terra:
+Actual Budget, Paisa, and BookOrbit run on Terra as separate pyinfra-managed
+Docker Compose stacks at `/opt/budget`, `/opt/ledger`, and `/opt/bookorbit`.
+BookOrbit runs alongside the existing Calibre and Calibre-Web stack at
+`/opt/books-stack` until its library migration is complete. Its `/books` mount
+uses the existing `/mnt/calibre-library` path. Before its first deployment,
+replace the `CHANGE_THIS_*` values in `/opt/bookorbit/.env`; the bootstrap
+token is generated automatically when that file is first created.
+
+Actual Budget and Paisa use the following local URLs. Rinoa's Traefik instance
+is the TLS endpoint and proxies them to Terra:
 
 - `https://budget.local.solivan.dev` -> Actual Budget on Terra port 5006
 - `https://ledger.local.solivan.dev` -> Paisa on Terra port 7500
