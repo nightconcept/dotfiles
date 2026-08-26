@@ -78,7 +78,7 @@ in {
         Type = "oneshot";
         RemainAfterExit = true;
         WorkingDirectory = containerPath;
-        ExecStart = "${pkgs.docker-compose}/bin/docker-compose up -d --wait --wait-timeout 180";
+        ExecStart = "${pkgs.docker-compose}/bin/docker-compose up -d --wait --wait-timeout 300";
         ExecStop = "${pkgs.docker-compose}/bin/docker-compose down";
         ExecReload = "${pkgs.docker-compose}/bin/docker-compose restart";
       };

@@ -55,10 +55,10 @@ in {
 
     systemd.tmpfiles.rules = [
       "d ${containerPath} 0755 root root -"
-      "d /home/danny/docker/bookorbit 0750 danny users -"
-      "d ${cfg.dataPath} 0750 danny users -"
+      "d /home/danny/docker/bookorbit 0755 danny users -"
+      "d ${cfg.dataPath} 0755 danny users -"
       "d ${cfg.dataPath}/app 0750 danny users -"
-      "d ${cfg.dataPath}/postgres 0750 danny users -"
+      "d ${cfg.dataPath}/postgres 0755 999 999 -"
     ];
 
     systemd.services."docker-container-${containerName}" = {
@@ -87,6 +87,9 @@ in {
           sleep 2
         done
 
+        mkdir -p "${cfg.dataPath}/postgres"
+        chown -R 999:999 "${cfg.dataPath}/postgres" || true
+
         cp ${./docker-compose.yml} ${containerPath}/docker-compose.yml
 
         if [ ! -f "${cfg.environmentFile}" ]; then
@@ -114,7 +117,7 @@ in {
         Type = "oneshot";
         RemainAfterExit = true;
         WorkingDirectory = containerPath;
-        ExecStart = "${pkgs.docker-compose}/bin/docker-compose up -d --wait --wait-timeout 180";
+        ExecStart = "${pkgs.docker-compose}/bin/docker-compose up -d --wait --wait-timeout 300";
         ExecStop = "${pkgs.docker-compose}/bin/docker-compose down";
         ExecReload = "${pkgs.docker-compose}/bin/docker-compose restart";
       };

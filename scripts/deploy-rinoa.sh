@@ -11,7 +11,14 @@ if [[ "${1:-}" != "--yes" ]]; then
   exit 2
 fi
 
-exec nixos-rebuild switch \
-  --flake "${repo_dir}#rinoa" \
-  --target-host "${target_host}" \
-  --use-remote-sudo
+if command -v nixos-rebuild >/dev/null 2>&1; then
+  exec nixos-rebuild switch \
+    --flake "${repo_dir}#rinoa" \
+    --target-host "${target_host}" \
+    --use-remote-sudo
+else
+  exec nix run nixpkgs#nixos-rebuild -- switch \
+    --flake "${repo_dir}#rinoa" \
+    --target-host "${target_host}" \
+    --use-remote-sudo
+fi
