@@ -76,6 +76,7 @@
       "radarr"
       "jellyfin"
       "audiobookshelf"
+      "bookorbit"
       "libbyrip-converter"
       "forgejo-db"
       "forgejo"
@@ -162,6 +163,7 @@
       "docker-container-radarr.service"
       "docker-container-jellyfin.service"
       "docker-container-audiobookshelf.service"
+      "docker-container-bookorbit.service"
       "docker-container-libbyrip-converter.service"
       "docker-container-forgejo.service"
       "docker-container-zotero-webdav.service"
@@ -195,6 +197,7 @@
     radarr.enable = true;
     jellyfin.enable = true;
     audiobookshelf.enable = true;
+    bookorbit.enable = true;
     libbyrip-converter.enable = true;
     nextcloud.enable = false;
     forgejo = {

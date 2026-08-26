@@ -24,13 +24,17 @@ Docker networks:
 
 ## Terra Docker Compose Stacks
 
-Actual Budget, Paisa, and BookOrbit run on Terra as separate pyinfra-managed
-Docker Compose stacks at `/opt/budget`, `/opt/ledger`, and `/opt/bookorbit`.
-BookOrbit runs alongside the existing Calibre and Calibre-Web stack at
-`/opt/books-stack` until its library migration is complete. Its `/books` mount
-uses the existing `/mnt/calibre-library` path. Before its first deployment,
-replace the `CHANGE_THIS_*` values in `/opt/bookorbit/.env`; the bootstrap
-token is generated automatically when that file is first created.
+Actual Budget and Paisa run on Terra as separate pyinfra-managed Docker Compose
+stacks at `/opt/budget` and `/opt/ledger`.
+
+BookOrbit runs as a Nix-managed Docker service on Rinoa. It stores its
+application and PostgreSQL data in `/home/danny/docker/bookorbit/data` on
+Rinoa and mounts `/mnt/titan` as `/books`, exposing `/books/Books` and
+`/books/Audiobooks`. On its first start, BookOrbit creates a private `.env`
+file and generates its database password, JWT secret, and setup token.
+
+BookOrbit is available at `https://books.local.solivan.dev` and
+`https://books.solivan.dev`.
 
 Actual Budget and Paisa use the following local URLs. Rinoa's Traefik instance
 is the TLS endpoint and proxies them to Terra:

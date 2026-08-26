@@ -28,6 +28,7 @@ in {
     ./containers/sonarr
 
     ./containers/audiobookshelf
+    ./containers/bookorbit
 
     # Add other containers as default.nix files are created
 

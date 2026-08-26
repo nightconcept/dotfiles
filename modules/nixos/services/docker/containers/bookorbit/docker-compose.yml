@@ -2,14 +2,15 @@ name: bookorbit
 
 services:
   app:
-    container_name: bookorbit-app
+    container_name: bookorbit
     image: ${APP_IMAGE?required}
     restart: unless-stopped
     init: true
     env_file:
       - .env
-    ports:
-      - "${APP_PORT:-3000}:${PORT:-3000}"
+    networks:
+      - proxy
+      - backend
     environment:
       NODE_ENV: production
       PORT: ${PORT:-3000}
@@ -33,8 +34,8 @@ services:
       postgres:
         condition: service_healthy
     volumes:
-      - ${BOOKS_HOST_PATH:-/mnt/calibre-library}:/books
-      - ./data/app:/data
+      - ${BOOKS_HOST_PATH?required}:/books
+      - ${DATA_PATH?required}/app:/data
     read_only: true
     tmpfs:
       - /tmp
@@ -49,18 +50,33 @@ services:
     security_opt:
       - no-new-privileges:true
     stop_grace_period: 30s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.bookorbit.entrypoints=http"
+      - "traefik.http.routers.bookorbit.rule=Host(`${SUBDOMAIN}.${LOCAL_DOMAIN}`) || Host(`${SUBDOMAIN}.${DOMAIN}`)"
+      - "traefik.http.middlewares.bookorbit-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.bookorbit.middlewares=bookorbit-https-redirect"
+      - "traefik.http.routers.bookorbit-secure.entrypoints=https"
+      - "traefik.http.routers.bookorbit-secure.rule=Host(`${SUBDOMAIN}.${LOCAL_DOMAIN}`) || Host(`${SUBDOMAIN}.${DOMAIN}`)"
+      - "traefik.http.routers.bookorbit-secure.tls=true"
+      - "traefik.http.routers.bookorbit-secure.middlewares=crowdsec-bouncer@docker"
+      - "traefik.http.routers.bookorbit-secure.service=bookorbit"
+      - "traefik.http.services.bookorbit.loadbalancer.server.port=3000"
+      - "traefik.docker.network=proxy"
 
   postgres:
     container_name: bookorbit-db
     image: pgvector/pgvector:pg18
     restart: unless-stopped
+    networks:
+      - backend
     environment:
       POSTGRES_USER: ${POSTGRES_USER?required}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD?required}
       POSTGRES_DB: ${POSTGRES_DB?required}
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
-      - ./data/postgres:/var/lib/postgresql/data
+      - ${DATA_PATH?required}/postgres:/var/lib/postgresql/data
     healthcheck:
       test:
         ["CMD-SHELL", 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
@@ -68,3 +84,9 @@ services:
       timeout: 5s
       retries: 10
       start_period: 20s
+
+networks:
+  proxy:
+    external: true
+  backend:
+    internal: true

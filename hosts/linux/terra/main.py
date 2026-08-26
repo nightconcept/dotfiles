@@ -1,4 +1,4 @@
-from modules.linux.programs.books.module import BookOrbitModule, BooksModule
+from modules.linux.programs.books.module import BooksModule
 from modules.linux.programs.budget.module import BudgetModule
 from modules.linux.programs.docker import DockerModule
 from modules.linux.programs.foreign_arch import ForeignArchModule
@@ -26,7 +26,6 @@ titan = TitanMountModule()
 tailscale = TailscaleModule(login_server="https://hs.solivan.dev")
 docker = DockerModule()
 books = BooksModule()
-bookorbit = BookOrbitModule(enabled=True, library_path="/mnt/calibre-library")
 budget = BudgetModule()
 ledger = LedgerModule()
 kosync = KoreaderSyncModule()
@@ -54,8 +53,6 @@ docker.deploy()
 budget.deploy()
 ledger.deploy()
 books.deploy()
-if bookorbit.enabled:
-    bookorbit.deploy()
 kosync.deploy()
 paseo.deploy()
 watchtower.deploy()

@@ -91,17 +91,6 @@ http:
       tls: {}
       service: calibre
 
-    books:
-      entryPoints:
-        - "https"
-      rule: "Host(`books.local.solivan.dev`)"
-      middlewares:
-        - default-whitelist
-        - default-headers
-        - https-redirectscheme
-      tls: {}
-      service: books
-
     kosync:
       entryPoints:
         - "https"
@@ -232,12 +221,6 @@ http:
       loadBalancer:
         servers:
           - url: "http://192.168.1.111:8085"
-        passHostHeader: true
-
-    books:
-      loadBalancer:
-        servers:
-          - url: "http://192.168.1.111:8083"
         passHostHeader: true
 
     kosync:
