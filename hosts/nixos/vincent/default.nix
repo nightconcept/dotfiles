@@ -81,6 +81,7 @@ in {
       {
         name = "Uptime Kuma direct";
         url = "http://192.168.1.185:3001/";
+        acceptedStatusCodes = ["200" "302"];
       }
     ];
     afterUnits = [
@@ -142,17 +143,17 @@ in {
         (http "Pi-hole direct" "http://192.168.1.101:8089/admin/")
         ((http "Plex HTTP direct" "http://192.168.1.118:32400/")
           // {
-            accepted_statuscodes = ["200-399" "401"];
+            accepted_statuscodes = ["200-299" "300-399" "401"];
           })
         (http "qBittorrent HTTP direct" "http://192.168.1.114:8112/")
         ((http "Terra Calibre direct" "http://192.168.1.111:8085/")
           // {
-            accepted_statuscodes = ["200-399" "401"];
+            accepted_statuscodes = ["200-299" "300-399" "401"];
           })
         (http "Terra Calibre Web direct" "http://192.168.1.111:8083/")
         ((http "Terra Paseo direct" "http://192.168.1.111:6767/")
           // {
-            accepted_statuscodes = ["200-399" "401" "403"];
+            accepted_statuscodes = ["200-299" "300-399" "401" "403"];
           })
         (http "Terra model API direct" "http://192.168.1.111:8080/v1/models")
 
@@ -175,10 +176,10 @@ in {
         (http "Forgejo LAN" "https://forge.local.solivan.dev/api/healthz")
         ((http "Zotero WebDAV LAN" "https://zotero.local.solivan.dev/") // {accepted_statuscodes = ["200" "401"];})
         (http "OpenGist LAN" "https://gist.local.solivan.dev/")
-        ((http "Plex routed" "https://plex.local.solivan.dev/") // {accepted_statuscodes = ["200-399" "401"];})
+        ((http "Plex routed" "https://plex.local.solivan.dev/") // {accepted_statuscodes = ["200-299" "300-399" "401"];})
         (http "Pi-hole routed" "https://pihole.local.solivan.dev/admin/")
         (http "qBittorrent routed" "https://qbittorrent.local.solivan.dev/")
-        ((http "Calibre" "https://calibre.local.solivan.dev/") // {accepted_statuscodes = ["200-399" "401"];})
+        ((http "Calibre" "https://calibre.local.solivan.dev/") // {accepted_statuscodes = ["200-299" "300-399" "401"];})
         (http "Calibre Web" "https://books.local.solivan.dev/")
         (http "Libby converter" "https://converter.local.solivan.dev/")
         (http "Valefor routed" "https://valefor.local.solivan.dev/")

@@ -20,7 +20,7 @@ in {
       # already ships its own valid service file in /usr/share/systemd/user/
       systemd.enable = lib.mkIf config.modules.home.programs.ghostty.configOnly false;
       # On macOS and non-NixOS Linux, use configOnly mode since ghostty is installed externally
-      package = lib.mkIf (pkgs.stdenv.isDarwin || config.modules.home.programs.ghostty.configOnly) (
+      package = lib.mkIf (pkgs.stdenv.hostPlatform.isDarwin || config.modules.home.programs.ghostty.configOnly) (
         pkgs.runCommand "ghostty-dummy" {
           meta.mainProgram = "ghostty";
         } ''
@@ -80,7 +80,7 @@ in {
 
         # Platform-specific keybindings
         keybind =
-          if pkgs.stdenv.isDarwin
+          if pkgs.stdenv.hostPlatform.isDarwin
           then [
             # macOS keybindings (CMD modifier)
             # Disable new_tab to avoid conflicts with tiling window managers (use splits instead)
@@ -117,7 +117,7 @@ in {
     };
 
     # On macOS, ensure ghostty is in PATH for shell integration
-    home.sessionPath = lib.mkIf pkgs.stdenv.isDarwin [
+    home.sessionPath = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin [
       "/Applications/Ghostty.app/Contents/MacOS"
     ];
   };

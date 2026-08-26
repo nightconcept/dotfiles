@@ -73,7 +73,7 @@
     ];
 
     # Set default applications for Hyprland (Linux only)
-    xdg.mimeApps = lib.mkIf pkgs.stdenv.isLinux {
+    xdg.mimeApps = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
       enable = true;
     };
 

@@ -129,7 +129,7 @@ in {
             command: ['dockerd', '-H', 'tcp://0.0.0.0:2375', '--tls=false']
             restart: unless-stopped
             healthcheck:
-              test: ['CMD', 'docker', 'info']
+              test: ['CMD', 'docker', '--host', 'tcp://127.0.0.1:2375', 'info']
               interval: 30s
               timeout: 10s
               retries: 3

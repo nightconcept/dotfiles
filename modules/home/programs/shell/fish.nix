@@ -23,7 +23,7 @@ in {
         "/opt/nvim-linux64/bin"
       ]
       ++ (
-        if pkgs.stdenv.isDarwin
+        if pkgs.stdenv.hostPlatform.isDarwin
         then [
           "/usr/local/bin"
           "/opt/homebrew/bin"
@@ -76,7 +76,7 @@ in {
           fishclear = "echo \"\" > ~/.local/share/fish/fish_history";
         }
         // (
-          if pkgs.stdenv.isLinux
+          if pkgs.stdenv.hostPlatform.isLinux
           then {
             apt = "sudo apt";
           }
@@ -98,7 +98,7 @@ in {
             fish_add_path --prepend /nix/var/nix/profiles/default/bin
         end
         ${
-          if pkgs.stdenv.isDarwin
+          if pkgs.stdenv.hostPlatform.isDarwin
           then ''
             set -gx VFLAGS "-cc clang"
             if test -d "${config.home.homeDirectory}/.nix-profile/bin"

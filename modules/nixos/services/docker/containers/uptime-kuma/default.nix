@@ -138,7 +138,7 @@ in {
           };
           accepted_statuscodes = lib.mkOption {
             type = lib.types.listOf lib.types.str;
-            default = ["200-399"];
+            default = ["200-299" "300-399"];
           };
           expiryNotification = lib.mkOption {
             type = lib.types.bool;

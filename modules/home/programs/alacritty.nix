@@ -69,7 +69,7 @@ in {
         };
 
         # Terminal settings
-        terminal = lib.mkIf pkgs.stdenv.isDarwin {
+        terminal = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
           shell = {
             program = "/bin/zsh";
             args = ["-l"];

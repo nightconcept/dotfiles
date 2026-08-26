@@ -74,7 +74,7 @@
     ];
 
     # Set default applications for Niri (Linux only)
-    xdg.mimeApps = lib.mkIf pkgs.stdenv.isLinux {
+    xdg.mimeApps = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
       enable = true;
     };
 
