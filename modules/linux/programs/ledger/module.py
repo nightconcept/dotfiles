@@ -12,6 +12,14 @@ _SYNC_COMMAND = (
     "python3 {ledger_dir}/scripts/sync_actual.py --commit --push"
 )
 
+# Includes the mise shims dir (unlike _SYNC_COMMAND's unit) because
+# sync_house.py shells out to hledger, which is mise-pinned, not on the
+# nix profile PATH -- see docs/repo/house-valuation.md in the ledger repo.
+_HOUSE_SYNC_COMMAND = (
+    "/home/danny/.nix-profile/bin/uv run --with requests "
+    "python3 {ledger_dir}/scripts/sync_house.py --commit --push"
+)
+
 _SYNC_SERVICE_UNIT = """\
 [Unit]
 Description=Regenerate hledger journal from Actual Budget
@@ -40,16 +48,49 @@ Unit=ledger-sync.service
 WantedBy=timers.target
 """
 
+_HOUSE_SYNC_SERVICE_UNIT = """\
+[Unit]
+Description=Snapshot the house's Real Market Value from the county assessor into hledger
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=danny
+Group=danny
+WorkingDirectory={ledger_dir}
+Environment=PATH=/home/danny/.local/bin:/home/danny/.nix-profile/bin:/home/danny/.local/share/mise/shims:/home/danny/.ghcup/bin:/usr/local/bin:/usr/bin:/bin
+ExecStart={house_sync_command}
+"""
+
+_HOUSE_SYNC_TIMER_UNIT = """\
+[Unit]
+Description=Run the county assessor -> hledger house valuation sync monthly
+
+[Timer]
+OnCalendar={on_calendar}
+Persistent=true
+Unit=ledger-sync-house.service
+
+[Install]
+WantedBy=timers.target
+"""
+
 
 class LedgerModule(HostModule):
     """Deploy the Paisa Docker Compose stack against the Ledger checkout."""
 
-    def __init__(self, sync_on_calendar: str = "*-*-* 06:00:00"):
+    def __init__(
+        self,
+        sync_on_calendar: str = "*-*-* 06:00:00",
+        house_sync_on_calendar: str = "*-*-01 07:00:00",
+    ):
         """Initialize deployment and persistent-data paths."""
         self.base_dir = "/opt/ledger"
         self.paisa_data_dir = "/home/danny/docker/paisa/data"
         self.ledger_dir = "/home/danny/git/ledger"
         self.sync_on_calendar = sync_on_calendar
+        self.house_sync_on_calendar = house_sync_on_calendar
         self.local_dir = os.path.dirname(__file__)
         self.local_compose = os.path.join(self.local_dir, "docker-compose.yml")
         self.local_paisa_config = os.path.join(self.local_dir, "paisa.yaml")
@@ -121,8 +162,28 @@ class LedgerModule(HostModule):
             _sudo=True,
         )
 
+        files.put(
+            name="Deploy ledger-sync-house.service unit",
+            src=io.StringIO(
+                _HOUSE_SYNC_SERVICE_UNIT.format(
+                    ledger_dir=self.ledger_dir,
+                    house_sync_command=_HOUSE_SYNC_COMMAND.format(ledger_dir=self.ledger_dir),
+                )
+            ),
+            dest="/etc/systemd/system/ledger-sync-house.service",
+            mode="644",
+            _sudo=True,
+        )
+        files.put(
+            name="Deploy ledger-sync-house.timer unit",
+            src=io.StringIO(_HOUSE_SYNC_TIMER_UNIT.format(on_calendar=self.house_sync_on_calendar)),
+            dest="/etc/systemd/system/ledger-sync-house.timer",
+            mode="644",
+            _sudo=True,
+        )
+
     def service(self):
-        """Use Docker Compose restart policies for Paisa; enable the sync timer."""
+        """Use Docker Compose restart policies for Paisa; enable the sync timers."""
         systemd.service(
             name="Enable ledger-sync.timer",
             service="ledger-sync.timer",
@@ -131,12 +192,27 @@ class LedgerModule(HostModule):
             daemon_reload=True,
             _sudo=True,
         )
+        systemd.service(
+            name="Enable ledger-sync-house.timer",
+            service="ledger-sync-house.timer",
+            running=True,
+            enabled=True,
+            daemon_reload=True,
+            _sudo=True,
+        )
 
     def remove(self):
-        """Stop the stack and sync timer while preserving persistent data directories."""
+        """Stop the stack and sync timers while preserving persistent data directories."""
         systemd.service(
             name="Disable ledger-sync.timer",
             service="ledger-sync.timer",
+            running=False,
+            enabled=False,
+            _sudo=True,
+        )
+        systemd.service(
+            name="Disable ledger-sync-house.timer",
+            service="ledger-sync-house.timer",
             running=False,
             enabled=False,
             _sudo=True,
