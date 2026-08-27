@@ -1,6 +1,6 @@
 services:
   paisa:
-    image: ananthakumaran/paisa:latest-hledger
+    image: ghcr.io/nightconcept/paisa:v0.7.5-nightconcept.1-hledger
     container_name: paisa
     restart: unless-stopped
     ports:
