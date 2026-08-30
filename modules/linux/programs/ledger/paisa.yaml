@@ -1,4 +1,4 @@
-journal_path: /ledger/ledger/main.journal
+journal_path: /ledger/clean/main.journal
 db_path: /root/Documents/paisa/paisa.db
 sheets_directory: /root/Documents/paisa/sheets
 readonly: false

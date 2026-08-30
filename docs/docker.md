@@ -48,7 +48,7 @@ Persistent data stays on Terra:
 - `/home/danny/docker/paisa/data` — Paisa configuration and SQLite database
 - `/home/danny/git/ledger` — Ledger Git checkout, mounted read-write by Paisa
 
-Paisa uses `ledger/main.journal` from the `nightconcept/ledger` checkout and
+Paisa uses `clean/main.journal` from the `nightconcept/ledger` checkout and
 the hledger image. Back up all three directories before upgrades. Actual and
 Ledger transaction conversion is a separate future project; no synchronization
 occurs between these stacks.

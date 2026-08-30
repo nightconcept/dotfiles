@@ -126,7 +126,7 @@ class LedgerModule(HostModule):
         server.shell(
             name="Require Ledger checkout and seed missing Paisa configuration",
             commands=[
-                f'test -f "{self.ledger_dir}/ledger/main.journal"',
+                f'test -f "{self.ledger_dir}/clean/main.journal"',
                 (
                     f'test -e "{self.paisa_data_dir}/paisa.yaml" || '
                     f"install -o danny -g danny -m 0640 "
