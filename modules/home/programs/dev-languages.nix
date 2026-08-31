@@ -6,6 +6,7 @@
 }: let
   moduleLib = import ../../../lib/module {inherit lib;};
   inherit (moduleLib) mkBoolOpt;
+  miseBin = pkgs.callPackage ../../../pkgs/mise/package.nix {};
 in {
   options.modules.home.programs.dev-languages = {
     enable = mkBoolOpt false "Enable developer programming languages and runtimes (excluding Python/uv)";
@@ -16,7 +17,7 @@ in {
       beamPackages.erlang
       gleam
       lua51Packages.lua
-      mise
+      miseBin
       nodejs_24
       vlang
     ];

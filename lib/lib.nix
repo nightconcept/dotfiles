@@ -102,6 +102,11 @@ in {
       pkgs = import nixpkgs {
         localSystem = "x86_64-linux";
         config.allowUnfree = true;
+        overlays = [
+          (final: prev: {
+            mise = final.callPackage ../pkgs/mise/package.nix {};
+          })
+        ];
       };
       modules = [
         ../home

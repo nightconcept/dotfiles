@@ -53,6 +53,9 @@ in {
       config.allowUnfree = true;
       overlays = [
         (final: prev: {
+          mise = final.callPackage ../../../pkgs/mise/package.nix {};
+        })
+        (final: prev: {
           direnv = prev.direnv.overrideAttrs (old: {
             postPatch =
               (old.postPatch or "")

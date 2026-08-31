@@ -1,18 +1,27 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }: let
   moduleLib = import ../../../lib/module {inherit lib;};
   inherit (moduleLib) mkBoolOpt;
+  miseBin = pkgs.callPackage ../../../pkgs/mise/package.nix {};
 in {
   options.modules.home.programs.mise = {
     enable = mkBoolOpt false "Enable mise for managing language runtimes and tools";
   };
 
-  config = lib.mkIf config.modules.home.programs.mise.enable {
-    programs.mise = {
+  config = {
+    nixpkgs.overlays = [
+      (final: prev: {
+        mise = final.callPackage ../../../pkgs/mise/package.nix {};
+      })
+    ];
+
+    programs.mise = lib.mkIf config.modules.home.programs.mise.enable {
       enable = true;
+      package = miseBin;
     };
   };
 }
