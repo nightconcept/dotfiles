@@ -27,10 +27,6 @@ check-darwin:
 update:
     nix flake update
 
-# Show flake outputs
-show:
-    nix flake show
-
 # Build a specific NixOS configuration without switching
 build-nixos config:
     nixos-rebuild build --flake .#{{config}}
@@ -63,19 +59,6 @@ clean:
 terra:
     uv run --with pyinfra --with requests pyinfra -y @local hosts/linux/terra/main.py
 
-# Run the LibbyRip converter locally without Traefik
-dev:
-    mkdir -p .local/state/libbyrip-converter-dev
-    LIBBYRIP_REPO="${PWD}/../LibbyRip" LIBBYRIP_DATA_DIR="${PWD}/.local/state/libbyrip-converter-dev" docker compose -f modules/nixos/services/docker/containers/libbyrip-converter/docker-compose.dev.yml up -d --build
-
-# Stop the local LibbyRip converter dev container
-dev-down:
-    LIBBYRIP_REPO="${PWD}/../LibbyRip" LIBBYRIP_DATA_DIR="${PWD}/.local/state/libbyrip-converter-dev" docker compose -f modules/nixos/services/docker/containers/libbyrip-converter/docker-compose.dev.yml down
-
-# Start the Palworld dedicated server (1.0-ready; not deployed on this machine yet)
-palworld:
-    cd modules/nixos/services/docker/containers/palworld && docker compose up -d
-
 # Deploy Barrett host (Debian VPN torrent server) using pyinfra
 barrett:
     uv run --with pyinfra --with requests pyinfra -y @local hosts/linux/barrett/main.py
@@ -83,10 +66,6 @@ barrett:
 # Validate Barrett modules without sudo (syntax, rendered configs, correctness checks)
 barrett-check:
     python3 scripts/barrett-validate.py
-
-# Run the default local llama.cpp chat model
-llama:
-    llama-cli -m /opt/llm-models/Qwen3.6-35B-A3B-UD-Q6_K.gguf -c 131072 -ngl all -fa on -ctk f16 -ctv f16 --no-mmproj --jinja -cnv
 
 # Format all Nix files
 fmt:
@@ -105,10 +84,3 @@ py-check:
 edit-sops:
     SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt sops modules/nixos/security/sops/common.yaml
 
-# Test starship configuration without rebuilding
-test-starship:
-    rm -f ~/.config/starship.toml
-    cp shared/starship.toml ~/.config/starship.toml
-    @echo "✓ Starship config copied!"
-    @echo "Press Enter in your terminal to reload (starship reloads automatically on each prompt)"
-    @echo "Or run: exec fish"
