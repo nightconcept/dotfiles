@@ -12,16 +12,8 @@ in {
     enable = mkBoolOpt false "Enable mise for managing language runtimes and tools";
   };
 
-  config = {
-    nixpkgs.overlays = [
-      (final: prev: {
-        mise = final.callPackage ../../../pkgs/mise/package.nix {};
-      })
-    ];
-
-    programs.mise = lib.mkIf config.modules.home.programs.mise.enable {
-      enable = true;
-      package = miseBin;
-    };
+  config.programs.mise = lib.mkIf config.modules.home.programs.mise.enable {
+    enable = true;
+    package = miseBin;
   };
 }
