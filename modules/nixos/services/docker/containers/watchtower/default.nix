@@ -17,15 +17,6 @@ in {
       default = "0 0 4 * * *";
       description = "Cron schedule for updates";
     };
-
-    apiTokenFile = lib.mkOption {
-      type = lib.types.nullOr lib.types.path;
-      default =
-        if config.modules.nixos.security.sops.enable
-        then "/run/secrets/services/watchtower/api_token"
-        else null;
-      description = "Path to file containing Watchtower API token";
-    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -50,7 +41,7 @@ in {
         services:
           watchtower:
             container_name: watchtower
-            image: containrrr/watchtower:latest
+            image: ghcr.io/nicholas-fedor/watchtower:latest
             restart: unless-stopped
             environment:
               - WATCHTOWER_CLEANUP=true
@@ -70,9 +61,9 @@ in {
         # Generate .env file
         cat > ${containerPath}/.env <<EOF
         WATCHTOWER_SCHEDULE=${cfg.schedule}
-        ${lib.optionalString (cfg.apiTokenFile != null) ''
-          WATCHTOWER_HTTP_API_TOKEN=$(cat ${cfg.apiTokenFile})
-        ''}
+        WATCHTOWER_CLEANUP=true
+        WATCHTOWER_LABEL_ENABLE=true
+        WATCHTOWER_INCLUDE_RESTARTING=true
         EOF
       '';
 

@@ -5,9 +5,10 @@ services:
       - PGID=0
       - PUID=0
       - TZ=America/Los_Angeles
-    image: linuxserver/ddclient:3.11.2
+    image: lscr.io/linuxserver/ddclient:latest
     labels:
       icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/ddclient-logo.png
+      com.centurylinklabs.watchtower.enable: "true"
     restart: always
     healthcheck:
       test: ["CMD-SHELL", "pgrep ddclient || exit 1"]

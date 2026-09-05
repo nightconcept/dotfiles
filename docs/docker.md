@@ -12,7 +12,7 @@ Available container modules include:
 - ***arr Stack**: sonarr, radarr, prowlarr, readarr, flaresolverr
 - **Books**: audiobookshelf, calibre, calibre-web, readarr-books
 - **Home Automation**: homepage, uptime-kuma
-- **Infrastructure**: traefik, portainer, watchtower, cloudflare-tunnel, headscale
+- **Infrastructure**: traefik, portainer, watchtower (Nicholas Fedor fork), cloudflare-tunnel, headscale
 - **Media requests**: seerr (the supported successor to Overseerr and Jellyseerr)
 - **Authentication**: vaultwarden
 - **Development**: forgejo, forgejo-runner, paseo
@@ -22,10 +22,17 @@ Available container modules include:
 Docker networks:
 - `proxy` - Shared network for services behind Traefik reverse proxy
 
+Rinoa runs the maintained `ghcr.io/nicholas-fedor/watchtower` fork daily at
+04:00. Updates are opt-in: only running containers with the
+`com.centurylinklabs.watchtower.enable=true` label are updated, and superseded
+images are removed afterward. Watchtower follows the configured image tag; it
+does not promote a pinned tag such as `3.5.2` to a newer release line.
+
 ## Terra Docker Compose Stacks
 
 Actual Budget and Paisa run on Terra as separate pyinfra-managed Docker Compose
 stacks at `/opt/budget` and `/opt/ledger`.
+Actual Budget opts into Terra's Watchtower instance for automatic image updates.
 
 BookOrbit runs as a Nix-managed Docker service on Rinoa. It stores its
 application and PostgreSQL data in `/home/danny/docker/bookorbit/data` on

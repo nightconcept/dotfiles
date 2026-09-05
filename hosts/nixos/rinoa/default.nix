@@ -63,6 +63,7 @@
     listenAddress = "192.168.1.110";
     expectedContainers = [
       "traefik"
+      "watchtower"
       "crowdsec"
       "crowdsec-bouncer-traefik"
       "ddclient"
@@ -84,6 +85,7 @@
       "opengist"
       "headscale"
       "seerr"
+      "obsidian-livesync"
     ];
     mounts = ["/mnt/titan"];
     httpChecks = [
@@ -137,6 +139,11 @@
         url = "https://gist.local.solivan.dev/healthcheck";
       }
       {
+        name = "Obsidian LiveSync routed";
+        url = "https://obsidian-db.local.solivan.dev/_up";
+        acceptedStatusCodes = ["401"];
+      }
+      {
         name = "Seerr direct";
         url = "http://127.0.0.1:5055/api/v1/settings/public";
       }
@@ -151,6 +158,7 @@
     ];
     afterUnits = [
       "docker-container-traefik.service"
+      "docker-container-watchtower.service"
       "docker-container-crowdsec.service"
       "docker-container-ddclient.service"
       "docker-container-portainer.service"
@@ -169,6 +177,7 @@
       "docker-container-zotero-webdav.service"
       "docker-container-opengist.service"
       "docker-container-seerr.service"
+      "docker-container-obsidian-livesync.service"
     ];
   };
 
@@ -187,7 +196,10 @@
     };
     ddclient.enable = true;
     portainer.enable = true;
-    watchtower.enable = false;
+    watchtower = {
+      enable = true;
+      schedule = "0 0 4 * * *";
+    };
     flaresolverr.enable = true;
     cloudflare-tunnel.enable = true;
     vaultwarden.enable = true;
@@ -207,6 +219,7 @@
       signingEmail = "dark@nightconcept.net";
     };
     zotero-webdav.enable = true;
+    obsidian-livesync.enable = true;
     opengist.enable = true;
     headscale.enable = true;
     seerr.enable = true;

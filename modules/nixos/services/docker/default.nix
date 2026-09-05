@@ -43,6 +43,7 @@ in {
     ./containers/immich
     # ./containers/minecraft
     ./containers/nextcloud
+    ./containers/obsidian-livesync
     ./containers/opengist
     ./containers/seerr
     # ./containers/open-webui

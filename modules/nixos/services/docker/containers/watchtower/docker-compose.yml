@@ -1,21 +1,15 @@
 services:
   watchtower:
-    image: containrrr/watchtower:latest
+    image: ghcr.io/nicholas-fedor/watchtower:latest
     container_name: watchtower
     networks:
       - proxy
     restart: unless-stopped
     environment:
-      - WATCHTOWER_HTTP_API_TOKEN=$WATCHTOWER_HTTP_API_TOKEN
       - WATCHTOWER_CLEANUP=$WATCHTOWER_CLEANUP
       - WATCHTOWER_LABEL_ENABLE=$WATCHTOWER_LABEL_ENABLE
       - WATCHTOWER_INCLUDE_RESTARTING=$WATCHTOWER_INCLUDE_RESTARTING
-      - WATCHTOWER_HTTP_API_METRICS=$WATCHTOWER_HTTP_API_METRICS
       - WATCHTOWER_SCHEDULE=$WATCHTOWER_SCHEDULE
-    ports:
-      - target: 8080
-        published: "8085"
-        protocol: tcp
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /etc/localtime:/etc/localtime:ro

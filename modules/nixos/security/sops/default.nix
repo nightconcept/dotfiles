@@ -145,6 +145,21 @@ in {
           owner = "root";
           mode = "0400";
         };
+
+        "services/obsidian-livesync/username" = {
+          sopsFile = ./obsidian-livesync.yaml;
+          key = "username";
+          owner = "root";
+          mode = "0400";
+          restartUnits = ["docker-container-obsidian-livesync.service"];
+        };
+        "services/obsidian-livesync/password" = {
+          sopsFile = ./obsidian-livesync.yaml;
+          key = "password";
+          owner = "root";
+          mode = "0400";
+          restartUnits = ["docker-container-obsidian-livesync.service"];
+        };
       };
     };
   };

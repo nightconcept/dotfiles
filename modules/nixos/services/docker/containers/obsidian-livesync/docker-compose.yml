@@ -1,0 +1,71 @@
+name: obsidian-livesync
+
+services:
+  couchdb:
+    container_name: obsidian-livesync
+    image: couchdb:3.5.2
+    restart: unless-stopped
+    user: "${PUID:-1000}:${PGID:-100}"
+    environment:
+      COUCHDB_USER: ${COUCHDB_USER?required}
+      COUCHDB_PASSWORD: ${COUCHDB_PASSWORD?required}
+    volumes:
+      - ${DATA_PATH?required}:/opt/couchdb/data
+      - ./livesync.ini:/opt/couchdb/etc/local.ini
+    networks:
+      - proxy
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          'curl -fsS -u "$${COUCHDB_USER}:$${COUCHDB_PASSWORD}" http://127.0.0.1:5984/_up | grep -q ''"status":"ok"''',
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    stop_grace_period: 60s
+    labels:
+      - "traefik.enable=${TRAEFIK_ENABLE:-true}"
+      - "traefik.http.routers.obsidian-livesync.entrypoints=http"
+      - "traefik.http.routers.obsidian-livesync.rule=Host(`${SUBDOMAIN}.${LOCAL_DOMAIN}`) || Host(`${SUBDOMAIN}.${DOMAIN}`)"
+      - "traefik.http.middlewares.obsidian-livesync-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.obsidian-livesync.middlewares=obsidian-livesync-https-redirect"
+      - "traefik.http.routers.obsidian-livesync-secure.entrypoints=https"
+      - "traefik.http.routers.obsidian-livesync-secure.rule=Host(`${SUBDOMAIN}.${LOCAL_DOMAIN}`) || Host(`${SUBDOMAIN}.${DOMAIN}`)"
+      - "traefik.http.routers.obsidian-livesync-secure.tls=true"
+      - "traefik.http.routers.obsidian-livesync-secure.middlewares=crowdsec-bouncer@docker"
+      - "traefik.http.routers.obsidian-livesync-secure.service=obsidian-livesync"
+      - "traefik.http.services.obsidian-livesync.loadbalancer.server.port=5984"
+      - "traefik.docker.network=proxy"
+      # Keep Fauxton reachable on the local hostname, but reject it on the public hostname.
+      - "traefik.http.routers.obsidian-livesync-admin.entrypoints=https"
+      - "traefik.http.routers.obsidian-livesync-admin.rule=Host(`${SUBDOMAIN}.${DOMAIN}`) && PathPrefix(`/_utils`)"
+      - "traefik.http.routers.obsidian-livesync-admin.priority=100"
+      - "traefik.http.routers.obsidian-livesync-admin.tls=true"
+      - "traefik.http.routers.obsidian-livesync-admin.middlewares=obsidian-livesync-admin-deny"
+      - "traefik.http.routers.obsidian-livesync-admin.service=obsidian-livesync"
+      - "traefik.http.middlewares.obsidian-livesync-admin-deny.ipallowlist.sourcerange=127.0.0.1/32"
+
+  couchdb-init:
+    container_name: obsidian-livesync-init
+    image: couchdb:3.5.2
+    restart: "no"
+    user: "${PUID:-1000}:${PGID:-100}"
+    depends_on:
+      couchdb:
+        condition: service_healthy
+    environment:
+      COUCHDB_INTERNAL_URL: http://couchdb:5984
+      COUCHDB_USER: ${COUCHDB_USER?required}
+      COUCHDB_PASSWORD: ${COUCHDB_PASSWORD?required}
+      COUCHDB_DATABASE: ${COUCHDB_DATABASE:-obsidiannotes}
+    volumes:
+      - ./couchdb-init.sh:/couchdb-init.sh:ro
+    entrypoint: ["sh", "/couchdb-init.sh"]
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true
