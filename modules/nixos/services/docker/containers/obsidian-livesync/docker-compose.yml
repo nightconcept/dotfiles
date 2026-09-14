@@ -46,6 +46,7 @@ services:
       - "traefik.http.routers.obsidian-livesync-admin.middlewares=obsidian-livesync-admin-deny"
       - "traefik.http.routers.obsidian-livesync-admin.service=obsidian-livesync"
       - "traefik.http.middlewares.obsidian-livesync-admin-deny.ipallowlist.sourcerange=127.0.0.1/32"
+      - "com.centurylinklabs.watchtower.enable=true"
 
   couchdb-init:
     container_name: obsidian-livesync-init

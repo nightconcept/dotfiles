@@ -17,6 +17,8 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
 
   forgejo:
     image: codeberg.org/forgejo/forgejo:15

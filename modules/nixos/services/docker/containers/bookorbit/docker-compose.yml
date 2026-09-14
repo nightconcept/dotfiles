@@ -69,6 +69,7 @@ services:
       - "traefik.http.routers.bookorbit-secure.service=bookorbit"
       - "traefik.http.services.bookorbit.loadbalancer.server.port=3000"
       - "traefik.docker.network=proxy"
+      - "com.centurylinklabs.watchtower.enable=true"
 
   postgres:
     container_name: bookorbit-db
@@ -90,6 +91,8 @@ services:
       timeout: 5s
       retries: 10
       start_period: 30s
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
 
 networks:
   proxy:

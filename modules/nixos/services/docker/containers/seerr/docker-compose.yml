@@ -35,6 +35,7 @@ services:
       - "traefik.http.routers.seerr-secure.service=seerr"
       - "traefik.http.services.seerr.loadbalancer.server.port=5055"
       - "traefik.docker.network=proxy"
+      - "com.centurylinklabs.watchtower.enable=true"
 
 networks:
   proxy:
