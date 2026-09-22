@@ -9,6 +9,7 @@ Personal dotfiles as a Nix flake supporting NixOS, nix-darwin, and home-manager.
 - [Bootstrap](docs/bootstrap.md) - How to install and setup new systems.
 - [SOPS](docs/sops.md) - Secret management and storage conventions.
 - [Docker](docs/docker.md) - Container modules and networking.
+- [Network](docs/network.md) - LAN topology, hypervisors, VM/IP map, troubleshooting order.
 - [Hyprland](docs/hyprland.md) - Desktop environment components and keybindings.
 - [Terminal](docs/terminal.md) - Installation guide for Ghostty and WezTerm.
 
