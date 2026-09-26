@@ -88,6 +88,8 @@
       "obsidian-livesync"
     ];
     mounts = ["/mnt/titan"];
+    # Terra-backed routes are monitored by Vincent's Uptime Kuma so a Terra
+    # outage does not block Rinoa's NixOS activation.
     httpChecks = [
       {
         name = "Portainer direct";
@@ -146,14 +148,6 @@
       {
         name = "Seerr direct";
         url = "http://127.0.0.1:5055/api/v1/settings/public";
-      }
-      {
-        name = "Actual Budget routed";
-        url = "https://budget.local.solivan.dev/";
-      }
-      {
-        name = "Paisa Ledger routed";
-        url = "https://ledger.local.solivan.dev/";
       }
     ];
     afterUnits = [

@@ -14,10 +14,9 @@
     '')
     cfg.mounts;
   httpChecks =
-    concatMapStringsSep "\n" (check: ''
-      check_http ${escapeShellArg check.name} ${escapeShellArg check.url} ${escapeShellArg (lib.concatStringsSep "," check.acceptedStatusCodes)}
-    '')
-    cfg.httpChecks;
+    lib.concatStringsSep "\n" (lib.imap0 (index: check: ''
+      check_http ${toString index} ${escapeShellArg check.name} ${escapeShellArg check.url} ${escapeShellArg (lib.concatStringsSep "," check.acceptedStatusCodes)}
+    '') cfg.httpChecks);
 
   healthChecker = pkgs.writeShellApplication {
     name = "docker-services-health";
@@ -31,6 +30,9 @@
         wait_mode=true
         wait_timeout="''${2:-$wait_timeout}"
       fi
+
+      passed_http=()
+      output=""
 
       check_once() {
         local failures=()
@@ -64,13 +66,19 @@
 
         ${lib.optionalString (cfg.httpChecks != []) ''
           check_http() {
-            local name="$1"
-            local url="$2"
-            local accepted="$3"
+            local index="$1"
+            local name="$2"
+            local url="$3"
+            local accepted="$4"
             local code
+          if [[ -n "''${passed_http[index]:-}" ]]; then
+            return
+          fi
           code=$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' --connect-timeout 5 --max-time 15 "$url" 2>/dev/null)
           if [[ ",$accepted," != *",$code,"* ]]; then
             failures+=("HTTP $name returned ''${code:-no response}")
+          else
+            passed_http[index]=1
           fi
         }
       ''}
@@ -79,16 +87,27 @@
         ${httpChecks}
 
         if (( ''${#failures[@]} > 0 )); then
-          printf '%s\n' "''${failures[@]}" >&2
+          output=$(printf '%s\n' "''${failures[@]}")
           return 1
         fi
 
-        echo "all expected Docker services are healthy"
+        output="all expected Docker services are healthy"
         return 0
       }
 
       deadline=$((SECONDS + wait_timeout))
-      while ! output=$(check_once 2>&1); do
+      had_failure=false
+      while true; do
+        if check_once; then
+          if $had_failure; then
+            # Recheck every HTTP endpoint together before reporting recovery.
+            passed_http=()
+            had_failure=false
+            continue
+          fi
+          break
+        fi
+        had_failure=true
         if ! $wait_mode || (( SECONDS >= deadline )); then
           echo "$output" >&2
           exit 1

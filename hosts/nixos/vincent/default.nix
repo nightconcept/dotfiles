@@ -178,6 +178,8 @@ in {
         (http "OpenGist LAN" "https://gist.local.solivan.dev/")
         ((http "Plex routed" "https://plex.local.solivan.dev/") // {accepted_statuscodes = ["200-299" "300-399" "401"];})
         (http "Pi-hole routed" "https://pihole.local.solivan.dev/admin/")
+        (http "Actual Budget routed" "https://budget.local.solivan.dev/")
+        (http "Paisa Ledger routed" "https://ledger.local.solivan.dev/")
         (http "qBittorrent routed" "https://qbittorrent.local.solivan.dev/")
         ((http "Calibre" "https://calibre.local.solivan.dev/") // {accepted_statuscodes = ["200-299" "300-399" "401"];})
         (http "Calibre Web" "https://books.local.solivan.dev/")
