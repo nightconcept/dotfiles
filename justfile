@@ -59,6 +59,13 @@ clean:
 terra:
     uv run --with pyinfra --with requests pyinfra -y @local hosts/linux/terra/main.py
 
+# Refresh Terra's Ledger checkout and Paisa journal without redeploying the host
+terra-ledger:
+    git -C /home/danny/git/ledger pull --ff-only
+    docker exec paisa paisa --config /root/Documents/paisa/paisa.yaml update --journal
+    docker restart paisa
+    PAISA_DATA_PATH=/home/danny/docker/paisa/data LEDGER_PATH=/home/danny/git/ledger docker compose -f /opt/ledger/docker-compose.yml up -d --no-recreate --wait
+
 # Deploy Barrett host (Debian VPN torrent server) using pyinfra
 barrett:
     uv run --with pyinfra --with requests pyinfra -y @local hosts/linux/barrett/main.py
