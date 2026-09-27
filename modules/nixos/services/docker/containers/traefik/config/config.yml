@@ -250,13 +250,13 @@ http:
     budget:
       loadBalancer:
         servers:
-          - url: "http://terra:5006"
+          - url: "http://192.168.1.243:5006"
         passHostHeader: true
 
     ledger:
       loadBalancer:
         servers:
-          - url: "http://terra:7500"
+          - url: "http://192.168.1.243:7500"
         passHostHeader: true
 
 #endregion
