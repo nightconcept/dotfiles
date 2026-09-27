@@ -7,17 +7,18 @@ from pyinfra.operations import files, server, systemd
 
 from modules.linux.module import HostModule
 
-_SYNC_COMMAND = (
-    "/home/danny/.nix-profile/bin/uv run --with actualpy "
-    "python3 {ledger_dir}/scripts/sync_actual.py --commit --push"
-)
+_SYNC_COMMAND = "/bin/bash -c '/home/danny/.nix-profile/bin/uv run ledger-tool sync && git push'"
 
-# Includes the mise shims dir (unlike _SYNC_COMMAND's unit) because
-# sync_house.py shells out to hledger, which is mise-pinned, not on the
-# nix profile PATH -- see docs/repo/house-valuation.md in the ledger repo.
+# ledger_tool.sync.sync_house() only writes prices.journal -- it does not
+# commit or push, unlike sync_actual() -- so this unit does both itself.
 _HOUSE_SYNC_COMMAND = (
-    "/home/danny/.nix-profile/bin/uv run --with requests "
-    "python3 {ledger_dir}/scripts/sync_house.py --commit --push"
+    "/bin/bash -c '"
+    "/home/danny/.nix-profile/bin/uv run ledger-tool sync --house --apply && "
+    "git add -- ledger/prices.journal && "
+    "(git diff --cached --quiet -- ledger/prices.journal || "
+    'git commit --no-verify -m "chore: sync house valuation" -- ledger/prices.journal) && '
+    "git push"
+    "'"
 )
 
 _SYNC_SERVICE_UNIT = """\
@@ -31,7 +32,7 @@ Type=oneshot
 User=danny
 Group=danny
 WorkingDirectory={ledger_dir}
-Environment=PATH=/home/danny/.local/bin:/home/danny/.nix-profile/bin:/home/danny/.ghcup/bin:/usr/local/bin:/usr/bin:/bin
+Environment=PATH=/home/danny/.local/bin:/home/danny/.nix-profile/bin:/home/danny/.local/share/mise/shims:/home/danny/.ghcup/bin:/usr/local/bin:/usr/bin:/bin
 ExecStart={sync_command}
 """
 
@@ -108,7 +109,7 @@ class LedgerModule(HostModule):
             )
 
     def update(self):
-        """Deploy stack assets, seed only missing defaults, and start containers."""
+        """Deploy stack assets, refresh Paisa's journal cache, and start services."""
         files.put(
             name="Deploy ledger Docker Compose file",
             src=self.local_compose,
@@ -126,12 +127,33 @@ class LedgerModule(HostModule):
         server.shell(
             name="Require Ledger checkout and seed missing Paisa configuration",
             commands=[
-                f'test -f "{self.ledger_dir}/clean/main.journal"',
+                f'test -f "{self.ledger_dir}/ledger/main.journal"',
                 (
                     f'test -e "{self.paisa_data_dir}/paisa.yaml" || '
                     f"install -o danny -g danny -m 0640 "
                     f'"{self.base_dir}/paisa.yaml.template" '
                     f'"{self.paisa_data_dir}/paisa.yaml"'
+                ),
+                (
+                    f"PAISA_DATA_PATH={self.paisa_data_dir} "
+                    f"LEDGER_PATH={self.ledger_dir} "
+                    f"docker compose -f {self.base_dir}/docker-compose.yml up -d --wait"
+                ),
+            ],
+            _sudo=True,
+        )
+
+        # The mounted journal can change without a Compose configuration change.
+        # Refresh its SQLite cache and restart the server to clear in-memory data.
+        server.shell(
+            name="Refresh Paisa journal cache",
+            commands=[
+                "docker exec paisa paisa --config "
+                "/root/Documents/paisa/paisa.yaml update --journal",
+                (
+                    f"PAISA_DATA_PATH={self.paisa_data_dir} "
+                    f"LEDGER_PATH={self.ledger_dir} "
+                    f"docker compose -f {self.base_dir}/docker-compose.yml restart paisa"
                 ),
                 (
                     f"PAISA_DATA_PATH={self.paisa_data_dir} "
