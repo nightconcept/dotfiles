@@ -8,7 +8,7 @@ from typing import Any
 
 MODEL_DIR = "/mnt/storage/llm-models"
 LLAMA_CPP_SERVER = "/opt/llama-cpp/llama-server"
-DEFAULT_MODEL_ID = "ornith-1.5-35b-a3b"
+DEFAULT_MODEL_ID = "qwen3-35b-mtp"
 BENCHMARK_MODEL_IDS = [
     "qwen3.8-27b",
     "muse-glimmer-30b",
