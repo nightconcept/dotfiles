@@ -18,6 +18,9 @@ in {
       # Herdr configuration
       # https://herdr.dev/docs/configuration/
 
+      # Home Manager owns this read-only file; skip onboarding's config write.
+      onboarding = false
+
       [theme]
       name = "tokyo-night"
 
