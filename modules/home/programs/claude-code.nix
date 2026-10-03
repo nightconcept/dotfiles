@@ -14,7 +14,11 @@
 
   cfg = config.modules.home.programs.claude-code;
 
-  claudeCodePkg = pkgs.claude-code;
+  claudeCodePkg =
+    (import inputs.nixpkgs-master {
+      system = pkgs.stdenv.hostPlatform.system;
+      config.allowUnfree = true;
+    }).claude-code;
 
   # ccstatusline package (pre-built from npm tarball, no build step needed)
   ccstatuslinePkg = pkgs.stdenv.mkDerivation {
