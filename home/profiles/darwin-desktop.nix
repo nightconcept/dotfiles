@@ -30,6 +30,7 @@
   };
 
   home.packages = with pkgs; [
+    (callPackage ../../pkgs/neo-writer/package.nix {})
     karabiner-elements
   ];
 }

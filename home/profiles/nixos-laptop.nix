@@ -35,6 +35,7 @@
   fonts.fontconfig.enable = true;
 
   home.packages = with pkgs; [
+    (callPackage ../../pkgs/neo-writer/package.nix {})
     firefox
     github-desktop
     kdePackages.xdg-desktop-portal-kde

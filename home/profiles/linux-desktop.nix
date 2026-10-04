@@ -48,6 +48,7 @@
   fonts.fontconfig.enable = true;
 
   home.packages = with pkgs; [
+    (callPackage ../../pkgs/neo-writer/package.nix {})
     github-desktop
     gitnuro
     kdePackages.xdg-desktop-portal-kde
