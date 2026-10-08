@@ -21,7 +21,7 @@ both hosts have shown ICMP filtered/blocked while 8006 answered fine.
 | **vincent** | 192.168.1.185 | CI/CD runner (Forgejo/GitHub runner), Uptime Kuma (3001) | Locke |
 | **barrett** | ~~192.168.1.114~~ **192.168.1.112** | VPN torrent server (qBittorrent + NordVPN) | Locke |
 | **aerith** | 192.168.1.118 | Plex media server | hypervisor unknown — not yet confirmed |
-| **terra** | (DHCP, not tracked here) | Ubuntu LLM inference server, pyinfra-managed | bare metal, not a VM |
+| **terra** | 192.168.1.173 (Wi-Fi DHCP; MAC `8c:86:dd:77:63:28`) | Ubuntu LLM inference server, pyinfra-managed | bare metal, not a VM |
 
 ⚠ **Known drift**: `hosts/nixos/vincent/default.nix` monitors Barrett at
 `192.168.1.114`, but Barrett has actually been observed on DHCP at

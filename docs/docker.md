@@ -66,8 +66,8 @@ resolve to Rinoa, not Terra:
 - `budget.local.solivan.dev` -> `rinoa`
 - `ledger.local.solivan.dev` -> `rinoa`
 
-Verify both names resolve to Rinoa before using the HTTPS URLs. Traefik resolves
-the Terra backend through the local hostname `terra`.
+Verify both names resolve to Rinoa before using the HTTPS URLs. Traefik connects
+to the Terra backend at `192.168.1.173`.
 
 ## Adding a New Service Checklist
 

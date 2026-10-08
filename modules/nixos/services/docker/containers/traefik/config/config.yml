@@ -220,19 +220,19 @@ http:
     calibre:
       loadBalancer:
         servers:
-          - url: "http://192.168.1.111:8085"
+          - url: "http://192.168.1.173:8085"
         passHostHeader: true
 
     kosync:
       loadBalancer:
         servers:
-          - url: "http://192.168.1.111:17200"
+          - url: "http://192.168.1.173:17200"
         passHostHeader: true
 
     ai:
       loadBalancer:
         servers:
-          - url: "http://192.168.1.213:8080"
+          - url: "http://192.168.1.173:8080"
         passHostHeader: true
 
     bank:
@@ -250,13 +250,13 @@ http:
     budget:
       loadBalancer:
         servers:
-          - url: "http://192.168.1.243:5006"
+          - url: "http://192.168.1.173:5006"
         passHostHeader: true
 
     ledger:
       loadBalancer:
         servers:
-          - url: "http://192.168.1.243:7500"
+          - url: "http://192.168.1.173:7500"
         passHostHeader: true
 
 #endregion

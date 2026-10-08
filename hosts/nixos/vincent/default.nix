@@ -121,7 +121,7 @@ in {
         (ping "Router" "192.168.1.1")
         (ping "Pi-hole" "192.168.1.101")
         (ping "Rinoa" "192.168.1.110")
-        (ping "Terra" "192.168.1.111")
+        (ping "Terra" "192.168.1.173")
         (ping "Barrett" "192.168.1.114")
         (ping "Aerith" "192.168.1.118")
         (ping "Valefor" "192.168.1.119")
@@ -131,7 +131,7 @@ in {
 
         (port "Pi-hole DNS" "192.168.1.101" 53)
         (port "Rinoa SSH" "192.168.1.110" 22)
-        (port "Terra SSH" "192.168.1.111" 22)
+        (port "Terra SSH" "192.168.1.173" 22)
         (port "Barrett SSH" "192.168.1.114" 22)
         (port "Aerith SSH" "192.168.1.118" 22)
         (port "Valefor Proxmox" "192.168.1.119" 8006)
@@ -146,16 +146,16 @@ in {
             accepted_statuscodes = ["200-299" "300-399" "401"];
           })
         (http "qBittorrent HTTP direct" "http://192.168.1.114:8112/")
-        ((http "Terra Calibre direct" "http://192.168.1.111:8085/")
+        ((http "Terra Calibre direct" "http://192.168.1.173:8085/")
           // {
             accepted_statuscodes = ["200-299" "300-399" "401"];
           })
-        (http "Terra Calibre Web direct" "http://192.168.1.111:8083/")
-        ((http "Terra Paseo direct" "http://192.168.1.111:6767/")
+        (http "Terra Calibre Web direct" "http://192.168.1.173:8083/")
+        ((http "Terra Paseo direct" "http://192.168.1.173:6767/")
           // {
             accepted_statuscodes = ["200-299" "300-399" "401" "403"];
           })
-        (http "Terra model API direct" "http://192.168.1.111:8080/v1/models")
+        (http "Terra model API direct" "http://192.168.1.173:8080/v1/models")
 
         # Host-local aggregators inspect expected containers, Docker health,
         # application endpoints, and required mounts on their own host.

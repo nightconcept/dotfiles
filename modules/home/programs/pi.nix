@@ -14,7 +14,7 @@
   piModelsConfig = pkgs.writeText "pi-models.json" (builtins.toJSON {
     providers = {
       "local-openai" = {
-        baseUrl = "http://192.168.1.111:8080/v1";
+        baseUrl = "http://192.168.1.173:8080/v1";
         api = "openai-completions";
         apiKey = "none";
         compat = {

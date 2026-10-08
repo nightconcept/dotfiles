@@ -151,14 +151,18 @@ in {
           key = "username";
           owner = "root";
           mode = "0400";
-          restartUnits = ["docker-container-obsidian-livesync.service"];
+          restartUnits = optional
+            config.modules.nixos.docker.containers.obsidian-livesync.enable
+            "docker-container-obsidian-livesync.service";
         };
         "services/obsidian-livesync/password" = {
           sopsFile = ./obsidian-livesync.yaml;
           key = "password";
           owner = "root";
           mode = "0400";
-          restartUnits = ["docker-container-obsidian-livesync.service"];
+          restartUnits = optional
+            config.modules.nixos.docker.containers.obsidian-livesync.enable
+            "docker-container-obsidian-livesync.service";
         };
       };
     };
