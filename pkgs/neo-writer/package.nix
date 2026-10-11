@@ -7,23 +7,23 @@
   appimageTools,
 }: let
   pname = "neo-writer";
-  version = "1.3.0";
+  version = "1.5.0";
   releases = {
     aarch64-darwin = {
       file = "NEO-${version}-arm64-mac.zip";
-      hash = "sha256-F6t0P/ywFs/ar6C0J6uG3lyyt37GvdauycoGT8stUqw=";
+      hash = "sha256-ZnulLgUaMOpyLtPB9qvymecysVMe04fHQrIkvZ0duxk=";
     };
     x86_64-darwin = {
       file = "NEO-${version}-mac.zip";
-      hash = "sha256-y6USld8Q6BHYlRP1WkKqBdPpXvSi5+Z7aGlxT+OBReY=";
+      hash = "sha256-LVN8Roxf9VKfEyVRoJ/IcqG+c4pVcSIZDGlY/CUqNm4=";
     };
     aarch64-linux = {
       file = "NEO-${version}-arm64.AppImage";
-      hash = "sha256-WiHZ/TAmbPuzN3ejbZdKV0qICdhquN4F9z2btfBQSr0=";
+      hash = "sha256-I5Txf9seYK+MI6P9fJdiaKJSN9A6+V7oZjvpwshX+84=";
     };
     x86_64-linux = {
       file = "NEO-${version}.AppImage";
-      hash = "sha256-3eFIJxqH3F/K5pOtPmxgR6h07jfA4SJLsYaydzCymSU=";
+      hash = "sha256-UYK/GDJ6p58l/8v6AM0MFvR33Ha9um9l/qPMBhTCWGo=";
     };
   };
   release = releases.${stdenv.hostPlatform.system} or (throw "neo-writer: unsupported platform ${stdenv.hostPlatform.system}");
