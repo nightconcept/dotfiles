@@ -16,6 +16,7 @@ from modules.linux.programs.storage import StorageModule
 from modules.linux.programs.watchtower.module import WatchtowerModule
 from modules.linux.services.tailscale import TailscaleModule
 from modules.linux.services.titan_mount import TitanMountModule
+from modules.linux.services.wifi_power_save import WiFiPowerSaveModule
 
 # Initialize modules
 ssh = SSHModule()
@@ -24,6 +25,7 @@ foreign_arch = ForeignArchModule(arch="aarch64-linux")
 storage = StorageModule()
 titan = TitanMountModule()
 tailscale = TailscaleModule(login_server="https://hs.solivan.dev")
+wifi_power_save = WiFiPowerSaveModule()
 docker = DockerModule()
 books = BooksModule()
 budget = BudgetModule()
@@ -45,6 +47,7 @@ home_manager.update()
 storage.deploy()
 titan.deploy()
 tailscale.deploy()
+wifi_power_save.deploy()
 
 # Deploy infrastructure
 docker.deploy()
