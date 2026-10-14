@@ -1,7 +1,6 @@
 from modules.linux.programs.books.module import BooksModule
 from modules.linux.programs.budget.module import BudgetModule
 from modules.linux.programs.docker import DockerModule
-from modules.linux.programs.foreign_arch import ForeignArchModule
 from modules.linux.programs.hermes import HermesModule
 from modules.linux.programs.home_manager import HomeManagerModule
 from modules.linux.programs.huggingface import HuggingFaceModule
@@ -21,7 +20,6 @@ from modules.linux.services.wifi_power_save import WiFiPowerSaveModule
 # Initialize modules
 ssh = SSHModule()
 home_manager = HomeManagerModule(profile="desktop")
-foreign_arch = ForeignArchModule(arch="aarch64-linux")
 storage = StorageModule()
 titan = TitanMountModule()
 tailscale = TailscaleModule(login_server="https://hs.solivan.dev")
@@ -42,7 +40,6 @@ hermes = HermesModule()
 # Deploy system foundations
 ssh.deploy()
 home_manager.install()
-foreign_arch.deploy()
 home_manager.update()
 storage.deploy()
 titan.deploy()
