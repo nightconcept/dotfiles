@@ -51,7 +51,7 @@ in {
     ./containers/prowlarr-abb
     # ./containers/readarr
     # ./containers/readarr-books
-    # ./containers/searxng
+    ./containers/degoog
     ./containers/uptime-kuma
     ./containers/vaultwarden
     # ./containers/wg-easy
