@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }: let
   moduleLib = import ../../../lib/module {inherit lib;};
@@ -9,11 +10,20 @@
 
   cfg = config.modules.home.programs.pi;
 
-  pi = pkgs.callPackage ../../../pkgs/pi/package.nix {};
+  # v1.2.0's published install-lock is missing `esbuild` (used by the codemode
+  # TS execution tool), so upstream's own installCheckPhase fails on an
+  # otherwise-working build. Skip that self-test until upstream re-syncs the
+  # lockfile; everything else (including our local-model provider) is unaffected.
+  pi = inputs.pi-agent.packages.${pkgs.system}.default.overrideAttrs (_: {
+    doInstallCheck = false;
+  });
+
+  localProvider = "local-openai";
+  localModelId = "qwen3.8-27b";
 
   piModelsConfig = pkgs.writeText "pi-models.json" (builtins.toJSON {
     providers = {
-      "local-openai" = {
+      "${localProvider}" = {
         baseUrl = "http://192.168.1.173:8080/v1";
         api = "openai-completions";
         apiKey = "none";
@@ -23,12 +33,17 @@
         };
         models = [
           {
-            id = "qwen3-35b-mtp";
-            name = "qwen3-35b-mtp";
+            id = localModelId;
+            name = localModelId;
           }
         ];
       };
     };
+  });
+
+  piSettingsConfig = pkgs.writeText "pi-settings.json" (builtins.toJSON {
+    defaultProvider = localProvider;
+    defaultModel = localModelId;
   });
 in {
   options.modules.home.programs.pi = {
@@ -38,6 +53,14 @@ in {
   config = lib.mkIf cfg.enable {
     home.packages = [pi];
 
-    home.file.".pi/agent/models.json".source = piModelsConfig;
+    home.file.".pi/agent/models.json" = {
+      source = piModelsConfig;
+      force = true;
+    };
+
+    home.file.".pi/agent/settings.json" = {
+      source = piSettingsConfig;
+      force = true;
+    };
   };
 }

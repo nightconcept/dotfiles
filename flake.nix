@@ -66,6 +66,11 @@
       url = "git+https://forge.solivan.dev/nightconcept/libbyrip.git?rev=f10d2a90b165a35916239f636a59b356b94c8327";
       flake = false;
     };
+
+    pi-agent = {
+      url = "github:earendil-works/pi?ref=v1.2.0";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
