@@ -18,6 +18,6 @@ Docker containers are Nix modules in `containers/`. Each defines compose config,
 | Authentication | vaultwarden |
 | Development | forgejo, forgejo-runner |
 | Gaming | minecraft, enshrouded, palworld |
-| Utilities | freshrss, nextcloud, open-webui, degoog, wg-easy, ddclient, knot |
+| Utilities | freshrss, nextcloud, open-webui, searxng, wg-easy, ddclient, knot |
 
 See `containers/traefik/CLAUDE.md` for reverse proxy and CrowdSec configuration.

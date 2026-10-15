@@ -2,6 +2,8 @@
 
 Researched 2026-10-12. The intended use is a private search box at `search.solivan.dev` that favors smaller sites and does not expose the host to anonymous search traffic.
 
+> **Status (2026-10-14):** Rinoa runs SearXNG again (`modules/nixos/services/docker/containers/searxng`), LAN-only at `search.local.solivan.dev`. The Degoog module was removed. The Degoog sections below are kept as research and are not deployed.
+
 ## Recommendation
 
 SearXNG has a documented [Marginalia engine](https://docs.searxng.org/dev/engines/online/marginalia.html), plus [engine weights](https://docs.searxng.org/admin/settings/settings_engines.html) and a [Hostnames plugin](https://docs.searxng.org/dev/plugins/hostnames.html) to favor or remove domains. It was the first deployed option.

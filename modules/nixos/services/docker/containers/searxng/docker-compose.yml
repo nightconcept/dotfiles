@@ -1,0 +1,61 @@
+services:
+  redis:
+    container_name: searxng-valkey
+    image: docker.io/valkey/valkey:8-alpine
+    command: valkey-server --save 30 1 --loglevel warning
+    restart: unless-stopped
+    networks:
+      - searxng
+    volumes:
+      - valkey-data:/data
+    cap_add:
+      - SETGID
+      - SETUID
+      - DAC_OVERRIDE
+    logging:
+      driver: json-file
+      options:
+        max-size: 1m
+        max-file: "1"
+
+  searxng:
+    container_name: searxng
+    image: docker.io/searxng/searxng:latest
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "127.0.0.1:8888:8080"
+    networks:
+      - proxy
+      - searxng
+    volumes:
+      - ./config:/etc/searxng:rw
+    environment:
+      - SEARXNG_BASE_URL=https://search.local.solivan.dev/
+      - SEARXNG_VALKEY_URL=valkey://searxng-valkey:6379/0
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.searxng.rule=Host(`search.local.solivan.dev`)"
+      - "traefik.http.routers.searxng.entrypoints=https"
+      - "traefik.http.routers.searxng.tls=true"
+      - "traefik.http.routers.searxng.middlewares=searxng-lan-only"
+      - "traefik.http.middlewares.searxng-lan-only.ipallowlist.sourcerange=192.168.1.0/24"
+      - "traefik.http.services.searxng.loadbalancer.server.port=8080"
+      - "traefik.docker.network=proxy"
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+    logging:
+      driver: json-file
+      options:
+        max-size: 1m
+        max-file: "1"
+
+networks:
+  proxy:
+    external: true
+  searxng:
+
+volumes:
+  valkey-data:

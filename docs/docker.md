@@ -17,7 +17,7 @@ Available container modules include:
 - **Authentication**: vaultwarden
 - **Development**: forgejo, forgejo-runner, paseo
 - **Gaming**: minecraft, enshrouded, palworld
-- **Utilities**: freshrss, nextcloud, open-webui, degoog, wg-easy, ddclient, knot
+- **Utilities**: freshrss, nextcloud, open-webui, searxng, wg-easy, ddclient, knot
 
 Docker networks:
 - `proxy` - Shared network for services behind Traefik reverse proxy

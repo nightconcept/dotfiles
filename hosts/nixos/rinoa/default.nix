@@ -86,7 +86,7 @@
       "headscale"
       "seerr"
       "obsidian-livesync"
-      "degoog"
+      "searxng"
     ];
     mounts = ["/mnt/titan"];
     # Terra-backed routes are monitored by Vincent's Uptime Kuma so a Terra
@@ -151,8 +151,8 @@
         url = "http://127.0.0.1:5055/api/v1/settings/public";
       }
       {
-        name = "Degoog direct";
-        url = "http://127.0.0.1:4444/healthz";
+        name = "SearXNG direct";
+        url = "http://127.0.0.1:8888/healthz";
       }
     ];
     afterUnits = [
@@ -177,7 +177,7 @@
       "docker-container-opengist.service"
       "docker-container-seerr.service"
       "docker-container-obsidian-livesync.service"
-      "docker-container-degoog.service"
+      "docker-container-searxng.service"
     ];
   };
 
@@ -223,7 +223,7 @@
     opengist.enable = true;
     headscale.enable = true;
     seerr.enable = true;
-    degoog.enable = true;
+    searxng.enable = true;
   };
 
   # System packages for server management
