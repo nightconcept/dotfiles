@@ -106,9 +106,9 @@ in {
       port = 9000;
     };
 
-    # Auto-update containers (optional)
+    # Auto-update containers labeled com.centurylinklabs.watchtower.enable=true
     watchtower = {
-      enable = false; # Disabled by default for CI runners
+      enable = true;
       schedule = "0 0 4 * * *";
     };
 

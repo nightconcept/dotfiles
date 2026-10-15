@@ -15,7 +15,7 @@ in {
 
     image = lib.mkOption {
       type = lib.types.str;
-      default = "code.forgejo.org/forgejo/runner:11";
+      default = "code.forgejo.org/forgejo/runner:13";
       description = "Docker image to use for Forgejo runners";
     };
 
@@ -144,6 +144,8 @@ in {
                 image: ${cfg.image}
                 container_name: forgejo-runner-${toString runnerNum}
                 restart: unless-stopped
+                labels:
+                  com.centurylinklabs.watchtower.enable: "true"
                 depends_on:
                   - docker-in-docker
                 environment:
