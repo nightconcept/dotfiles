@@ -1,6 +1,6 @@
 """NordVPN module for host configuration."""
 
-from pyinfra.operations import files, server, systemd
+from pyinfra.operations import server, systemd
 
 from ..module import HostModule
 
@@ -18,7 +18,8 @@ class NordVPNModule(HostModule):
             name="Install NordVPN (if missing)",
             commands=[
                 "if ! command -v nordvpn >/dev/null 2>&1; then "
-                "sh <(curl -sSf https://downloads.nordcdn.com/apps/linux/install.sh) --non-interactive; fi"
+                "curl -sSf https://downloads.nordcdn.com/apps/linux/install.sh"
+                " | sh -s -- --non-interactive; fi"
             ],
         )
 
