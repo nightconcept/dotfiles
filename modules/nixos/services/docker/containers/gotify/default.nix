@@ -222,7 +222,7 @@ in {
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
-        ExecStart = "${lib.getExe provisioner} http://127.0.0.1:${toString cfg.port} ${lib.escapeShellArg cfg.adminUsername} ${lib.escapeShellArg cfg.adminPasswordFile} ${cfg.tokenDir} ${lib.escapeShellArgs applications}";
+        ExecStart = "${lib.getExe provisioner} http://${cfg.listenAddress}:${toString cfg.port} ${lib.escapeShellArg cfg.adminUsername} ${lib.escapeShellArg cfg.adminPasswordFile} ${cfg.tokenDir} ${lib.escapeShellArgs applications}";
         Restart = "on-failure";
         RestartSec = 10;
       };
@@ -235,7 +235,7 @@ in {
       serviceConfig = {
         Type = "oneshot";
         StateDirectory = "gotify-disk-alert";
-        ExecStart = "${lib.getExe diskAlert} http://127.0.0.1:${toString cfg.port} ${cfg.tokenDir}/host-alerts.token ${toString cfg.diskAlert.threshold} /var/lib/gotify-disk-alert ${lib.escapeShellArgs cfg.diskAlert.paths}";
+        ExecStart = "${lib.getExe diskAlert} http://${cfg.listenAddress}:${toString cfg.port} ${cfg.tokenDir}/host-alerts.token ${toString cfg.diskAlert.threshold} /var/lib/gotify-disk-alert ${lib.escapeShellArgs cfg.diskAlert.paths}";
       };
     };
 
