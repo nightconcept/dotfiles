@@ -1,3 +1,5 @@
+# Disabled: not deployed by any host. Start manually with
+#   docker compose -f modules/linux/programs/yubal/docker-compose.yml up -d
 name: yubal-test
 services:
   yubal:
