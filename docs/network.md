@@ -19,14 +19,15 @@ both hosts have shown ICMP filtered/blocked while 8006 answered fine.
 | **rinoa** | 192.168.1.110 | Docker host: **Traefik reverse proxy**, Prowlarr, Immich, CrowdSec, Obsidian LiveSync, BookOrbit | Valefor |
 | **mog** | 192.168.1.167 | SMB file server | Locke |
 | **vincent** | 192.168.1.185 | CI/CD runner (Forgejo/GitHub runner), Uptime Kuma (3001), Gotify (8070) | Locke |
-| **barrett** | ~~192.168.1.114~~ **192.168.1.112** | VPN torrent server (qBittorrent + NordVPN) | Locke |
+| **barrett** | 192.168.1.112 (DHCP reservation) | VPN torrent server (qBittorrent + NordVPN) | Locke |
 | **aerith** | 192.168.1.118 | Plex media server | hypervisor unknown — not yet confirmed |
 | **terra** | 192.168.1.173 (Wi-Fi DHCP; MAC `8c:86:dd:77:63:28`) | Ubuntu LLM inference server, pyinfra-managed | bare metal, not a VM |
 
-⚠ **Known drift**: `hosts/nixos/vincent/default.nix` monitors Barrett at
-`192.168.1.114`, but Barrett has actually been observed on DHCP at
-`192.168.1.112`. The monitor config should either be updated to the real IP
-or Barrett should be pinned to a static/reserved lease.
+Barrett uses one DHCP client: ifupdown runs dhcpcd on `ens18`, and the
+pyinfra `IfupdownNetworkModule` stops NetworkManager from managing it. Before
+this change, NetworkManager also leased `192.168.1.117`, so Barrett had two
+addresses. The router reserves `192.168.1.112` for Barrett's MAC
+`bc:24:11:39:96:98`. `192.168.1.114` now belongs to a different device.
 
 ## Why Rinoa matters most for "is anything routed broken"
 

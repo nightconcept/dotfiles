@@ -12,6 +12,7 @@ Pre-requisites (place on host before running):
 
 from modules.linux.programs.home_manager import HomeManagerModule
 from modules.linux.services.autoremove_torrents import AutoremoveTorrentsModule
+from modules.linux.services.ifupdown_network import IfupdownNetworkModule
 from modules.linux.services.ipfilter import IPFilterModule
 from modules.linux.services.nordvpn import NordVPNModule
 from modules.linux.services.qbittorrent import QBittorrentModule
@@ -40,6 +41,7 @@ autoremove = AutoremoveTorrentsModule(
     remove_rule="seeding_time > 600",
 )
 ipfilter = IPFilterModule()
+network = IfupdownNetworkModule(interface="ens18")
 
 home_manager.deploy()
 nordvpn.deploy()
@@ -47,3 +49,5 @@ titan.deploy()
 qbittorrent.deploy()
 autoremove.deploy()
 ipfilter.deploy()
+# Last: dropping the NetworkManager lease can end SSH sessions using it.
+network.deploy()

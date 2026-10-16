@@ -145,7 +145,7 @@ in {
         (ping "Pi-hole" "192.168.1.101")
         (ping "Rinoa" "192.168.1.110")
         (ping "Terra" "192.168.1.173")
-        (ping "Barrett" "192.168.1.114")
+        (ping "Barrett" "192.168.1.112")
         (ping "Aerith" "192.168.1.118")
         (ping "Valefor" "192.168.1.119")
         (ping "Mog" "192.168.1.167")
@@ -155,20 +155,20 @@ in {
         (port "Pi-hole DNS" "192.168.1.101" 53)
         (port "Rinoa SSH" "192.168.1.110" 22)
         (port "Terra SSH" "192.168.1.173" 22)
-        (port "Barrett SSH" "192.168.1.114" 22)
+        (port "Barrett SSH" "192.168.1.112" 22)
         (port "Aerith SSH" "192.168.1.118" 22)
         (port "Valefor Proxmox" "192.168.1.119" 8006)
         (port "Mog SMB" "192.168.1.167" 445)
         (port "Locke Proxmox" "192.168.1.188" 8006)
         (port "Plex direct" "192.168.1.118" 32400)
-        (port "qBittorrent direct" "192.168.1.114" 8112)
+        (port "qBittorrent direct" "192.168.1.112" 8112)
 
         (http "Pi-hole direct" "http://192.168.1.101:8089/admin/")
         ((http "Plex HTTP direct" "http://192.168.1.118:32400/")
           // {
             accepted_statuscodes = ["200-299" "300-399" "401"];
           })
-        (http "qBittorrent HTTP direct" "http://192.168.1.114:8112/")
+        (http "qBittorrent HTTP direct" "http://192.168.1.112:8112/")
         ((http "Terra Calibre direct" "http://192.168.1.173:8085/")
           // {
             accepted_statuscodes = ["200-299" "300-399" "401"];
