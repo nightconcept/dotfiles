@@ -1,6 +1,10 @@
 """Docker module for host configuration."""
 
+import io
 import os
+
+from pyinfra import host
+from pyinfra.facts.server import Command
 from pyinfra.operations import apt, files, server, systemd
 
 from modules.linux.module import HostModule
@@ -19,15 +23,27 @@ class DockerModule(HostModule):
             _sudo=True,
         )
 
-        # Add Docker's official GPG key and apt repository
-        server.shell(
+        distribution = host.get_fact(Command, command='. /etc/os-release && echo "$ID"')
+        if distribution not in {"debian", "ubuntu"}:
+            raise ValueError(f"Unsupported Docker distribution: {distribution}")
+        codename = host.get_fact(Command, command='. /etc/os-release && echo "$VERSION_CODENAME"')
+        architecture = host.get_fact(Command, command="dpkg --print-architecture")
+        files.directory(path="/etc/apt/keyrings", mode="755", _sudo=True)
+        files.download(
+            name="Install Docker repository signing key",
+            src=f"https://download.docker.com/linux/{distribution}/gpg",
+            dest="/etc/apt/keyrings/docker.asc",
+            mode="644",
+            _sudo=True,
+        )
+        files.put(
             name="Configure Docker apt repository",
-            commands=[
-                "install -m 0755 -d /etc/apt/keyrings",
-                "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg --yes",
-                "chmod a+r /etc/apt/keyrings/docker.gpg",
-                'echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null'
-            ],
+            src=io.StringIO(
+                f"deb [arch={architecture} signed-by=/etc/apt/keyrings/docker.asc] "
+                f"https://download.docker.com/linux/{distribution} {codename} stable\n"
+            ),
+            dest="/etc/apt/sources.list.d/docker.list",
+            mode="644",
             _sudo=True,
         )
 

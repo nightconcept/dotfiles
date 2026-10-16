@@ -76,6 +76,7 @@ The home configuration uses a profile-based system where `home/default.nix` sele
 - `merlin` - Mac Mini M1 HTPC
 
 ### Active Linux Hosts (Non-Nix, managed via pyinfra)
+- `cloud` - Debian Docker host with a Windows Server 2025 Forgejo runner VM; deploy with `just cloud`; see [Cloud](cloud.md)
 - `terra` - Ubuntu-based LLM inference server; home-manager profile: `desktop`; reachable remotely via Tailscale (client) against a self-hosted Headscale control server on rinoa (no port forwarding)
 - `barrett` - Debian VPN torrent server with NordVPN; home-manager profile: `server`
 

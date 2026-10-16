@@ -1,0 +1,29 @@
+services:
+  windows-runner:
+    image: dockurr/windows@sha256:16fd7c39a3e48bb946d29c59dc6015942e5b900a1fa5d7e5552053bfc48ee2ea
+    container_name: cloud-windows-runner
+    environment:
+      VERSION: "2025"
+      CPU_CORES: "4"
+      RAM_SIZE: "8G"
+      DISK_SIZE: "90G"
+      DISK_FMT: qcow2
+      ALLOCATE: "N"
+      USERNAME: cloud-admin
+      PASSWORD: ${WINDOWS_PASSWORD:?Windows password is required}
+      AUTOLOGIN: "Y"
+    devices:
+      - /dev/kvm
+      - /dev/net/tun
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - "127.0.0.1:8006:8006"
+      - "127.0.0.1:3389:3389/tcp"
+      - "127.0.0.1:3389:3389/udp"
+    volumes:
+      - /var/lib/cloud-windows-runner:/storage
+      - ./provision:/oem:ro
+      - ./provision:/shared:ro
+    restart: unless-stopped
+    stop_grace_period: 2m

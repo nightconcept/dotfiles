@@ -1,0 +1,15 @@
+log:
+  level: info
+runner:
+  capacity: 2
+  timeout: 3h
+  labels:
+    - windows-latest:host
+    - windows-2025:host
+    - self-hosted:host
+    - windows:host
+    - x64:host
+cache:
+  enabled: false
+host:
+  workdir_parent: C:/ForgejoRunner/work
