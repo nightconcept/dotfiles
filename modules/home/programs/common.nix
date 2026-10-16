@@ -47,8 +47,9 @@ in {
         zoxide
       ])
       ++ [masterPkgs.codex]
-      # Exclude on rinoa, aerith, and vincent because antigravity-cli 1.0.7 does not build on those hosts.
-      ++ lib.optionals (!(builtins.elem hostname ["rinoa" "aerith" "vincent"])) (with pkgs; [
+      # Exclude hosts whose CPU lacks PCLMUL (generic QEMU vCPUs); antigravity-cli
+      # aborts at startup there, which fails its install check. "server" is barrett.
+      ++ lib.optionals (!(builtins.elem hostname ["rinoa" "aerith" "vincent" "server"])) (with pkgs; [
         antigravity-cli
       ]);
   };
