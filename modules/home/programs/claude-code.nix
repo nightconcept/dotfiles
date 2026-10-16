@@ -38,6 +38,44 @@
     '';
   };
 
+  # Statusline mirroring the starship prompt (shared/starship.toml): [user@host] dir  branch flags
+  promptStatuslineScript = pkgs.writeShellScript "statusline-prompt.sh" ''
+    input=$(cat)
+    dir=$(${pkgs.jq}/bin/jq -r '.workspace.current_dir // .cwd // empty' <<<"$input")
+    model=$(${pkgs.jq}/bin/jq -r '.model.display_name // empty' <<<"$input")
+    [ -n "$dir" ] || dir=$PWD
+    blue=$'\033[34m'; yellow=$'\033[33m'; green=$'\033[32m'; dim=$'\033[2m'; rst=$'\033[0m'
+
+    # fish-style path: abbreviate all but the last 3 components to one char
+    short="''${dir/#$HOME/\~}"
+    IFS=/ read -ra parts <<<"$short"
+    n=''${#parts[@]}
+    out=""
+    for i in "''${!parts[@]}"; do
+      p="''${parts[$i]}"
+      if [ "$i" -lt $((n - 3)) ] && [ -n "$p" ] && [ "$p" != "~" ]; then p="''${p:0:1}"; fi
+      out+="''${out:+/}$p"
+    done
+    [ "''${short:0:1}" = "/" ] && out="/''${out#/}"
+
+    line=""
+    [ -n "$SSH_CONNECTION" ] && line+="''${blue}$USER@$(hostname -s)''${rst} "
+    line+="''${blue}$out''${rst}"
+
+    if branch=$(git -C "$dir" symbolic-ref --short HEAD 2>/dev/null || git -C "$dir" rev-parse --short HEAD 2>/dev/null); then
+      st=$(git -C "$dir" status --porcelain 2>/dev/null)
+      flags=""
+      grep -q '^[MADRC]' <<<"$st" && flags+="+"
+      grep -q '^.[MD]' <<<"$st" && flags+="!"
+      grep -q '^??' <<<"$st" && flags+="?"
+      line+=" ''${blue} $branch''${rst}"
+      [ -n "$flags" ] && line+=" ''${yellow}$flags''${rst}"
+    fi
+    [ -n "$IN_NIX_SHELL" ] && line+=" ''${green}nix''${rst}"
+    [ -n "$model" ] && line+=" ''${dim}$model''${rst}"
+    printf '%s' "$line"
+  '';
+
   # Claude Code settings.json configuration
   claudeSettingsConfig = pkgs.writeText "claude-settings.json" (builtins.toJSON (
     if cfg.statusline.enable
@@ -45,7 +83,7 @@
       model = "sonnet";
       statusLine = {
         type = "command";
-        command = "${ccstatuslinePkg}/bin/ccstatusline";
+        command = "${promptStatuslineScript}";
       };
     }
     else {
