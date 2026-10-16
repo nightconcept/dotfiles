@@ -134,6 +134,10 @@ in {
               timeout: 10s
               retries: 3
               start_period: 30s
+            # Named so recreating the container reuses the image cache instead
+            # of orphaning a new anonymous /var/lib/docker volume each time.
+            volumes:
+              - forgejo-dind-data:/var/lib/docker
             networks:
               - runner-network
 
@@ -181,6 +185,7 @@ in {
           cfg.replicas)}
 
         volumes:
+          forgejo-dind-data:
         ${lib.concatStringsSep "\n" (lib.genList (i: "  forgejo-runner-data-${toString (i + 1)}:") cfg.replicas)}
 
         networks:
@@ -199,6 +204,24 @@ in {
         ExecStart = "${pkgs.docker-compose}/bin/docker-compose up -d --wait --wait-timeout 180";
         ExecStop = "${pkgs.docker-compose}/bin/docker-compose down";
         Restart = "on-failure";
+      };
+    };
+
+    # CI jobs pull images into dind on every run; drop ones unused for a week.
+    systemd.services.forgejo-dind-prune = {
+      description = "Prune unused images from the Forgejo docker-in-docker cache";
+      after = ["docker-container-forgejo-runners.service"];
+      serviceConfig = {
+        Type = "oneshot";
+        ExecStart = "${pkgs.docker}/bin/docker exec forgejo-dind docker --host tcp://127.0.0.1:2375 system prune --all --force --filter until=168h";
+      };
+    };
+
+    systemd.timers.forgejo-dind-prune = {
+      wantedBy = ["timers.target"];
+      timerConfig = {
+        OnCalendar = "weekly";
+        Persistent = true;
       };
     };
   };
