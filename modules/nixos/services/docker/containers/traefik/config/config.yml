@@ -143,6 +143,17 @@ http:
       tls: {}
       service: status
 
+    gotify:
+      entryPoints:
+        - "https"
+      rule: "Host(`gotify.local.solivan.dev`)"
+      middlewares:
+        - default-whitelist
+        - default-headers
+        - https-redirectscheme
+      tls: {}
+      service: gotify
+
     budget:
       entryPoints:
         - "https"
@@ -245,6 +256,12 @@ http:
       loadBalancer:
         servers:
           - url: "http://192.168.1.185:3001"
+        passHostHeader: true
+
+    gotify:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.1.185:8070"
         passHostHeader: true
 
     budget:

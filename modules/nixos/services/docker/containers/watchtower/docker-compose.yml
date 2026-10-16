@@ -5,6 +5,8 @@ services:
     networks:
       - proxy
     restart: unless-stopped
+    env_file:
+      - .env
     environment:
       - WATCHTOWER_CLEANUP=$WATCHTOWER_CLEANUP
       - WATCHTOWER_LABEL_ENABLE=$WATCHTOWER_LABEL_ENABLE

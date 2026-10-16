@@ -10,23 +10,44 @@
   containerPath = "/var/lib/docker-containers/${containerName}";
   python = pkgs.python3.withPackages (ps: [ps."uptime-kuma-api"]);
   monitorFile = pkgs.writeText "uptime-kuma-monitors.json" (builtins.toJSON cfg.monitors);
+  gotifyFile = pkgs.writeText "uptime-kuma-gotify.json" (builtins.toJSON cfg.gotify);
   provisioner = pkgs.writeText "provision-uptime-kuma.py" ''
     import json
     import pathlib
     import sys
 
-    from uptime_kuma_api import MonitorType, UptimeKumaApi
+    from uptime_kuma_api import MonitorType, NotificationType, UptimeKumaApi
 
 
-    url, username, password_file, monitors_file = sys.argv[1:]
+    url, username, password_file, monitors_file, gotify_file = sys.argv[1:]
     password = pathlib.Path(password_file).read_text().strip()
     desired = json.loads(pathlib.Path(monitors_file).read_text())
+    gotify = json.loads(pathlib.Path(gotify_file).read_text())
     marker = "[managed-by-nix]"
 
     with UptimeKumaApi(url, timeout=30) as api:
         if api.need_setup():
             api.setup(username, password)
         api.login(username, password)
+
+        if gotify:
+            notification = {
+                "name": "Gotify",
+                "type": NotificationType.GOTIFY,
+                "isDefault": True,
+                "applyExisting": True,
+                "gotifyserverurl": gotify["url"],
+                "gotifyapplicationToken": pathlib.Path(gotify["tokenFile"]).read_text().strip(),
+                "gotifyPriority": gotify["priority"],
+            }
+            existing = next(
+                (n for n in api.get_notifications() if n["name"] == notification["name"]),
+                None,
+            )
+            if existing:
+                api.edit_notification(existing["id"], **notification)
+            else:
+                api.add_notification(**notification)
 
         current = {monitor["name"]: monitor for monitor in api.get_monitors()}
         desired_names = {monitor["name"] for monitor in desired}
@@ -99,6 +120,28 @@ in {
       type = lib.types.str;
       default = "${containerPath}/admin-password";
       description = "Persistent file containing the Uptime Kuma administrator password.";
+    };
+
+    gotify = lib.mkOption {
+      type = lib.types.nullOr (lib.types.submodule {
+        options = {
+          url = lib.mkOption {
+            type = lib.types.str;
+            description = "Gotify URL reachable from the Uptime Kuma container.";
+          };
+          tokenFile = lib.mkOption {
+            type = lib.types.str;
+            description = "Host file containing the Gotify application token.";
+          };
+          priority = lib.mkOption {
+            type = lib.types.ints.between 0 10;
+            default = 8;
+            description = "Gotify message priority for monitor alerts.";
+          };
+        };
+      });
+      default = null;
+      description = "Default Gotify notification attached to every monitor.";
     };
 
     monitors = lib.mkOption {
@@ -195,12 +238,13 @@ in {
 
     systemd.services.uptime-kuma-provision = lib.mkIf (cfg.monitors != []) {
       description = "Reconcile declarative Uptime Kuma monitors";
-      after = ["docker-container-${containerName}.service"];
+      after = ["docker-container-${containerName}.service"] ++ lib.optional (cfg.gotify != null) "gotify-provision.service";
       requires = ["docker-container-${containerName}.service"];
+      wants = lib.optional (cfg.gotify != null) "gotify-provision.service";
       wantedBy = ["multi-user.target"];
       serviceConfig = {
         Type = "oneshot";
-        ExecStart = "${python}/bin/python ${provisioner} http://${cfg.listenAddress}:${toString cfg.port} ${lib.escapeShellArg cfg.adminUsername} ${lib.escapeShellArg cfg.adminPasswordFile} ${monitorFile}";
+        ExecStart = "${python}/bin/python ${provisioner} http://${cfg.listenAddress}:${toString cfg.port} ${lib.escapeShellArg cfg.adminUsername} ${lib.escapeShellArg cfg.adminPasswordFile} ${monitorFile} ${gotifyFile}";
         Restart = "on-failure";
         RestartSec = 10;
       };

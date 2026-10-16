@@ -17,6 +17,23 @@ in {
       default = "0 0 4 * * *";
       description = "Cron schedule for updates";
     };
+
+    gotify = lib.mkOption {
+      type = lib.types.nullOr (lib.types.submodule {
+        options = {
+          host = lib.mkOption {
+            type = lib.types.str;
+            description = "Gotify host and port reachable from the Watchtower container.";
+          };
+          tokenFile = lib.mkOption {
+            type = lib.types.str;
+            description = "Host file containing the Gotify application token.";
+          };
+        };
+      });
+      default = null;
+      description = "Send update reports to Gotify.";
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -28,8 +45,9 @@ in {
 
     systemd.services."docker-container-${containerName}" = {
       description = "Watchtower Auto-Update Container";
-      after = ["docker.service" "docker-network-proxy.service"];
+      after = ["docker.service" "docker-network-proxy.service"] ++ lib.optional (cfg.gotify != null) "gotify-provision.service";
       requires = ["docker.service" "docker-network-proxy.service"];
+      wants = lib.optional (cfg.gotify != null) "gotify-provision.service";
       wantedBy = ["multi-user.target"];
 
       preStart = ''
@@ -59,12 +77,19 @@ in {
         fi
 
         # Generate .env file
+        umask 077
         cat > ${containerPath}/.env <<EOF
         WATCHTOWER_SCHEDULE=${cfg.schedule}
         WATCHTOWER_CLEANUP=true
         WATCHTOWER_LABEL_ENABLE=true
         WATCHTOWER_INCLUDE_RESTARTING=true
         EOF
+        ${lib.optionalString (cfg.gotify != null) ''
+          cat >> ${containerPath}/.env <<EOF
+          WATCHTOWER_NOTIFICATION_URL=gotify://${cfg.gotify.host}/$(cat ${cfg.gotify.tokenFile})?disabletls=yes
+          WATCHTOWER_NOTIFICATIONS_HOSTNAME=${config.networking.hostName}
+          EOF
+        ''}
       '';
 
       serviceConfig = {

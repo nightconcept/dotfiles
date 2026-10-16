@@ -38,6 +38,7 @@ in {
     ./containers/flaresolverr
     ./containers/forgejo
     ./containers/freshrss
+    ./containers/gotify
     ./containers/headscale
     ./containers/homepage
     ./containers/immich

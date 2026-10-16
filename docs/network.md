@@ -18,7 +18,7 @@ both hosts have shown ICMP filtered/blocked while 8006 answered fine.
 |---|---|---|---|
 | **rinoa** | 192.168.1.110 | Docker host: **Traefik reverse proxy**, Prowlarr, Immich, CrowdSec, Obsidian LiveSync, BookOrbit | Valefor |
 | **mog** | 192.168.1.167 | SMB file server | Locke |
-| **vincent** | 192.168.1.185 | CI/CD runner (Forgejo/GitHub runner), Uptime Kuma (3001) | Locke |
+| **vincent** | 192.168.1.185 | CI/CD runner (Forgejo/GitHub runner), Uptime Kuma (3001), Gotify (8070) | Locke |
 | **barrett** | ~~192.168.1.114~~ **192.168.1.112** | VPN torrent server (qBittorrent + NordVPN) | Locke |
 | **aerith** | 192.168.1.118 | Plex media server | hypervisor unknown — not yet confirmed |
 | **terra** | 192.168.1.173 (Wi-Fi DHCP; MAC `8c:86:dd:77:63:28`) | Ubuntu LLM inference server, pyinfra-managed | bare metal, not a VM |

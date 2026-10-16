@@ -13,7 +13,7 @@ Docker containers are Nix modules in `containers/`. Each defines compose config,
 | Media | jellyfin, plex, seerr |
 | *arr Stack | sonarr, radarr, prowlarr, readarr, flaresolverr |
 | Books | audiobookshelf, calibre, calibre-web, readarr-books |
-| Home Automation | homepage, uptime-kuma |
+| Home Automation | homepage, uptime-kuma, gotify |
 | Infrastructure | traefik, portainer, watchtower (Nicholas Fedor fork), cloudflare-tunnel, headscale |
 | Authentication | vaultwarden |
 | Development | forgejo, forgejo-runner |

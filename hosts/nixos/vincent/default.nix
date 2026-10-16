@@ -7,6 +7,7 @@
   inputs,
   ...
 }: let
+  inherit (config.modules.nixos.docker.containers) gotify;
   ping = name: hostname: {
     inherit name hostname;
     type = "ping";
@@ -70,10 +71,15 @@ in {
       "forgejo-runner-1"
       "forgejo-runner-2"
       "forgejo-runner-3"
+      "gotify"
       "portainer"
       "uptimekuma"
     ];
     httpChecks = [
+      {
+        name = "Gotify direct";
+        url = "http://192.168.1.185:8070/health";
+      }
       {
         name = "Portainer direct";
         url = "http://127.0.0.1:9000/api/status";
@@ -86,6 +92,7 @@ in {
     ];
     afterUnits = [
       "docker-container-forgejo-runners.service"
+      "docker-container-gotify.service"
       "docker-container-portainer.service"
       "docker-container-uptimekuma.service"
     ];
@@ -106,15 +113,31 @@ in {
       port = 9000;
     };
 
+    # Push notifications for anything that needs hands-on IT work
+    gotify = {
+      enable = true;
+      listenAddress = "192.168.1.185";
+      applications = ["uptime-kuma" "watchtower"];
+      diskAlert.enable = true;
+    };
+
     # Auto-update containers labeled com.centurylinklabs.watchtower.enable=true
     watchtower = {
       enable = true;
       schedule = "0 0 4 * * *";
+      gotify = {
+        host = "gotify:80";
+        tokenFile = "${gotify.tokenDir}/watchtower.token";
+      };
     };
 
     uptime-kuma = {
       enable = true;
       listenAddress = "192.168.1.185";
+      gotify = {
+        url = gotify.internalUrl;
+        tokenFile = "${gotify.tokenDir}/uptime-kuma.token";
+      };
       monitors = [
         # Host and network reachability. These use direct addresses so a DNS,
         # reverse-proxy, or Cloudflare incident does not collapse every signal.
@@ -162,10 +185,12 @@ in {
         (http "Rinoa container readiness" "http://192.168.1.110:3002/health")
         (http "Vincent container readiness" "http://192.168.1.185:3002/health")
         (http "Uptime Kuma direct" "http://192.168.1.185:3001/")
+        (http "Gotify direct" "http://192.168.1.185:8070/health")
 
         # User-facing LAN paths validate local DNS, TLS, Traefik, and the app.
         (http "Traefik dashboard" "https://traefik-dashboard.local.solivan.dev/")
         (http "Portainer" "https://portainer.local.solivan.dev/")
+        (http "Gotify routed" "https://gotify.local.solivan.dev/health")
         (http "Vaultwarden LAN" "https://vaultwarden.local.solivan.dev/alive")
         (http "Prowlarr" "https://prowlarr.local.solivan.dev/ping")
         (http "Prowlarr ABB" "https://prowlarr-abb.local.solivan.dev/ping")

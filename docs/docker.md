@@ -11,7 +11,7 @@ Available container modules include:
 - **Media**: jellyfin, plex
 - ***arr Stack**: sonarr, radarr, prowlarr, readarr, flaresolverr
 - **Books**: audiobookshelf, calibre, calibre-web, readarr-books
-- **Home Automation**: homepage, uptime-kuma
+- **Home Automation**: homepage, uptime-kuma, gotify
 - **Infrastructure**: traefik, portainer, watchtower (Nicholas Fedor fork), cloudflare-tunnel, headscale
 - **Media requests**: seerr (the supported successor to Overseerr and Jellyseerr)
 - **Authentication**: vaultwarden
@@ -27,6 +27,39 @@ Rinoa runs the maintained `ghcr.io/nicholas-fedor/watchtower` fork daily at
 `com.centurylinklabs.watchtower.enable=true` label are updated, and superseded
 images are removed afterward. Watchtower follows the configured image tag; it
 does not promote a pinned tag such as `3.5.2` to a newer release line.
+
+## Gotify Notifications (Vincent)
+
+Gotify on Vincent pushes alerts for work that needs a person. It listens on
+`http://192.168.1.185:8070`, and Rinoa's Traefik routes
+`https://gotify.local.solivan.dev` to it (LAN and VPN clients only).
+
+- **Uptime Kuma** sends monitor down/up and certificate expiry alerts through
+  a default `Gotify` notification attached to every monitor.
+- **Watchtower** on Vincent sends a report after it updates containers or
+  fails to update them.
+- **Disk space**: `gotify-disk-alert.timer` checks `/` every hour. It sends
+  an alert when usage is at or above 85%, repeats it every 24 hours while the
+  disk stays full, and sends one message when usage goes below 85%.
+
+On the first start, the module generates the admin password in
+`/var/lib/docker-containers/gotify/admin-password`. `gotify-provision.service`
+creates the `uptime-kuma` and `watchtower` applications. Gotify 3 shows an
+application token only once, so the service stores each token in
+`/var/lib/docker-containers/gotify/tokens/`. If a token file is missing, the
+service rotates that application's token. The `host-alerts` application is
+added when `diskAlert.enable` is set.
+
+To receive alerts, log in to the web UI as `admin`, then add a client in the
+Gotify Android app (or another Gotify client) with the server URL.
+
+## Forgejo Runner Image Cache
+
+The `forgejo-dind` container keeps its image cache in the named volume
+`forgejo-runners_forgejo-dind-data`. Before this volume existed, each
+recreation of the container left behind an anonymous `/var/lib/docker` volume
+of 2-10 GB. `forgejo-dind-prune.timer` runs weekly and removes images that
+have not been used for 7 days.
 
 ## Terra Docker Compose Stacks
 
