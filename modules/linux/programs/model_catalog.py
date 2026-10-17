@@ -24,10 +24,12 @@ MODEL_CATALOG: list[dict[str, Any]] = [
     {
         # Strata serves its own packs and needs the whole GPU; llama-swap stops other models first.
         # LD_LIBRARY_PATH is cleared so llama.cpp's libraries from the unit do not shadow Strata's.
+        # Strata refuses unknown Host headers, and llama-swap passes the client's through.
         "id": "qwen3.8-flash-next-iq2_xs",
         "files": [],
         "cmd": (
-            f"env -u LD_LIBRARY_PATH sh -c 'cd {STRATA_DIR} && exec .venv/bin/python "
+            "env -u LD_LIBRARY_PATH STRATA_ALLOWED_HOSTS=terra,terra.nclabs.net,192.168.1.173 "
+            f"sh -c 'cd {STRATA_DIR} && exec .venv/bin/python "
             "serve/server.py --engine strata --config strata-iq2_xs.json --port ${PORT}'"
         ),
         "aliases": ["Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS"],
