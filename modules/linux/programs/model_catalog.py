@@ -8,7 +8,11 @@ from typing import Any
 
 MODEL_DIR = "/mnt/storage/llm-models"
 LLAMA_CPP_SERVER = "/opt/llama-cpp/llama-server"
-DEFAULT_MODEL_ID = "qwen3-35b-mtp"
+# Strata (github.com/Niko1221/Strata) is set up outside dotfiles with `./setup.sh --no-start`.
+STRATA_DIR = "/home/danny/git/Strata"
+# EdeaBench v0.1 (2026-10-17): Flash Next IQ2_XS ties the 27B and IQ3_XXS in under half
+# the 27B's time.
+DEFAULT_MODEL_ID = "qwen3.8-flash-next-iq2_xs"
 BENCHMARK_MODEL_IDS = [
     "qwen3.8-27b",
     "muse-glimmer-30b",
@@ -17,6 +21,18 @@ BENCHMARK_MODEL_IDS = [
 
 
 MODEL_CATALOG: list[dict[str, Any]] = [
+    {
+        # Strata serves its own packs and needs the whole GPU; llama-swap stops other models first.
+        # LD_LIBRARY_PATH is cleared so llama.cpp's libraries from the unit do not shadow Strata's.
+        "id": "qwen3.8-flash-next-iq2_xs",
+        "files": [],
+        "cmd": (
+            f"env -u LD_LIBRARY_PATH sh -c 'cd {STRATA_DIR} && exec .venv/bin/python "
+            "serve/server.py --engine strata --config strata-iq2_xs.json --port ${PORT}'"
+        ),
+        "aliases": ["Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS"],
+        "context": 131072,
+    },
     {
         "id": "qwen3.8-27b",
         "repo_id": "unsloth/Qwen3.8-27B-GGUF",
@@ -139,7 +155,7 @@ def render_llama_swap_config() -> str:
     ]
 
     for model in MODEL_CATALOG:
-        cmd = " ".join(
+        cmd = model.get("cmd") or " ".join(
             shlex.quote(part) if part != "${PORT}" else part
             for part in [LLAMA_CPP_SERVER, *model["args"]]
         )
