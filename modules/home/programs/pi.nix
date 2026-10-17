@@ -19,7 +19,10 @@
   });
 
   localProvider = "local-openai";
-  localModelId = "qwen3.8-27b";
+  # Same default as Hermes (modules/linux/programs/model_catalog.py DEFAULT_MODEL_ID).
+  localModelId = "qwen3.8-flash-next-iq2_xs";
+  # Other llama-swap models pi can switch to; selecting one swaps the GPU over.
+  otherLocalModelIds = ["qwen3.8-27b" "qwen3-35b-mtp"];
 
   piModelsConfig = pkgs.writeText "pi-models.json" (builtins.toJSON {
     providers = {
@@ -31,12 +34,10 @@
           supportsDeveloperRole = false;
           supportsReasoningEffort = false;
         };
-        models = [
-          {
-            id = localModelId;
-            name = localModelId;
-          }
-        ];
+        models = map (id: {
+          inherit id;
+          name = id;
+        }) ([localModelId] ++ otherLocalModelIds);
       };
     };
   });
