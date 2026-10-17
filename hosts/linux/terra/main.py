@@ -10,6 +10,7 @@ from modules.linux.programs.llama_cpp import LlamaCppModule
 from modules.linux.programs.llama_swap import LlamaSwapModule
 from modules.linux.programs.llm_models import LLMModelsModule
 from modules.linux.programs.paseo.module import PaseoModule
+from modules.linux.programs.pinchflat.module import PinchflatModule
 from modules.linux.programs.ssh import SSHModule
 from modules.linux.programs.storage import StorageModule
 from modules.linux.programs.watchtower.module import WatchtowerModule
@@ -32,6 +33,7 @@ budget = BudgetModule()
 ledger = LedgerModule()
 kosync = KoreaderSyncModule()
 paseo = PaseoModule(port=6767)
+pinchflat = PinchflatModule()
 watchtower = WatchtowerModule()
 hf = HuggingFaceModule()
 llama = LlamaCppModule()
@@ -58,6 +60,7 @@ ledger.deploy()
 books.deploy()
 kosync.deploy()
 paseo.deploy()
+pinchflat.deploy()
 watchtower.deploy()
 
 # Deploy AI modules
