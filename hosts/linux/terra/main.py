@@ -16,6 +16,7 @@ from modules.linux.programs.watchtower.module import WatchtowerModule
 from modules.linux.services.tailscale import TailscaleModule
 from modules.linux.services.titan_mount import TitanMountModule
 from modules.linux.services.wifi_power_save import WiFiPowerSaveModule
+from modules.linux.services.wifi_watchdog import WiFiWatchdogModule
 
 # Initialize modules
 ssh = SSHModule()
@@ -24,6 +25,7 @@ storage = StorageModule()
 titan = TitanMountModule()
 tailscale = TailscaleModule(login_server="https://hs.solivan.dev")
 wifi_power_save = WiFiPowerSaveModule()
+wifi_watchdog = WiFiWatchdogModule()
 docker = DockerModule()
 books = BooksModule()
 budget = BudgetModule()
@@ -45,6 +47,7 @@ storage.deploy()
 titan.deploy()
 tailscale.deploy()
 wifi_power_save.deploy()
+wifi_watchdog.deploy()
 
 # Deploy infrastructure
 docker.deploy()

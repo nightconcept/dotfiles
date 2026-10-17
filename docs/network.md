@@ -54,3 +54,8 @@ separately before concluding a service itself is down.
    hypervisor uplink failure (missing switch-to-router cable, dead port)
    takes down every VM on it and looks identical to "VM is down" from the
    LAN side.
+5. Terra is on Wi-Fi through a USB `rtw88_8822bu` adapter whose firmware can hang
+   ("failed to get tx report from firmware" in the kernel log). NetworkManager then
+   gives up on autoconnect, so terra looks powered off while it is still running.
+   `wifi-watchdog.timer` reloads the driver and reconnects after 3 minutes without
+   the gateway (`journalctl -t wifi-watchdog`). A wired link on `enp4s0` avoids it.
