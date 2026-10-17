@@ -15,6 +15,7 @@
     ./networking
     ./programs
     ./services/docker
+    ./services/download-sweeper
     ./services/openssh
     ./security
   ];

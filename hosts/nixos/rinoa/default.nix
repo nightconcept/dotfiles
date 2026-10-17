@@ -51,6 +51,12 @@
       # Sonarr and Radarr require this mount, and the 60s timeout causes them to stop
       titanIdleTimeout = 0;
     };
+
+    # Enable periodic download sweeper for /mnt/titan/downloads
+    services.downloadSweeper = {
+      enable = true;
+      schedule = "hourly";
+    };
   };
 
   # Enable Docker
