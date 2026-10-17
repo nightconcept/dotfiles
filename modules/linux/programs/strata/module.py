@@ -40,7 +40,11 @@ class StrataModule(HostModule):
         self.fetch_script = f"/home/{self.user}/.local/libexec/strata-fetch-shard"
 
     def install(self):
-        """Install download and venv prerequisites, and fetch the pinned Strata release."""
+        """Install prerequisites and put Strata at the pinned release.
+
+        A missing checkout is a shallow clone of the tag. A clean checkout on another commit is
+        moved to the tag (setup then rebuilds the engine); one with local changes stops the deploy.
+        """
         apt.packages(
             name="Install Strata prerequisites",
             packages=["git", "aria2", "python3-venv", "python3-pip"],
@@ -55,9 +59,16 @@ class StrataModule(HostModule):
                     git clone --quiet --depth 1 --branch "{STRATA_TAG}" \\
                         "{STRATA_REPO}" "{STRATA_DIR}"
                 fi
-                head=$(git -C "{STRATA_DIR}" rev-parse HEAD)
-                if [ "$head" != "{STRATA_COMMIT}" ]; then
-                    echo "Strata is at $head, not {STRATA_TAG} ({STRATA_COMMIT}); leaving it alone."
+                cd "{STRATA_DIR}"
+                if [ "$(git rev-parse HEAD)" != "{STRATA_COMMIT}" ]; then
+                    if ! git diff --quiet || ! git diff --cached --quiet; then
+                        echo "Strata has local changes; not moving it to {STRATA_TAG}." >&2
+                        exit 1
+                    fi
+                    depth=""
+                    [ -f .git/shallow ] && depth="--depth 1"
+                    git fetch --quiet $depth origin "refs/tags/{STRATA_TAG}:refs/tags/{STRATA_TAG}"
+                    git checkout --quiet "{STRATA_COMMIT}"
                 fi
                 """
             ],
