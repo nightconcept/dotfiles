@@ -82,10 +82,11 @@ class LlamaSwapModule(HostModule):
 
                 curl -fsSL "$URL" -o "$TMP_DIR/$ASSET"
                 tar -xzf "$TMP_DIR/$ASSET" -C "$TMP_DIR"
-                sudo install -m 0755 "$TMP_DIR/llama-swap" "{self.install_dir}/llama-swap"
-                printf '%s\\n' "$VERSION" | sudo tee "$VERSION_FILE" >/dev/null
+                install -m 0755 "$TMP_DIR/llama-swap" "{self.install_dir}/llama-swap"
+                printf '%s\\n' "$VERSION" > "$VERSION_FILE"
                 """
             ],
+            _sudo=True,
         )
 
         files.put(
@@ -104,10 +105,11 @@ class LlamaSwapModule(HostModule):
                 """
                 set -eu
                 if systemctl list-unit-files llama-server.service >/dev/null 2>&1; then
-                    sudo systemctl disable --now llama-server.service || true
+                    systemctl disable --now llama-server.service || true
                 fi
                 """
             ],
+            _sudo=True,
         )
 
         unit = _SERVICE_UNIT.format(user=self.user, listen=self.listen)
@@ -135,7 +137,8 @@ class LlamaSwapModule(HostModule):
         """Remove llama-swap binaries and config."""
         server.shell(
             name="Disable llama-swap service",
-            commands=["sudo systemctl disable --now llama-swap.service || true"],
+            commands=["systemctl disable --now llama-swap.service || true"],
+            _sudo=True,
         )
         files.directory(
             name=f"Remove {self.install_dir}",

@@ -38,7 +38,7 @@ class LLMModelsModule(HostModule):
                 commands.append(
                     f'test -f "{local_source}" && '
                     f'if [ ! -f "{self.model_dir}/{filename}" ]; then '
-                    f'sudo install -o "{self.user}" -g "{self.user}" -m 0644 '
+                    "install -m 0644 "
                     f'"{local_source}" "{self.model_dir}/{filename}"; fi'
                 )
                 continue

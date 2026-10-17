@@ -22,6 +22,7 @@ class LlamaCppModule(HostModule):
         # The service only needs llama-server, not the embedded UI assets.
         self.build_ui = os.environ.get("LLAMA_CPP_BUILD_UI", "OFF")
         self.required_rocm_packages = "rocm-dev hipblas-dev rocblas-dev rocwmma-dev"
+        self.user = os.environ.get("USER", "danny")
 
     def install(self):
         """Ensure ROCm dev packages and llama.cpp source are present."""
@@ -30,18 +31,25 @@ class LlamaCppModule(HostModule):
             name="Install ROCm llama.cpp build dependencies (if missing)",
             commands=[
                 f"if ! dpkg -s {self.required_rocm_packages} >/dev/null 2>&1; then "
-                "sudo apt-get update && "
-                f"sudo apt-get install -y {self.required_rocm_packages}; fi"
+                "apt-get update && "
+                f"apt-get install -y {self.required_rocm_packages}; fi"
             ],
+            _sudo=True,
         )
 
-        # Ensure directories exist
-        server.shell(
-            name=f"Ensure {self.bin_dir} and {self.local_bin} exist",
-            commands=[
-                f"sudo mkdir -p {self.bin_dir}",
-                f"mkdir -p {self.local_bin}",
-            ],
+        # The install dir is user-owned so the build can update it without sudo.
+        files.directory(
+            name=f"Ensure {self.bin_dir} exists",
+            path=self.bin_dir,
+            present=True,
+            user=self.user,
+            group=self.user,
+            _sudo=True,
+        )
+        files.directory(
+            name=f"Ensure {self.local_bin} exists",
+            path=self.local_bin,
+            present=True,
         )
 
         git.repo(
@@ -116,8 +124,8 @@ class LlamaCppModule(HostModule):
                             echo "llama.cpp HIP build did not expose any usable devices" >&2
                             exit 1
                         fi
-                        sudo rsync -a --delete --exclude VERSION "$STAGE_DIR"/ {self.bin_dir}/
-                        echo "$LATEST" | sudo tee $V_FILE
+                        rsync -a --delete --exclude VERSION "$STAGE_DIR"/ {self.bin_dir}/
+                        echo "$LATEST" > "$V_FILE"
                         rm -rf "$BUILD_DIR"
                         ln -sf {self.bin_dir}/llama-cli {self.local_bin}/llama-cli
                         ln -sf {self.bin_dir}/llama-server {self.local_bin}/llama-server
