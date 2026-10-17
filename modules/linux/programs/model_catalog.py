@@ -8,8 +8,12 @@ from typing import Any
 
 MODEL_DIR = "/mnt/storage/llm-models"
 LLAMA_CPP_SERVER = "/opt/llama-cpp/llama-server"
-# Strata (github.com/Niko1221/Strata) is set up outside dotfiles with `./setup.sh --no-start`.
+# Strata serves Qwen3.8 Flash Next GSQ-RCO packs. modules/linux/programs/strata.py clones it,
+# fetches the shards listed under each entry's "strata" key, and runs its setup.
+STRATA_REPO = "https://github.com/Niko1221/Strata.git"
+STRATA_COMMIT = "296b59d2f73c8f04a805df29c2fa97655adace78"
 STRATA_DIR = "/home/danny/git/Strata"
+STRATA_DATA_DIR = f"{MODEL_DIR}/Strata-data"
 # EdeaBench v0.1 (2026-10-17): Flash Next IQ2_XS ties the 27B and IQ3_XXS in under half
 # the 27B's time.
 DEFAULT_MODEL_ID = "qwen3.8-flash-next-iq2_xs"
@@ -34,6 +38,24 @@ MODEL_CATALOG: list[dict[str, Any]] = [
         ),
         "aliases": ["Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS"],
         "context": 131072,
+        "strata": {
+            "model": "IQ2_XS",
+            "repo_id": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+            "revision": "ed59f92082b1e93c0e96d60a8b11aab089b52f09",
+            "shards": [
+                {
+                    "name": "Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00001-of-00002.gguf",
+                    "size": 39225954592,
+                    "sha256": "92cee27ae5bbadcd732416a0f7a7f0acc092399dbbe8f5a5efa707c2ec0a49d7",
+                },
+                {
+                    # IQ3_XXS ships the same bytes as its 00002 shard under another name.
+                    "name": "Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS-00002-of-00002.gguf",
+                    "size": 28800138432,
+                    "sha256": "316b46f3a2dbd68c900f43136ab9449f9dcc3725dfd8c794847c204bc161e113",
+                },
+            ],
+        },
     },
     {
         "id": "qwen3.8-27b",
@@ -177,3 +199,8 @@ def render_llama_swap_config() -> str:
         )
 
     return "\n".join(lines) + "\n"
+
+
+def strata_models() -> list[dict[str, Any]]:
+    """Return the catalog entries served by Strata."""
+    return [model for model in MODEL_CATALOG if "strata" in model]

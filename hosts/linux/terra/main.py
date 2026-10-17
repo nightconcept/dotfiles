@@ -13,6 +13,7 @@ from modules.linux.programs.paseo.module import PaseoModule
 from modules.linux.programs.pinchflat.module import PinchflatModule
 from modules.linux.programs.ssh import SSHModule
 from modules.linux.programs.storage import StorageModule
+from modules.linux.programs.strata.module import StrataModule
 from modules.linux.programs.watchtower.module import WatchtowerModule
 from modules.linux.services.tailscale import TailscaleModule
 from modules.linux.services.titan_mount import TitanMountModule
@@ -39,6 +40,7 @@ hf = HuggingFaceModule()
 llama = LlamaCppModule()
 llama_swap = LlamaSwapModule()
 models = LLMModelsModule()
+strata = StrataModule()
 hermes = HermesModule()
 
 # Deploy system foundations
@@ -66,6 +68,7 @@ watchtower.deploy()
 # Deploy AI modules
 hf.deploy()
 models.deploy()
+strata.deploy()
 llama.deploy()
 llama_swap.deploy()
 hermes.deploy()
