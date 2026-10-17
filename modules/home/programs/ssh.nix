@@ -20,6 +20,8 @@ in {
       settings = {
         "*" = {
           IdentityFile = "${config.home.homeDirectory}/.ssh/id_sdev";
+          # Terra's Wi-Fi path drops DSCP-marked packets, so SSH connects time out.
+          IPQoS = "none";
         };
 
         "github.com" = {
