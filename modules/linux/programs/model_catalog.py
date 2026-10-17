@@ -11,6 +11,9 @@ LLAMA_CPP_SERVER = "/opt/llama-cpp/llama-server"
 # Strata serves Qwen3.8 Flash Next GSQ-RCO packs. modules/linux/programs/strata.py clones it,
 # fetches the shards listed under each entry's "strata" key, and runs its setup.
 STRATA_REPO = "https://github.com/Niko1221/Strata.git"
+# EdeaBench v0.1 ran on this release. GitHub ships only Windows engines, so setup.sh compiles the
+# Linux HIP engine for terra's card (gfx1201).
+STRATA_TAG = "v0.1.44.1"
 STRATA_COMMIT = "296b59d2f73c8f04a805df29c2fa97655adace78"
 STRATA_DIR = "/home/danny/git/Strata"
 STRATA_DATA_DIR = f"{MODEL_DIR}/Strata-data"

@@ -17,6 +17,7 @@ from modules.linux.programs.model_catalog import (
     STRATA_DATA_DIR,
     STRATA_DIR,
     STRATA_REPO,
+    STRATA_TAG,
     strata_models,
 )
 
@@ -39,23 +40,24 @@ class StrataModule(HostModule):
         self.fetch_script = f"/home/{self.user}/.local/libexec/strata-fetch-shard"
 
     def install(self):
-        """Install download and venv prerequisites, and clone Strata at the pinned commit."""
+        """Install download and venv prerequisites, and fetch the pinned Strata release."""
         apt.packages(
             name="Install Strata prerequisites",
             packages=["git", "aria2", "python3-venv", "python3-pip"],
             _sudo=True,
         )
         server.shell(
-            name="Clone Strata at the pinned commit",
+            name=f"Fetch Strata {STRATA_TAG}",
             commands=[
                 f"""
                 set -eu
                 if [ ! -d "{STRATA_DIR}/.git" ]; then
-                    git clone "{STRATA_REPO}" "{STRATA_DIR}"
-                    git -C "{STRATA_DIR}" checkout --quiet "{STRATA_COMMIT}"
-                elif [ "$(git -C "{STRATA_DIR}" rev-parse HEAD)" != "{STRATA_COMMIT}" ]; then
-                    head=$(git -C "{STRATA_DIR}" rev-parse --short HEAD)
-                    echo "Strata is at $head, not the pinned {STRATA_COMMIT}; leaving it alone."
+                    git clone --quiet --depth 1 --branch "{STRATA_TAG}" \\
+                        "{STRATA_REPO}" "{STRATA_DIR}"
+                fi
+                head=$(git -C "{STRATA_DIR}" rev-parse HEAD)
+                if [ "$head" != "{STRATA_COMMIT}" ]; then
+                    echo "Strata is at $head, not {STRATA_TAG} ({STRATA_COMMIT}); leaving it alone."
                 fi
                 """
             ],
