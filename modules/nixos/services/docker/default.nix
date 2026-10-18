@@ -7,6 +7,7 @@
   cfg = config.modules.nixos.docker;
 in {
   imports = [
+    ./arr-fail-downloads.nix
     ./health-check.nix
 
     # Core infrastructure
