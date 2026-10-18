@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/recyclarr/recyclarr/v8.8.0/schemas/settings-schema.json
+resource_providers:
+  # Custom formats that are not in the TRaSH Guides.
+  - name: local-radarr
+    type: custom-formats
+    service: radarr
+    path: custom-formats/radarr

@@ -11,7 +11,7 @@ Docker containers are Nix modules in `containers/`. Each defines compose config,
 | Category | Containers |
 |----------|-----------|
 | Media | jellyfin, plex, seerr |
-| *arr Stack | sonarr, radarr, prowlarr, readarr, flaresolverr |
+| *arr Stack | sonarr, radarr, recyclarr, prowlarr, readarr, flaresolverr |
 | Books | audiobookshelf, calibre, calibre-web, readarr-books |
 | Home Automation | homepage, uptime-kuma, gotify |
 | Infrastructure | traefik, portainer, watchtower (Nicholas Fedor fork), cloudflare-tunnel, headscale |

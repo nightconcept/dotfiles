@@ -9,7 +9,7 @@ Docker services are managed as Nix modules in `/modules/nixos/services/docker/co
 
 Available container modules include:
 - **Media**: jellyfin, plex
-- ***arr Stack**: sonarr, radarr, prowlarr, readarr, flaresolverr
+- ***arr Stack**: sonarr, radarr, recyclarr, prowlarr, readarr, flaresolverr
 - **Books**: audiobookshelf, calibre, calibre-web, readarr-books
 - **Home Automation**: homepage, uptime-kuma, gotify
 - **Infrastructure**: traefik, portainer, watchtower (Nicholas Fedor fork), cloudflare-tunnel, headscale

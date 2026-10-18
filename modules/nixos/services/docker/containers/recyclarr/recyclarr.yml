@@ -1,0 +1,96 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/recyclarr/recyclarr/v8.8.0/schemas/config-schema.json
+#
+# Quality profiles, custom formats, and quality sizes from the TRaSH Guides.
+# Recyclarr owns these settings; change them here, not in the Sonarr/Radarr UI.
+# 1080p is the ceiling: no 2160p profiles. Anime profiles are not set up yet.
+#
+# Sizes are MB per minute of runtime; 1 MB/min is about 0.133 Mbps.
+# TRaSH Bluray minimums (~50 MB/min at 1080p) reject most x265 encodes as too
+# small, so Bluray uses the WEB minimums. Maximums cap bitrate: no remuxes or
+# near-remux encodes.
+
+sonarr:
+  rinoa-sonarr:
+    base_url: http://sonarr:8989
+    api_key: !env_var SONARR_API_KEY
+    delete_old_custom_formats: true
+
+    quality_definition:
+      type: series
+      qualities:
+        # 1080p: 100 MB/min (~13 Mbps), about 4.5 GB for a 45-minute episode.
+        - { name: WEBDL-1080p, max: 100, preferred: 100 }
+        - { name: WEBRip-1080p, max: 100, preferred: 100 }
+        - { name: Bluray-1080p, min: 15, max: 100, preferred: 100 }
+        - { name: HDTV-1080p, max: 100, preferred: 100 }
+        # 720p: 60 MB/min (~8 Mbps).
+        - { name: WEBDL-720p, max: 60, preferred: 60 }
+        - { name: WEBRip-720p, max: 60, preferred: 60 }
+        - { name: Bluray-720p, min: 10, max: 60, preferred: 60 }
+        - { name: HDTV-720p, max: 60, preferred: 60 }
+
+    media_management:
+      # Repack/Proper custom formats handle this; TRaSH requires do_not_prefer.
+      propers_and_repacks: do_not_prefer
+
+    quality_profiles:
+      # TRaSH WEB-1080p allows only WEB 1080p. The library is mostly older TV,
+      # so Bluray-1080p ranks with WEB, and 720p/HDTV stay as fallbacks.
+      # The guide profile already blocks dubs with "Language: Not Original":
+      # a release must have the original audio; extra dubs are fine.
+      - trash_id: 72dae194fc92bf828f32cde7744e51a1 # WEB-1080p
+        upgrade:
+          allowed: true
+          until_quality: 1080p
+        qualities:
+          - name: 1080p
+            qualities: [WEBDL-1080p, WEBRip-1080p, Bluray-1080p]
+          - name: HDTV-1080p
+          - name: 720p
+            qualities: [WEBDL-720p, WEBRip-720p, Bluray-720p]
+          - name: HDTV-720p
+
+    custom_formats:
+      - trash_ids:
+          - 47435ece6b99a0b477caf360e79ba0bb # x265 (HD)
+        assign_scores_to:
+          - trash_id: 72dae194fc92bf828f32cde7744e51a1
+            score: 50
+
+radarr:
+  rinoa-radarr:
+    base_url: http://radarr:7878
+    api_key: !env_var RADARR_API_KEY
+    delete_old_custom_formats: true
+
+    quality_definition:
+      type: movie
+      qualities:
+        # 1080p: 130 MB/min (~17 Mbps), about 15.6 GB for a 2-hour movie.
+        # The "Size: Over 20 GB" format below caps long movies.
+        - { name: WEBDL-1080p, max: 130, preferred: 130 }
+        - { name: WEBRip-1080p, max: 130, preferred: 130 }
+        - { name: Bluray-1080p, min: 12.5, max: 130, preferred: 130 }
+        # 720p: 60 MB/min (~8 Mbps).
+        - { name: Bluray-720p, min: 12.5, max: 60, preferred: 60 }
+
+    media_management:
+      propers_and_repacks: do_not_prefer
+
+    quality_profiles:
+      - trash_id: d1d67249d3890e49bc12e275d989a7e9 # HD Bluray + WEB
+
+    custom_formats:
+      - trash_ids:
+          - dc98083864ea246d05a42df0d05f81cc # x265 (HD)
+        assign_scores_to:
+          - trash_id: d1d67249d3890e49bc12e275d989a7e9
+            score: 50
+      # Block dubs: a release must have the original audio; extra dubs are
+      # fine. Untagged releases count as the original language.
+      - trash_ids:
+          - d6e9318c875905d6cfb5bee961afcea9 # Language: Not Original
+          - 514faaa4809b87c71c5c07f31e731120 # Size: Over 20 GB (local)
+        assign_scores_to:
+          - trash_id: d1d67249d3890e49bc12e275d989a7e9
+            score: -10000

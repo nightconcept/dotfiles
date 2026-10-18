@@ -1,0 +1,20 @@
+{
+  "trash_id": "514faaa4809b87c71c5c07f31e731120",
+  "trash_scores": {
+    "default": -10000
+  },
+  "name": "Size: Over 20 GB",
+  "includeCustomFormatWhenRenaming": false,
+  "specifications": [
+    {
+      "name": "Over 20 GB",
+      "implementation": "SizeSpecification",
+      "negate": false,
+      "required": true,
+      "fields": {
+        "min": 20,
+        "max": 10000
+      }
+    }
+  ]
+}

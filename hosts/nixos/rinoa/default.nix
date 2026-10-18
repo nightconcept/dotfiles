@@ -81,6 +81,7 @@
       "prowlarr"
       "sonarr"
       "radarr"
+      "recyclarr"
       "jellyfin"
       "audiobookshelf"
       "bookorbit"
@@ -174,6 +175,7 @@
       "docker-container-prowlarr.service"
       "docker-container-sonarr.service"
       "docker-container-radarr.service"
+      "docker-container-recyclarr.service"
       "docker-container-jellyfin.service"
       "docker-container-audiobookshelf.service"
       "docker-container-bookorbit.service"
@@ -213,6 +215,7 @@
     prowlarr.enable = true;
     sonarr.enable = true;
     radarr.enable = true;
+    recyclarr.enable = true;
     jellyfin.enable = true;
     audiobookshelf.enable = true;
     bookorbit.enable = true;

@@ -26,6 +26,7 @@ in {
     # *arr stack
     ./containers/prowlarr
     ./containers/radarr
+    ./containers/recyclarr
     ./containers/sonarr
 
     ./containers/audiobookshelf
