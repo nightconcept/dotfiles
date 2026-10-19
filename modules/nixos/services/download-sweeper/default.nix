@@ -10,7 +10,7 @@
 with lib; let
   cfg = config.modules.nixos.services.downloadSweeper;
 
-  downloadSweeperScript = pkgs.writers.writePython3Bin "download-sweeper" {} (
+  downloadSweeperScript = pkgs.writers.writePython3Bin "download-sweeper" {flakeIgnore = ["E501"];} (
     builtins.readFile ./sweep_downloads.py
   );
 

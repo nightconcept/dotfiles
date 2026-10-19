@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Download sweeper for /mnt/titan/downloads.
 
 Safely prunes already-imported media, spam executables, and orphaned junk
