@@ -1,0 +1,19 @@
+{
+  "trash_id": "6f1a0c52b7d94e38a2c5e1904d7b3f86",
+  "trash_scores": {
+    "default": 10000
+  },
+  "name": "Allow: MeGusta",
+  "includeCustomFormatWhenRenaming": false,
+  "specifications": [
+    {
+      "name": "MeGusta",
+      "implementation": "ReleaseGroupSpecification",
+      "negate": false,
+      "required": true,
+      "fields": {
+        "value": "^(MeGusta)$"
+      }
+    }
+  ]
+}

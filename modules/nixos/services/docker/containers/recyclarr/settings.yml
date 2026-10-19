@@ -5,3 +5,7 @@ resource_providers:
     type: custom-formats
     service: radarr
     path: custom-formats/radarr
+  - name: local-sonarr
+    type: custom-formats
+    service: sonarr
+    path: custom-formats/sonarr

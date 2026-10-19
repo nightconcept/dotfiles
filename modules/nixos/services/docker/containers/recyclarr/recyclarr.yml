@@ -5,9 +5,9 @@
 # 1080p is the ceiling: no 2160p profiles. Anime has its own Sonarr instance.
 #
 # Sizes are MB per minute of runtime; 1 MB/min is about 0.133 Mbps.
-# TRaSH Bluray minimums (~50 MB/min at 1080p) reject most x265 encodes as too
-# small, so Bluray uses the WEB minimums. Maximums cap bitrate: no remuxes or
-# near-remux encodes.
+# TRaSH minimums (15-50 MB/min at 1080p) reject most x265 encodes as too
+# small, so Sonarr minimums are lowered for every quality. Maximums cap bitrate:
+# no remuxes or near-remux encodes.
 
 sonarr:
   rinoa-sonarr:
@@ -19,15 +19,15 @@ sonarr:
       type: series
       qualities:
         # 1080p: 100 MB/min (~13 Mbps), about 4.5 GB for a 45-minute episode.
-        - { name: WEBDL-1080p, max: 100, preferred: 100 }
-        - { name: WEBRip-1080p, max: 100, preferred: 100 }
-        - { name: Bluray-1080p, min: 15, max: 100, preferred: 100 }
-        - { name: HDTV-1080p, max: 100, preferred: 100 }
+        - { name: WEBDL-1080p, min: 5, max: 100, preferred: 100 }
+        - { name: WEBRip-1080p, min: 5, max: 100, preferred: 100 }
+        - { name: Bluray-1080p, min: 5, max: 100, preferred: 100 }
+        - { name: HDTV-1080p, min: 5, max: 100, preferred: 100 }
         # 720p: 60 MB/min (~8 Mbps).
-        - { name: WEBDL-720p, max: 60, preferred: 60 }
-        - { name: WEBRip-720p, max: 60, preferred: 60 }
-        - { name: Bluray-720p, min: 10, max: 60, preferred: 60 }
-        - { name: HDTV-720p, max: 60, preferred: 60 }
+        - { name: WEBDL-720p, min: 4, max: 60, preferred: 60 }
+        - { name: WEBRip-720p, min: 4, max: 60, preferred: 60 }
+        - { name: Bluray-720p, min: 4, max: 60, preferred: 60 }
+        - { name: HDTV-720p, min: 4, max: 60, preferred: 60 }
 
     media_management:
       # Repack/Proper custom formats handle this; TRaSH requires do_not_prefer.
@@ -109,6 +109,13 @@ sonarr:
         assign_scores_to:
           - trash_id: 20e0fc959f1f1704bed501f23bdae76f
             score: 50
+      # MeGusta is on TRaSH's LQ release group list (-10000), but its x265
+      # encodes are at the right bitrate. +10000 cancels LQ for this group only.
+      - trash_ids:
+          - 6f1a0c52b7d94e38a2c5e1904d7b3f86 # Allow: MeGusta (local)
+        assign_scores_to:
+          - trash_id: 72dae194fc92bf828f32cde7744e51a1
+            score: 10000
 
 radarr:
   rinoa-radarr:
@@ -119,13 +126,14 @@ radarr:
     quality_definition:
       type: movie
       qualities:
-        # 1080p: 130 MB/min (~17 Mbps), about 15.6 GB for a 2-hour movie.
-        # The "Size: Over 20 GB" format below caps long movies.
-        - { name: WEBDL-1080p, max: 130, preferred: 130 }
-        - { name: WEBRip-1080p, max: 130, preferred: 130 }
-        - { name: Bluray-1080p, min: 12.5, max: 130, preferred: 130 }
-        # 720p: 60 MB/min (~8 Mbps).
-        - { name: Bluray-720p, min: 12.5, max: 60, preferred: 60 }
+        # 1080p: 100 MB/min (5.9 GiB/h), about 11.7 GB for a 2-hour movie.
+        # Preferred = max, so the largest release under the cap wins.
+        # The "Size: Over 20 GB" format below still caps very long movies.
+        - { name: WEBDL-1080p, min: 5, max: 100, preferred: 100 }
+        - { name: WEBRip-1080p, min: 5, max: 100, preferred: 100 }
+        - { name: Bluray-1080p, min: 5, max: 100, preferred: 100 }
+        # 720p: 60 MB/min (3.5 GiB/h).
+        - { name: Bluray-720p, min: 4, max: 60, preferred: 60 }
 
     media_management:
       propers_and_repacks: do_not_prefer
@@ -147,3 +155,9 @@ radarr:
         assign_scores_to:
           - trash_id: d1d67249d3890e49bc12e275d989a7e9
             score: -10000
+      # Same LQ exception as Sonarr.
+      - trash_ids:
+          - 9c3e7a15d2b84f60b1a8e7c35f02d946 # Allow: MeGusta (local)
+        assign_scores_to:
+          - trash_id: d1d67249d3890e49bc12e275d989a7e9
+            score: 10000
