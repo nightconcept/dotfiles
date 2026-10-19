@@ -38,6 +38,12 @@ in {
         description = "Path to TV shows library";
       };
 
+      anime = lib.mkOption {
+        type = lib.types.str;
+        default = "/mnt/titan/Anime";
+        description = "Path to anime library";
+      };
+
       movies = lib.mkOption {
         type = lib.types.str;
         default = "/mnt/titan/Movies";
@@ -110,6 +116,7 @@ in {
         CONFIG_PATH=${cfg.configPath}
         TV_SHOWS_PATH=${cfg.mediaPaths.tvShows}
         MOVIES_PATH=${cfg.mediaPaths.movies}
+        ANIME_PATH=${cfg.mediaPaths.anime}
         WATCHTOWER_ENABLE=${toString cfg.enableWatchtower}
         EOF
       '';

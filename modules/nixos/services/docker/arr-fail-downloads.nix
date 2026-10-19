@@ -63,6 +63,10 @@
       name = "sonarr";
       inherit (containers.sonarr) port configPath;
     }
+    ++ lib.optional containers.sonarr-anime.enable {
+      name = "sonarr-anime";
+      inherit (containers.sonarr-anime) port configPath;
+    }
     ++ lib.optional containers.radarr.enable {
       name = "radarr";
       inherit (containers.radarr) port configPath;

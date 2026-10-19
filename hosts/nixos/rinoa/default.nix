@@ -80,6 +80,7 @@
       "prowlarr-abb"
       "prowlarr"
       "sonarr"
+      "sonarr-anime"
       "radarr"
       "recyclarr"
       "jellyfin"
@@ -118,6 +119,10 @@
       {
         name = "Sonarr direct";
         url = "http://127.0.0.1:8989/ping";
+      }
+      {
+        name = "Sonarr Anime direct";
+        url = "http://127.0.0.1:8990/ping";
       }
       {
         name = "Radarr direct";
@@ -174,6 +179,7 @@
       "docker-container-prowlarr-abb.service"
       "docker-container-prowlarr.service"
       "docker-container-sonarr.service"
+      "docker-container-sonarr-anime.service"
       "docker-container-radarr.service"
       "docker-container-recyclarr.service"
       "docker-container-jellyfin.service"
@@ -214,6 +220,7 @@
     prowlarr-abb.enable = true;
     prowlarr.enable = true;
     sonarr.enable = true;
+    sonarr-anime.enable = true;
     radarr.enable = true;
     recyclarr.enable = true;
     jellyfin.enable = true;

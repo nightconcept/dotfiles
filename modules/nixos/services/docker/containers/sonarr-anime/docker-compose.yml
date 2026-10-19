@@ -1,0 +1,53 @@
+services:
+  sonarr-anime:
+    container_name: sonarr-anime
+    restart: always
+    networks:
+      - proxy
+    environment:
+      - PGID=${PGID}
+      - PUID=${PUID}
+      - TZ=${TZ}
+    image: linuxserver/sonarr:latest
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8989/ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    ports:
+      - target: 8989
+        published: "${WEBUI_PORT}"
+        protocol: tcp
+    volumes:
+      - type: bind
+        source: ${CONFIG_PATH}
+        target: /config
+      - type: bind
+        source: ${DOWNLOADS_PATH}
+        target: /downloads
+      - type: bind
+        source: ${DOWNLOADS_PATH}
+        target: /mnt/titan/downloads
+      - type: bind
+        source: ${ANIME_PATH}
+        target: /anime
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.sonarr-anime.entrypoints=http"
+      - "traefik.http.routers.sonarr-anime.rule=Host(`${SUBDOMAIN}.${DOMAIN}`)"
+      - "traefik.http.middlewares.sonarr-anime-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.sonarr-anime.middlewares=sonarr-anime-https-redirect"
+      - "traefik.http.routers.sonarr-anime-secure.entrypoints=https"
+      - "traefik.http.routers.sonarr-anime-secure.rule=Host(`${SUBDOMAIN}.${DOMAIN}`)"
+      - "traefik.http.routers.sonarr-anime-secure.tls=true"
+      - "traefik.http.routers.sonarr-anime-secure.service=sonarr-anime"
+      - "traefik.http.services.sonarr-anime.loadbalancer.server.port=8989"
+      - "traefik.docker.network=proxy"
+      - "com.centurylinklabs.watchtower.enable=true"
+
+    privileged: false
+
+networks:
+  proxy:
+    external: true

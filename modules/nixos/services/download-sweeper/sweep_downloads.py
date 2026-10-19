@@ -219,6 +219,8 @@ def sweep_downloads(
     qbittorrent_password_file: str,
     sonarr_url: str,
     sonarr_config: str,
+    sonarr_anime_url: str | None,
+    sonarr_anime_config: str | None,
     radarr_url: str,
     radarr_config: str,
     min_age_minutes: int,
@@ -275,18 +277,20 @@ def sweep_downloads(
         )
 
     # 2. Query Sonarr & Radarr APIs
-    sonarr_api_key = extract_api_key_from_xml(sonarr_config)
-    radarr_api_key = extract_api_key_from_xml(radarr_config)
+    servarrs = [(sonarr_url, sonarr_config), (radarr_url, radarr_config)]
+    if sonarr_anime_url and sonarr_anime_config:
+        servarrs.append((sonarr_anime_url, sonarr_anime_config))
+    servarr_keys = [(url, extract_api_key_from_xml(config)) for url, config in servarrs]
 
-    sonarr_queue = get_servarr_queue_titles(sonarr_url, sonarr_api_key)
-    radarr_queue = get_servarr_queue_titles(radarr_url, radarr_api_key)
-    active_queue_titles = sonarr_queue | radarr_queue
+    active_queue_titles: set[str] = set()
+    for url, api_key in servarr_keys:
+        active_queue_titles |= get_servarr_queue_titles(url, api_key)
     if active_queue_titles:
         logger.info("Active queue items in Sonarr/Radarr: %d", len(active_queue_titles))
 
-    sonarr_imported = get_servarr_imported_paths(sonarr_url, sonarr_api_key)
-    radarr_imported = get_servarr_imported_paths(radarr_url, radarr_api_key)
-    known_imported_paths = sonarr_imported | radarr_imported
+    known_imported_paths: set[str] = set()
+    for url, api_key in servarr_keys:
+        known_imported_paths |= get_servarr_imported_paths(url, api_key)
     logger.info("Known imported paths from *arr history: %d", len(known_imported_paths))
 
     # 3. Index destination libraries if not spam-only
@@ -568,6 +572,14 @@ def main() -> None:
         help="Path to Sonarr config.xml",
     )
     parser.add_argument(
+        "--sonarr-anime-url",
+        help="Sonarr Anime base URL (optional)",
+    )
+    parser.add_argument(
+        "--sonarr-anime-config",
+        help="Path to Sonarr Anime config.xml (optional)",
+    )
+    parser.add_argument(
         "--radarr-url",
         default="http://127.0.0.1:7878",
         help="Radarr base URL",
@@ -608,6 +620,7 @@ def main() -> None:
     if not library_dirs:
         library_dirs = [
             "/mnt/titan/TVShows",
+            "/mnt/titan/Anime",
             "/mnt/titan/Movies",
             "/mnt/titan/Audiobooks",
         ]
@@ -621,6 +634,8 @@ def main() -> None:
         qbittorrent_password_file=args.qbittorrent_password_file,
         sonarr_url=args.sonarr_url,
         sonarr_config=args.sonarr_config,
+        sonarr_anime_url=args.sonarr_anime_url,
+        sonarr_anime_config=args.sonarr_anime_config,
         radarr_url=args.radarr_url,
         radarr_config=args.radarr_config,
         min_age_minutes=args.min_age_minutes,

@@ -10,6 +10,7 @@ services:
       - TZ=${TZ}
       - CRON_SCHEDULE=${CRON_SCHEDULE}
       - SONARR_API_KEY=${SONARR_API_KEY}
+      - SONARR_ANIME_API_KEY=${SONARR_ANIME_API_KEY}
       - RADARR_API_KEY=${RADARR_API_KEY}
     volumes:
       - type: bind

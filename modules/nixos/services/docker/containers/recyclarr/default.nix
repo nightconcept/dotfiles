@@ -1,6 +1,6 @@
 # Recyclarr TRaSH Guides sync container module.
-# Syncs quality profiles, custom formats, and quality sizes into Sonarr and
-# Radarr from ./recyclarr.yml on a schedule.
+# Syncs quality profiles, custom formats, and quality sizes into Sonarr,
+# Sonarr Anime, and Radarr from ./recyclarr.yml on a schedule.
 {
   config,
   lib,
@@ -31,6 +31,12 @@ in {
       type = lib.types.str;
       default = "${containers.sonarr.configPath}/config.xml";
       description = "Sonarr config.xml that holds the API key Recyclarr uses";
+    };
+
+    sonarrAnimeConfigXml = lib.mkOption {
+      type = lib.types.str;
+      default = "${containers.sonarr-anime.configPath}/config.xml";
+      description = "Sonarr Anime config.xml that holds the API key Recyclarr uses";
     };
 
     radarrConfigXml = lib.mkOption {
@@ -73,6 +79,7 @@ in {
         "docker.service"
         "docker-network-proxy.service"
         "docker-container-sonarr.service"
+        "docker-container-sonarr-anime.service"
         "docker-container-radarr.service"
       ];
       requires = ["docker.service" "docker-network-proxy.service"];
@@ -85,15 +92,16 @@ in {
       ];
 
       preStart = ''
-        # Sonarr and Radarr own their API keys; read them instead of copying
+        # The *arr apps own their API keys; read them instead of copying
         # them into SOPS, so a key rotated in the UI cannot drift.
         api_key() {
           ${pkgs.gnused}/bin/sed -n 's:.*<ApiKey>\(.*\)</ApiKey>.*:\1:p' "$1"
         }
         sonarr_key=$(api_key ${lib.escapeShellArg cfg.sonarrConfigXml})
+        sonarr_anime_key=$(api_key ${lib.escapeShellArg cfg.sonarrAnimeConfigXml})
         radarr_key=$(api_key ${lib.escapeShellArg cfg.radarrConfigXml})
-        if [ -z "$sonarr_key" ] || [ -z "$radarr_key" ]; then
-          echo "Could not read the Sonarr or Radarr API key" >&2
+        if [ -z "$sonarr_key" ] || [ -z "$sonarr_anime_key" ] || [ -z "$radarr_key" ]; then
+          echo "Could not read the Sonarr, Sonarr Anime, or Radarr API key" >&2
           exit 1
         fi
 
@@ -107,6 +115,7 @@ in {
         PGID=${toString cfg.gid}
         TZ=${cfg.timezone}
         SONARR_API_KEY=$sonarr_key
+        SONARR_ANIME_API_KEY=$sonarr_anime_key
         RADARR_API_KEY=$radarr_key
         EOF
 

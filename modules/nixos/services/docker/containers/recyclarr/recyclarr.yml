@@ -2,7 +2,7 @@
 #
 # Quality profiles, custom formats, and quality sizes from the TRaSH Guides.
 # Recyclarr owns these settings; change them here, not in the Sonarr/Radarr UI.
-# 1080p is the ceiling: no 2160p profiles. Anime profiles are not set up yet.
+# 1080p is the ceiling: no 2160p profiles. Anime has its own Sonarr instance.
 #
 # Sizes are MB per minute of runtime; 1 MB/min is about 0.133 Mbps.
 # TRaSH Bluray minimums (~50 MB/min at 1080p) reject most x265 encodes as too
@@ -55,6 +55,59 @@ sonarr:
           - 47435ece6b99a0b477caf360e79ba0bb # x265 (HD)
         assign_scores_to:
           - trash_id: 72dae194fc92bf828f32cde7744e51a1
+            score: 50
+
+  rinoa-sonarr-anime:
+    base_url: http://sonarr-anime:8989
+    api_key: !env_var SONARR_ANIME_API_KEY
+    delete_old_custom_formats: true
+
+    quality_definition:
+      type: anime
+      qualities:
+        # Same caps as regular TV. A 24-minute episode tops out near 2.4 GB.
+        - { name: WEBDL-1080p, max: 100, preferred: 100 }
+        - { name: WEBRip-1080p, max: 100, preferred: 100 }
+        - { name: Bluray-1080p, max: 100, preferred: 100 }
+        - { name: HDTV-1080p, max: 100, preferred: 100 }
+        - { name: WEBDL-720p, max: 60, preferred: 60 }
+        - { name: WEBRip-720p, max: 60, preferred: 60 }
+        - { name: Bluray-720p, max: 60, preferred: 60 }
+        - { name: HDTV-720p, max: 60, preferred: 60 }
+
+    media_management:
+      propers_and_repacks: do_not_prefer
+
+    quality_profiles:
+      # TRaSH anime profile, without Remux-1080p: 1080p is still the ceiling.
+      # Its "Dubs Only" format already blocks dub-only releases; dual audio is
+      # fine. The library is mostly older anime with few releases from the
+      # tiered groups, so the guide's minimum score of 100 is dropped to 0;
+      # the LQ group and raw formats still block at -10000.
+      - trash_id: 20e0fc959f1f1704bed501f23bdae76f # [Anime] Remux-1080p
+        min_format_score: 0
+        upgrade:
+          allowed: true
+          until_quality: Bluray 1080p
+        qualities:
+          - name: Bluray 1080p
+            qualities: [Bluray-1080p]
+          - name: WEB 1080p
+            qualities: [HDTV-1080p, WEBRip-1080p, WEBDL-1080p]
+          - name: Bluray-720p
+          - name: WEB 720p
+            qualities: [HDTV-720p, WEBRip-720p, WEBDL-720p]
+          - name: Bluray-480p
+          - name: WEB 480p
+            qualities: [WEBRip-480p, WEBDL-480p]
+          - name: DVD
+          - name: SDTV
+
+    custom_formats:
+      - trash_ids:
+          - 47435ece6b99a0b477caf360e79ba0bb # x265 (HD)
+        assign_scores_to:
+          - trash_id: 20e0fc959f1f1704bed501f23bdae76f
             score: 50
 
 radarr:

@@ -28,6 +28,7 @@ in {
     ./containers/radarr
     ./containers/recyclarr
     ./containers/sonarr
+    ./containers/sonarr-anime
 
     ./containers/audiobookshelf
     ./containers/bookorbit

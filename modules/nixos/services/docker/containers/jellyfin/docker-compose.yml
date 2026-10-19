@@ -23,6 +23,7 @@ services:
       - ${CONFIG_PATH}:/config
       - ${TV_SHOWS_PATH}:/data/tvshows
       - ${MOVIES_PATH}:/data/movies
+      - ${ANIME_PATH}:/data/anime
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.jellyfin.entrypoints=http"

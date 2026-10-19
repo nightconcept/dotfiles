@@ -30,6 +30,10 @@ with lib; let
       cfg.sonarrUrl
       "--sonarr-config"
       cfg.sonarrConfig
+      "--sonarr-anime-url"
+      cfg.sonarrAnimeUrl
+      "--sonarr-anime-config"
+      cfg.sonarrAnimeConfig
       "--radarr-url"
       cfg.radarrUrl
       "--radarr-config"
@@ -54,6 +58,7 @@ in {
       type = types.listOf types.str;
       default = [
         "/mnt/titan/TVShows"
+        "/mnt/titan/Anime"
         "/mnt/titan/Movies"
         "/mnt/titan/Audiobooks"
       ];
@@ -106,6 +111,18 @@ in {
       type = types.str;
       default = "/home/danny/docker/sonarr/config/config.xml";
       description = "Path to Sonarr config.xml containing API key";
+    };
+
+    sonarrAnimeUrl = mkOption {
+      type = types.str;
+      default = "http://127.0.0.1:8990";
+      description = "Sonarr Anime base URL";
+    };
+
+    sonarrAnimeConfig = mkOption {
+      type = types.str;
+      default = "/home/danny/docker/sonarr-anime/config/config.xml";
+      description = "Path to Sonarr Anime config.xml containing API key";
     };
 
     radarrUrl = mkOption {

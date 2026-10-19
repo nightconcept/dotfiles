@@ -195,6 +195,7 @@ in {
         (http "Prowlarr" "https://prowlarr.local.solivan.dev/ping")
         (http "Prowlarr ABB" "https://prowlarr-abb.local.solivan.dev/ping")
         (http "Sonarr" "https://sonarr.local.solivan.dev/ping")
+        (http "Sonarr Anime" "https://sonarr-anime.local.solivan.dev/ping")
         (http "Radarr" "https://radarr.local.solivan.dev/ping")
         (http "Jellyfin LAN" "https://jellyfin.local.solivan.dev/health")
         (http "Audiobookshelf LAN" "https://audiobookshelf.local.solivan.dev/healthcheck")
