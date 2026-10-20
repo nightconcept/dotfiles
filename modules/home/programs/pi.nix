@@ -14,7 +14,7 @@
   # TS execution tool), so upstream's own installCheckPhase fails on an
   # otherwise-working build. Skip that self-test until upstream re-syncs the
   # lockfile; everything else (including our local-model provider) is unaffected.
-  pi = inputs.pi-agent.packages.${pkgs.system}.default.overrideAttrs (_: {
+  pi = inputs.pi-agent.packages.${pkgs.stdenv.hostPlatform.system}.default.overrideAttrs (_: {
     doInstallCheck = false;
   });
 
