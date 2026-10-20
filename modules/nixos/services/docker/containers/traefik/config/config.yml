@@ -91,6 +91,16 @@ http:
       tls: {}
       service: calibre
 
+    pinchflat:
+      entryPoints:
+        - "https"
+      rule: "Host(`pinchflat.local.solivan.dev`)"
+      middlewares:
+        - default-headers
+        - https-redirectscheme
+      tls: {}
+      service: pinchflat
+
     kosync:
       entryPoints:
         - "https"
@@ -232,6 +242,12 @@ http:
       loadBalancer:
         servers:
           - url: "http://192.168.1.173:8085"
+        passHostHeader: true
+
+    pinchflat:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.1.173:8945"
         passHostHeader: true
 
     kosync:
