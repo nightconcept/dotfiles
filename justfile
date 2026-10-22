@@ -23,6 +23,10 @@ check-darwin:
     NIXPKGS_ALLOW_UNFREE=1 nix build .#darwinConfigurations.waver.system --dry-run --impure
     NIXPKGS_ALLOW_UNFREE=1 nix build .#darwinConfigurations.merlin.system --dry-run --impure
 
+# Report repos whose mise/devenv toolchains fall behind shared/dev-builds.toml (default: ~/git)
+check-repo-deps *paths:
+    python3 scripts/check-repo-deps.py {{paths}}
+
 # Update flake inputs
 update:
     nix flake update

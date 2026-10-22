@@ -1,0 +1,28 @@
+# Preferred dev builds: the versions new projects start on and older projects move toward.
+#
+# `just check-repo-deps [paths...]` reports repos (default: ~/git) whose mise, devenv, or
+# language files fall behind these versions. Falling behind is allowed; the report shows
+# what to bump and how.
+#
+# A version is compared at the precision given here: "3.14" means any 3.14.x is current.
+# To update: check `mise latest <tool>`, bump the version here, then run the check.
+
+updated = "2026-10-22"
+
+[tools]
+python = "3.14"   # newest Python with ROCm torch wheels (3.15 has CPU-only torch builds)
+node = "24"       # current LTS (26 is the "current" line, not LTS)
+go = "1.27"
+rust = "1.99"     # stable channel
+dotnet = "10.0"   # LTS SDK band
+java = "25"       # LTS (Temurin)
+zig = "0.17"
+uv = "0.13"
+just = "1.59"
+pnpm = "12"
+
+[python.torch]
+# One torch build per Python, so each host keeps a single cached wheel.
+version = "2.14.1"
+rocm-backend = "rocm7.2"   # matches system ROCm 7.2.x (scripts/setup-rocm-ubuntu.sh)
+triton-rocm = "3.8.0"
