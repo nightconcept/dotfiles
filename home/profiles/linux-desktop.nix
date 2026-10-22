@@ -35,7 +35,8 @@
     ghostty.configOnly = true;
     herdr.enable = true;
     spotify.enable = true;
-    zotero.enable = true;
+    # Zotero 10.0.4 bundles Firefox ESR 140, now EOL and marked insecure. Re-enable once Zotero moves to ESR 153.
+    zotero.enable = false;
     # wezterm.configOnly = true; # Replaced by ghostty - install manually if needed
     xdg.enable = true;
     shell = {
