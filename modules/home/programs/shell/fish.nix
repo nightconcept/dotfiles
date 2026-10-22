@@ -260,18 +260,35 @@ in {
         flake-rebuild = {
           description = "Smart flake rebuild that auto-detects system and hostname, deploys remotely if host differs from local";
           body = ''
+            # Machine hostnames that differ from their flake configuration name (hostname:config)
+            set -l host_aliases macmini:merlin
+
+            # Determine the local configuration name, applying aliases
+            set local_host (hostname -s | string lower)
+            for pair in $host_aliases
+                set -l parts (string split : $pair)
+                if test "$local_host" = "$parts[1]"
+                    set local_host $parts[2]
+                end
+            end
+
             # Parse arguments - check if host was provided
             if test (count $argv) -gt 0
                 set host $argv[1]
+                for pair in $host_aliases
+                    set -l parts (string split : $pair)
+                    if test "$host" = "$parts[1]"
+                        set host $parts[2]
+                    end
+                end
                 echo "Using specified host: $host"
             else
                 # Auto-detect hostname
-                set host (hostname -s)
+                set host $local_host
                 echo "Auto-detected host: $host"
             end
 
             # Determine if this is a remote deploy
-            set local_host (hostname -s)
             set remote false
             if test "$host" != "$local_host"
                 set remote true
