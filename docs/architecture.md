@@ -65,6 +65,11 @@ The home configuration uses a profile-based system where `home/default.nix` sele
 
 ## Host Configurations
 
+### Proxmox Hypervisors
+
+Locke and Valefor host the server VMs. This repository has no Nix or pyinfra deployment configuration for either hypervisor.
+See [Network](network.md) for direct access, VM placement, bridge topology, and management access rules.
+
 ### Active NixOS Hosts
 - `tidus` - Dell Latitude 7420 laptop with Hyprland desktop
 - `aerith` - Plex media server
