@@ -1,6 +1,6 @@
 services:
   recyclarr:
-    image: ghcr.io/recyclarr/recyclarr:8.8.0
+    image: ghcr.io/recyclarr/recyclarr:8
     container_name: recyclarr
     restart: always
     user: ${PUID}:${PGID}
@@ -17,6 +17,8 @@ services:
         source: ${CONFIG_PATH}
         target: /config
     privileged: false
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
 
 networks:
   proxy:

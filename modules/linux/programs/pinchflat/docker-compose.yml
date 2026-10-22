@@ -13,4 +13,4 @@ services:
       - ${PINCHFLAT_CONFIG_PATH}:/config
       - ${PINCHFLAT_DOWNLOADS_PATH}:/downloads
     labels:
-      - "com.centurylinklabs.watchtower.enable=false"
+      - "com.centurylinklabs.watchtower.enable=true"

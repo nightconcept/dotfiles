@@ -2,7 +2,7 @@ services:
   headscale:
     container_name: headscale
     hostname: headscale
-    image: headscale/headscale:0.29.3
+    image: headscale/headscale:0.29
     restart: always
     command: serve
     healthcheck:

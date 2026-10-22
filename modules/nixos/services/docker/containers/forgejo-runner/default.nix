@@ -125,6 +125,8 @@ in {
           docker-in-docker:
             image: docker:dind
             container_name: forgejo-dind
+            labels:
+              com.centurylinklabs.watchtower.enable: "true"
             privileged: true
             command: ['dockerd', '-H', 'tcp://0.0.0.0:2375', '--tls=false']
             restart: unless-stopped
