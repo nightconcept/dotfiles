@@ -10,6 +10,10 @@ Pre-requisites (place on host before running):
   /root/.qbittorrent-password-hash  — qBittorrent PBKDF2 hash (WebUI)
 """
 
+import io
+
+from pyinfra.operations import apt, files
+
 from modules.linux.programs.home_manager import HomeManagerModule
 from modules.linux.services.autoremove_torrents import AutoremoveTorrentsModule
 from modules.linux.services.ifupdown_network import IfupdownNetworkModule
@@ -42,6 +46,23 @@ autoremove = AutoremoveTorrentsModule(
 )
 ipfilter = IPFilterModule()
 network = IfupdownNetworkModule(interface="ens18")
+
+apt.packages(
+    name="Install unattended upgrades",
+    packages=["unattended-upgrades"],
+    _sudo=True,
+)
+files.put(
+    name="Enable daily unattended upgrades",
+    src=io.StringIO(
+        'APT::Periodic::Update-Package-Lists "1";\n'
+        'APT::Periodic::Unattended-Upgrade "1";\n'
+        'Unattended-Upgrade::Automatic-Reboot "false";\n'
+    ),
+    dest="/etc/apt/apt.conf.d/20auto-upgrades",
+    mode="644",
+    _sudo=True,
+)
 
 home_manager.deploy()
 nordvpn.deploy()

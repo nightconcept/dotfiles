@@ -68,10 +68,16 @@ class NordVPNModule(HostModule):
                 fi
 
                 # Apply settings (idempotent)
-                nordvpn set technology NordLynx
-                nordvpn set lan-discovery enable
-                nordvpn set dns 103.86.96.100 103.86.99.100
-                nordvpn set autoconnect on
+                set_if_needed() {
+                    expected=$1
+                    shift
+                    settings=$(nordvpn settings)
+                    printf '%s\n' "$settings" | grep -Fxq "$expected" || nordvpn set "$@"
+                }
+                set_if_needed "Technology: NORDLYNX" technology NordLynx
+                set_if_needed "LAN Discovery: enabled" lan-discovery enable
+                set_if_needed "DNS: 103.86.96.100, 103.86.99.100" dns 103.86.96.100 103.86.99.100
+                set_if_needed "Auto-connect: enabled" autoconnect on
 
                 # Connect if not already connected
                 if ! nordvpn status | grep -q "Status: Connected"; then

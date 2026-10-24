@@ -184,6 +184,45 @@ except subprocess.TimeoutExpired:
     warn("nordvpn status timed out")
 
 # ---------------------------------------------------------------------------
+# 5. NordVPN setting updates: skip unchanged settings and preserve failures
+# ---------------------------------------------------------------------------
+header("5. NordVPN settings (mocked CLI)")
+
+from unittest.mock import patch
+
+from modules.linux.services.nordvpn import NordVPNModule
+
+with patch("modules.linux.services.nordvpn.server.shell") as shell:
+    NordVPNModule().service()
+settings_script = shell.call_args.kwargs["commands"][0].split(
+    "# Apply settings (idempotent)", 1
+)[1].split("# Connect if not already connected", 1)[0]
+
+current_settings = (
+    "Technology: NORDLYNX\nLAN Discovery: enabled\n"
+    "DNS: 103.86.96.100, 103.86.99.100\nAuto-connect: enabled"
+)
+for label, read_command, set_command, expected_code, expected_calls in [
+    ("Unchanged settings skip setters", f"printf '%s\\n' '{current_settings}'", "return 9", 0, 0),
+    ("Missing settings invoke all setters", "true", "echo SET", 0, 4),
+    ("Settings read failures stop deployment", "return 7", "echo SET", 7, 0),
+    ("Setting update failures stop deployment", "true", "echo SET; return 8", 8, 1),
+]:
+    mock_cli = (
+        'nordvpn() { if [ "$1" = settings ]; then '
+        f"{read_command}; else {set_command}; fi; }}\n"
+    )
+    result = subprocess.run(
+        ["sh", "-c", "set -eu\n" + mock_cli + settings_script],
+        capture_output=True, text=True, timeout=5,
+    )
+    if result.returncode == expected_code and result.stdout.count("SET") == expected_calls:
+        ok(label)
+    else:
+        fail(f"{label}: exit={result.returncode}, stdout={result.stdout!r}")
+        all_passed = False
+
+# ---------------------------------------------------------------------------
 # Result
 # ---------------------------------------------------------------------------
 header("Result")
