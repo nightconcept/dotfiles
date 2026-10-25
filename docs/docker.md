@@ -62,7 +62,7 @@ See [the distributed security architecture](security.md) for package boundaries,
 
 The module is `modules/nixos/services/docker/containers/security-stack/default.nix`.
 Both host declarations enable their selected role on the next rebuild.
-Vincent is active. Rinoa has its configuration and enrollment files; its sensor restart is pending.
+Vincent and Rinoa are active with healthy central and sensor containers.
 The encrypted bridge token remains in `modules/nixos/security/sops/suricata.yaml`.
 The package passed isolated central and remote-sensor tests on Terra.
 See [enablement and test evidence](security.md#enable-vincent-first).

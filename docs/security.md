@@ -7,7 +7,7 @@ No security application runs on a Proxmox host.
 ## Current state
 
 The package is implemented and tested on Terra. Both host declarations enable it on future rebuilds.
-Vincent is active with six healthy containers. Rinoa has the new configuration and enrollment files; its service restart is pending.
+Vincent has six healthy security containers. Rinoa has four healthy sensor containers and reports to Vincent.
 Proxmox traffic mirrors are pending.
 The superseded Rinoa prototype snapshot must not be activated.
 
@@ -196,6 +196,7 @@ Rule updates, log rotation, enrollment with CA verification, container health, a
 The Nix runtime package runs ten unit tests during its build.
 The full Vincent and Rinoa configurations evaluate successfully.
 Production checks on 2026-10-25 found Vincent healthy, EveBox HTTPS responding, and the Wazuh dashboard responding with CA verification.
-Rinoa initially failed because enrollment files were missing. The files were securely installed; its service restart is pending.
+Rinoa initially failed because enrollment files were missing. After secure installation and restart, all four sensor containers became healthy.
+Vincent reports the Rinoa Wazuh agent as active. EveBox records contact from its forwarder. Both maintenance timers are active.
 CrowdSec reads Traefik access logs. Barrett retains its NordVPN connection and LAN route, and the qBittorrent proxy returns HTTP 200.
 Actual Headscale access, Cloudflare client attribution, and wider capture feeds remain unverified.

@@ -2,7 +2,7 @@
 
 **ID:** 001
 **Created:** 2026-10-25
-**Status:** in progress — package built and tested; production activation and capture feeds pending
+**Status:** in progress — package built and tested; both stacks active, capture feeds pending
 **Research:** [Repository and live-state evidence](001-distributed-security.research.md)
 **Issue/Ref:** User request for a simple Nix-enabled security package on Vincent and Rinoa.
 
@@ -11,8 +11,8 @@
 Reuse Vincent for central EveBox/Wazuh analysis and a local Suricata sensor. Rinoa runs a remote sensor and retains independent CrowdSec protection for Traefik. Gotify stays separate on Vincent. Add mirrored feeds through one-time Proxmox settings, documented in `docs/network.md`; create no new VMs or hypervisor security applications.
 
 **Built:** shared central/sensor Nix module, Suricata/EveBox/Wazuh services, authenticated remote forwarding, notification bridge, enrollment exports, and retention maintenance. Ten unit tests run in the Nix package build. Isolated distributed integration checks passed on Terra.
-**Pending:** production activation, capture NICs, one-time Proxmox mirrors, and router/switch feeds.
-**Live:** Vincent has six healthy security containers. Rinoa has the new system configuration and installed enrollment files; its sensor restart is pending. CrowdSec reads Traefik access logs and its bouncer is active. Both Proxmox hosts have no configured capture feeds.
+**Pending:** capture NICs, one-time Proxmox mirrors, router/switch feeds, and wider production acceptance checks.
+**Live:** Vincent has six healthy security containers. Rinoa has four healthy sensor containers and an active Wazuh connection to Vincent. EveBox records forwarder contact. CrowdSec reads Traefik access logs and its bouncer is active. Both Proxmox hosts have no configured capture feeds.
 
 ## Worker context bootstrap
 
@@ -123,7 +123,7 @@ Test tap recreation and mirror reattachment on isolated temporary interfaces fir
 
 ## Phase 4: Named-host deployment and acceptance
 
-**Depends on:** preceding checks; interactive sudo on both NixOS guests; capture verification for wider-coverage claims. **Status:** not started.
+**Depends on:** preceding checks; interactive sudo on both NixOS guests; capture verification for wider-coverage claims. **Status:** initial guest-local rollout active; wider acceptance checks pending.
 
 **Files:** Vincent/Rinoa health-check expectations and central UI routes; `docs/{security,docker,network}.md` status, coverage, rollback and operator commands. Extend tests only for newly uncovered failures.
 
@@ -165,3 +165,5 @@ Terra-to-internet and other paths bypassing these hypervisors remain blind spots
 - 2026-10-25: Built the central/sensor runtime package. Reused one base Compose file plus pinned upstream Wazuh configuration, rather than separate duplicated role files. Added ten focused unit tests. Both full host configurations evaluate. Terra integration used isolated temporary projects rather than a permanent deployment harness: both sensor identities reached EveBox, Wazuh indexing, and the test notification receiver. Forwarder restart replay, fresh authentication, credential/certificate persistence, health, and maintenance passed. See [the enablement runbook](../../security.md). Production and mirror phases remain pending; Cloudflare attribution and live Headscale access are not proven.
 
 - 2026-10-25: Verified Vincent's six security containers and maintenance timer are healthy/active. EveBox HTTPS and the CA-verified Wazuh dashboard return HTTP 200. Rinoa's initial sensor startup lacked enrollment files; installed them securely and requested an authenticated service restart. CrowdSec Traefik acquisition and bouncer activity are confirmed. Barrett NordVPN remains connected and qBittorrent returns HTTP 200.
+
+- 2026-10-25: Rinoa restart succeeded: four healthy sensor containers, Wazuh connected, EveBox forwarder contact, maintenance timer active. The rebuild also exposed an independent Recyclarr failure: upstream does not publish `latest`. Changed to supported major tag `8`, confirmed its image pulls, and built the corrected full Rinoa system. Activation of that Recyclarr correction requires the next authenticated rebuild.

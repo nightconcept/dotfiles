@@ -106,7 +106,7 @@ Valefor has one active physical Ethernet interface, `enp1s0`.
 Neither Valefor's uplink nor Rinoa's VM interface received a controlled Terra-to-internet ICMP test.
 Some unrelated SMB packets reached Valefor, but this does not establish complete traffic visibility.
 
-Rinoa's initial Suricata configuration monitors its own `ens18` traffic only. Production activation is pending.
+Rinoa's active Suricata configuration monitors its own `ens18` traffic only.
 The implemented [distributed security stack](security.md) selects central services on Vincent and local sensors on both VMs.
 Each sensor needs mirrored traffic from its own hypervisor for wider coverage.
 A switch mirror port must receive both traffic directions and connect to a dedicated capture interface for the local sensor VM.
@@ -168,7 +168,7 @@ Remove only owned settings during rollback.
 
 | Coverage path | Current evidence |
 |---|---|
-| Sensor VM's own interface | Controlled packet detection passed on Terra; production activation pending |
+| Sensor VM's own interface | Controlled packet detection passed on Terra; both production stacks healthy |
 | Same-hypervisor guest traffic | No mirror configured |
 | Hypervisor physical ports | No mirror configured |
 | Other LAN clients and ordinary internet traffic | Router/switch feed required |
