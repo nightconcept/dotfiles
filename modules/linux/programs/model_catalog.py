@@ -8,13 +8,13 @@ from typing import Any
 
 MODEL_DIR = "/mnt/storage/llm-models"
 LLAMA_CPP_SERVER = "/opt/llama-cpp/llama-server"
-# Strata serves Qwen3.8 Flash Next GSQ-RCO packs. modules/linux/programs/strata.py clones it,
+# Strata serves Qwen3.8 Flash Next GSQ-RCO packs. modules/linux/programs/strata/ clones it,
 # fetches the shards listed under each entry's "strata" key, and runs its setup.
 STRATA_REPO = "https://github.com/Niko1221/Strata.git"
-# GitHub ships only Windows engines, so setup.sh compiles the Linux HIP engine for terra's card
-# (gfx1201). EdeaBench v0.1 ran on v0.1.44.1; v0.1.45 gives byte-identical Flash Next answers.
-STRATA_TAG = "v0.1.45"
-STRATA_COMMIT = "477ac13cbe8e582c20484871ce459d20d82df09d"
+# Build this release's source for terra's R9700 (gfx1201), rather than using an older
+# packaged Qwen engine. Rerun comparisons on the same build after changing this pin.
+STRATA_TAG = "v0.2.4.2"
+STRATA_COMMIT = "dfa3f4025c9f1bc4af8cee201b20a2d223061813"
 STRATA_DIR = "/home/danny/git/Strata"
 STRATA_DATA_DIR = f"{MODEL_DIR}/Strata-data"
 # EdeaBench v0.1 (2026-10-17): Flash Next IQ2_XS ties the 27B and IQ3_XXS in under half
