@@ -1,0 +1,8 @@
+name: local/trusted-networks
+description: Keep LAN and Headscale clients out of reverse-proxy bans
+whitelist:
+  reason: Trusted LAN and VPN clients
+  cidr:
+    - 192.168.1.0/24
+    - 100.64.0.0/10
+    - fd7a:115c:a1e0::/48

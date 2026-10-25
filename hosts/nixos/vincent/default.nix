@@ -107,6 +107,12 @@ in {
 
   # Additional container management
   modules.nixos.docker.containers = {
+    security-stack = {
+      enable = true;
+      role = "central";
+      interfaces = ["ens18"];
+      sensors = ["rinoa"];
+    };
     # Container management
     portainer = {
       enable = true;

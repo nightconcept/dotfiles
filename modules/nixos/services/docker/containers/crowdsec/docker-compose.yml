@@ -9,15 +9,14 @@ services:
       - COLLECTIONS=crowdsecurity/traefik crowdsecurity/http-cve crowdsecurity/whitelist-good-actors
       - GID=1000
       - ENROLL_KEY=${ENROLL_KEY}
+      - BOUNCER_KEY_traefik=${BOUNCER_KEY}
     volumes:
+      - ${CONFIG_PATH}/trusted-networks.yaml:/etc/crowdsec/parsers/s02-enrich/trusted-networks.yaml:ro
       - type: bind
         source: ${CONFIG_PATH}/acquis.yaml
         target: /etc/crowdsec/acquis.yaml
         read_only: true
-      - type: bind
-        source: ${TRAEFIK_LOG_PATH}
-        target: /var/log/traefik
-        read_only: true
+      - traefik-logs:/var/log/traefik:ro
       - type: bind
         source: /var/log
         target: /var/log/host
@@ -52,5 +51,8 @@ networks:
     external: true
 
 volumes:
+  traefik-logs:
+    external: true
+    name: traefik_traefik-logs
   crowdsec-db:
   crowdsec-config:

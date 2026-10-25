@@ -15,6 +15,7 @@ in {
     ./containers/portainer
     ./containers/watchtower
     ./containers/crowdsec
+    ./containers/security-stack
 
     # CI/CD runners
     ./containers/forgejo-runner

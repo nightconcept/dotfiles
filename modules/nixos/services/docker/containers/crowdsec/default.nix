@@ -36,14 +36,6 @@ in {
       description = "Path to CrowdSec data directory";
     };
 
-    traefik = {
-      logPath = lib.mkOption {
-        type = lib.types.str;
-        default = "/var/lib/docker-containers/traefik/logs";
-        description = "Path to Traefik logs for CrowdSec to monitor";
-      };
-    };
-
     secrets = {
       enrollKeyFile = lib.mkOption {
         type = lib.types.nullOr lib.types.path;
@@ -80,21 +72,24 @@ in {
     # CrowdSec container service
     systemd.services."docker-container-${containerName}" = {
       description = "CrowdSec Security Engine Container";
-      after = ["docker.service" "docker-network-proxy.service" "sops-install-secrets.service"];
-      requires = ["docker.service" "docker-network-proxy.service" "sops-install-secrets.service"];
+      after = ["docker.service" "docker-container-traefik.service" "docker-network-proxy.service" "sops-install-secrets.service"];
+      requires = ["docker.service" "docker-container-traefik.service" "docker-network-proxy.service" "sops-install-secrets.service"];
       wantedBy = ["multi-user.target"];
 
       preStart = ''
+        umask 077
         # Copy docker-compose.yml to runtime directory
         cp ${./docker-compose.yml} ${containerPath}/docker-compose.yml
+        cp ${./trusted-networks.yaml} ${cfg.configPath}/trusted-networks.yaml
 
         # Generate .env file
+        touch ${containerPath}/.env
+        chmod 600 ${containerPath}/.env
         cat > ${containerPath}/.env <<EOF
         CONFIG_PATH=${cfg.configPath}
         DATA_PATH=${cfg.dataPath}
         DOMAIN=${cfg.domain}
         SUBDOMAIN=${cfg.subdomain}
-        TRAEFIK_LOG_PATH=${cfg.traefik.logPath}
         ${lib.optionalString (cfg.secrets.enrollKeyFile != null) ''
           ENROLL_KEY=$(cat ${cfg.secrets.enrollKeyFile})
         ''}
@@ -114,8 +109,8 @@ in {
         ---
         # System authentication logs
         filenames:
-          - /var/log/auth.log
-          - /var/log/syslog
+          - /var/log/host/auth.log
+          - /var/log/host/syslog
         labels:
           type: syslog
         ACQUIS

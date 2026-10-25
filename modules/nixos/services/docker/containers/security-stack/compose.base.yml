@@ -1,0 +1,47 @@
+services:
+  suricata:
+    image: jasonish/suricata:8.0.7
+    restart: unless-stopped
+    network_mode: host
+    cap_add: [NET_ADMIN, NET_RAW, SYS_NICE]
+    entrypoint: [sh, -ec]
+    healthcheck:
+      test: [CMD, suricatasc, -c, uptime]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
+    volumes:
+      - suricata-config:/etc/suricata
+      - suricata-rules:/var/lib/suricata
+      - suricata-logs:/var/log/suricata
+      - ./suricata-logrotate:/etc/logrotate.d/suricata:ro
+    logging: {driver: local, options: {max-size: 10m, max-file: "3"}}
+
+  evebox-gotify:
+    image: python:3.13-alpine
+    restart: unless-stopped
+    command: [python, -u, /app/gotify_bridge.py]
+    environment:
+      GOTIFY_URL: ${GOTIFY_URL}
+    volumes:
+      - ./gotify_bridge.py:/app/gotify_bridge.py:ro
+      - ${GOTIFY_TOKEN_FILE}:/run/secrets/gotify-token:ro
+      - suricata-logs:/var/log/suricata:ro
+      - bridge-state:/var/lib/bridge
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    healthcheck:
+      test: [CMD, python, -c, "import os,time; assert time.time()-os.stat('/var/lib/bridge/position.json').st_mtime < 120"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 180s
+    logging: {driver: local, options: {max-size: 10m, max-file: "3"}}
+
+volumes:
+  suricata-config:
+  suricata-rules:
+  suricata-logs:
+  bridge-state:

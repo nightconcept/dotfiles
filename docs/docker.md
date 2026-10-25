@@ -53,6 +53,57 @@ added when `diskAlert.enable` is set.
 To receive alerts, log in to the web UI as `admin`, then add a client in the
 Gotify Android app (or another Gotify client) with the server URL.
 
+## Security stack and reverse-proxy protection
+
+The shared security package has central and sensor roles.
+Vincent runs central EveBox/Wazuh services and a local sensor. Rinoa runs a local sensor that reports to Vincent.
+Gotify remains on Vincent. CrowdSec remains on reverse-proxy hosts such as Rinoa.
+See [the distributed security architecture](security.md) for package boundaries, capture interfaces, placement findings, and implementation status.
+
+The module is `modules/nixos/services/docker/containers/security-stack/default.nix`.
+Both host declarations enable their selected role on the next rebuild.
+Vincent is active. Rinoa has its configuration and enrollment files; its sensor restart is pending.
+The encrypted bridge token remains in `modules/nixos/security/sops/suricata.yaml`.
+The package passed isolated central and remote-sensor tests on Terra.
+See [enablement and test evidence](security.md#enable-vincent-first).
+
+Run the package checks with the repository's Python environment:
+
+```sh
+uv run python -m unittest discover -s modules/nixos/services/docker/containers/security-stack -p 'test_*.py'
+```
+
+### CrowdSec on Rinoa
+
+The configured CrowdSec service reads Traefik's existing `traefik_traefik-logs` volume.
+Its bouncer key is registered through `BOUNCER_KEY_traefik` and shared with the existing Traefik bouncer.
+Only routers with `crowdsec-bouncer@docker` enforce CrowdSec decisions. There is no host firewall bouncer or outbound filtering.
+The acquisition whitelist covers the LAN and Headscale IPv4/IPv6 ranges to preserve trusted client access.
+Traefik's LAN access rules also permit the Headscale IPv4/IPv6 ranges.
+This whitelist prevents detection from creating bans. It does not remove existing manual decisions.
+Barrett's NordVPN traffic and direct LAN services do not pass through this middleware.
+
+Recent Traefik logs included Docker gateway addresses instead of public client addresses.
+Cloudflare Tunnel client attribution needs validation before relying on CrowdSec for those requests.
+Do not enable unrestricted trust of forwarded headers to resolve this.
+
+Deploy the full Rinoa host from its repository checkout:
+
+```sh
+sudo nixos-rebuild switch --flake 'path:.#rinoa'
+```
+
+Check CrowdSec acquisition and bouncer registration:
+
+```sh
+docker exec crowdsec cscli metrics show acquisition
+docker exec crowdsec cscli bouncers list
+```
+
+Terra checks parsed four synthetic Traefik records.
+The test bouncer blocked a banned address and allowed LAN and Headscale clients.
+These checks do not validate every VPN application.
+
 ## Forgejo Runner Image Cache
 
 The `forgejo-dind` container keeps its image cache in the named volume

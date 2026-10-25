@@ -197,6 +197,12 @@
 
   # Enable Docker containers
   modules.nixos.docker.containers = {
+    security-stack = {
+      enable = true;
+      role = "sensor";
+      interfaces = ["ens18"];
+      serverAddress = "192.168.1.185";
+    };
     traefik = {
       enable = true;
       domain = "local.solivan.dev";

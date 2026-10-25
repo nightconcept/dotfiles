@@ -164,6 +164,15 @@ http:
       tls: {}
       service: gotify
 
+    evebox:
+      entryPoints:
+        - "https"
+      rule: "Host(`evebox.local.solivan.dev`)"
+      middlewares:
+        - secured
+      tls: {}
+      service: evebox
+
     budget:
       entryPoints:
         - "https"
@@ -185,6 +194,10 @@ http:
 #endregion
 #region services
   services:
+    evebox:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.1.185:5636"
     pihole:
       loadBalancer:
         servers:
@@ -327,6 +340,8 @@ http:
         - "10.0.0.0/8"
         - "192.168.0.0/16"
         - "172.16.0.0/12"
+        - "100.64.0.0/10"
+        - "fd7a:115c:a1e0::/48"
 
     secured:
       chain:
