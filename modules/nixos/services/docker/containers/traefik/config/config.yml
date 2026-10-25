@@ -235,7 +235,7 @@ http:
     qbittorrent:
       loadBalancer:
         servers:
-          - url: "http://192.168.1.117:8112"
+          - url: "http://192.168.1.112:8112"
         passHostHeader: true
 
     calibre:
