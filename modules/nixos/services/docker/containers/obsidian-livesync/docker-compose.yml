@@ -3,7 +3,7 @@ name: obsidian-livesync
 services:
   couchdb:
     container_name: obsidian-livesync
-    image: couchdb:3.5
+    image: couchdb:latest  # no CouchDB LTS policy; latest per policy
     restart: unless-stopped
     user: "${PUID:-1000}:${PGID:-100}"
     environment:
@@ -50,7 +50,7 @@ services:
 
   couchdb-init:
     container_name: obsidian-livesync-init
-    image: couchdb:3.5
+    image: couchdb:latest  # no CouchDB LTS policy; latest per policy
     restart: "no"
     user: "${PUID:-1000}:${PGID:-100}"
     depends_on:

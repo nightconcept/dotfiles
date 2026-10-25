@@ -1,6 +1,6 @@
 services:
   forgejo-db:
-    image: postgres:16-alpine
+    image: postgres:16-alpine  # LTS: pg16 supported through Nov 2028
     container_name: forgejo-db
     restart: always
     networks:

@@ -1,6 +1,6 @@
 services:
   seerr:
-    image: ghcr.io/seerr-team/seerr:v3
+    image: ghcr.io/seerr-team/seerr:latest  # no LTS policy; latest per policy
     container_name: seerr
     hostname: seerr
     init: true

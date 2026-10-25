@@ -2,7 +2,7 @@ services:
   headscale:
     container_name: headscale
     hostname: headscale
-    image: headscale/headscale:0.29
+    image: headscale/headscale:latest  # no LTS policy; latest per policy
     restart: always
     command: serve
     healthcheck:
