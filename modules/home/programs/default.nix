@@ -5,6 +5,7 @@
     ./chrome.nix
     ./chromium.nix
     ./claude-code.nix
+    ./colab.nix
     ./common.nix
     ./dev-languages.nix
     ./dev-tools.nix

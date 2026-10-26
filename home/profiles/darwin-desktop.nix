@@ -11,6 +11,7 @@
   ];
 
   modules.home.programs = {
+    colab.enable = true;
     dev-languages.enable = true;
     dev-tools.enable = true;
     ghostty.enable = true;
