@@ -12,6 +12,7 @@
   ];
 
   modules.home.programs = {
+    colab.enable = true;
     chromium.enable = true;
     dev-languages.enable = true;
     dev-tools.enable = true;
