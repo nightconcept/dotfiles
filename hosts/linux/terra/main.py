@@ -1,5 +1,6 @@
 from modules.linux.programs.books.module import BooksModule
 from modules.linux.programs.budget.module import BudgetModule
+from modules.linux.programs.colab import ColabModule
 from modules.linux.programs.docker import DockerModule
 from modules.linux.programs.hermes import HermesModule
 from modules.linux.programs.home_manager import HomeManagerModule
@@ -37,6 +38,7 @@ paseo = PaseoModule(port=6767)
 pinchflat = PinchflatModule()
 watchtower = WatchtowerModule()
 hf = HuggingFaceModule()
+colab = ColabModule()
 llama = LlamaCppModule()
 llama_swap = LlamaSwapModule()
 models = LLMModelsModule()
@@ -67,6 +69,7 @@ watchtower.deploy()
 
 # Deploy AI modules
 hf.deploy()
+colab.deploy()
 models.deploy()
 strata.deploy()
 llama.deploy()
