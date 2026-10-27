@@ -11,6 +11,7 @@ Personal dotfiles as a Nix flake supporting NixOS, nix-darwin, and home-manager.
 - [Docker](docs/docker.md) - Container modules and networking.
 - [Network](docs/network.md) - LAN topology, hypervisors, VM/IP map, troubleshooting order.
 - [Hyprland](docs/hyprland.md) - Desktop environment components and keybindings.
+- [Hermes](docs/hermes.md) - Hermes agent on terra: model-safety alerts (Gotify), approval deny rules, Pi-hole blocks.
 - [Terminal](docs/terminal.md) - Installation guide for Ghostty and WezTerm.
 
 ## Common Commands

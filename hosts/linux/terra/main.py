@@ -16,6 +16,7 @@ from modules.linux.programs.ssh import SSHModule
 from modules.linux.programs.storage import StorageModule
 from modules.linux.programs.strata.module import StrataModule
 from modules.linux.programs.watchtower.module import WatchtowerModule
+from modules.linux.services.hermes_ioc_alert.module import HermesIocAlertModule
 from modules.linux.services.tailscale import TailscaleModule
 from modules.linux.services.titan_mount import TitanMountModule
 from modules.linux.services.wifi_power_save import WiFiPowerSaveModule
@@ -44,6 +45,7 @@ llama_swap = LlamaSwapModule()
 models = LLMModelsModule()
 strata = StrataModule()
 hermes = HermesModule()
+hermes_ioc_alert = HermesIocAlertModule()
 
 # Deploy system foundations
 ssh.deploy()
@@ -75,3 +77,4 @@ strata.deploy()
 llama.deploy()
 llama_swap.deploy()
 hermes.deploy()
+hermes_ioc_alert.deploy()

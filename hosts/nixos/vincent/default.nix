@@ -123,7 +123,7 @@ in {
     gotify = {
       enable = true;
       listenAddress = "192.168.1.185";
-      applications = ["uptime-kuma" "watchtower"];
+      applications = ["uptime-kuma" "watchtower" "hermes-alerts"];
       diskAlert.enable = true;
     };
 

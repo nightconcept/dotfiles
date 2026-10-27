@@ -44,7 +44,7 @@ Gotify on Vincent pushes alerts for work that needs a person. It listens on
 
 On the first start, the module generates the admin password in
 `/var/lib/docker-containers/gotify/admin-password`. `gotify-provision.service`
-creates the `uptime-kuma` and `watchtower` applications. Gotify 3 shows an
+creates the `uptime-kuma`, `watchtower` and `hermes-alerts` applications. Gotify 3 shows an
 application token only once, so the service stores each token in
 `/var/lib/docker-containers/gotify/tokens/`. If a token file is missing, the
 service rotates that application's token. The `host-alerts` application is
