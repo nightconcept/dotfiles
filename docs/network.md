@@ -6,7 +6,7 @@ LAN: `192.168.1.0/24`. Netgear R7800 router at `192.168.1.1`, Pi-hole DNS at `19
 
 | Host | IP | Web UI | Hosts (VMs) |
 |---|---|---|---|
-| **Locke** | 192.168.1.188 | https://192.168.1.188:8006 | mog, vincent, barrett, aerith (garnet stopped) |
+| **Locke** | 192.168.1.188 | https://192.168.1.188:8006 | mog, vincent, barrett, aerith, garnet |
 | **Valefor** | 192.168.1.119 | https://192.168.1.119:8006 | rinoa (yuffie stopped) |
 
 Locke and Valefor are separate standalone Proxmox nodes.
@@ -27,7 +27,7 @@ VM IDs are local to each hypervisor.
 |---|---|---|---|
 | Locke | 100 | mog | vmbr0, vmbr2 |
 | Locke | 102 | barrett | vmbr0 |
-| Locke | 103 | garnet (stopped) | vmbr0 |
+| Locke | 103 | garnet | vmbr0 |
 | Locke | 104 | vincent | vmbr0 |
 | Locke | 105 | aerith | vmbr1 |
 | Valefor | 100 | yuffie (stopped) | vmbr0 |
@@ -45,6 +45,25 @@ VM IDs are local to each hypervisor.
 Both management bridges use gateway `192.168.1.1`.
 Locke's bridges use untagged VLAN 1. Physical switch connections are not documented.
 Valefor's management bridge MAC is `68:1d:ef:3a:f0:75`.
+
+### Locke storage
+
+Locke has one NVMe (VG `pve`, no free extents): `pve/root` 96 GiB (`local`: ISOs, vzdump backups), `pve/swap` 2 GiB, and the thin pool `pve/data` 370.82 GiB (`local-lvm`).
+Mog's six 8 TB data disks are passed through (`backup=0`) and are not in the pool.
+
+| VM | local-lvm disk | Discard |
+|---|---|---|
+| mog | 25 GiB | on |
+| barrett | 40 GiB | on |
+| garnet | 93 GiB | on |
+| vincent | 100 GiB | on |
+| aerith | 112 GiB | on |
+| **Promised** | **370 GiB** (pool 370.82 GiB) | |
+
+Rules: the pool is not overcommitted. Before adding or growing a disk, shrink another by the same amount.
+Do not take Proxmox snapshots on `local-lvm`; they use pool space beyond the disk sizes. Use `vzdump` to `local` instead.
+`locke-pool-alert.timer` (from `scripts/locke-pool-alert.sh`, installed by hand) sends a Gotify `host-alerts` message when pool data or metadata reaches 90 %.
+Shrink procedure and history: [plan 002](exec-plans/active/002-locke-zero-overcommit.plan.md).
 
 ### Management access
 
