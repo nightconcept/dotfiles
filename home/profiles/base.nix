@@ -35,7 +35,6 @@
         enable = true;
         distro = "nvchad";
       };
-      reasonix.enable = true;
       ssh.enable = true;
     };
     secrets = {

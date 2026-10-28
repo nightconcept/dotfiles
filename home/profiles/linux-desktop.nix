@@ -34,6 +34,8 @@
     # Use configOnly - install ghostty manually via native package manager
     ghostty.configOnly = true;
     herdr.enable = true;
+    opencode.enable = true;
+    reasonix.enable = true;
     spotify.enable = true;
     # Zotero 10.0.4 bundles Firefox ESR 140, now EOL and marked insecure. Re-enable once Zotero moves to ESR 153.
     zotero.enable = false;

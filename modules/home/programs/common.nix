@@ -36,7 +36,6 @@ in {
         mosh
         ncdu
         nmap
-        opencode
         ripgrep
         rsync
         sops
