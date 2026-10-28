@@ -14,6 +14,18 @@ in {
       default = true;
       description = "Enable Nix configuration";
     };
+
+    gcOlderThan = mkOption {
+      type = types.str;
+      default = "30d";
+      description = "Age after which the weekly GC deletes old generations";
+    };
+
+    keepBuildOutputs = mkOption {
+      type = types.bool;
+      default = true;
+      description = "Keep build-time outputs and derivations of live paths (keep-outputs/keep-derivations)";
+    };
   };
 
   config = mkIf cfg.enable {
@@ -24,8 +36,8 @@ in {
         experimental-features = ["nix-command" "flakes"];
         use-xdg-base-directories = true;
         warn-dirty = false;
-        keep-outputs = true;
-        keep-derivations = true;
+        keep-outputs = cfg.keepBuildOutputs;
+        keep-derivations = cfg.keepBuildOutputs;
 
         # Build performance optimizations
         max-jobs = "auto";
@@ -61,7 +73,7 @@ in {
       gc = {
         automatic = true;
         dates = "weekly";
-        options = "--delete-older-than 30d";
+        options = "--delete-older-than ${cfg.gcOlderThan}";
       };
     };
 

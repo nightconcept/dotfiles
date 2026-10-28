@@ -44,6 +44,14 @@ in {
         sops-nix.nixosModules.sops
         disko.nixosModules.disko
         {
+          # VMs with small disks: keep a week of generations and no build-time closures.
+          modules.nixos.core.nix = {
+            gcOlderThan = "7d";
+            keepBuildOutputs = false;
+          };
+          boot.loader.grub.configurationLimit = 5;
+        }
+        {
           home-manager = {
             useGlobalPkgs = true;
             useUserPackages = true;
