@@ -209,20 +209,26 @@ in {
       };
     };
 
-    # CI jobs pull images into dind on every run; drop ones unused for a week.
-    systemd.services.forgejo-dind-prune = {
-      description = "Prune unused images from the Forgejo docker-in-docker cache";
+    # CI jobs pull images and leave job volumes in dind on every run; drop images
+    # unused for three days and every volume no job container still uses.
+    systemd.services.forgejo-dind-prune = let
+      dind = "${pkgs.docker}/bin/docker exec forgejo-dind docker --host tcp://127.0.0.1:2375";
+    in {
+      description = "Prune unused images and volumes from the Forgejo docker-in-docker cache";
       after = ["docker-container-forgejo-runners.service"];
       serviceConfig = {
         Type = "oneshot";
-        ExecStart = "${pkgs.docker}/bin/docker exec forgejo-dind docker --host tcp://127.0.0.1:2375 system prune --all --force --filter until=168h";
+        ExecStart = [
+          "${dind} system prune --all --force --filter until=72h"
+          "${dind} volume prune --all --force"
+        ];
       };
     };
 
     systemd.timers.forgejo-dind-prune = {
       wantedBy = ["timers.target"];
       timerConfig = {
-        OnCalendar = "weekly";
+        OnCalendar = "daily";
         Persistent = true;
       };
     };

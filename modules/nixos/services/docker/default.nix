@@ -103,7 +103,8 @@ in {
       autoPrune = {
         enable = true;
         dates = "weekly";
-        flags = ["--all"];
+        # --volumes only removes anonymous volumes no container references.
+        flags = ["--all" "--volumes"];
       };
       # Swarm mode requires live-restore to be disabled
       daemon.settings = lib.mkIf cfg.swarm.enable {

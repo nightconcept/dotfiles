@@ -2,7 +2,7 @@ database:
   type: sqlite
   retention:
     days: 7
-    size: "4 GB"
+    size: "2 GB"
 input:
   enabled: true
   paths: [/var/log/suricata/eve.json]
