@@ -2,7 +2,7 @@ services:
   palworld-dedicated-server:
     container_name: palworld-dedicated-server
     image: jammsen/palworld-dedicated-server:latest
-    restart: "no" # Start on demand with `just start`; garnet reboots nightly.
+    restart: "no" # Start on demand with `just start`.
     logging:
       driver: "local"
       options:

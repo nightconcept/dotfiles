@@ -43,14 +43,14 @@ in {
         stylix.nixosModules.stylix
         sops-nix.nixosModules.sops
         disko.nixosModules.disko
-        {
+        ({lib, ...}: {
           # VMs with small disks: keep a week of generations and no build-time closures.
           modules.nixos.core.nix = {
-            gcOlderThan = "7d";
-            keepBuildOutputs = false;
+            gcOlderThan = lib.mkDefault "7d";
+            keepBuildOutputs = lib.mkDefault false;
           };
-          boot.loader.grub.configurationLimit = 5;
-        }
+          boot.loader.grub.configurationLimit = lib.mkDefault 5;
+        })
         {
           home-manager = {
             useGlobalPkgs = true;
