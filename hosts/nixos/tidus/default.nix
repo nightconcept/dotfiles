@@ -17,6 +17,11 @@
   # Desktop environment
   modules.nixos.desktop.hyprland.enable = true;
 
+  services.logind.settings.Login = {
+    HandleLidSwitch = "suspend";
+    HandleLidSwitchExternalPower = "ignore";
+  };
+
   # Hardware features
   modules.nixos.hardware = {
     bluetooth.enable = true;

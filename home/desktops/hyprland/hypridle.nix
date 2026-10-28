@@ -68,12 +68,6 @@
         on-timeout = hyprctl dispatch dpms off      # turn off screen
         on-resume = hyprctl dispatch dpms on        # turn on screen
       }
-
-      # Sleep after 1 hour when plugged in
-      listener {
-        timeout = 3600
-        on-timeout = systemctl suspend              # suspend system
-      }
     '';
 
     # Hypridle configuration for when laptop is UNPLUGGED (on battery)

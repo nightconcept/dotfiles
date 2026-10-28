@@ -341,9 +341,8 @@
           "$mod, mouse:273, resizewindow"
         ];
 
-        # Lid close/open handling
+        # Logind handles lid close based on external power.
         bindl = [
-          ", switch:on:Lid Switch, exec, systemctl suspend"
           ", switch:off:Lid Switch, exec, hyprctl dispatch dpms on"
         ];
 
