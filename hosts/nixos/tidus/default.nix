@@ -44,5 +44,18 @@
   # Services
   modules.nixos.docker.enable = true;
 
+  # Vesper work (a foreman remote host), as on vincent.
+  environment.systemPackages = with pkgs; [
+    gcc # cgo: the Vesper site tests build with go
+    python3 # the Vesper tests run some tools on the system python3
+  ];
+
+  # Vesper's tests and scripts name /bin/bash and /usr/bin/python3. envfs serves /bin and
+  # /usr/bin from the caller's PATH, as on a plain Linux host.
+  services.envfs.enable = true;
+
+  # Foreman runs host jobs as user units: keep them alive with no login session.
+  users.users.danny.linger = true;
+
   system.stateVersion = "23.11";
 }
