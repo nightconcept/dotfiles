@@ -55,10 +55,36 @@ in {
     security.sops.enable = true;
   };
 
-  # System packages for server management
+  # System packages for server management. git and uv come from core packages.
+  # Node and Go follow shared/dev-builds.toml (node 24, go 1.27) for Vesper work.
   environment.systemPackages = with pkgs; [
     home-manager
+    nodejs_24
+    go_1_27
   ];
+
+  # Run generic Linux binaries for Vesper work: manylinux wheels (torch CPU,
+  # poke-engine), uv-managed CPython, and Node or Go prebuilt tools.
+  programs.nix-ld = {
+    enable = true;
+    libraries = with pkgs; [
+      stdenv.cc.cc.lib # libstdc++, libgcc_s
+      zlib
+      zstd
+      bzip2
+      xz
+      openssl
+      libffi
+      ncurses
+      readline
+      sqlite
+      expat
+      util-linux.lib # libuuid
+      openblas
+      glib
+      libxcrypt
+    ];
+  };
 
   # Enable Docker
   modules.nixos.docker.enable = true;
