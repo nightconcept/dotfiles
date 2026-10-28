@@ -61,7 +61,13 @@ in {
     home-manager
     nodejs_24
     go_1_27
+    gcc # cgo: the Vesper site tests build with go
+    python3 # the Vesper tests run some tools on the system python3
   ];
+
+  # Vesper's tests and scripts name /bin/bash and /usr/bin/python3. envfs serves /bin and
+  # /usr/bin from the caller's PATH, as on a plain Linux host.
+  services.envfs.enable = true;
 
   # Run generic Linux binaries for Vesper work: manylinux wheels (torch CPU,
   # poke-engine), uv-managed CPython, and Node or Go prebuilt tools.
