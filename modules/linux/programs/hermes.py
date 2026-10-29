@@ -13,6 +13,7 @@ from pathlib import Path
 from pyinfra.operations import server, systemd
 
 from modules.linux.module import HostModule
+from modules.linux.programs.foreman.module import gpu_window_open
 from modules.linux.programs.model_catalog import DEFAULT_MODEL_ID
 
 
@@ -32,6 +33,20 @@ class HermesModule(HostModule):
 
     def update(self):
         """Point Hermes's default model and Terra custom provider at the target model."""
+        # While foreman's GPU window is open, llama-swap is down on purpose, so the check
+        # would fail the deploy. The config update below does not need llama-swap.
+        if not gpu_window_open():
+            self._verify_llama_swap()
+        server.shell(
+            name=f"Point Hermes config at {self.default_model}",
+            commands=[
+                f"cd {self.repo_root} && uv run python scripts/update-hermes-model.py "
+                f"--config {self.config_path} --model {self.default_model} --context 131072"
+            ],
+        )
+
+    def _verify_llama_swap(self):
+        """Fail the deploy unless llama-swap serves the default model."""
         server.shell(
             name=f"Verify llama-swap serves {self.default_model} before pointing Hermes at it",
             commands=[
@@ -57,13 +72,6 @@ class HermesModule(HostModule):
                     exit 1
                 fi
                 """
-            ],
-        )
-        server.shell(
-            name=f"Point Hermes config at {self.default_model}",
-            commands=[
-                f"cd {self.repo_root} && uv run python scripts/update-hermes-model.py "
-                f"--config {self.config_path} --model {self.default_model} --context 131072"
             ],
         )
 

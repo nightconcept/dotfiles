@@ -2,6 +2,7 @@ from modules.linux.programs.books.module import BooksModule
 from modules.linux.programs.budget.module import BudgetModule
 from modules.linux.programs.colab import ColabModule
 from modules.linux.programs.docker import DockerModule
+from modules.linux.programs.foreman.module import ForemanModule
 from modules.linux.programs.hermes import HermesModule
 from modules.linux.programs.home_manager import HomeManagerModule
 from modules.linux.programs.huggingface import HuggingFaceModule
@@ -42,6 +43,7 @@ hf = HuggingFaceModule()
 colab = ColabModule()
 llama = LlamaCppModule()
 llama_swap = LlamaSwapModule()
+foreman = ForemanModule()
 models = LLMModelsModule()
 strata = StrataModule()
 hermes = HermesModule()
@@ -76,5 +78,6 @@ models.deploy()
 strata.deploy()
 llama.deploy()
 llama_swap.deploy()
+foreman.deploy()
 hermes.deploy()
 hermes_ioc_alert.deploy()

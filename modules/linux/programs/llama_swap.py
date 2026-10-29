@@ -6,6 +6,7 @@ import os
 from pyinfra.operations import files, server, systemd
 
 from modules.linux.module import HostModule
+from modules.linux.programs.foreman.module import gpu_window_open
 from modules.linux.programs.model_catalog import render_llama_swap_config
 
 _SERVICE_UNIT = """\
@@ -120,14 +121,21 @@ class LlamaSwapModule(HostModule):
             mode="644",
             _sudo=True,
         )
+        # foreman keeps llama-swap down while its GPU window is open (overnight training), so a
+        # deploy then must neither start nor restart it. The next window boundary starts it.
+        gpu_window = gpu_window_open()
         systemd.service(
-            name="Enable and restart llama-swap",
+            name=(
+                "Enable llama-swap (no restart: foreman's GPU window is open)"
+                if gpu_window
+                else "Enable and restart llama-swap"
+            ),
             service="llama-swap",
-            running=True,
+            running=None if gpu_window else True,
             # Config is re-rendered every deploy; a plain `running=True` only
             # starts the unit if it's down, so it silently ignores config
             # changes on an already-running service. Always restart instead.
-            restarted=True,
+            restarted=not gpu_window,
             enabled=True,
             daemon_reload=True,
             _sudo=True,

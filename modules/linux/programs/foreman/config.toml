@@ -1,0 +1,28 @@
+# foreman seed config. dotfiles writes this file only when it is missing, so edits made
+# with `foreman config set ...` survive a deploy. The CLI rewrites the file and drops these comments.
+tick = "15s"
+release_on_exit = false   # true: a lease is freed when its process exits; false: held until its end time
+over = "kill"             # kill | allow: what happens past the end time or over the leased VRAM/RAM
+
+[floor]                   # never leased
+vram_mb = 256
+cores   = 2
+ram_gb  = 6
+
+[[window]]
+name    = "strata"
+start   = "06:30"
+end     = "00:00"         # end <= start means the window crosses midnight
+reason  = "Strata (Qwen3.8 Flash Next via llama-swap)"
+vram_mb = 32368           # total minus floor
+cores   = 4
+ram_gb  = 40
+service = "llama-swap.service"   # system unit: started at window start, stopped at window end
+gpu_leases = false
+
+[[window]]
+name    = "training"
+start   = "00:00"
+end     = "06:30"
+reason  = "GPU training (vesper)"
+gpu_leases = true         # VRAM leases are allowed only in windows that set this

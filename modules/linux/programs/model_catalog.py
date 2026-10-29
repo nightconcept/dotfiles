@@ -22,7 +22,6 @@ STRATA_DATA_DIR = f"{MODEL_DIR}/Strata-data"
 DEFAULT_MODEL_ID = "qwen3.8-flash-next-iq2_xs"
 BENCHMARK_MODEL_IDS = [
     "qwen3.8-27b",
-    "muse-glimmer-30b",
     "qwen3-35b-mtp",
 ]
 
@@ -121,33 +120,6 @@ MODEL_CATALOG: list[dict[str, Any]] = [
             "${PORT}",
         ],
         "aliases": ["Qwen3.6-35B-A3B-MTP-UD-Q5_K_XL"],
-        "context": 131072,
-    },
-    {
-        "id": "muse-glimmer-30b",
-        "repo_id": "unsloth/Muse-Glimmer-30B-GGUF",
-        "files": ["Muse-Glimmer-30B-UD-Q4_K_XL.gguf"],
-        "args": [
-            "-m",
-            f"{MODEL_DIR}/Muse-Glimmer-30B-UD-Q4_K_XL.gguf",
-            "-c",
-            "131072",
-            "-ngl",
-            "all",
-            "-fa",
-            "on",
-            "-ctk",
-            "q8_0",
-            "-ctv",
-            "q8_0",
-            "--no-mmproj",
-            "--jinja",
-            "--host",
-            "127.0.0.1",
-            "--port",
-            "${PORT}",
-        ],
-        "aliases": ["Muse-Glimmer-30B-UD-Q4_K_XL"],
         "context": 131072,
     },
 ]
