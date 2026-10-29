@@ -73,5 +73,29 @@
     SUBSYSTEM=="power_supply", KERNEL=="AC", ATTR{online}=="0", RUN+="${pkgs.systemd}/bin/systemctl --no-block stop stay-awake-on-ac.service"
   '';
 
+  # Run generic Linux binaries for Vesper work, as on vincent: manylinux wheels (numpy, torch
+  # CPU), uv-managed CPython, and Node or Go prebuilt tools. Without it, /lib64 holds a stub
+  # loader, and numpy in a lease venv fails: "libstdc++.so.6: cannot open shared object file".
+  programs.nix-ld = {
+    enable = true;
+    libraries = with pkgs; [
+      stdenv.cc.cc.lib # libstdc++, libgcc_s
+      zlib
+      zstd
+      bzip2
+      xz
+      openssl
+      libffi
+      ncurses
+      readline
+      sqlite
+      expat
+      util-linux.lib # libuuid
+      openblas
+      glib
+      libxcrypt
+    ];
+  };
+
   system.stateVersion = "23.11";
 }
