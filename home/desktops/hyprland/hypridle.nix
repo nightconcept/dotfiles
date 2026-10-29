@@ -15,8 +15,9 @@
       (writeShellScriptBin "hypridle-wrapper" ''
         #!/usr/bin/env bash
 
-        # Kill any existing hypridle instances
-        killall hypridle 2>/dev/null
+        # Kill any existing hypridle instances. killall (psmisc) is not installed, so this
+        # used pkill: a stale battery instance kept its 20-minute suspend timer on AC.
+        ${pkgs.procps}/bin/pkill -x hypridle 2>/dev/null
 
         # Check if AC adapter is connected (on battery = 0, on AC = 1)
         on_ac() {
