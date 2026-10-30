@@ -92,6 +92,57 @@ Barrett's `ens18` has `192.168.1.112`. Its former `192.168.1.117` address no lon
 The router reserves `192.168.1.112` for Barrett's MAC `bc:24:11:39:96:98`.
 The repository's `IfupdownNetworkModule` configures ifupdown/dhcpcd and excludes the interface from NetworkManager management.
 
+### SABnzbd on Barrett
+
+Deploy SABnzbd with the full host configuration: `just barrett`.
+The deployment enables NordVPN's kill switch and retains LAN discovery.
+SABnzbd starts only after Titan mounts and NordVPN reports a connected tunnel
+with the kill switch enabled. Failed pre-start checks retry every 15 seconds;
+a failed mount dependency requires restoring the mount and restarting SABnzbd.
+
+The web UI listens at `http://192.168.1.112:8080`.
+Create its encrypted credentials before deployment:
+
+```sh
+mkdir -p hosts/linux/barrett/secrets
+SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt" sops hosts/linux/barrett/secrets/sabnzbd.yaml
+```
+
+Replace the editor's sample contents with these fields and your real values:
+
+```yaml
+web_username: danny
+web_password: "your chosen SABnzbd web password"
+newshosting_username: "your Newshosting service username"
+newshosting_password: "your Newshosting service password"
+```
+
+SOPS encrypts this file using the personal age key. Commit only the encrypted
+file. The deployment copies it to `/etc/sabnzbd/secrets.yaml` with mode `0600`.
+At each service start, a root helper decrypts it in memory using Barrett's
+existing `/home/danny/.config/sops/age/keys.txt` and applies the credentials.
+Newshosting uses `news.newshosting.com`, port `563`, SSL, and certificate validation.
+SABnzbd needs its credentials in its private `/var/lib/sabnzbd/sabnzbd.ini` file.
+That file has mode `0600`; the state directory has mode `0700`.
+Other settings, API keys, and queue state persist across deployments.
+Change managed credentials through SOPS, then run `just barrett` again.
+Web UI edits to managed credentials are replaced on the next service start.
+
+Incomplete and complete downloads use `/mnt/titan/downloads/usenet/incomplete`
+and `/mnt/titan/downloads/usenet/complete`. Both use Titan to avoid filling
+Barrett's 40 GiB system disk. Each has a 5 GiB free-space threshold.
+The initial categories are `sonarr`, `sonarr-anime`, and `radarr`.
+Use the matching category when adding SABnzbd to each arr application.
+The apps can access the reported `/mnt/titan/downloads` paths directly.
+Add NZB.life separately in Prowlarr; provider and indexer credentials stay out of Git.
+
+After deployment, check `systemctl status sabnzbdplus` and `nordvpn settings`.
+To check the kill switch during a maintenance window, disconnect NordVPN and
+confirm a new public request fails (`curl --max-time 10 https://example.com`),
+then reconnect with `nordvpn connect p2p`. LAN access should remain available.
+This interrupts Barrett's downloads. A successful request while disconnected
+means the VPN protection needs investigation before downloading.
+
 ## Reverse proxy dependency
 
 Rinoa runs Traefik, which fronts the routed `*.local.solivan.dev` and `*.solivan.dev` services (see [Docker](docker.md)).

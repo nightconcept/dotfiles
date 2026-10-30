@@ -199,12 +199,12 @@ settings_script = shell.call_args.kwargs["commands"][0].split(
 )[1].split("# Connect if not already connected", 1)[0]
 
 current_settings = (
-    "Technology: NORDLYNX\nLAN Discovery: enabled\n"
+    "Technology: NORDLYNX\nLAN Discovery: enabled\nKill Switch: enabled\n"
     "DNS: 103.86.96.100, 103.86.99.100\nAuto-connect: enabled"
 )
 for label, read_command, set_command, expected_code, expected_calls in [
     ("Unchanged settings skip setters", f"printf '%s\\n' '{current_settings}'", "return 9", 0, 0),
-    ("Missing settings invoke all setters", "true", "echo SET", 0, 4),
+    ("Missing settings invoke all setters", "true", "echo SET", 0, 5),
     ("Settings read failures stop deployment", "return 7", "echo SET", 7, 0),
     ("Setting update failures stop deployment", "true", "echo SET; return 8", 8, 1),
 ]:

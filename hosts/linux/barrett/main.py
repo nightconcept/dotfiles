@@ -1,4 +1,4 @@
-"""Barrett — Debian VPN torrent server.
+"""Barrett — Debian VPN torrent and Usenet server.
 
 Replaces scripts/barrett-setup.sh with declarative pyinfra deployment.
 Deploy with: just barrett
@@ -16,12 +16,14 @@ from modules.linux.services.ifupdown_network import IfupdownNetworkModule
 from modules.linux.services.ipfilter import IPFilterModule
 from modules.linux.services.nordvpn import NordVPNModule
 from modules.linux.services.qbittorrent import QBittorrentModule
+from modules.linux.services.sabnzbd import SABnzbdModule
 from modules.linux.services.titan_mount import TitanMountModule
 from modules.linux.services.unattended_upgrades import UnattendedUpgradesModule
 
 home_manager = HomeManagerModule(profile="server")
 nordvpn = NordVPNModule(user="danny")
 titan = TitanMountModule()
+sabnzbd = SABnzbdModule()
 qbittorrent = QBittorrentModule(
     user="danny",
     config_dir="/var/lib/torrent/qbittorrent",
@@ -51,6 +53,7 @@ home_manager.deploy()
 nordvpn.deploy()
 titan.deploy()
 qbittorrent.deploy()
+sabnzbd.deploy()
 autoremove.deploy()
 ipfilter.deploy()
 # Last: dropping the NetworkManager lease can end SSH sessions using it.

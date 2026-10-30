@@ -76,6 +76,7 @@ class NordVPNModule(HostModule):
                 }
                 set_if_needed "Technology: NORDLYNX" technology NordLynx
                 set_if_needed "LAN Discovery: enabled" lan-discovery enable
+                set_if_needed "Kill Switch: enabled" killswitch on
                 set_if_needed "DNS: 103.86.96.100, 103.86.99.100" dns 103.86.96.100 103.86.99.100
                 set_if_needed "Auto-connect: enabled" autoconnect on
 

@@ -15,6 +15,12 @@ keys:
   # - &waver_host age1...
 
 creation_rules:
+  # Barrett's downloader uses the personal key only.
+  - path_regex: hosts/linux/barrett/secrets/[^/]+\.yaml$
+    key_groups:
+    - age:
+      - *danny_personal
+
   # NixOS system secrets (common to all NixOS hosts)
   - path_regex: systems/nixos/secrets/[^/]+\.(yaml|json|env|ini)$
     key_groups:

@@ -6,6 +6,12 @@ Secrets are managed using sops-nix:
 - Age keys derived from SSH keys
 - Automatic deployment to runtime directories
 
+Barrett's native SABnzbd service uses a pyinfra-managed SOPS integration.
+Its encrypted file is `hosts/linux/barrett/secrets/sabnzbd.yaml`, using only
+the personal age recipient. See [SABnzbd setup](network.md#sabnzbd-on-barrett)
+for the schema and deployment commands. The service decrypts credentials in
+memory at startup and writes them to SABnzbd's private configuration file.
+
 ### Secret Storage Conventions
 
 #### SOPS Encryption Key
