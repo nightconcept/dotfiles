@@ -26,7 +26,10 @@ def configure(credentials: dict[str, str]) -> None:
     config = ConfigObj(str(config_path), encoding="utf-8")
     if not config_path.exists():
         # Shared data directories must remain traversable by the arr applications.
-        for path in (DOWNLOAD_ROOT, DOWNLOAD_ROOT / "incomplete", DOWNLOAD_ROOT / "complete"):
+        categories = ("sonarr", "sonarr-anime", "radarr")
+        paths = [DOWNLOAD_ROOT, DOWNLOAD_ROOT / "incomplete", DOWNLOAD_ROOT / "complete"]
+        paths.extend(DOWNLOAD_ROOT / "complete" / name for name in categories)
+        for path in paths:
             path.mkdir(mode=0o775, parents=True, exist_ok=True)
             path.chmod(0o775)
             os.chown(path, account.pw_uid, 100)
@@ -46,7 +49,7 @@ def configure(credentials: dict[str, str]) -> None:
         }
         config["categories"] = {
             name: {"name": name, "pp": "3", "dir": name}
-            for name in ("sonarr", "sonarr-anime", "radarr")
+            for name in categories
         }
 
     config["misc"]["username"] = credentials["web_username"]
