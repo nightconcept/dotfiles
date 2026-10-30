@@ -122,12 +122,13 @@ apt-get install -y sabnzbdplus unrar
                 r"""\
 set -eu
 export LC_ALL=C
+export PATH="/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
 settings=$(nordvpn settings)
 if ! printf '%s\n' "$settings" | grep -Eq '^[[:space:]]*8080 \((UDP\|)?TCP(\|UDP)?\)$'; then
     nordvpn allowlist add port 8080 protocol TCP
 fi
-if command -v ufw >/dev/null 2>&1; then
-    ufw allow in on ens18 proto tcp from 192.168.1.0/24 to 192.168.1.112 port 8080
+if test -x /usr/sbin/ufw; then
+    /usr/sbin/ufw allow in on ens18 proto tcp from 192.168.1.0/24 to 192.168.1.112 port 8080
 fi
 """
             ],
