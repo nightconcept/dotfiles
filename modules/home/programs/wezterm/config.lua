@@ -135,4 +135,28 @@ if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
   config.default_prog = { 'pwsh.exe', '-NoLogo' }
 end
 
+-- Windows clipboard shortcuts use the system clipboard across windows and apps.
+if wezterm.target_triple:find('windows', 1, true) then
+  table.insert(config.keys, {
+    key = 'c',
+    mods = 'CTRL',
+    action = wezterm.action_callback(function(window, pane)
+      if window:get_selection_text_for_pane(pane) ~= '' then
+        window:perform_action(act.CopyTo 'Clipboard', pane)
+        window:perform_action(act.ClearSelection, pane)
+      else
+        window:perform_action(act.SendKey { key = 'c', mods = 'CTRL' }, pane)
+      end
+    end),
+  })
+  table.insert(config.keys, { key = 'v', mods = 'CTRL', action = act.PasteFrom 'Clipboard' })
+  table.insert(config.keys, { key = 'Insert', mods = 'CTRL', action = act.CopyTo 'Clipboard' })
+  table.insert(config.keys, { key = 'Insert', mods = 'SHIFT', action = act.PasteFrom 'Clipboard' })
+  table.insert(config.mouse_bindings, {
+    event = { Down = { streak = 1, button = 'Right' } },
+    mods = 'NONE',
+    action = act.PasteFrom 'Clipboard',
+  })
+end
+
 return config
