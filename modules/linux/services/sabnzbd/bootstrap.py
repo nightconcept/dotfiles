@@ -47,10 +47,7 @@ def configure(credentials: dict[str, str]) -> None:
             "complete_free": "5G",
             "permissions": "775",
         }
-        config["categories"] = {
-            name: {"name": name, "pp": "3", "dir": name}
-            for name in categories
-        }
+        config["categories"] = {name: {"name": name, "pp": "3", "dir": name} for name in categories}
 
     config["misc"]["username"] = credentials["web_username"]
     config["misc"]["password"] = credentials["web_password"]
