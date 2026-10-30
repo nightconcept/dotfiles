@@ -4,6 +4,7 @@ import os
 
 from pyinfra.operations import files, git, server
 
+from modules.linux.ai.versions import VERSIONS
 from modules.linux.module import HostModule
 
 
@@ -16,9 +17,9 @@ class LlamaCppModule(HostModule):
         self.build_dir = os.path.join(self.git_dir, "build-pyinfra-hip")
         self.bin_dir = "/opt/llama-cpp"
         self.local_bin = os.path.expanduser("~/.local/bin")
-        # Pin to a known-good upstream revision unless explicitly overridden.
+        # Pin to a known-good upstream revision from the stack manifest.
         # 6d05498314db supports both Muse Glimmer and Qwen3.8's qwen35 architecture.
-        self.version = os.environ.get("LLAMA_CPP_VERSION", "6d05498314db")
+        self.version = VERSIONS["llama_cpp"]["commit"]
         # The service only needs llama-server, not the embedded UI assets.
         self.build_ui = os.environ.get("LLAMA_CPP_BUILD_UI", "OFF")
         self.required_rocm_packages = "rocm-dev hipblas-dev rocblas-dev rocwmma-dev"
@@ -54,12 +55,13 @@ class LlamaCppModule(HostModule):
 
         git.repo(
             name="Clone llama.cpp source",
-            src="https://github.com/ggml-org/llama.cpp.git",
+            src=VERSIONS["llama_cpp"]["repo"],
             dest=self.git_dir,
+            pull=False,
         )
 
     def update(self):
-        """Build/install the pinned release if it is newer or missing."""
+        """Build/install the pinned release if it differs or is missing."""
         # We use a trick: only run the heavy build shell if version mismatch
         # This keeps the pyinfra plan clean and fast
         server.shell(
@@ -74,28 +76,44 @@ class LlamaCppModule(HostModule):
                 BIN_FILE="{self.bin_dir}/llama-cli"
                 BUILD_DIR="{self.build_dir}"
                 STAGE_DIR="$BUILD_DIR/stage"
-                
+
+                cd "{self.git_dir}"
+                if ! git diff --quiet || ! git diff --cached --quiet; then
+                    echo "llama.cpp has local changes; refusing to deploy." >&2
+                    exit 1
+                fi
+                if ! git cat-file -e "$LATEST^{{commit}}" 2>/dev/null; then
+                    git fetch origin "$LATEST"
+                fi
+                git checkout --quiet --detach "$LATEST"
+                # Accept the former abbreviated VERSION without rebuilding identical source.
+                INSTALLED=""
+                if [ -f "$V_FILE" ]; then
+                    INSTALLED=$(git rev-parse "$(cat "$V_FILE")^{{commit}}" 2>/dev/null || true)
+                fi
+
                 # Check if current install has the HIP backend library.
                 HAS_HIP=false
-                if [ -f "$BIN_FILE" ] && find "{self.bin_dir}" -maxdepth 1 -name 'libggml-hip.so*' | grep -q .; then
+                if [ -f "$BIN_FILE" ] && \\
+                    find "{self.bin_dir}" -maxdepth 1 -name 'libggml-hip.so*' | grep -q .; then
                     HAS_HIP=true
                 fi
 
-                if [ ! -f "$V_FILE" ] || [ "$(cat $V_FILE)" != "$LATEST" ] || [ "$HAS_HIP" = false ]; then
+                if [ "$INSTALLED" != "$LATEST" ] || [ "$HAS_HIP" = false ]; then
                     echo "Starting build for version $LATEST..."
                     cd {self.git_dir}
-                    git fetch --tags origin master && git checkout $LATEST
                     mkdir -p "$BUILD_DIR"
-                    
+
                     export ROCM_PATH=/opt/rocm
                     export PATH=$ROCM_PATH/bin:$PATH
-                    export LD_LIBRARY_PATH="$ROCM_PATH/lib:$ROCM_PATH/lib64${{LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}}"
+                    export LD_LIBRARY_PATH="$ROCM_PATH/lib:$ROCM_PATH/lib64"\\
+"${{LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}}"
                     GPU_ARCH=$(rocminfo | grep -o 'gfx[0-9]\\+' | head -n 1)
                     if [ -z "$GPU_ARCH" ]; then
                         echo "Unable to detect AMD GPU architecture via rocminfo" >&2
                         exit 1
                     fi
-                    
+
                     # Enable rocWMMA Flash Attention kernels for RDNA4 HIP builds.
                     HIPCXX="$(hipconfig -l)/clang" HIP_PATH="$(hipconfig -R)" \
                     cmake -S . -B "$BUILD_DIR" \
@@ -113,14 +131,16 @@ class LlamaCppModule(HostModule):
                           -DCMAKE_INSTALL_BINDIR=. \
                           -DCMAKE_INSTALL_LIBDIR=. \
                           -DCMAKE_INSTALL_RPATH='$ORIGIN;/opt/rocm/lib;/opt/rocm/lib64'
-                             
+
                     cmake --build "$BUILD_DIR" --config Release -- -j$(nproc)
                     cmake --install "$BUILD_DIR" --prefix "$STAGE_DIR"
-                    
-                    if [ -f "$STAGE_DIR/llama-cli" ] && find "$STAGE_DIR" -maxdepth 1 -name 'libggml-hip.so*' | grep -q .; then
+
+                    if [ -f "$STAGE_DIR/llama-cli" ] && \\
+                        find "$STAGE_DIR" -maxdepth 1 -name 'libggml-hip.so*' | grep -q .; then
                         DEVICE_LIST=$("$STAGE_DIR/llama-cli" --list-devices)
                         printf '%s\n' "$DEVICE_LIST"
-                        if ! printf '%s\n' "$DEVICE_LIST" | awk 'NR > 1 && NF {{ found=1 }} END {{ exit found ? 0 : 1 }}'; then
+                        if ! printf '%s\n' "$DEVICE_LIST" | \\
+                            awk 'NR > 1 && NF {{ found=1 }} END {{ exit found ? 0 : 1 }}'; then
                             echo "llama.cpp HIP build did not expose any usable devices" >&2
                             exit 1
                         fi
@@ -135,7 +155,7 @@ class LlamaCppModule(HostModule):
                 else
                     echo "Already at latest version ($LATEST)."
                 fi
-                """
+                """,
             ],
         )
 

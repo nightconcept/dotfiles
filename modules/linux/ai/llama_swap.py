@@ -5,9 +5,10 @@ import os
 
 from pyinfra.operations import files, server, systemd
 
+from modules.linux.ai.catalog import render_llama_swap_config
+from modules.linux.ai.versions import VERSIONS
 from modules.linux.module import HostModule
 from modules.linux.programs.foreman.module import gpu_window_open
-from modules.linux.programs.model_catalog import render_llama_swap_config
 
 _SERVICE_UNIT = """\
 [Unit]
@@ -36,7 +37,7 @@ class LlamaSwapModule(HostModule):
         """Initialize llama-swap paths and version."""
         self.user = os.environ.get("USER", "danny")
         self.install_dir = "/opt/llama-swap"
-        self.version = os.environ.get("LLAMA_SWAP_VERSION", "v250")
+        self.version = VERSIONS["llama_swap"]["version"]
         self.config_dir = "/etc/llama-swap"
         self.config_path = f"{self.config_dir}/config.yaml"
         self.listen = os.environ.get("LLAMA_SWAP_LISTEN", "0.0.0.0:8080")
@@ -68,8 +69,14 @@ class LlamaSwapModule(HostModule):
 
                 ARCH="$(uname -m)"
                 case "$ARCH" in
-                    x86_64|amd64) ASSET_ARCH="amd64" ;;
-                    aarch64|arm64) ASSET_ARCH="arm64" ;;
+                    x86_64|amd64)
+                        ASSET_ARCH="amd64"
+                        SHA256="{VERSIONS["llama_swap"]["sha256_amd64"]}"
+                        ;;
+                    aarch64|arm64)
+                        ASSET_ARCH="arm64"
+                        SHA256="{VERSIONS["llama_swap"]["sha256_arm64"]}"
+                        ;;
                     *)
                         echo "unsupported architecture for llama-swap: $ARCH" >&2
                         exit 1
@@ -82,6 +89,7 @@ class LlamaSwapModule(HostModule):
                 trap 'rm -rf "$TMP_DIR"' EXIT
 
                 curl -fsSL "$URL" -o "$TMP_DIR/$ASSET"
+                printf '%s  %s\\n' "$SHA256" "$TMP_DIR/$ASSET" | sha256sum --check --status
                 tar -xzf "$TMP_DIR/$ASSET" -C "$TMP_DIR"
                 install -m 0755 "$TMP_DIR/llama-swap" "{self.install_dir}/llama-swap"
                 printf '%s\\n' "$VERSION" > "$VERSION_FILE"

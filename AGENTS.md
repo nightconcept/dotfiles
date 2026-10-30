@@ -13,6 +13,7 @@ Personal dotfiles as a Nix flake supporting NixOS, nix-darwin, and home-manager.
 - [Hyprland](docs/hyprland.md) - Desktop environment components and keybindings.
 - [Foreman](docs/foreman.md) - GPU/CPU/RAM lease daemon on terra: windows, CLI, polkit, reboot note.
 - [Hermes](docs/hermes.md) - Hermes agent on terra: model-safety alerts (Gotify), approval deny rules, Pi-hole blocks.
+- [AI Stack](docs/ai.md) - Terra inference and Hermes module, software pins, deployment, and upgrade flow.
 - [Terminal](docs/terminal.md) - Installation guide for Ghostty and WezTerm.
 
 ## Common Commands

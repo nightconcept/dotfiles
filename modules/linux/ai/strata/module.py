@@ -10,8 +10,7 @@ import os
 
 from pyinfra.operations import apt, files, server
 
-from modules.linux.module import HostModule
-from modules.linux.programs.model_catalog import (
+from modules.linux.ai.catalog import (
     MODEL_DIR,
     STRATA_COMMIT,
     STRATA_DATA_DIR,
@@ -20,6 +19,7 @@ from modules.linux.programs.model_catalog import (
     STRATA_TAG,
     strata_models,
 )
+from modules.linux.module import HostModule
 
 _FETCH_SCRIPT = os.path.join(os.path.dirname(__file__), "fetch-shard.sh")
 

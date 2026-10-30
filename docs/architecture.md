@@ -9,6 +9,7 @@
   - `darwin/` - macOS system modules
   - `home/` - Home Manager modules
   - `linux/` - Non-Nix Linux modules (pyinfra)
+    - `ai/` - Terra inference and agent stack, with software pins in `versions.toml`
 - `/home/` - Home Manager user configurations
 - `/hosts/` - Host-specific configurations
   - `nixos/` - NixOS hosts
@@ -62,6 +63,9 @@ The home configuration uses a profile-based system where `home/default.nix` sele
 - **merlin**: `base + darwin-desktop` (Mac Mini M1)
 - **terra**: `base + desktop` (LLM inference server) — deployed via `desktop` flake profile
 - **desktop/laptop/server**: Generic standalone profiles used by pyinfra-managed hosts
+
+Terra's inference and agent modules share one [AI stack module](ai.md).
+Foreman, Hugging Face CLI, and Colab remain independent tooling.
 
 ## Host Configurations
 

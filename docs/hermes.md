@@ -1,8 +1,67 @@
 # Hermes
 
-Hermes (`~/.hermes`) runs on terra as the user service `hermes-gateway`. It is installed and
-configured outside dotfiles. `modules/linux/programs/hermes.py` only points it at llama-swap's
-default model.
+Hermes runs on Terra as the user service `hermes-gateway`.
+The [AI module](ai.md) manages its checkout, Python environment, launcher, and gateway unit.
+The software pins are in `modules/linux/ai/versions.toml`.
+The checkout stays at `~/.hermes/hermes-agent`, and persistent state stays in `~/.hermes`.
+
+## Pinned upgrades
+
+The first managed deploy adopts Terra's installed commit, `b4f978d983b24ad4ba5ced5bf2c528bcf1c1fb0c`.
+It saves a full state backup before it synchronizes dependencies.
+It preserves credentials, conversations, memory, and the existing config.
+The model config update still selects the catalog's default model.
+
+For an upgrade:
+
+1. Select the upstream release or commit.
+2. Update `[hermes].commit` in `modules/linux/ai/versions.toml` with the full commit hash.
+3. Check the selected revision's Python requirements, `uv.lock`, and installer flow.
+4. Update `[hermes].python` and `[hermes].extras` to match that revision.
+5. Run `just terra` on Terra from the dotfiles directory.
+6. Run `hermes config check` to review new config keys.
+
+The deploy uses `uv sync --locked --inexact --no-dev` with the selected extras and Python version.
+A stale lockfile stops the deploy. The deploy never resolves a replacement lockfile.
+The `--inexact` flag preserves additional packages that Hermes installs for optional tools.
+Those optional packages are outside the base runtime pin.
+
+The current pin uses the upstream installer's locked-sync path.
+Newer Hermes revisions use PM for environment preparation.
+An AI that updates the pin must check that flow before it changes the deployment helper.
+The helper does not assume that every future revision has the same installation contract.
+
+Before a runtime change, the helper stops `hermes-gateway` and runs the existing Hermes backup command.
+Backups are private directories under `~/.hermes/backups/dotfiles/`.
+Each backup contains `state.zip`, a backup log, and the previous source commit.
+The deploy retains these backups until the owner removes them.
+The full backup uses upstream exclusions and SQLite safe-copy.
+
+After the backup, the helper selects the exact commit, synchronizes dependencies, and checks the CLI.
+It then regenerates the gateway unit through Hermes without starting it.
+The AI module updates the model config and starts the gateway after runtime preparation.
+
+Repeated deploys check the runtime identity, dependency environment, and CLI.
+A matching runtime skips the backup, dependency installation, and unit regeneration.
+The router and gateway still restart during the full deploy to apply their config.
+
+If preparation fails, the gateway stays stopped.
+After you fix the error, rerun `just terra`.
+The helper retains the backup from an interrupted upgrade and reuses it during the retry.
+Edited source files stop the deploy before it changes the checkout.
+
+The helper refuses a commit that is an ancestor of the installed revision.
+A newer Hermes revision can migrate persistent state that an older revision cannot read.
+A rollback requires a compatible state backup and source checkout before the next deploy.
+Changing the pin alone does not restore state.
+
+`hermes update` selects upstream versions independently of this manifest.
+For this managed install, upgrades use manifest edits and the full Terra deploy.
+Fresh installs still require the owner to configure Hermes credentials and the `Terra:8080` provider.
+The deployment does not replace that personal config with a generated file.
+
+Upstream references: [installation](https://hermes-agent.nousresearch.com/docs/getting-started/installation)
+and [updates](https://hermes-agent.nousresearch.com/docs/getting-started/updating).
 
 ## Model safety
 
@@ -22,7 +81,7 @@ remove it.
 
 ### Alerts (`hermes-ioc-alert`)
 
-`modules/linux/services/hermes_ioc_alert/` installs a root system timer. Every minute, it
+`modules/linux/ai/alerts/` installs a root system timer. Every minute, it
 scans these sources for the indicators in the report:
 
 - New assistant messages in `~/.hermes/state.db`, which contain the tool calls and replies

@@ -102,7 +102,7 @@ def send_gotify(url, token, title, message, priority):
 
 def main():
     """Scan once, alert on hits, and save how far the scan got."""
-    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser = argparse.ArgumentParser(description=(__doc__ or "").splitlines()[0])
     parser.add_argument("--db", type=Path, required=True)
     parser.add_argument("--uid", required=True)
     parser.add_argument("--gotify-url", required=True)

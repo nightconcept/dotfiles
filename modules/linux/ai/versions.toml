@@ -1,0 +1,22 @@
+# Update these pins directly, then deploy the full Terra host with `just terra`.
+# Release labels are descriptive; full commits select Git source revisions.
+[llama_cpp]
+repo = "https://github.com/ggml-org/llama.cpp.git"
+commit = "6d05498314db1b57f81c271080018aa2d0b89be9"
+
+[llama_swap]
+version = "v250"
+sha256_amd64 = "1675b0bcdb0791f6172d22993ab22a8097c25a0adda4bb8467d2c31871fb77a0"
+sha256_arm64 = "b5d4c0a5634c2f043801905a9f1e4cd1e00f948dfdcd0e851752398bc248b73d"
+
+[strata]
+repo = "https://github.com/Niko1221/Strata.git"
+release = "v0.2.4.2"
+commit = "dfa3f4025c9f1bc4af8cee201b20a2d223061813"
+
+[hermes]
+repo = "https://github.com/NousResearch/hermes-agent.git"
+# Adopt Terra's installed revision; consolidation does not upgrade Hermes.
+commit = "b4f978d983b24ad4ba5ced5bf2c528bcf1c1fb0c"
+python = "3.11.16"
+extras = ["all"]

@@ -4,8 +4,8 @@ import os
 
 from pyinfra.operations import files, server
 
+from modules.linux.ai.catalog import MODEL_DIR, catalog_entries
 from modules.linux.module import HostModule
-from modules.linux.programs.model_catalog import MODEL_DIR, catalog_entries
 
 
 class LLMModelsModule(HostModule):
@@ -46,8 +46,8 @@ class LLMModelsModule(HostModule):
             repo_id = entry["repo_id"]
             commands.append(
                 f'if [ ! -f "{self.model_dir}/{filename}" ]; then '
-                f'hf download {repo_id} {filename} '
-                f'--local-dir {self.model_dir} </dev/null; fi'
+                f"hf download {repo_id} {filename} "
+                f"--local-dir {self.model_dir} </dev/null; fi"
             )
         server.shell(
             name="Install and download catalog models",

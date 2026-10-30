@@ -19,7 +19,7 @@
   });
 
   localProvider = "local-openai";
-  # Same default as Hermes (modules/linux/programs/model_catalog.py DEFAULT_MODEL_ID).
+  # Same default as Hermes (modules/linux/ai/catalog.py DEFAULT_MODEL_ID).
   localModelId = "qwen3.8-flash-next-iq2_xs";
   # Other llama-swap models pi can switch to; selecting one swaps the GPU over.
   otherLocalModelIds = ["qwen3.8-27b" "qwen3-35b-mtp"];

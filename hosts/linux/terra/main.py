@@ -1,23 +1,18 @@
+from modules.linux.ai.module import AIStackModule
 from modules.linux.programs.books.module import BooksModule
 from modules.linux.programs.budget.module import BudgetModule
 from modules.linux.programs.colab import ColabModule
 from modules.linux.programs.docker import DockerModule
 from modules.linux.programs.foreman.module import ForemanModule
-from modules.linux.programs.hermes import HermesModule
 from modules.linux.programs.home_manager import HomeManagerModule
 from modules.linux.programs.huggingface import HuggingFaceModule
 from modules.linux.programs.koreader_sync.module import KoreaderSyncModule
 from modules.linux.programs.ledger.module import LedgerModule
-from modules.linux.programs.llama_cpp import LlamaCppModule
-from modules.linux.programs.llama_swap import LlamaSwapModule
-from modules.linux.programs.llm_models import LLMModelsModule
 from modules.linux.programs.paseo.module import PaseoModule
 from modules.linux.programs.pinchflat.module import PinchflatModule
 from modules.linux.programs.ssh import SSHModule
 from modules.linux.programs.storage import StorageModule
-from modules.linux.programs.strata.module import StrataModule
 from modules.linux.programs.watchtower.module import WatchtowerModule
-from modules.linux.services.hermes_ioc_alert.module import HermesIocAlertModule
 from modules.linux.services.tailscale import TailscaleModule
 from modules.linux.services.titan_mount import TitanMountModule
 from modules.linux.services.wifi_power_save import WiFiPowerSaveModule
@@ -41,13 +36,8 @@ pinchflat = PinchflatModule()
 watchtower = WatchtowerModule()
 hf = HuggingFaceModule()
 colab = ColabModule()
-llama = LlamaCppModule()
-llama_swap = LlamaSwapModule()
 foreman = ForemanModule()
-models = LLMModelsModule()
-strata = StrataModule()
-hermes = HermesModule()
-hermes_ioc_alert = HermesIocAlertModule()
+ai = AIStackModule()
 
 # Deploy system foundations
 ssh.deploy()
@@ -71,13 +61,8 @@ paseo.deploy()
 pinchflat.deploy()
 watchtower.deploy()
 
-# Deploy AI modules
+# Deploy independent AI tooling, then the inference and agent stack.
 hf.deploy()
 colab.deploy()
-models.deploy()
-strata.deploy()
-llama.deploy()
-llama_swap.deploy()
 foreman.deploy()
-hermes.deploy()
-hermes_ioc_alert.deploy()
+ai.deploy()
