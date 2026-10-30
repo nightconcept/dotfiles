@@ -101,6 +101,9 @@ with the kill switch enabled. Failed pre-start checks retry every 15 seconds;
 a failed mount dependency requires restoring the mount and restarting SABnzbd.
 
 The web UI listens at `http://192.168.1.112:8080`.
+The deployment allowlists TCP port 8080 in NordVPN and permits incoming UFW
+connections from `192.168.1.0/24` on `ens18`. The Usenet connection on port 563
+continues through the VPN. LAN discovery alone does not replace these rules.
 Create its encrypted credentials before deployment:
 
 ```sh
