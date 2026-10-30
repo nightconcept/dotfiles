@@ -11,12 +11,11 @@ sha256_arm64 = "b5d4c0a5634c2f043801905a9f1e4cd1e00f948dfdcd0e851752398bc248b73d
 
 [strata]
 repo = "https://github.com/Niko1221/Strata.git"
-release = "v0.2.4.2"
-commit = "dfa3f4025c9f1bc4af8cee201b20a2d223061813"
+release = "v0.2.8"
+commit = "870aedd9e1ebe1c91f94da93b59af17729f6c5c0"
 
 [hermes]
 repo = "https://github.com/NousResearch/hermes-agent.git"
-# Adopt Terra's installed revision; consolidation does not upgrade Hermes.
-commit = "b4f978d983b24ad4ba5ced5bf2c528bcf1c1fb0c"
-python = "3.11.16"
-extras = ["all"]
+release = "v0.22.5"
+commit = "bf0203a794a07aac3ff764972ab9087baa4e4f4e"
+# This source revision's pm/lock.json pins Python, uv, and other runtime tools.

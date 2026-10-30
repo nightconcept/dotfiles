@@ -23,7 +23,7 @@ Hermes skips the router model-list check during that window.
 Git source pins use full commit hashes.
 The Strata release label describes its commit and selects the initial shallow clone.
 The llama-swap binary downloads use architecture-specific SHA-256 hashes.
-The Hermes pin also selects Python and the upstream extras.
+The Hermes pin selects the release; its PM lock selects Python and tools.
 Environment variables no longer override llama.cpp or llama-swap source versions.
 
 `modules/linux/ai/catalog.py` records model IDs, files, serving arguments, and the default model.

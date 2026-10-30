@@ -6,12 +6,9 @@ umask 077
 repo_dir=$1
 repo_url=$2
 commit=$3
-python_version=$4
-shift 4
 
 : "${HERMES_HOME:?HERMES_HOME must identify the persistent Hermes state directory}"
-unset PYTHONPATH PYTHONHOME VIRTUAL_ENV UV_PYTHON
-export UV_PROJECT_ENVIRONMENT="$repo_dir/venv"
+unset PYTHONPATH PYTHONHOME VIRTUAL_ENV UV_PYTHON UV_PROJECT_ENVIRONMENT
 
 mkdir -p "$(dirname "$repo_dir")" "$HERMES_HOME"
 exec 9>"$HERMES_HOME/.dotfiles-install.lock"
@@ -45,17 +42,19 @@ if [ -n "$previous" ] && [ "$previous" != "$commit" ] \
 fi
 
 marker="$HERMES_HOME/.dotfiles-runtime"
-identity=$(printf '%s\n' "$commit" "$python_version" "$@" | sha256sum | cut -d ' ' -f 1)
-sync_args=(--locked --inexact --no-dev --python "$python_version")
-for extra in "$@"; do
-    sync_args+=(--extra "$extra")
-done
-python="$repo_dir/venv/bin/python"
+identity=$(printf '%s\n' "$commit" "pm-v1" | sha256sum | cut -d ' ' -f 1)
+hermes=("$repo_dir/.hermes/bin/hermes")
+if [ ! -x "${hermes[0]}" ]; then
+    # The pre-PM installation can make the backup before its source is replaced.
+    hermes=("$repo_dir/venv/bin/python" -m hermes_cli.main)
+fi
 unit="${XDG_CONFIG_HOME:-$HOME/.config}/systemd/user/hermes-gateway.service"
 if [ "$previous" = "$commit" ] && [ -f "$marker" ] \
     && [ "$(cat "$marker")" = "$identity" ] && [ -f "$unit" ] \
-    && [ -x "$python" ] && uv sync "${sync_args[@]}" --check >/dev/null 2>&1 \
-    && "$python" -m hermes_cli.main --help >/dev/null 2>&1; then
+    && [ -x "${hermes[0]}" ] \
+    && python3 -c 'import pm; raise SystemExit(not pm.venv_is_current())' \
+        >/dev/null 2>&1 \
+    && "${hermes[@]}" --help >/dev/null 2>&1; then
     echo "Hermes already matches the pinned runtime."
     exit 0
 fi
@@ -72,12 +71,12 @@ pending_backup="$HERMES_HOME/.dotfiles-upgrade-backup"
 if [ -f "$pending_backup" ]; then
     test -s "$(cat "$pending_backup")/state.zip"
     echo "Keeping the state backup from the interrupted Hermes deploy."
-elif [ -x "$python" ]; then
+elif [ -x "${hermes[0]}" ]; then
     backup_dir="$HERMES_HOME/backups/dotfiles"
     mkdir -p "$backup_dir"
     backup_dir=$(mktemp -d "$backup_dir/pre-deploy-XXXXXXXX")
     echo "Backing up Hermes state (log: $backup_dir/backup.log)."
-    "$python" -m hermes_cli.main backup --output "$backup_dir/state.zip" \
+    "${hermes[@]}" backup --output "$backup_dir/state.zip" \
         >"$backup_dir/backup.log" 2>&1
     test -s "$backup_dir/state.zip"
     printf '%s\n' "$previous" >"$backup_dir/commit"
@@ -87,11 +86,17 @@ fi
 
 git checkout --quiet --detach "$commit"
 git submodule update --init --recursive
-# Fail if the lock is stale. Never fall back to a fresh dependency resolution.
-# --inexact preserves optional tools Hermes installed lazily outside the base lock.
-uv sync "${sync_args[@]}"
-"$python" -m hermes_cli.main --help >/dev/null
-"$python" -m hermes_cli.main gateway install --force --no-start-now </dev/null
+# Use the pinned installer's dependency and completion stages. Omitting its
+# repository stage prevents it from selecting a different release or branch.
+# PM owns the exact Python/tool pins, locked environments, and retained extras.
+for stage in python-deps products; do
+    bash scripts/install.sh --stage "$stage" --dir "$repo_dir" \
+        --hermes-home "$HERMES_HOME" --non-interactive </dev/null
+done
+test "$(git rev-parse HEAD)" = "$commit"
+hermes=("$repo_dir/.hermes/bin/hermes")
+"${hermes[@]}" --help >/dev/null
+"${hermes[@]}" gateway install --force --no-start-now </dev/null
 test -f "$unit"
 printf '%s\n' "$identity" >"$marker.new"
 mv "$marker.new" "$marker"

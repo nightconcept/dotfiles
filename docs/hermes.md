@@ -7,29 +7,28 @@ The checkout stays at `~/.hermes/hermes-agent`, and persistent state stays in `~
 
 ## Pinned upgrades
 
-The first managed deploy adopts Terra's installed commit, `b4f978d983b24ad4ba5ced5bf2c528bcf1c1fb0c`.
-It saves a full state backup before it synchronizes dependencies.
+The current pin is v0.22.5, commit `bf0203a794a07aac3ff764972ab9087baa4e4f4e`.
+It replaces the adopted commit `b4f978d983b24ad4ba5ced5bf2c528bcf1c1fb0c`.
+The deploy saves a full state backup before it changes the runtime.
 It preserves credentials, conversations, memory, and the existing config.
 The model config update still selects the catalog's default model.
 
 For an upgrade:
 
 1. Select the upstream release or commit.
-2. Update `[hermes].commit` in `modules/linux/ai/versions.toml` with the full commit hash.
-3. Check the selected revision's Python requirements, `uv.lock`, and installer flow.
-4. Update `[hermes].python` and `[hermes].extras` to match that revision.
-5. Run `just terra` on Terra from the dotfiles directory.
-6. Run `hermes config check` to review new config keys.
+2. Update `[hermes].release` and `[hermes].commit` in `modules/linux/ai/versions.toml` with the full commit hash.
+3. Check the selected revision's `pm/lock.json` and `scripts/install.sh` stages.
+4. Run `just terra` on Terra from the dotfiles directory.
+5. Run `hermes config check` and `hermes pm doctor` to review new config keys and the runtime.
 
-The deploy uses `uv sync --locked --inexact --no-dev` with the selected extras and Python version.
-A stale lockfile stops the deploy. The deploy never resolves a replacement lockfile.
-The `--inexact` flag preserves additional packages that Hermes installs for optional tools.
-Those optional packages are outside the base runtime pin.
+The selected revision's PM owns the Python, uv, and Node pins, the locked environments, and extras.
+The manifest does not repeat them.
+The deploy runs the pinned installer stages `python-deps` and `products`.
+It never runs the installer `repository` stage, so the selected commit stays in place.
+The launcher is `~/.hermes/hermes-agent/.hermes/bin/hermes`.
+Plugins and lazy tools can extend the environment beyond the committed lock.
 
-The current pin uses the upstream installer's locked-sync path.
-Newer Hermes revisions use PM for environment preparation.
-An AI that updates the pin must check that flow before it changes the deployment helper.
-The helper does not assume that every future revision has the same installation contract.
+An older checkout that has no PM launcher uses its `venv` Python for the backup.
 
 Before a runtime change, the helper stops `hermes-gateway` and runs the existing Hermes backup command.
 Backups are private directories under `~/.hermes/backups/dotfiles/`.
@@ -37,7 +36,7 @@ Each backup contains `state.zip`, a backup log, and the previous source commit.
 The deploy retains these backups until the owner removes them.
 The full backup uses upstream exclusions and SQLite safe-copy.
 
-After the backup, the helper selects the exact commit, synchronizes dependencies, and checks the CLI.
+After the backup, the helper selects the exact commit, runs the installer stages, and checks the CLI.
 It then regenerates the gateway unit through Hermes without starting it.
 The AI module updates the model config and starts the gateway after runtime preparation.
 

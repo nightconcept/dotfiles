@@ -45,8 +45,6 @@ class HermesModule(HostModule):
                 self.install_dir,
                 pin["repo"],
                 pin["commit"],
-                pin["python"],
-                *pin["extras"],
             ]
         )
         server.shell(
@@ -58,7 +56,7 @@ class HermesModule(HostModule):
         launcher = (
             "#!/usr/bin/env bash\n"
             "unset PYTHONPATH PYTHONHOME\n"
-            f'exec {shlex.quote(self.install_dir + "/venv/bin/hermes")} "$@"\n'
+            f'exec {shlex.quote(self.install_dir + "/.hermes/bin/hermes")} "$@"\n'
         )
         files.put(
             name="Install the pinned Hermes launcher",

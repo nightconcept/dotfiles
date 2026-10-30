@@ -21,23 +21,33 @@ elif sys.argv[1] == "gateway":
     unit.write_text("fixture unit")
 """
 
-UV = """#!/usr/bin/env python3
+PM_STAGE = """#!/usr/bin/env python3
 import os, pathlib, subprocess, sys
 repo = pathlib.Path.cwd()
-venv = pathlib.Path(os.environ["UV_PROJECT_ENVIRONMENT"])
-head = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
-marker = venv / "installed"
-if "--check" in sys.argv:
-    sys.exit(0 if marker.exists() and marker.read_text() == head else 1)
+stage = sys.argv[sys.argv.index("--stage") + 1]
 with open(os.environ["ACTIONS"], "a") as log:
-    log.write("sync\\n")
-if os.environ.get("FAIL_SYNC"):
-    sys.exit(7)
-(venv / "bin").mkdir(parents=True, exist_ok=True)
-python = venv / "bin/python"
-if not python.exists():
-    python.symlink_to(sys.executable)
-marker.write_text(head)
+    log.write(stage + "\\n")
+if stage == "python-deps":
+    if os.environ.get("FAIL_SYNC"):
+        sys.exit(7)
+    location = repo / ".hermes"
+    location.mkdir(exist_ok=True)
+    head = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
+    (location / "installed").write_text(head)
+elif stage == "products":
+    binaries = repo / ".hermes/bin"
+    binaries.mkdir(parents=True, exist_ok=True)
+    launcher = binaries / "hermes"
+    launcher.write_text("#!/bin/sh\\nexec " + sys.executable + " -m hermes_cli.main \\"$@\\"\\n")
+    launcher.chmod(0o755)
+"""
+
+PM_PROBE = """import pathlib, subprocess
+def venv_is_current():
+    root = pathlib.Path(__file__).resolve().parents[1]
+    marker = root / ".hermes/installed"
+    head = subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD"], text=True).strip()
+    return marker.exists() and marker.read_text() == head
 """
 
 SYSTEMCTL = """#!/usr/bin/env python3
@@ -70,7 +80,13 @@ class HermesInstallTest(unittest.TestCase):
         package = self.source / "hermes_cli"
         package.mkdir()
         (package / "main.py").write_text(CLI)
-        (self.source / ".gitignore").write_text("venv/\n__pycache__/\n")
+        (self.source / ".gitignore").write_text("venv/\n.hermes/\n__pycache__/\n")
+        scripts = self.source / "scripts"
+        scripts.mkdir()
+        (scripts / "install.sh").write_text('#!/bin/sh\nexec hermes-pm-stage "$@"\n')
+        pm = self.source / "pm"
+        pm.mkdir()
+        (pm / "__init__.py").write_text(PM_PROBE)
         self.first = self.commit("initial runtime")
         (self.source / "release").write_text("second release")
         self.second = self.commit("next runtime")
@@ -78,7 +94,7 @@ class HermesInstallTest(unittest.TestCase):
         self.actions = root / "actions"
         binaries = root / "bin"
         binaries.mkdir()
-        for name, content in (("uv", UV), ("systemctl", SYSTEMCTL)):
+        for name, content in (("hermes-pm-stage", PM_STAGE), ("systemctl", SYSTEMCTL)):
             path = binaries / name
             path.write_text(content.replace("#!/usr/bin/env python3", f"#!{sys.executable}"))
             path.chmod(0o755)
@@ -104,7 +120,7 @@ class HermesInstallTest(unittest.TestCase):
     def deploy(self, commit: str, **environment: str) -> subprocess.CompletedProcess[str]:
         """Run the production helper without touching host packages or daemons."""
         return subprocess.run(
-            ["bash", str(INSTALL), str(self.repo), str(self.source), commit, "3.11.16", "all"],
+            ["bash", str(INSTALL), str(self.repo), str(self.source), commit],
             env={**self.env, **environment},
             text=True,
             capture_output=True,
