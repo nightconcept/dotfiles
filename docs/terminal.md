@@ -27,6 +27,27 @@ Same pattern as Ghostty:
 - **Non-NixOS**: Manual installation via package manager
 - **macOS**: Via Homebrew
 
+### WezTerm Clipboard on Windows
+
+The WezTerm config in `modules/home/programs/wezterm/config.lua` adds Windows
+clipboard shortcuts:
+
+- Select text with the mouse to copy it automatically.
+- **Ctrl+C** copies selected terminal text and clears the selection. With no
+  selection, it sends Ctrl+C to the running program to interrupt it as usual.
+- **Ctrl+V** or **right-click** pastes from the Windows clipboard.
+- **Ctrl+Insert** copies and **Shift+Insert** pastes using the Windows clipboard.
+- The default **Ctrl+Shift+C/V** shortcuts also work.
+
+When an application captures the mouse (such as tmux or Vim), hold **Shift** while
+selecting text or right-clicking to use WezTerm's clipboard behavior.
+
+Windows loads `%USERPROFILE%\.config\wezterm\wezterm.lua`; an older installation
+may use separate `keybinds.lua` and `mousebinds.lua` files there. Changes to the
+repository do not automatically update those installed files. WezTerm normally
+reloads saved configuration changes automatically; **Ctrl+Shift+R** reloads them
+manually.
+
 ### Why This Approach?
 
 Using native package managers for GUI applications on non-NixOS systems:
