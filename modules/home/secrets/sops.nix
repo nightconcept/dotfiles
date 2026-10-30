@@ -116,6 +116,9 @@ in {
         # Auto-deploy sops-nix secrets on login (WSL workaround)
         [ -f ~/.config/sops-nix/auto-deploy.sh ] && source ~/.config/sops-nix/auto-deploy.sh
 
+        # Hermes publishes its launcher here. Declaring the PATH keeps its installer from editing this file.
+        case ":$PATH:" in *":$HOME/.local/bin:"*) ;; *) export PATH="$HOME/.local/bin:$PATH" ;; esac
+
         # Launch fish for interactive sessions; non-interactive (VS Code SSH, scripts) stays bash
         [[ $- == *i* ]] && exec fish
       '';
