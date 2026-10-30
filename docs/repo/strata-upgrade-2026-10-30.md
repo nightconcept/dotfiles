@@ -76,3 +76,20 @@ Keep approximate long-prompt mode (`STRATA_KVA`) off during the initial test.
 An optional same-build diagnostic with `STRATA_DEFAULTS=026` can help isolate
 new defaults; it does not reproduce the old executable.
 [Default switches and limitations](https://github.com/Niko1221/Strata/blob/v0.2.8/docs/release-notes-0.2.7.md).
+
+## Measured result on Terra (IQ2_XS) and decision
+
+Terra ran `v0.2.8` against `v0.2.4.2` on the same harness (medians; the
+`after-warm` run used 5 samples after the engine was warm). All requests passed in both.
+
+| Metric | v0.2.4.2 | v0.2.8 |
+| --- | --- | --- |
+| Decode, 7K-token prompt | 51.0 tok/s | 52.2 tok/s |
+| Decode, long generation | 70.7 tok/s | 75.6 tok/s |
+| Prefill | 60-80 tok/s | 25-31 tok/s |
+| Time to first token | 0.14-0.17 s | 0.27-0.30 s |
+
+Decode gained a few percent. Prefill halved and time to first token doubled, and a
+warm rerun did not recover them. Hermes sends large prompts, so Terra stays on
+`v0.2.4.2` until a later Strata release fixes prefill. Hermes `v0.22.5` stays deployed.
+Results: `~/.local/state/ai-bench/*-before`, `*-after`, `*-after-warm`.
