@@ -18,7 +18,7 @@ from modules.linux.module import HostModule
 # TODO: the foreman repo has no remote yet. Push it to forge first. FOREMAN_COMMIT is the local
 # HEAD when this was written; confirm it is the pushed commit before running `just terra`.
 FOREMAN_REPO = "https://forge.solivan.dev/danny/foreman"
-FOREMAN_COMMIT = "70dfd2d9245d61739755fdc1066896ca08522d13"  # PIN
+FOREMAN_COMMIT = "f3ae098f324877b5f8a08e43319d7396a1396bca"  # PIN
 
 _SEED_CONFIG = os.path.join(os.path.dirname(__file__), "config.toml")
 
