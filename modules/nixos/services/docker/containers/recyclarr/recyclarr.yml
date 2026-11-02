@@ -38,10 +38,13 @@ sonarr:
       # so Bluray-1080p ranks with WEB, and 720p/HDTV stay as fallbacks.
       # The guide profile already blocks dubs with "Language: Not Original":
       # a release must have the original audio; extra dubs are fine.
+      # Stop at score 50 instead of the guide's 10000, so Sonarr does not
+      # keep replacing episodes with larger tiered releases.
       - trash_id: 72dae194fc92bf828f32cde7744e51a1 # WEB-1080p
         upgrade:
           allowed: true
           until_quality: 1080p
+          until_score: 50
         qualities:
           - name: 1080p
             qualities: [WEBDL-1080p, WEBRip-1080p, Bluray-1080p]
@@ -125,20 +128,27 @@ radarr:
     quality_definition:
       type: movie
       qualities:
-        # 1080p: 100 MB/min (5.9 GiB/h), about 11.7 GB for a 2-hour movie.
-        # Preferred = max, so the largest release under the cap wins.
-        # The "Size: Over 20 GB" format below still caps very long movies.
-        - { name: WEBDL-1080p, min: 5, max: 100, preferred: 100 }
-        - { name: WEBRip-1080p, min: 5, max: 100, preferred: 100 }
-        - { name: Bluray-1080p, min: 5, max: 100, preferred: 100 }
-        # 720p: 60 MB/min (3.5 GiB/h).
-        - { name: Bluray-720p, min: 4, max: 60, preferred: 60 }
+        # 1080p: 42 MB/min (~5.6 Mbps), about 5 GB for a 2-hour movie.
+        # Preferred is below max, so a mid-size x265 encode wins over the
+        # largest release under the cap. "Size: Over 8 GB" below still caps
+        # very long movies.
+        - { name: WEBDL-1080p, min: 5, max: 42, preferred: 35 }
+        - { name: WEBRip-1080p, min: 5, max: 42, preferred: 35 }
+        - { name: Bluray-1080p, min: 5, max: 42, preferred: 35 }
+        # 720p: 30 MB/min (~3.6 GB for a 2-hour movie).
+        - { name: Bluray-720p, min: 4, max: 30, preferred: 25 }
 
     media_management:
       propers_and_repacks: do_not_prefer
 
     quality_profiles:
+      # The guide upgrades until score 10000, so Radarr keeps chasing
+      # release-group tiers (big x264 encodes). Stop at score 50: an x265
+      # file or any tiered release is final once it reaches Bluray-1080p.
       - trash_id: d1d67249d3890e49bc12e275d989a7e9 # HD Bluray + WEB
+        upgrade:
+          allowed: true
+          until_score: 50
 
     custom_formats:
       - trash_ids:
@@ -150,7 +160,7 @@ radarr:
       # fine. Untagged releases count as the original language.
       - trash_ids:
           - d6e9318c875905d6cfb5bee961afcea9 # Language: Not Original
-          - 514faaa4809b87c71c5c07f31e731120 # Size: Over 20 GB (local)
+          - 514faaa4809b87c71c5c07f31e731120 # Size: Over 8 GB (local)
         assign_scores_to:
           - trash_id: d1d67249d3890e49bc12e275d989a7e9
             score: -10000

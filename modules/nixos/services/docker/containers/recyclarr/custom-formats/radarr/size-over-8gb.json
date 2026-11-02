@@ -3,16 +3,16 @@
   "trash_scores": {
     "default": -10000
   },
-  "name": "Size: Over 20 GB",
+  "name": "Size: Over 8 GB",
   "includeCustomFormatWhenRenaming": false,
   "specifications": [
     {
-      "name": "Over 20 GB",
+      "name": "Over 8 GB",
       "implementation": "SizeSpecification",
       "negate": false,
       "required": true,
       "fields": {
-        "min": 20,
+        "min": 8,
         "max": 10000
       }
     }
