@@ -5,7 +5,7 @@ Deploy with: just barrett
 
 Pre-requisites (place on host before running):
   /root/.nordvpn-token              — NordVPN login token
-  /etc/mog-secrets                  — CIFS credentials for the Titan share on Mog
+  ~/.config/sops/age/keys.txt       — age key; Titan credentials are decrypted from SOPS
   /root/.qbittorrent-password       — qBittorrent plain-text password (autoremove)
   /root/.qbittorrent-password-hash  — qBittorrent PBKDF2 hash (WebUI)
 """

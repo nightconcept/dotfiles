@@ -71,6 +71,10 @@ barrett:
 cloud:
     uv run --with pyinfra --with requests pyinfra -y --sudo --use-sudo-password @local hosts/linux/cloud/main.py
 
+# Deploy Kids host (Arch desktop) using pyinfra
+kids:
+    uv run --with pyinfra --with requests pyinfra -y --use-sudo-password @local hosts/linux/kids/main.py
+
 # Validate Barrett modules without sudo (syntax, rendered configs, correctness checks)
 barrett-check:
     python3 scripts/barrett-validate.py

@@ -1,8 +1,9 @@
 """Home Manager module for non-NixOS Linux hosts."""
 
-from pyinfra.operations import apt, server
+from pyinfra.operations import server
 
 from modules.linux.module import HostModule
+from modules.linux.packages import install_packages
 
 DOTFILES_REPO = "https://forge.solivan.dev/nightconcept/dotfiles.git"
 DOTFILES_DIR = "$HOME/git/dotfiles"
@@ -16,10 +17,10 @@ class HomeManagerModule(HostModule):
         self.profile = profile
 
     def install(self):
-        apt.packages(
+        install_packages(
             name="Ensure git and curl are installed",
-            packages=["git", "curl", "xz-utils"],
-            _sudo=True,
+            debian=["git", "curl", "xz-utils"],
+            arch=["git", "curl", "xz"],
         )
 
         server.shell(

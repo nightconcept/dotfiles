@@ -39,6 +39,7 @@ NixOS, macOS, and Linux system configurations managed by [Nix](https://nixos.org
 |------|------|----------|---------|------------|
 | `terra` | Ubuntu | Desktop PC | AI/ML Workstation | [pyinfra](hosts/linux/terra/) |
 | `barrett` | Debian | VM | VPN torrent server | script |
+| `kids` | Arch | Desktop PC | Linux desktop | [pyinfra](hosts/linux/kids/) |
 
 ## Homes
 

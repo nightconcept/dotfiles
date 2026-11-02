@@ -1,10 +1,11 @@
 """Titan network mount module for host configuration."""
 
 from pyinfra import host
-from pyinfra.facts.files import File
+from pyinfra.facts.server import Home
 from pyinfra.operations import files, server, systemd
 
 from ..module import HostModule
+from ..packages import install_packages
 
 _MOUNT_UNIT = """\
 [Unit]
@@ -35,6 +36,32 @@ DirectoryMode=0755
 WantedBy=multi-user.target
 """
 
+_CREDENTIALS = "/etc/mog-secrets"
+_SOPS_FILE = "git/dotfiles/modules/nixos/security/sops/common.yaml"
+_SOPS_KEY = "network/titan_credentials"
+
+# Decrypt into a root-only temp file so plaintext never reaches argv or pyinfra
+# output. Keep an existing credentials file when decryption is unavailable.
+_SYNC_CREDENTIALS = """\
+set -u
+tmp=$(mktemp)
+trap 'rm -f "$tmp"' EXIT
+if SOPS_AGE_KEY_FILE={home}/.config/sops/age/keys.txt \\
+    {home}/.nix-profile/bin/sops --decrypt --extract '["network"]["titan_credentials"]' \\
+    {home}/{sops_file} > "$tmp" 2>/dev/null && [ -s "$tmp" ]; then
+  if ! cmp -s "$tmp" {credentials}; then
+    install -m 600 -o root -g root "$tmp" {credentials}
+    echo "Updated {credentials} from SOPS ({sops_key})"
+  fi
+elif [ -f {credentials} ]; then
+  echo "WARNING: SOPS decryption failed; keeping existing {credentials}"
+else
+  echo "ERROR: cannot decrypt {sops_key} and {credentials} is missing." >&2
+  echo "Install the age key at {home}/.config/sops/age/keys.txt (run bootstrap.sh)." >&2
+  exit 1
+fi
+"""
+
 
 class TitanMountModule(HostModule):
     """Manages the Titan CIFS network drive automount."""
@@ -50,13 +77,10 @@ class TitanMountModule(HostModule):
 
     def install(self):
         """Ensure cifs-utils is installed and mount point exists."""
-        server.shell(
-            name="Install cifs-utils and ensure /mnt/titan mount point exists",
-            commands=[
-                "if ! dpkg -s cifs-utils >/dev/null 2>&1; then "
-                "apt-get update && apt-get install -y cifs-utils; fi",
-                "mkdir -p /mnt/titan",
-            ],
+        install_packages(name="Install cifs-utils", debian=["cifs-utils"])
+        files.directory(
+            name="Ensure /mnt/titan mount point exists",
+            path="/mnt/titan",
             _sudo=True,
         )
 
@@ -65,16 +89,19 @@ class TitanMountModule(HostModule):
         pass
 
     def service(self):
-        """Deploy systemd mount and automount units."""
-        credentials_file = host.get_fact(File, path="/etc/mog-secrets", _sudo=True)
-        if not credentials_file:
-            server.shell(
-                name="Warn when titan credentials are missing",
-                commands=[
-                    "echo 'WARNING: /etc/mog-secrets not found - skipping titan mount setup'"
-                ],
-            )
-            return
+        """Sync credentials from SOPS, then deploy systemd mount and automount units."""
+        server.shell(
+            name="Sync Titan credentials from SOPS",
+            commands=[
+                _SYNC_CREDENTIALS.format(
+                    home=host.get_fact(Home),
+                    sops_file=_SOPS_FILE,
+                    sops_key=_SOPS_KEY,
+                    credentials=_CREDENTIALS,
+                )
+            ],
+            _sudo=True,
+        )
 
         units = "/etc/systemd/system/mnt-titan"
         mount_unit = _MOUNT_UNIT.format(source=self.source)
