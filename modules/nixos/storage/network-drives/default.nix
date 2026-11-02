@@ -11,7 +11,7 @@ with lib; let
   # Default titan mount configuration
   titanMount = {
     name = "titan";
-    source = "//192.168.1.167/titan";
+    source = cfg.titanSource;
     credentials = "/run/secrets/network/titan_credentials";
   };
 in {
@@ -22,6 +22,12 @@ in {
       type = types.bool;
       default = false;
       description = "Enable default titan network mount";
+    };
+
+    titanSource = mkOption {
+      type = types.str;
+      default = "//192.168.1.167/titan";
+      description = "Titan share path. Hosts on the Locke storage network use Mog's private address.";
     };
 
     titanIdleTimeout = mkOption {

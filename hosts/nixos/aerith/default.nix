@@ -48,10 +48,31 @@
     storage.networkDrives = {
       enable = true;
       enableTitan = true;
+      # Isolated Locke storage network; traffic stays on the hypervisor.
+      titanSource = "//10.77.0.10/titan";
+      # Containers that require this mount stop when the idle timeout unmounts it.
+      titanIdleTimeout = 0;
     };
 
     # Security
     security.sops.enable = true;
+  };
+
+  # Isolated storage network to Mog on Locke vmbr3 (plan 003). No gateway,
+  # no DHCP, no IPv6, and no forwarding on this interface.
+  networking.networkmanager.unmanaged = ["interface-name:ens19"];
+  networking.interfaces.ens19 = {
+    useDHCP = false;
+    ipv4.addresses = [
+      {
+        address = "10.77.0.20";
+        prefixLength = 24;
+      }
+    ];
+  };
+  boot.kernel.sysctl = {
+    "net.ipv4.conf.ens19.forwarding" = 0;
+    "net.ipv6.conf.ens19.disable_ipv6" = 1;
   };
 
   # Media services moved from Rinoa (plan 003). Their state is on local disk;

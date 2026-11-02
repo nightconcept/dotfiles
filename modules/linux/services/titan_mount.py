@@ -13,7 +13,7 @@ After=network-online.target
 Wants=network-online.target
 
 [Mount]
-What=//192.168.1.167/titan
+What={source}
 Where=/mnt/titan
 Type=cifs
 Options=credentials=/etc/mog-secrets,uid=1000,gid=100,iocharset=utf8,nofail,_netdev,x-systemd.automount,x-systemd.mount-timeout=10
@@ -38,6 +38,15 @@ WantedBy=multi-user.target
 
 class TitanMountModule(HostModule):
     """Manages the Titan CIFS network drive automount."""
+
+    def __init__(self, source: str = "//192.168.1.167/titan"):
+        """Initialize Titan mount module.
+
+        Args:
+            source: CIFS share path. Hosts on the Locke storage network use
+                Mog's private address.
+        """
+        self.source = source
 
     def install(self):
         """Ensure cifs-utils is installed and mount point exists."""
@@ -67,12 +76,14 @@ class TitanMountModule(HostModule):
             )
             return
 
+        units = "/etc/systemd/system/mnt-titan"
+        mount_unit = _MOUNT_UNIT.format(source=self.source)
         server.shell(
             name="Deploy Titan mount and automount units",
             commands=[
-                f"cat > /etc/systemd/system/mnt-titan.mount <<'UNIT_EOF'\n{_MOUNT_UNIT}UNIT_EOF",
-                f"cat > /etc/systemd/system/mnt-titan.automount <<'UNIT_EOF'\n{_AUTOMOUNT_UNIT}UNIT_EOF",
-                "chmod 644 /etc/systemd/system/mnt-titan.mount /etc/systemd/system/mnt-titan.automount",
+                f"cat > {units}.mount <<'UNIT_EOF'\n{mount_unit}UNIT_EOF",
+                f"cat > {units}.automount <<'UNIT_EOF'\n{_AUTOMOUNT_UNIT}UNIT_EOF",
+                f"chmod 644 {units}.mount {units}.automount",
             ],
             _sudo=True,
         )

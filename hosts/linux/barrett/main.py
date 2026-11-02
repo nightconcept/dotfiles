@@ -5,7 +5,7 @@ Deploy with: just barrett
 
 Pre-requisites (place on host before running):
   /root/.nordvpn-token              — NordVPN login token
-  /etc/mog-secrets                  — CIFS credentials for //192.168.1.167/titan
+  /etc/mog-secrets                  — CIFS credentials for the Titan share on Mog
   /root/.qbittorrent-password       — qBittorrent plain-text password (autoremove)
   /root/.qbittorrent-password-hash  — qBittorrent PBKDF2 hash (WebUI)
 """
@@ -17,12 +17,15 @@ from modules.linux.services.ipfilter import IPFilterModule
 from modules.linux.services.nordvpn import NordVPNModule
 from modules.linux.services.qbittorrent import QBittorrentModule
 from modules.linux.services.sabnzbd import SABnzbdModule
+from modules.linux.services.storage_interface import StorageInterfaceModule
 from modules.linux.services.titan_mount import TitanMountModule
 from modules.linux.services.unattended_upgrades import UnattendedUpgradesModule
 
 home_manager = HomeManagerModule(profile="server")
 nordvpn = NordVPNModule(user="danny")
-titan = TitanMountModule()
+# Titan through the isolated Locke storage network (plan 003).
+storage = StorageInterfaceModule(interface="ens19", address="10.77.0.30/24")
+titan = TitanMountModule(source="//10.77.0.10/titan")
 sabnzbd = SABnzbdModule()
 qbittorrent = QBittorrentModule(
     user="danny",
@@ -51,6 +54,7 @@ unattended_upgrades.deploy()
 
 home_manager.deploy()
 nordvpn.deploy()
+storage.deploy()
 titan.deploy()
 qbittorrent.deploy()
 sabnzbd.deploy()
