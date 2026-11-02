@@ -1,4 +1,4 @@
-# Aerith - Plex media server
+# Aerith - Plex and media services
 {
   config,
   pkgs,
@@ -33,12 +33,6 @@
     network = {
       networkManager = true;
       mdns = true;
-    };
-
-    services.plex = {
-      enable = true;
-      user = "danny";
-      openFirewall = true;
     };
 
     # Hardware for server
@@ -81,11 +75,17 @@
 
   modules.nixos.docker.containers = {
     jellyfin.enable = true;
+    # Replaces the NixOS Plex service; uses its data directory in place.
+    plex.enable = true;
     sonarr.enable = true;
     sonarr-anime.enable = true;
     radarr.enable = true;
     # Reads the *arr API keys from their local config.xml files.
     recyclarr.enable = true;
+    watchtower = {
+      enable = true;
+      schedule = "0 0 4 * * *";
+    };
   };
 
   modules.nixos.services.downloadSweeper = {
@@ -97,14 +97,20 @@
     enable = true;
     listenAddress = "192.168.1.118";
     expectedContainers = [
+      "plex"
       "jellyfin"
       "sonarr"
       "sonarr-anime"
       "radarr"
       "recyclarr"
+      "watchtower"
     ];
     mounts = ["/mnt/titan"];
     httpChecks = [
+      {
+        name = "Plex direct";
+        url = "http://127.0.0.1:32400/identity";
+      }
       {
         name = "Jellyfin direct";
         url = "http://127.0.0.1:8096/health";
@@ -123,11 +129,13 @@
       }
     ];
     afterUnits = [
+      "docker-container-plex.service"
       "docker-container-jellyfin.service"
       "docker-container-sonarr.service"
       "docker-container-sonarr-anime.service"
       "docker-container-radarr.service"
       "docker-container-recyclarr.service"
+      "docker-container-watchtower.service"
     ];
   };
 

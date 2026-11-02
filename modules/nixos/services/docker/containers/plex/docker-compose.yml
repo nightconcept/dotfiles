@@ -1,0 +1,22 @@
+services:
+  plex:
+    image: plexinc/pms-docker:latest
+    container_name: plex
+    restart: unless-stopped
+    # Host networking keeps LAN discovery (GDM, DLNA) and port 32400 as they
+    # were under the NixOS service.
+    network_mode: host
+    environment:
+      - TZ=${TZ}
+      - PLEX_UID=${PLEX_UID}
+      - PLEX_GID=${PLEX_GID}
+      # Leave ownership of the existing data directory unchanged.
+      - CHANGE_CONFIG_DIR_OWNERSHIP=false
+    volumes:
+      - ${CONFIG_PATH}:/config
+      - ${DATA_PATH}:/config/Library/Application Support/Plex Media Server
+      - ${TRANSCODE_PATH}:/transcode
+      # Same path as on the host so library locations in the database match.
+      - ${MEDIA_PATH}:${MEDIA_PATH}
+    labels:
+      - "com.centurylinklabs.watchtower.enable=${WATCHTOWER_ENABLE}"

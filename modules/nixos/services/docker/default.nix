@@ -23,6 +23,7 @@ in {
 
     # Media services
     ./containers/jellyfin
+    ./containers/plex
     ./containers/libbyrip-converter
 
     # *arr stack
