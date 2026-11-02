@@ -54,6 +54,9 @@
     security.sops.enable = true;
   };
 
+  # Docker runtime for media services moved from Rinoa (plan 003).
+  modules.nixos.docker.enable = true;
+
   services.openssh.enable = true;
 
   # System packages for server management
