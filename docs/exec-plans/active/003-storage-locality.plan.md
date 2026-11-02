@@ -1,6 +1,6 @@
 # Execution Plan: Storage locality and Aerith capacity
 
-Status: active — Phases 0, 1 and 3 done 2026-11-01; Phase 2 (private network) and Phase 4 pending
+Status: active — Phases 0–3 done (2026-11-01/02); Phase 4 pending
 Last reviewed: 2026-11-01
 Owner: danny
 
@@ -264,7 +264,7 @@ Never activate an obsolete source directory and silently discard newer writes.
 ### Phase 2: Add and prove the internal storage network
 
 **Depends on:** Phase 0 network inventory. Independent of the Aerith disk decision.
-**Status:** [ ] deferred. Mog network changes can interrupt Plex SMB sessions; apply when Plex is idle.
+**Status:** [x] done 2026-11-02. Details in [network.md](../../network.md#locke-storage-network).
 
 **Files and external configuration:**
 
@@ -440,4 +440,9 @@ Do not add unrelated documentation infrastructure.
   - The originals stay in place and inactive: `/mnt/titan/docker/forgejo`, `/mnt/titan/docker/obsidian-livesync/data`, and the Jellyfin and arr configs on Rinoa.
   - Revert: `sudo bash ~/storage-locality/revert-aerith-1.sh` on Aerith, then `sudo bash ~/storage-locality/revert-rinoa-2.sh` on Rinoa. Rollback generations are pinned in `~/storage-locality/`. Prowlarr and Seerr settings from before the cutover are in `~/storage-locality/app-settings-before/` on Rinoa (mode 0600).
 - 2026-11-01: Sonarr Anime and Radarr qBittorrent download clients changed from the stale `192.168.1.117` to `192.168.1.112` through their APIs (connection tests passed). The previous settings are in `~/storage-locality/app-settings-before/` on Aerith (mode 0600). The sweeper default also changed to `.112`; it takes effect at the next Aerith rebuild.
-- Open: Phase 2 private network. Recurring local Forgejo/CouchDB backups to Titan. Remove the old copies after seven days (from 2026-11-08), by explicit decision only.
+- 2026-11-02: Phase 2 done with Plex idle, commits `a9d79a1`, `54c760f`. `vmbr3` was created on Locke, and NICs were hot-added to Mog, Aerith and Barrett (no reboots). Mog's address persists through OMV; its 9 SMB sessions survived.
+  - Aerith: the switch left `network-addresses-ens19.service` unstarted, so the mount hung on the LAN route. Starting the unit by hand fixed it.
+  - Barrett: its CIFS credentials moved from `/root/.titan-credentials` to the shared `/etc/mog-secrets`. NordVPN kill switch still enabled and connected.
+  - Packet capture during a 200 MiB read: 12,709 packets on `tap105i1` and `tap100i2`, none on `enp5s0`, `enp6s0f0` or `enp6s0f1`.
+  - Aerith → Titan, LAN versus private: ping 25.5 ms avg (7.9–34.4) → 0.27 ms avg. A `find` of Movies at depth 2 (2,942 entries) took minutes and was abandoned on the LAN → 1.3 s. Direct read 140–152 MB/s. Aerith I/O pressure avg10 51 % → 0 %, load 14 → 0.3.
+- Open: Recurring local Forgejo/CouchDB backups to Titan. Remove the old copies after seven days (from 2026-11-08), by explicit decision only.

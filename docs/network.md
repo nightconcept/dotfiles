@@ -25,11 +25,11 @@ VM IDs are local to each hypervisor.
 
 | Hypervisor | VM ID | Name | Bridges |
 |---|---|---|---|
-| Locke | 100 | mog | vmbr0, vmbr2 |
-| Locke | 102 | barrett | vmbr0 |
+| Locke | 100 | mog | vmbr0, vmbr2, vmbr3 |
+| Locke | 102 | barrett | vmbr0, vmbr3 |
 | Locke | 103 | garnet | vmbr0 |
 | Locke | 104 | vincent | vmbr0 |
-| Locke | 105 | aerith | vmbr1 |
+| Locke | 105 | aerith | vmbr1, vmbr3 |
 | Valefor | 100 | yuffie (stopped) | vmbr0 |
 | Valefor | 101 | rinoa | vmbr0 |
 
@@ -40,11 +40,33 @@ VM IDs are local to each hypervisor.
 | Locke | vmbr0 | enp5s0 | 192.168.1.188/24 | Mog, Barrett, Garnet, Vincent |
 | Locke | vmbr1 | enp6s0f0 | none | Aerith |
 | Locke | vmbr2 | enp6s0f1 | none | Mog's second interface |
+| Locke | vmbr3 | none | none | Isolated storage network: Mog, Aerith, Barrett |
 | Valefor | vmbr0 | enp1s0 | 192.168.1.119/24 | Rinoa, Yuffie |
 
 Both management bridges use gateway `192.168.1.1`.
 Locke's bridges use untagged VLAN 1. Physical switch connections are not documented.
 Valefor's management bridge MAC is `68:1d:ef:3a:f0:75`.
+
+### Locke storage network
+
+`vmbr3` has no physical port, so SMB between these guests stays in Locke's memory and never reaches the switch.
+It has no gateway, DHCP, IPv6, or forwarding. Rinoa and Terra still mount Titan over the LAN (`192.168.1.167`).
+
+| Guest | Interface | MAC | Address | Persistence |
+|---|---|---|---|---|
+| mog | ens20 (net2) | BC:24:11:44:F3:4F | 10.77.0.10/24 | OMV `setEthernetIface` + `omv-salt deploy run systemd-networkd` (`/etc/netplan/20-openmediavault-ens20.yaml`) |
+| aerith | ens19 (net1) | BC:24:11:5A:8B:14 | 10.77.0.20/24 | `hosts/nixos/aerith/default.nix` |
+| barrett | ens19 (net1) | BC:24:11:99:82:8A | 10.77.0.30/24 | `StorageInterfaceModule` in `hosts/linux/barrett/main.py` |
+
+Aerith and Barrett mount `//10.77.0.10/titan`. All guest NICs have `firewall=0`.
+Locke's `/etc/network/interfaces` backup from before `vmbr3`: `/root/interfaces.pre-vmbr3.20261101-221322`.
+Do not edit Mog's netplan by hand; OMV regenerates it and removes unmanaged files.
+
+When `ens19` is added to a running Aerith, `nixos-rebuild switch` does not start `network-addresses-ens19.service` (it is wanted by the device, which already exists).
+Start it by hand once: `sudo systemctl start network-addresses-ens19.service`. It starts on its own at boot.
+
+Rollback: point the host back to `//192.168.1.167/titan` (Aerith `titanSource`, Barrett `TitanMountModule` source) and deploy with consumers stopped.
+Then `qm set <vmid> --delete net<N>` on Locke and restore the interfaces backup.
 
 ### Locke storage
 
@@ -168,7 +190,8 @@ Live route and packet checks on 2026-10-24 showed these paths:
 | Reverse proxy | Rinoa Traefik → Docker backend or another LAN host |
 | Barrett internet access | Policy routing table 205 → `nordlynx` → NordVPN server, through the R7800 |
 | Barrett LAN access | `ens18` → LAN destination, outside `nordlynx` |
-| Aerith storage access | Aerith → Mog over SMB (TCP 445), outside Traefik |
+| Aerith and Barrett storage access | `10.77.0.20`/`.30` → Mog `10.77.0.10` over SMB (TCP 445) on `vmbr3`; no physical NIC |
+| Rinoa and Terra storage access | LAN → Mog `192.168.1.167` over SMB (TCP 445) |
 
 Barrett used NordVPN endpoint `103.219.20.242` during this check. The endpoint can change.
 The qBittorrent backend responded at `192.168.1.112:8112`. The old `.117:8112` backend timed out.
