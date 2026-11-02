@@ -445,4 +445,5 @@ Do not add unrelated documentation infrastructure.
   - Barrett: its CIFS credentials moved from `/root/.titan-credentials` to the shared `/etc/mog-secrets`. NordVPN kill switch still enabled and connected.
   - Packet capture during a 200 MiB read: 12,709 packets on `tap105i1` and `tap100i2`, none on `enp5s0`, `enp6s0f0` or `enp6s0f1`.
   - Aerith → Titan, LAN versus private: ping 25.5 ms avg (7.9–34.4) → 0.27 ms avg. A `find` of Movies at depth 2 (2,942 entries) took minutes and was abandoned on the LAN → 1.3 s. Direct read 140–152 MB/s. Aerith I/O pressure avg10 51 % → 0 %, load 14 → 0.3.
-- Open: Recurring local Forgejo/CouchDB backups to Titan. Remove the old copies after seven days (from 2026-11-08), by explicit decision only.
+- 2026-11-02: Decision: no recurring backups of the local Forgejo/CouchDB data to Titan.
+- Open: Phase 4. Remove the old copies after seven days (from 2026-11-08), by explicit decision only.
