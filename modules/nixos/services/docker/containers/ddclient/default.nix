@@ -56,6 +56,10 @@ in {
         EOF
 
         # Copy and process config template
+        # This file contains the provider password and ddclient runs as root.
+        umask 077
+        touch ${cfg.configPath}/ddclient.conf
+        chmod 0600 ${cfg.configPath}/ddclient.conf
         ${lib.optionalString (builtins.pathExists ./config/ddclient.conf.template) ''
           if [ -n "${toString cfg.passwordFile}" ] && [ -f "${cfg.passwordFile}" ]; then
             PASSWORD=$(cat ${cfg.passwordFile})
