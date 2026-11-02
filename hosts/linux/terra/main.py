@@ -1,13 +1,11 @@
 from modules.linux.ai.module import AIStackModule
 from modules.linux.programs.books.module import BooksModule
-from modules.linux.programs.budget.module import BudgetModule
 from modules.linux.programs.colab import ColabModule
 from modules.linux.programs.docker import DockerModule
 from modules.linux.programs.foreman.module import ForemanModule
 from modules.linux.programs.home_manager import HomeManagerModule
 from modules.linux.programs.huggingface import HuggingFaceModule
 from modules.linux.programs.koreader_sync.module import KoreaderSyncModule
-from modules.linux.programs.ledger.module import LedgerModule
 from modules.linux.programs.paseo.module import PaseoModule
 from modules.linux.programs.pinchflat.module import PinchflatModule
 from modules.linux.programs.ssh import SSHModule
@@ -28,8 +26,6 @@ wifi_power_save = WiFiPowerSaveModule()
 wifi_watchdog = WiFiWatchdogModule()
 docker = DockerModule()
 books = BooksModule()
-budget = BudgetModule()
-ledger = LedgerModule()
 kosync = KoreaderSyncModule()
 paseo = PaseoModule(port=6767)
 pinchflat = PinchflatModule()
@@ -53,8 +49,6 @@ wifi_watchdog.deploy()
 docker.deploy()
 
 # Deploy services
-budget.deploy()
-ledger.deploy()
 books.deploy()
 kosync.deploy()
 paseo.deploy()

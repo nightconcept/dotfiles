@@ -173,24 +173,6 @@ http:
       tls: {}
       service: evebox
 
-    budget:
-      entryPoints:
-        - "https"
-      rule: "Host(`budget.local.solivan.dev`)"
-      middlewares:
-        - secured
-      tls: {}
-      service: budget
-
-    ledger:
-      entryPoints:
-        - "https"
-      rule: "Host(`ledger.local.solivan.dev`)"
-      middlewares:
-        - secured
-      tls: {}
-      service: ledger
-
 #endregion
 #region services
   services:
@@ -291,18 +273,6 @@ http:
       loadBalancer:
         servers:
           - url: "http://192.168.1.185:8070"
-        passHostHeader: true
-
-    budget:
-      loadBalancer:
-        servers:
-          - url: "http://192.168.1.173:5006"
-        passHostHeader: true
-
-    ledger:
-      loadBalancer:
-        servers:
-          - url: "http://192.168.1.173:7500"
         passHostHeader: true
 
 #endregion

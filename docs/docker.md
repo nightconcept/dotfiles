@@ -112,46 +112,44 @@ recreation of the container left behind an anonymous `/var/lib/docker` volume
 of 2-10 GB. `forgejo-dind-prune.timer` runs weekly and removes images that
 have not been used for 7 days.
 
-## Terra Docker Compose Stacks
+## Finance services on Rinoa
 
-Actual Budget and Paisa run on Terra as separate pyinfra-managed Docker Compose
-stacks at `/opt/budget` and `/opt/ledger`.
-Actual Budget opts into Terra's Watchtower instance for automatic image updates.
+The `finance` module manages Actual Budget and Paisa on Rinoa.
+Both containers use the `proxy` network. Neither container publishes a host port.
+Traefik permits LAN and Headscale clients through `secured@file`.
 
-BookOrbit runs as a Nix-managed Docker service on Rinoa. It stores its
-application and PostgreSQL data in `/home/danny/docker/bookorbit/data` on
-Rinoa and mounts `/mnt/titan` as `/books`, exposing `/books/Books` and
-`/books/Audiobooks`. On its first start, BookOrbit creates a private `.env`
-file and generates its database password, JWT secret, and setup token.
+- `https://budget.local.solivan.dev` routes to Actual Budget, container port 5006.
+- `https://ledger.local.solivan.dev` routes to Paisa, container port 7500.
 
-BookOrbit is available at `https://books.local.solivan.dev` and
-`https://books.solivan.dev`.
+The image digests preserve the versions from Terra during migration.
+Update these digests separately after a backup.
 
-Actual Budget and Paisa use the following local URLs. Rinoa's Traefik instance
-is the TLS endpoint and proxies them to Terra:
+Persistent paths on Rinoa:
 
-- `https://budget.local.solivan.dev` -> Actual Budget on Terra port 5006
-- `https://ledger.local.solivan.dev` -> Paisa on Terra port 7500
+- `/home/danny/docker/actual/data` contains the Actual server and user files.
+- `/home/danny/docker/paisa/data` contains the Paisa configuration and database.
+- `/home/danny/git/ledger` contains the Ledger checkout.
 
-Persistent data stays on Terra:
+The module refuses to start without these migrated paths.
+The daily Ledger sync and monthly house valuation timers also move to Rinoa.
+The sync uses the existing SOPS password and SSH identity.
+A full Terra deployment no longer starts either finance stack.
 
-- `/home/danny/docker/actual/data` — Actual server and user files
-- `/home/danny/docker/paisa/data` — Paisa configuration and SQLite database
-- `/home/danny/git/ledger` — Ledger Git checkout, mounted read-write by Paisa
+Migration status and commands: [finance migration](finance-migration.md).
 
-Paisa uses `ledger/main.journal` from the `nightconcept/ledger` checkout and
-the hledger image. Back up all three directories before upgrades. Actual and
-Ledger transaction conversion is a separate future project; no synchronization
-occurs between these stacks.
+## Private Compose credentials
 
-Before deploying the Rinoa routes, create these Pi-hole local DNS records that
-resolve to Rinoa, not Terra:
+The Docker module creates each runtime `.env` file with mode `0600` before the service writes credentials.
+It also repairs existing file permissions when the service starts.
+This rule covers enabled container modules on both Rinoa and Vincent.
 
-- `budget.local.solivan.dev` -> `rinoa`
-- `ledger.local.solivan.dev` -> `rinoa`
+To repair existing files without a service restart, run:
 
-Verify both names resolve to Rinoa before using the HTTPS URLs. Traefik connects
-to the Terra backend at `192.168.1.173`.
+```sh
+ssh -t rinoa 'sudo find /var/lib/docker-containers -xdev -type f -name .env -exec chmod 0600 {} +' && ssh -t vincent 'sudo find /var/lib/docker-containers -xdev -type f -name .env -exec chmod 0600 {} +'
+```
+
+This command changes file permissions. It does not rotate credentials.
 
 ## Adding a New Service Checklist
 

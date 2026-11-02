@@ -95,11 +95,21 @@
       "seerr"
       "obsidian-livesync"
       "searxng"
+      "actual-budget"
+      "paisa"
     ];
     mounts = ["/mnt/titan"];
     # Terra-backed routes are monitored by Vincent's Uptime Kuma so a Terra
     # outage does not block Rinoa's NixOS activation.
     httpChecks = [
+      {
+        name = "Actual Budget routed";
+        url = "https://budget.local.solivan.dev/";
+      }
+      {
+        name = "Paisa routed";
+        url = "https://ledger.local.solivan.dev/";
+      }
       {
         name = "Portainer direct";
         url = "http://127.0.0.1:9000/api/status";
@@ -168,6 +178,7 @@
       }
     ];
     afterUnits = [
+      "docker-container-finance.service"
       "docker-container-traefik.service"
       "docker-container-watchtower.service"
       "docker-container-crowdsec.service"
@@ -197,6 +208,7 @@
 
   # Enable Docker containers
   modules.nixos.docker.containers = {
+    finance.enable = true;
     security-stack = {
       enable = true;
       role = "sensor";

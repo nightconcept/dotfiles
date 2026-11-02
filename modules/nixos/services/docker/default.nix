@@ -16,6 +16,7 @@ in {
     ./containers/watchtower
     ./containers/crowdsec
     ./containers/security-stack
+    ./containers/finance
 
     # CI/CD runners
     ./containers/forgejo-runner
@@ -125,20 +126,42 @@ in {
       "d /var/lib/docker-containers 0755 root root -"
     ];
 
-    # Create proxy network for containers
-    systemd.services.docker-network-proxy = {
-      description = "Create Docker proxy network";
-      after = ["docker.service"];
-      requires = ["docker.service"];
-      wantedBy = ["multi-user.target"];
-      script = ''
-        ${pkgs.docker}/bin/docker network ls | grep -q proxy || \
-        ${pkgs.docker}/bin/docker network create proxy
-      '';
-      serviceConfig = {
-        Type = "oneshot";
-        RemainAfterExit = true;
+    # Compose reads these files as root. Create them privately before individual
+    # modules write credentials, and repair permissions on existing installations.
+    systemd.services =
+      lib.mapAttrs' (name: _: let
+        serviceName =
+          if name == "forgejo-runner"
+          then "forgejo-runners"
+          else if name == "uptime-kuma"
+          then "uptimekuma"
+          else name;
+        environmentFile = "/var/lib/docker-containers/${serviceName}/.env";
+      in
+        lib.nameValuePair "docker-container-${serviceName}" {
+          preStart = lib.mkBefore ''
+            if [ ! -e ${environmentFile} ]; then
+              ${pkgs.coreutils}/bin/install -D -m 0600 /dev/null ${environmentFile}
+            fi
+            ${pkgs.coreutils}/bin/chmod 0600 ${environmentFile}
+          '';
+        }) (lib.filterAttrs (_: container: container.enable or false) cfg.containers)
+      // {
+        # Create proxy network for containers
+        docker-network-proxy = {
+          description = "Create Docker proxy network";
+          after = ["docker.service"];
+          requires = ["docker.service"];
+          wantedBy = ["multi-user.target"];
+          script = ''
+            ${pkgs.docker}/bin/docker network ls | grep -q proxy || \
+            ${pkgs.docker}/bin/docker network create proxy
+          '';
+          serviceConfig = {
+            Type = "oneshot";
+            RemainAfterExit = true;
+          };
+        };
       };
-    };
   };
 }

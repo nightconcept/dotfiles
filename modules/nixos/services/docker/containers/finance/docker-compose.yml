@@ -1,0 +1,65 @@
+name: finance
+
+services:
+  actual-budget:
+    # Preserve the running version during migration.
+    image: actualbudget/actual-server@sha256:24645e971da6bb1a1f953d6859e307a0b29be1e8b4130a35b3220c209b5b860c
+    container_name: actual-budget
+    restart: unless-stopped
+    networks:
+      - proxy
+    volumes:
+      - /home/danny/docker/actual/data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "node scripts/health-check.js"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.budget.entrypoints=http"
+      - "traefik.http.routers.budget.rule=Host(`budget.local.solivan.dev`)"
+      - "traefik.http.routers.budget.middlewares=https-redirectscheme@file"
+      - "traefik.http.routers.budget-secure.entrypoints=https"
+      - "traefik.http.routers.budget-secure.rule=Host(`budget.local.solivan.dev`)"
+      - "traefik.http.routers.budget-secure.tls=true"
+      - "traefik.http.routers.budget-secure.middlewares=secured@file"
+      - "traefik.http.routers.budget-secure.service=budget"
+      - "traefik.http.services.budget.loadbalancer.server.port=5006"
+      - "traefik.docker.network=proxy"
+
+  paisa:
+    image: ghcr.io/nightconcept/paisa@sha256:2e79d2bd528fc76b8fd1a7adb11e1d66562ee223e34d835973cedec3ba1ad25c
+    container_name: paisa
+    restart: unless-stopped
+    networks:
+      - proxy
+    environment:
+      PAISA_CONFIG: /root/Documents/paisa/paisa.yaml
+      TZ: America/Los_Angeles
+    volumes:
+      - /home/danny/docker/paisa/data:/root/Documents/paisa
+      - /home/danny/git/ledger:/ledger
+    healthcheck:
+      test: ["CMD-SHELL", "wget --quiet --spider http://localhost:7500/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ledger.entrypoints=http"
+      - "traefik.http.routers.ledger.rule=Host(`ledger.local.solivan.dev`)"
+      - "traefik.http.routers.ledger.middlewares=https-redirectscheme@file"
+      - "traefik.http.routers.ledger-secure.entrypoints=https"
+      - "traefik.http.routers.ledger-secure.rule=Host(`ledger.local.solivan.dev`)"
+      - "traefik.http.routers.ledger-secure.tls=true"
+      - "traefik.http.routers.ledger-secure.middlewares=secured@file"
+      - "traefik.http.routers.ledger-secure.service=ledger"
+      - "traefik.http.services.ledger.loadbalancer.server.port=7500"
+      - "traefik.docker.network=proxy"
+
+networks:
+  proxy:
+    external: true
