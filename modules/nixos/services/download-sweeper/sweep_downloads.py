@@ -542,7 +542,7 @@ def main() -> None:
     )
     parser.add_argument(
         "--qbittorrent-host",
-        default="192.168.1.117",
+        default="192.168.1.112",
         help="qBittorrent host",
     )
     parser.add_argument(

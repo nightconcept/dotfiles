@@ -79,7 +79,7 @@ in {
 
     qbittorrentHost = mkOption {
       type = types.str;
-      default = "192.168.1.117";
+      default = "192.168.1.112";
       description = "qBittorrent WebUI host";
     };
 
