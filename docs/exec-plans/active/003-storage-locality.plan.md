@@ -1,6 +1,6 @@
 # Execution Plan: Storage locality and Aerith capacity
 
-Status: active — planning complete, implementation pending
+Status: active — Phases 0, 1 and 3 done 2026-11-01; Phase 2 (private network) and Phase 4 pending
 Last reviewed: 2026-11-01
 Owner: danny
 
@@ -186,7 +186,7 @@ No gateway or forwarding between Aerith interfaces is necessary.
 ### Phase 0: Refresh evidence and decide Aerith capacity
 
 **Depends on:** none.
-**Status:** [ ] not started.
+**Status:** [x] done 2026-11-01.
 
 **Files:** This plan and its research document.
 
@@ -223,7 +223,7 @@ ssh rinoa 'df -k /; docker system df'
 ### Phase 1: Remove active application state from SMB on Rinoa
 
 **Depends on:** refreshed evidence. Independent of the Aerith capacity decision.
-**Status:** [ ] not started.
+**Status:** [x] done 2026-11-01.
 
 **Files to change:**
 
@@ -264,7 +264,7 @@ Never activate an obsolete source directory and silently discard newer writes.
 ### Phase 2: Add and prove the internal storage network
 
 **Depends on:** Phase 0 network inventory. Independent of the Aerith disk decision.
-**Status:** [ ] not started.
+**Status:** [ ] deferred. Mog network changes can interrupt Plex SMB sessions; apply when Plex is idle.
 
 **Files and external configuration:**
 
@@ -306,7 +306,7 @@ Keep the original LAN paths functional for Rinoa, Traefik, and SSH.
 ### Phase 3: Prepare Aerith and migrate media applications in small batches
 
 **Depends on:** Phase 0 capacity decision and Phase 2 network checks.
-**Status:** [ ] not started. Block application migration until capacity work is complete.
+**Status:** [x] done 2026-11-01 (all services in one window).
 
 **Files to change:**
 
@@ -429,3 +429,14 @@ Do not add unrelated documentation infrastructure.
 - 2026-11-01: Recorded user exceptions and Aerith storage concern.
 - Next session: read the bootstrap files, refresh Phase 0, then present concrete Aerith capacity choices.
 - Forgejo local storage can proceed separately after implementation authorization.
+- 2026-11-01: Capacity decision. `Plex Media Server.new` (20.9 GB, unchanged since 2024-03-24) was archived to Titan, verified with `tar --compare`, and deleted. Aerith had 55.5 GiB free before the move and 42 GiB after it, which meets the 30 GiB reserve.
+- 2026-11-01: Cutover in one window, about 21:16–22:20 PST. No VM was shut down. Plex stayed active. Commit `7bbeff1`.
+  - Forgejo `/data` moved to `/var/lib/docker-containers/forgejo/data` on Rinoa through a Mog tar. All files matched the Mog SHA-256 manifest. A Zekrom clone took 0.35 s.
+  - CouchDB data moved to `/var/lib/docker-containers/obsidian-livesync/data` (checksum-verified).
+  - Jellyfin, Sonarr, Sonarr Anime, Radarr, Recyclarr and the download sweeper run on Aerith with the image digests Rinoa ran. Configs were pre-copied, then a final copy ran with the services stopped.
+  - Recyclarr moved too, because it reads the arr API keys from local `config.xml` files.
+  - Rinoa Traefik routes to Aerith through the file provider. Prowlarr applications and Seerr servers point to `192.168.1.118`; arr indexers point to `http://192.168.1.110:9696`.
+- Backups and rollback: `/mnt/titan/Backups/storage-locality-2026-11-01/` holds configs, the Plex archive, the Forgejo tar, its manifest and a `pg_dump`, and the cutover and revert scripts.
+  - The originals stay in place and inactive: `/mnt/titan/docker/forgejo`, `/mnt/titan/docker/obsidian-livesync/data`, and the Jellyfin and arr configs on Rinoa.
+  - Revert: `sudo bash ~/storage-locality/revert-aerith-1.sh` on Aerith, then `sudo bash ~/storage-locality/revert-rinoa-2.sh` on Rinoa. Rollback generations are pinned in `~/storage-locality/`. Prowlarr and Seerr settings from before the cutover are in `~/storage-locality/app-settings-before/` on Rinoa (mode 0600).
+- Open: Sonarr Anime, Radarr and the sweeper use the stale qBittorrent address `192.168.1.117`. This predates the move; the correct address is `.112`. Phase 2 private network. Recurring local Forgejo/CouchDB backups to Titan. Remove the old copies after seven days (from 2026-11-08), by explicit decision only.

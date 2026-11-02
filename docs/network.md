@@ -81,11 +81,11 @@ Cloudflare tunnel ingress configuration resides outside this repository.
 
 | Host | IP | Role | Runs on |
 |---|---|---|---|
-| **rinoa** | 192.168.1.110 | Docker host: **Traefik reverse proxy**, Prowlarr, Immich, CrowdSec, Obsidian LiveSync, BookOrbit | Valefor |
+| **rinoa** | 192.168.1.110 | Docker host: **Traefik reverse proxy**, Forgejo, Prowlarr, Seerr, CrowdSec, Obsidian LiveSync, BookOrbit | Valefor |
 | **mog** | 192.168.1.167 | SMB file server | Locke |
 | **vincent** | 192.168.1.185 | CI/CD runner (Forgejo/GitHub runner), Uptime Kuma (3001), Gotify (8070) | Locke |
 | **barrett** | 192.168.1.112 (reserved) | VPN torrent server (qBittorrent + NordVPN) | Locke |
-| **aerith** | 192.168.1.118 | Plex media server | Locke (VM 105) |
+| **aerith** | 192.168.1.118 | Plex, Jellyfin (8096), Sonarr (8989), Sonarr Anime (8990), Radarr (7878), Recyclarr, download sweeper | Locke (VM 105) |
 | **terra** | 192.168.1.173 (Wi-Fi DHCP; MAC `8c:86:dd:77:63:28`) | Ubuntu LLM inference server, pyinfra-managed | bare metal, not a VM |
 
 Barrett's `ens18` has `192.168.1.112`. Its former `192.168.1.117` address no longer responds.
