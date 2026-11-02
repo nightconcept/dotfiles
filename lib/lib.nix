@@ -1,36 +1,41 @@
 {inputs}: let
   inherit (inputs) nixpkgs home-manager nix-darwin vscode-server stylix spicetify-nix sops-nix disko lix-module;
+
+  # Module list for full NixOS desktops. tests/nixos/tidus-boot.nix boots the same list in a VM.
+  nixosDesktopModules = hostname: [
+    ../modules/nixos
+    ../hosts/nixos/${hostname}
+    home-manager.nixosModules.home-manager
+    stylix.nixosModules.stylix
+    sops-nix.nixosModules.sops
+    {
+      home-manager = {
+        useGlobalPkgs = true;
+        useUserPackages = true;
+        users.danny.home.stateVersion = "23.11";
+        backupFileExtension = "backup";
+        users.danny.imports = [
+          ../home
+          stylix.homeModules.stylix
+          {stylix.overlays.enable = false;}
+          spicetify-nix.homeManagerModules.default
+          sops-nix.homeManagerModules.sops
+          vscode-server.homeModules.default
+        ];
+        extraSpecialArgs = {
+          inherit inputs;
+          inherit hostname;
+        };
+      };
+    }
+  ];
 in {
+  inherit nixosDesktopModules;
+
   mkNixos = pkgs: hostname:
     pkgs.lib.nixosSystem {
       specialArgs = {inherit inputs;};
-      modules = [
-        ../modules/nixos
-        ../hosts/nixos/${hostname}
-        home-manager.nixosModules.home-manager
-        stylix.nixosModules.stylix
-        sops-nix.nixosModules.sops
-        {
-          home-manager = {
-            useGlobalPkgs = true;
-            useUserPackages = true;
-            users.danny.home.stateVersion = "23.11";
-            backupFileExtension = "backup";
-            users.danny.imports = [
-              ../home
-              stylix.homeModules.stylix
-              {stylix.overlays.enable = false;}
-              spicetify-nix.homeManagerModules.default
-              sops-nix.homeManagerModules.sops
-              vscode-server.homeModules.default
-            ];
-            extraSpecialArgs = {
-              inherit inputs;
-              inherit hostname;
-            };
-          };
-        }
-      ];
+      modules = nixosDesktopModules hostname;
     };
 
   mkNixosServer = pkgs: hostname:

@@ -11,6 +11,7 @@ Host-specific configs live in `hosts/nixos/<hostname>/` and `hosts/darwin/<hostn
 | `barrett` | VPN torrent server (NordVPN) |
 | `rinoa` | General purpose server (Docker services) |
 | `vincent` | CI/CD runner (Docker + Forgejo runner) |
+| `yuffie` | Nightly flake update builder and binary cache ([docs](../docs/yuffie.md)) |
 
 ## Darwin Hosts
 

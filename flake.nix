@@ -88,7 +88,21 @@
       barrett = lib.mkNixosServer inputs.nixpkgs "barrett";
       rinoa = lib.mkNixosServer inputs.nixpkgs "rinoa";
       vincent = lib.mkNixosServer inputs.nixpkgs "vincent";
+      yuffie = lib.mkNixosServer inputs.nixpkgs "yuffie";
     };
+
+    # Real builds of every active NixOS host, plus a VM boot of tidus. Yuffie builds these
+    # nightly before it pushes a flake update (docs/yuffie.md). CI only evaluates them.
+    checks.x86_64-linux =
+      nixpkgs.lib.genAttrs ["tidus" "aerith" "rinoa" "vincent" "yuffie"] (
+        host: self.nixosConfigurations.${host}.config.system.build.toplevel
+      )
+      // {
+        tidus-boot = import ./tests/nixos/tidus-boot.nix {
+          inherit pkgs inputs;
+          modules = lib.nixosDesktopModules "tidus";
+        };
+      };
 
     darwinConfigurations = {
       waver = lib.mkDarwin inputs.nixpkgs "waver";

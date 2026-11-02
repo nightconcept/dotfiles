@@ -7,7 +7,7 @@ LAN: `192.168.1.0/24`. Netgear R7800 router at `192.168.1.1`, Pi-hole DNS at `19
 | Host | IP | Web UI | Hosts (VMs) |
 |---|---|---|---|
 | **Locke** | 192.168.1.188 | https://192.168.1.188:8006 | mog, vincent, barrett, aerith, garnet |
-| **Valefor** | 192.168.1.119 | https://192.168.1.119:8006 | rinoa (yuffie stopped) |
+| **Valefor** | 192.168.1.119 | https://192.168.1.119:8006 | rinoa, yuffie (stopped until provisioned; see [Yuffie](yuffie.md)) |
 
 Locke and Valefor are separate standalone Proxmox nodes.
 Both accept key-based SSH as root:
@@ -30,7 +30,7 @@ VM IDs are local to each hypervisor.
 | Locke | 103 | garnet | vmbr0 |
 | Locke | 104 | vincent | vmbr0 |
 | Locke | 105 | aerith | vmbr1, vmbr3 |
-| Valefor | 100 | yuffie (stopped) | vmbr0 |
+| Valefor | 100 | yuffie (stopped until provisioned) | vmbr0 |
 | Valefor | 101 | rinoa | vmbr0 |
 
 ### Bridges and physical interfaces

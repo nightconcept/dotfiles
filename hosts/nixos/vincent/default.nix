@@ -155,7 +155,7 @@ in {
     gotify = {
       enable = true;
       listenAddress = "192.168.1.185";
-      applications = ["uptime-kuma" "watchtower" "hermes-alerts"];
+      applications = ["uptime-kuma" "watchtower" "hermes-alerts" "flake-updater"];
       diskAlert.enable = true;
     };
 

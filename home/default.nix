@@ -55,6 +55,14 @@
       extraConfig = {};
     };
 
+    yuffie = {
+      profiles = [./profiles/server.nix];
+      username = "danny";
+      homeDirectory = "/home/danny";
+      extraImports = [];
+      extraConfig = {};
+    };
+
     terra = {
       profiles = [./profiles/server.nix];
       username = "danny";

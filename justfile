@@ -3,9 +3,9 @@
 default:
     @just --list
 
-# Check all flake configurations
+# Evaluate all flake configurations (yuffie builds them nightly)
 check:
-    NIXPKGS_ALLOW_UNFREE=1 nix flake check --impure
+    NIXPKGS_ALLOW_UNFREE=1 nix flake check --impure --no-build
 
 # Check home-manager configurations only
 check-home:

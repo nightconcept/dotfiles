@@ -22,7 +22,8 @@ jobs:
           git checkout "${GITHUB_SHA}"
 
       - name: Flake check
-        run: nix flake check --all-systems
+        # Evaluate only: yuffie builds the checks nightly (docs/yuffie.md).
+        run: nix flake check --all-systems --no-build
 
       - name: Home configurations check
         run: |

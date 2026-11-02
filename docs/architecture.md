@@ -59,6 +59,7 @@ The home configuration uses a profile-based system where `home/default.nix` sele
 - **barrett**: `base + server` (VPN torrent server) — deployed via `desktop` flake profile
 - **rinoa**: `base + server` (Docker services)
 - **vincent**: `base + server` (CI/CD runner with Docker)
+- **yuffie**: `base + server` (nightly flake update builder)
 - **waver**: `base + darwin-laptop` (MacBook Pro M1)
 - **merlin**: `base + darwin-desktop` (Mac Mini M1)
 - **terra**: `base + desktop` (LLM inference server) — deployed via `desktop` flake profile
@@ -79,6 +80,7 @@ See [Network](network.md) for direct access, VM placement, bridge topology, and 
 - `aerith` - Plex media server
 - `rinoa` - General purpose server (Docker services)
 - `vincent` - CI/CD runner host with Docker and Forgejo runner
+- `yuffie` - Nightly flake update builder and binary cache; see [Yuffie](yuffie.md)
 
 ### Active Darwin Hosts
 - `waver` - MacBook Pro M1

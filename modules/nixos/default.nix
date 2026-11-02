@@ -16,6 +16,7 @@
     ./programs
     ./services/docker
     ./services/download-sweeper
+    ./services/flake-updater
     ./services/openssh
     ./security
   ];
