@@ -5,7 +5,7 @@ Deploy with: just barrett
 
 Pre-requisites (place on host before running):
   /root/.nordvpn-token              — NordVPN login token
-  /root/.titan-credentials          — CIFS credentials for the Titan share on Mog
+  /etc/mog-secrets                  — CIFS credentials for the Titan share on Mog
   /root/.qbittorrent-password       — qBittorrent plain-text password (autoremove)
   /root/.qbittorrent-password-hash  — qBittorrent PBKDF2 hash (WebUI)
 """
@@ -25,7 +25,7 @@ home_manager = HomeManagerModule(profile="server")
 nordvpn = NordVPNModule(user="danny")
 # Titan through the isolated Locke storage network (plan 003).
 storage = StorageInterfaceModule(interface="ens19", address="10.77.0.30/24")
-titan = TitanMountModule(source="//10.77.0.10/titan", credentials="/root/.titan-credentials")
+titan = TitanMountModule(source="//10.77.0.10/titan")
 sabnzbd = SABnzbdModule()
 qbittorrent = QBittorrentModule(
     user="danny",

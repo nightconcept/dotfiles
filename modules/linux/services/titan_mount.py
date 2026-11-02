@@ -16,7 +16,7 @@ Wants=network-online.target
 What={source}
 Where=/mnt/titan
 Type=cifs
-Options=credentials={credentials},uid=1000,gid=100,iocharset=utf8,nofail,_netdev,x-systemd.automount,x-systemd.mount-timeout=10
+Options=credentials=/etc/mog-secrets,uid=1000,gid=100,iocharset=utf8,nofail,_netdev,x-systemd.automount,x-systemd.mount-timeout=10
 
 [Install]
 WantedBy=multi-user.target
@@ -39,20 +39,14 @@ WantedBy=multi-user.target
 class TitanMountModule(HostModule):
     """Manages the Titan CIFS network drive automount."""
 
-    def __init__(
-        self,
-        source: str = "//192.168.1.167/titan",
-        credentials: str = "/etc/mog-secrets",
-    ):
+    def __init__(self, source: str = "//192.168.1.167/titan"):
         """Initialize Titan mount module.
 
         Args:
             source: CIFS share path. Hosts on the Locke storage network use
                 Mog's private address.
-            credentials: CIFS credentials file on the host.
         """
         self.source = source
-        self.credentials = credentials
 
     def install(self):
         """Ensure cifs-utils is installed and mount point exists."""
@@ -72,18 +66,18 @@ class TitanMountModule(HostModule):
 
     def service(self):
         """Deploy systemd mount and automount units."""
-        credentials_file = host.get_fact(File, path=self.credentials, _sudo=True)
+        credentials_file = host.get_fact(File, path="/etc/mog-secrets", _sudo=True)
         if not credentials_file:
             server.shell(
                 name="Warn when titan credentials are missing",
                 commands=[
-                    f"echo 'WARNING: {self.credentials} not found - skipping titan mount setup'"
+                    "echo 'WARNING: /etc/mog-secrets not found - skipping titan mount setup'"
                 ],
             )
             return
 
         units = "/etc/systemd/system/mnt-titan"
-        mount_unit = _MOUNT_UNIT.format(source=self.source, credentials=self.credentials)
+        mount_unit = _MOUNT_UNIT.format(source=self.source)
         server.shell(
             name="Deploy Titan mount and automount units",
             commands=[
