@@ -54,8 +54,61 @@
     security.sops.enable = true;
   };
 
-  # Docker runtime for media services moved from Rinoa (plan 003).
+  # Media services moved from Rinoa (plan 003). Their state is on local disk;
+  # media and downloads stay on Titan.
   modules.nixos.docker.enable = true;
+
+  modules.nixos.docker.containers = {
+    jellyfin.enable = true;
+    sonarr.enable = true;
+    sonarr-anime.enable = true;
+    radarr.enable = true;
+    # Reads the *arr API keys from their local config.xml files.
+    recyclarr.enable = true;
+  };
+
+  modules.nixos.services.downloadSweeper = {
+    enable = true;
+    schedule = "hourly";
+  };
+
+  modules.nixos.docker.healthCheck = {
+    enable = true;
+    listenAddress = "192.168.1.118";
+    expectedContainers = [
+      "jellyfin"
+      "sonarr"
+      "sonarr-anime"
+      "radarr"
+      "recyclarr"
+    ];
+    mounts = ["/mnt/titan"];
+    httpChecks = [
+      {
+        name = "Jellyfin direct";
+        url = "http://127.0.0.1:8096/health";
+      }
+      {
+        name = "Sonarr direct";
+        url = "http://127.0.0.1:8989/ping";
+      }
+      {
+        name = "Sonarr Anime direct";
+        url = "http://127.0.0.1:8990/ping";
+      }
+      {
+        name = "Radarr direct";
+        url = "http://127.0.0.1:7878/ping";
+      }
+    ];
+    afterUnits = [
+      "docker-container-jellyfin.service"
+      "docker-container-sonarr.service"
+      "docker-container-sonarr-anime.service"
+      "docker-container-radarr.service"
+      "docker-container-recyclarr.service"
+    ];
+  };
 
   services.openssh.enable = true;
 

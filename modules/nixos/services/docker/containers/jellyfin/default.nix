@@ -8,6 +8,8 @@
   cfg = config.modules.nixos.docker.containers.jellyfin;
   containerName = "jellyfin";
   containerPath = "/var/lib/docker-containers/${containerName}";
+  mediaPaths = lib.attrValues cfg.mediaPaths;
+  usesTitan = lib.any (lib.hasPrefix "/mnt/titan") mediaPaths;
 in {
   options.modules.nixos.docker.containers.jellyfin = {
     enable = lib.mkEnableOption "Jellyfin media server container";
@@ -97,11 +99,22 @@ in {
     # Jellyfin container service
     systemd.services."docker-container-${containerName}" = {
       description = "Jellyfin Media Server Container";
-      after = ["docker.service" "docker-network-proxy.service"];
-      requires = ["docker.service" "docker-network-proxy.service"];
+      after = ["docker.service" "docker-network-proxy.service"] ++ lib.optionals usesTitan ["mnt-titan.mount"];
+      requires = ["docker.service" "docker-network-proxy.service"] ++ lib.optionals usesTitan ["mnt-titan.mount"];
       wantedBy = ["multi-user.target"];
+      unitConfig = lib.mkIf usesTitan {
+        RequiresMountsFor = mediaPaths;
+      };
 
       preStart = ''
+        # A library scan against an empty mount point marks media as missing.
+        ${lib.optionalString usesTitan ''
+          if ! ${pkgs.util-linux}/bin/mountpoint -q /mnt/titan; then
+            echo "Titan is not mounted at /mnt/titan" >&2
+            exit 1
+          fi
+        ''}
+
         # Copy docker-compose.yml to runtime directory
         cp ${./docker-compose.yml} ${containerPath}/docker-compose.yml
 

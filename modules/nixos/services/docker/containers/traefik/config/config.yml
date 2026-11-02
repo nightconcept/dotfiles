@@ -173,6 +173,65 @@ http:
       tls: {}
       service: evebox
 
+    # Media services on Aerith. These replace the Docker labels they had on Rinoa.
+    jellyfin:
+      entryPoints:
+        - "http"
+      rule: "Host(`jellyfin.local.solivan.dev`) || Host(`jellyfin.solivan.dev`)"
+      middlewares:
+        - https-redirectscheme
+      service: jellyfin
+    jellyfin-secure:
+      entryPoints:
+        - "https"
+      rule: "Host(`jellyfin.local.solivan.dev`) || Host(`jellyfin.solivan.dev`)"
+      middlewares:
+        - crowdsec-bouncer@docker
+      tls: {}
+      service: jellyfin
+
+    sonarr:
+      entryPoints:
+        - "http"
+      rule: "Host(`sonarr.local.solivan.dev`)"
+      middlewares:
+        - https-redirectscheme
+      service: sonarr
+    sonarr-secure:
+      entryPoints:
+        - "https"
+      rule: "Host(`sonarr.local.solivan.dev`)"
+      tls: {}
+      service: sonarr
+
+    sonarr-anime:
+      entryPoints:
+        - "http"
+      rule: "Host(`sonarr-anime.local.solivan.dev`)"
+      middlewares:
+        - https-redirectscheme
+      service: sonarr-anime
+    sonarr-anime-secure:
+      entryPoints:
+        - "https"
+      rule: "Host(`sonarr-anime.local.solivan.dev`)"
+      tls: {}
+      service: sonarr-anime
+
+    radarr:
+      entryPoints:
+        - "http"
+      rule: "Host(`radarr.local.solivan.dev`)"
+      middlewares:
+        - https-redirectscheme
+      service: radarr
+    radarr-secure:
+      entryPoints:
+        - "https"
+      rule: "Host(`radarr.local.solivan.dev`)"
+      tls: {}
+      service: radarr
+
 #endregion
 #region services
   services:
@@ -273,6 +332,30 @@ http:
       loadBalancer:
         servers:
           - url: "http://192.168.1.185:8070"
+        passHostHeader: true
+
+    jellyfin:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.1.118:8096"
+        passHostHeader: true
+
+    sonarr:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.1.118:8989"
+        passHostHeader: true
+
+    sonarr-anime:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.1.118:8990"
+        passHostHeader: true
+
+    radarr:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.1.118:7878"
         passHostHeader: true
 
 #endregion

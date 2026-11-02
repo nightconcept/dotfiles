@@ -47,15 +47,9 @@
     storage.networkDrives = {
       enable = true;
       enableTitan = true;
-      # Disable automount timeout to prevent services from stopping
-      # Sonarr and Radarr require this mount, and the 60s timeout causes them to stop
+      # Disable automount timeout to prevent services from stopping.
+      # Containers that require this mount stop when the 60s timeout unmounts it.
       titanIdleTimeout = 0;
-    };
-
-    # Enable periodic download sweeper for /mnt/titan/downloads
-    services.downloadSweeper = {
-      enable = true;
-      schedule = "hourly";
     };
   };
 
@@ -79,11 +73,6 @@
       "vaultwarden"
       "prowlarr-abb"
       "prowlarr"
-      "sonarr"
-      "sonarr-anime"
-      "radarr"
-      "recyclarr"
-      "jellyfin"
       "audiobookshelf"
       "bookorbit"
       "libbyrip-converter"
@@ -125,22 +114,6 @@
       {
         name = "Prowlarr ABB direct";
         url = "http://127.0.0.1:9697/ping";
-      }
-      {
-        name = "Sonarr direct";
-        url = "http://127.0.0.1:8989/ping";
-      }
-      {
-        name = "Sonarr Anime direct";
-        url = "http://127.0.0.1:8990/ping";
-      }
-      {
-        name = "Radarr direct";
-        url = "http://127.0.0.1:7878/ping";
-      }
-      {
-        name = "Jellyfin direct";
-        url = "http://127.0.0.1:8096/health";
       }
       {
         name = "Forgejo routed";
@@ -189,11 +162,6 @@
       "docker-container-vaultwarden.service"
       "docker-container-prowlarr-abb.service"
       "docker-container-prowlarr.service"
-      "docker-container-sonarr.service"
-      "docker-container-sonarr-anime.service"
-      "docker-container-radarr.service"
-      "docker-container-recyclarr.service"
-      "docker-container-jellyfin.service"
       "docker-container-audiobookshelf.service"
       "docker-container-bookorbit.service"
       "docker-container-libbyrip-converter.service"
@@ -237,23 +205,23 @@
     vaultwarden.enable = true;
     prowlarr-abb.enable = true;
     prowlarr.enable = true;
-    sonarr.enable = true;
-    sonarr-anime.enable = true;
-    radarr.enable = true;
-    recyclarr.enable = true;
-    jellyfin.enable = true;
     audiobookshelf.enable = true;
     bookorbit.enable = true;
     libbyrip-converter.enable = true;
     nextcloud.enable = false;
     forgejo = {
       enable = true;
+      # Local disk; Titan SMB metadata latency stalled Git operations (plan 003).
+      remoteDataPath = "/var/lib/docker-containers/forgejo/data";
       signingKey = "1C5E44D950920340"; # Your GPG key ID
       signingName = "Danny Solivan";
       signingEmail = "dark@nightconcept.net";
     };
     zotero-webdav.enable = true;
-    obsidian-livesync.enable = true;
+    obsidian-livesync = {
+      enable = true;
+      dataPath = "/var/lib/docker-containers/obsidian-livesync/data";
+    };
     opengist.enable = true;
     headscale.enable = true;
     seerr.enable = true;
