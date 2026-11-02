@@ -151,7 +151,8 @@ in {
           key = "username";
           owner = "root";
           mode = "0400";
-          restartUnits = optional
+          restartUnits =
+            optional
             config.modules.nixos.docker.containers.obsidian-livesync.enable
             "docker-container-obsidian-livesync.service";
         };
@@ -160,7 +161,8 @@ in {
           key = "password";
           owner = "root";
           mode = "0400";
-          restartUnits = optional
+          restartUnits =
+            optional
             config.modules.nixos.docker.containers.obsidian-livesync.enable
             "docker-container-obsidian-livesync.service";
         };

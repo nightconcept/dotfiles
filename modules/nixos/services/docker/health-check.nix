@@ -13,10 +13,10 @@
       check_mount ${escapeShellArg path}
     '')
     cfg.mounts;
-  httpChecks =
-    lib.concatStringsSep "\n" (lib.imap0 (index: check: ''
+  httpChecks = lib.concatStringsSep "\n" (lib.imap0 (index: check: ''
       check_http ${toString index} ${escapeShellArg check.name} ${escapeShellArg check.url} ${escapeShellArg (lib.concatStringsSep "," check.acceptedStatusCodes)}
-    '') cfg.httpChecks);
+    '')
+    cfg.httpChecks);
 
   healthChecker = pkgs.writeShellApplication {
     name = "docker-services-health";
