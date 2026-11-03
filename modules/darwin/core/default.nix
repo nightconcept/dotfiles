@@ -35,7 +35,7 @@ in {
       };
       gc = {
         automatic = true;
-        options = "--delete-older-than 7d";
+        options = "";
       };
       extraOptions =
         ''
@@ -47,6 +47,13 @@ in {
           extra-platforms = x86_64-darwin aarch64-darwin
         '';
     };
+
+    # Keep the current system generation and three older rollback generations.
+    launchd.daemons.nix-gc.command = lib.mkForce (pkgs.writeShellScript "nix-gc" ''
+      set -e
+      ${config.nix.package}/bin/nix-env --profile /nix/var/nix/profiles/system --delete-generations +4
+      exec ${config.nix.package}/bin/nix-collect-garbage ${config.nix.gc.options}
+    '');
 
     nixpkgs = {
       hostPlatform = lib.mkDefault "aarch64-darwin";
