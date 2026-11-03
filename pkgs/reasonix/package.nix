@@ -9,24 +9,24 @@
   stdenv,
   fetchurl,
 }: let
-  version = "1.18.0";
+  version = "2.57.0";
 
   bins = {
     x86_64-linux = {
       url = "https://github.com/esengine/DeepSeek-Reasonix/releases/download/v${version}/reasonix-linux-amd64.tar.gz";
-      hash = "sha256-cpSTnaLtXFj3zCA8lCR5ka29hZMQIDafqVmmuK48J9M=";
+      hash = "sha256-wie7wIxlryfbzEmq6E4RWpEhI6Pit5AqZmis2nX7lI8=";
     };
     aarch64-linux = {
       url = "https://github.com/esengine/DeepSeek-Reasonix/releases/download/v${version}/reasonix-linux-arm64.tar.gz";
-      hash = "sha256-xlnnxhrQpOySgqvH2Xk8FwW2SweoZADAUBJ2GW+AAMg=";
+      hash = "sha256-0fWBhpN9TPg5EK0AB7C5IR2CAaHB5A79hbLOZqFrtKM=";
     };
     x86_64-darwin = {
       url = "https://github.com/esengine/DeepSeek-Reasonix/releases/download/v${version}/reasonix-darwin-amd64.tar.gz";
-      hash = "sha256-vwxJQ08hp2Zk1jKb17IPw+FrBUVhp9Zwyn3LwLtLtW8=";
+      hash = "sha256-GU975rGe+6HKn3GEKvIJoqrFgijncYtOMnUIuu8tsDg=";
     };
     aarch64-darwin = {
       url = "https://github.com/esengine/DeepSeek-Reasonix/releases/download/v${version}/reasonix-darwin-arm64.tar.gz";
-      hash = "sha256-Uu/UCIAFbWClnXiMZxTF+ZNiSX7ydRKgQGM92b41/ew=";
+      hash = "sha256-0/x6Z6zn8cfuICUEASoJIycxswKJE50IqGaxYQ0n62o=";
     };
   };
 
