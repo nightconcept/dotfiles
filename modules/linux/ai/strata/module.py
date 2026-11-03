@@ -97,14 +97,22 @@ class StrataModule(HostModule):
                 ],
             )
             config = f"{STRATA_DIR}/strata-{name.lower()}.json"
+            setup_cmd = (
+                f'cd "{STRATA_DIR}" && ./setup.sh --yes --build --family qwen --model {name} '
+                f'--backend {self.backend} --data-dir "{STRATA_DATA_DIR}" --port {self.port} '
+                f"--context {model['context']} --vision no --no-browser --no-start "
+                f'>> "{STRATA_DIR}/strata-setup-{name.lower()}.log" 2>&1 '
+                f'|| {{ tail -20 "{STRATA_DIR}/strata-setup-{name.lower()}.log"; exit 1; }}'
+            )
             server.shell(
                 name=f"Prepare the Strata {name} pack",
                 commands=[
-                    f'cd "{STRATA_DIR}" && ./setup.sh --yes --build --family qwen --model {name} '
-                    f'--backend {self.backend} --data-dir "{STRATA_DATA_DIR}" --port {self.port} '
-                    f"--context {model['context']} --vision no --no-browser --no-start "
-                    f'>> "{STRATA_DIR}/strata-setup-{name.lower()}.log" 2>&1 '
-                    f'|| {{ tail -20 "{STRATA_DIR}/strata-setup-{name.lower()}.log"; exit 1; }}',
+                    (
+                        "systemctl stop llama-swap.service 2>/dev/null || true; "
+                        f'pkill -f "{STRATA_DIR}" 2>/dev/null || true; '
+                        f'rm -f "{STRATA_DIR}/engine/strata"; '
+                        f"{setup_cmd}"
+                    ),
                     f'test -f "{config}" || {{ echo "setup did not write {config}" >&2; exit 1; }}',
                 ],
             )
