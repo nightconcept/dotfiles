@@ -2,7 +2,7 @@
 
 Run the same harness on Terra before and after the upgrade. Use a quiet inference
 window. Pause interactive Hermes use so other requests do not distort timings.
-The script checks Foreman status and refuses GPU lease windows or dirty installed
+The script checks Rotom or Foreman status and refuses GPU lease windows or dirty installed
 Strata and Hermes sources. Three known generated Strata download-list and backup
 files are allowed; all other untracked files fail the check. It does not stop
 services or change configuration.

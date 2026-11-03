@@ -42,14 +42,38 @@ def git_output(path: Path, *args: str) -> str:
     return subprocess.check_output(["git", "-C", str(path), *args], text=True).strip()
 
 
+def get_scheduler_status() -> tuple[str, dict[str, Any]]:
+    """Query rotom or foreman for status and return (daemon_name, status_dict)."""
+    candidates = ["rotom", "foreman"]
+    switch_file = Path.home() / ".config/vesper/scheduler"
+    if switch_file.is_file():
+        try:
+            mode = switch_file.read_text().strip().lower()
+            if mode in candidates:
+                candidates.remove(mode)
+                candidates.insert(0, mode)
+        except OSError:
+            pass
+
+    for name in candidates:
+        bin_path = Path.home() / f".local/bin/{name}"
+        cmd = [str(bin_path) if bin_path.is_file() else name, "status", "--json"]
+        try:
+            raw = subprocess.check_output(cmd, text=True, stderr=subprocess.DEVNULL)
+            return name, json.loads(raw)
+        except (subprocess.SubprocessError, OSError, json.JSONDecodeError):
+            continue
+    raise RuntimeError("Neither rotom nor foreman daemon is reachable for status check")
+
+
 def preflight() -> dict[str, Any]:
     """Require clean installed sources and an inference GPU window."""
-    foreman = subprocess.check_output(
-        [str(Path.home() / ".local/bin/foreman"), "status", "--json"], text=True
-    )
-    status = json.loads(foreman)
-    if status.get("gpu_leases") is not False:
-        raise RuntimeError("Foreman GPU leases are active or status is unknown")
+    daemon_name, status = get_scheduler_status()
+    gpu_leases = status.get("gpu_leases")
+    if gpu_leases is None and isinstance(status.get("terra"), dict):
+        gpu_leases = status["terra"].get("gpu_leases")
+    if gpu_leases is not False:
+        raise RuntimeError(f"{daemon_name.capitalize()} GPU leases are active or status is unknown")
     sources = {}
     generated_artifact_counts = {}
     for name, path in {
@@ -76,7 +100,12 @@ def preflight() -> dict[str, Any]:
     config = json.loads(config_path.read_text())
     # Allowlist only inference settings. Never read Hermes personal config or credentials.
     settings = {key: config[key] for key in ("args", "backend", "model_name") if key in config}
+    window = status.get("window") or (
+        status.get("terra", {}).get("window") if isinstance(status.get("terra"), dict) else None
+    )
     return {
+        "scheduler": daemon_name,
+        "scheduler_window": window,
         "installed_commits": sources,
         "strata_settings": settings,
         "untracked_generated_artifact_counts": generated_artifact_counts,

@@ -8,6 +8,7 @@ for the user manager and a polkit rule that lets danny start and stop llama-swap
 
 import io
 import os
+import shlex
 
 from pyinfra import host
 from pyinfra.facts.server import Command
@@ -58,24 +59,28 @@ polkit.addRule(function(action, subject) {{
 
 
 def gpu_window_open() -> bool:
-    """Tells whether foreman reports an open GPU lease window right now.
+    """Tells whether rotom or foreman reports an open GPU lease window right now.
 
     While it is open, llama-swap is meant to be down. Deploy steps that would restart or
-    probe llama-swap use this to leave it alone. It is False when foreman is missing, not
+    probe llama-swap use this to leave it alone. It is False when the scheduler is missing, not
     running, or in a window without GPU leases.
 
     Returns:
-        True when `foreman status --json` reports `gpu_leases: true`.
+        True when status reports `gpu_leases: true`.
     """
     home = os.path.expanduser("~")
-    output = host.get_fact(
-        Command,
-        command=(
-            f"{home}/.local/bin/foreman status --json 2>/dev/null | "
-            "python3 -c \"import json,sys; print(json.load(sys.stdin).get('gpu_leases') is True)\" "
-            "2>/dev/null || echo False"
-        ),
+    check_expr = (
+        "import json,sys; d=json.load(sys.stdin); "
+        "val = d.get('gpu_leases'); val = (d.get('terra') or {}).get('gpu_leases') "
+        "if val is None else val; print(val is True)"
     )
+    cmd = (
+        f"({home}/.local/bin/rotom status --json 2>/dev/null || rotom status --json 2>/dev/null || "
+        f"{home}/.local/bin/foreman status --json 2>/dev/null || "
+        "foreman status --json 2>/dev/null) | "
+        f"python3 -c {shlex.quote(check_expr)} 2>/dev/null || echo False"
+    )
+    output = host.get_fact(Command, command=cmd)
     return (output or "").strip().endswith("True")
 
 
