@@ -109,7 +109,8 @@ class StrataModule(HostModule):
                 commands=[
                     (
                         "systemctl stop llama-swap.service 2>/dev/null || true; "
-                        f'pkill -f "{STRATA_DIR}" 2>/dev/null || true; '
+                        "pkill -x strata 2>/dev/null || true; "
+                        f'fuser -k "{STRATA_DIR}/engine/strata" 2>/dev/null || true; '
                         f'rm -f "{STRATA_DIR}/engine/strata"; '
                         f"{setup_cmd}"
                     ),
