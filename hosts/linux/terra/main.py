@@ -2,7 +2,6 @@ from modules.linux.ai.module import AIStackModule
 from modules.linux.programs.books.module import BooksModule
 from modules.linux.programs.colab import ColabModule
 from modules.linux.programs.docker import DockerModule
-from modules.linux.programs.foreman.module import ForemanModule
 from modules.linux.programs.home_manager import HomeManagerModule
 from modules.linux.programs.huggingface import HuggingFaceModule
 from modules.linux.programs.koreader_sync.module import KoreaderSyncModule
@@ -32,7 +31,6 @@ pinchflat = PinchflatModule()
 watchtower = WatchtowerModule()
 hf = HuggingFaceModule()
 colab = ColabModule()
-foreman = ForemanModule()
 ai = AIStackModule()
 
 # Deploy system foundations
@@ -58,5 +56,4 @@ watchtower.deploy()
 # Deploy independent AI tooling, then the inference and agent stack.
 hf.deploy()
 colab.deploy()
-foreman.deploy()
 ai.deploy()

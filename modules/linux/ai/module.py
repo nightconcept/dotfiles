@@ -11,8 +11,8 @@ from modules.linux.ai.strata.module import StrataModule
 class AIStackModule:
     """Own the deployment order of the inference and agent stack.
 
-    Hugging Face CLI and Foreman are independent prerequisites managed by the host.
-    Foreman's status remains the authority for whether the GPU is available.
+    Hugging Face CLI and Colab are independent prerequisites managed by the host.
+    Rotom's status remains the authority for whether the GPU is available.
     """
 
     def deploy(self):

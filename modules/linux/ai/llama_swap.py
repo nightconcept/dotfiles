@@ -6,9 +6,22 @@ import os
 from pyinfra.operations import files, server, systemd
 
 from modules.linux.ai.catalog import render_llama_swap_config
+from modules.linux.ai.scheduler import gpu_window_open
 from modules.linux.ai.versions import VERSIONS
 from modules.linux.module import HostModule
-from modules.linux.programs.foreman.module import gpu_window_open
+
+_POLKIT_RULE = """\
+// Managed by dotfiles (llama-swap module).
+// Lets {user} start and stop llama-swap.service only. Other units and verbs stay denied.
+polkit.addRule(function(action, subject) {{
+    if (action.id == "org.freedesktop.systemd1.manage-units" &&
+        subject.user == "{user}" &&
+        action.lookup("unit") == "llama-swap.service" &&
+        (action.lookup("verb") == "start" || action.lookup("verb") == "stop")) {{
+        return polkit.Result.YES;
+    }}
+}});
+"""
 
 _SERVICE_UNIT = """\
 [Unit]
@@ -129,12 +142,26 @@ class LlamaSwapModule(HostModule):
             mode="644",
             _sudo=True,
         )
-        # foreman keeps llama-swap down while its GPU window is open (overnight training), so a
+        polkit = _POLKIT_RULE.format(user=self.user)
+        files.put(
+            name="Deploy polkit rule for llama-swap service management",
+            src=io.StringIO(polkit),
+            dest="/etc/polkit-1/rules.d/50-llama-swap.rules",
+            mode="644",
+            _sudo=True,
+        )
+        files.file(
+            name="Remove legacy foreman polkit rule",
+            path="/etc/polkit-1/rules.d/50-foreman-llama-swap.rules",
+            present=False,
+            _sudo=True,
+        )
+        # Rotom keeps llama-swap down while its GPU window is open (overnight training), so a
         # deploy then must neither start nor restart it. The next window boundary starts it.
         gpu_window = gpu_window_open()
         systemd.service(
             name=(
-                "Enable llama-swap (no restart: foreman's GPU window is open)"
+                "Enable llama-swap (no restart: GPU lease window is open)"
                 if gpu_window
                 else "Enable and restart llama-swap"
             ),

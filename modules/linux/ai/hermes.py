@@ -8,9 +8,9 @@ from pathlib import Path
 from pyinfra.operations import files, server, systemd
 
 from modules.linux.ai.catalog import DEFAULT_MODEL_ID
+from modules.linux.ai.scheduler import gpu_window_open
 from modules.linux.ai.versions import VERSIONS
 from modules.linux.module import HostModule
-from modules.linux.programs.foreman.module import gpu_window_open
 
 
 class HermesModule(HostModule):
@@ -67,7 +67,7 @@ class HermesModule(HostModule):
 
     def update(self):
         """Point Hermes's default model and Terra custom provider at the target model."""
-        # While foreman's GPU window is open, llama-swap is down on purpose, so the check
+        # While the GPU window is open, llama-swap is down on purpose, so the check
         # would fail the deploy. The config update below does not need llama-swap.
         if not gpu_window_open():
             self._verify_llama_swap()

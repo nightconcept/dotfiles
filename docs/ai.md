@@ -2,18 +2,18 @@
 
 `modules/linux/ai/module.py` exposes `AIStackModule.deploy()` to Terra's host config.
 The module owns the model catalog, Strata, llama.cpp, llama-swap, Hermes, and Hermes alerts.
-Foreman, Hugging Face CLI, and Colab remain independent tooling in the host config.
+Hugging Face CLI and Colab remain independent tooling in the host config.
 
 The deployment order is:
 
 1. Prepare model storage and catalog files.
 2. Prepare Strata and its model packs.
 3. Prepare llama.cpp.
-4. Configure and restart llama-swap, unless Foreman's GPU lease window is open.
+4. Configure and restart llama-swap, unless Rotom's GPU lease window is open.
 5. Prepare the pinned Hermes runtime and update its model config.
 6. Restart Hermes and enable its alert timer.
 
-Foreman remains the authority for GPU lease windows.
+Rotom remains the authority for GPU lease windows.
 The router does not start during an open window.
 Hermes skips the router model-list check during that window.
 

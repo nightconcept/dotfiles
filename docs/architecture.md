@@ -66,7 +66,7 @@ The home configuration uses a profile-based system where `home/default.nix` sele
 - **desktop/laptop/server**: Generic standalone profiles used by pyinfra-managed hosts
 
 Terra's inference and agent modules share one [AI stack module](ai.md).
-Foreman, Hugging Face CLI, and Colab remain independent tooling.
+Hugging Face CLI and Colab remain independent tooling.
 
 ## Host Configurations
 

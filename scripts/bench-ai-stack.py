@@ -43,27 +43,15 @@ def git_output(path: Path, *args: str) -> str:
 
 
 def get_scheduler_status() -> tuple[str, dict[str, Any]]:
-    """Query rotom or foreman for status and return (daemon_name, status_dict)."""
-    candidates = ["rotom", "foreman"]
-    switch_file = Path.home() / ".config/vesper/scheduler"
-    if switch_file.is_file():
-        try:
-            mode = switch_file.read_text().strip().lower()
-            if mode in candidates:
-                candidates.remove(mode)
-                candidates.insert(0, mode)
-        except OSError:
-            pass
-
-    for name in candidates:
-        bin_path = Path.home() / f".local/bin/{name}"
-        cmd = [str(bin_path) if bin_path.is_file() else name, "status", "--json"]
-        try:
-            raw = subprocess.check_output(cmd, text=True, stderr=subprocess.DEVNULL)
-            return name, json.loads(raw)
-        except (subprocess.SubprocessError, OSError, json.JSONDecodeError):
-            continue
-    raise RuntimeError("Neither rotom nor foreman daemon is reachable for status check")
+    """Query rotom for status and return (daemon_name, status_dict)."""
+    bin_path = Path.home() / ".local/bin/rotom"
+    cmd = [str(bin_path) if bin_path.is_file() else "rotom", "status", "--json"]
+    try:
+        raw = subprocess.check_output(cmd, text=True, stderr=subprocess.DEVNULL)
+        return "rotom", json.loads(raw)
+    except (subprocess.SubprocessError, OSError, json.JSONDecodeError):
+        pass
+    raise RuntimeError("Rotom daemon is not reachable for status check")
 
 
 def preflight() -> dict[str, Any]:
