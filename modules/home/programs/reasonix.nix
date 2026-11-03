@@ -14,7 +14,7 @@
     [[providers]]
     name = "deepseek-flash"
     base_url = "https://api.deepseek.com"
-    model = "deepseek-flash"
+    models = ["deepseek-flash"]
     api_key_env = "DEEPSEEK_API_KEY"
   '';
 in {
@@ -24,12 +24,7 @@ in {
 
   config = lib.mkIf config.modules.home.programs.reasonix.enable {
     home.packages = [
-      (pkgs.writeShellScriptBin "reasonix" ''
-        if [ -z "''${DEEPSEEK_API_KEY:-}" ] && [ -r ${lib.escapeShellArg secretPath} ]; then
-          export DEEPSEEK_API_KEY="$(cat ${lib.escapeShellArg secretPath})"
-        fi
-        exec ${reasonix}/bin/reasonix "$@"
-      '')
+      reasonix
     ];
 
     home.activation.reasonixConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
@@ -37,6 +32,7 @@ in {
       mkdir -p "$(dirname "$config_file")"
       if [ -f "$config_file" ]; then
         ${pkgs.gnused}/bin/sed -i 's/"deepseek-v4-flash"/"deepseek-flash"/g' "$config_file"
+        ${pkgs.gnused}/bin/sed -i 's/^\([[:space:]]*\)model[[:space:]]*=[[:space:]]*"deepseek-flash".*/\1models = ["deepseek-flash"]/' "$config_file"
       else
         install -m 600 ${defaultConfig} "$config_file"
       fi
@@ -46,6 +42,14 @@ in {
       sopsFile = ../secrets/reasonix.yaml;
       path = secretPath;
       mode = "0400";
+    };
+
+    sops.templates."reasonix.env" = {
+      path = "${config.home.homeDirectory}/.reasonix/.env";
+      mode = "0400";
+      content = ''
+        DEEPSEEK_API_KEY=${config.sops.placeholder.deepseek_api_key}
+      '';
     };
   };
 }

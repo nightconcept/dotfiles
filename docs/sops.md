@@ -17,10 +17,9 @@ memory at startup and writes them to SABnzbd's private configuration file.
 Run `sops modules/home/secrets/reasonix.yaml` and set `deepseek_api_key` to
 your DeepSeek API key. The file uses only the personal age recipient.
 
-Rebuild your Home Manager configuration to deploy the secret and Reasonix
-wrapper. The wrapper reads the key at startup from
-`~/.local/share/sops/secrets/deepseek_api_key`. An existing `DEEPSEEK_API_KEY`
-environment variable takes precedence. Restart Reasonix after deployment.
+Rebuild your Home Manager configuration to deploy the secret. SOPS renders
+`~/.reasonix/.env` with mode `0400`; Reasonix 1.18.0 reads provider credentials
+from this file rather than the process environment. Restart Reasonix after deployment.
 
 The activation step updates the old `deepseek-v4-flash` model name to
 `deepseek-flash` and preserves the other settings in `~/.reasonix/config.toml`.
