@@ -81,6 +81,22 @@ http:
       tls: {}
       service: qbittorrent
 
+    usenet:
+      entryPoints:
+        - "http"
+      rule: "Host(`usenet.local.solivan.dev`)"
+      middlewares:
+        - https-redirectscheme
+      service: usenet
+    usenet-secure:
+      entryPoints:
+        - "https"
+      rule: "Host(`usenet.local.solivan.dev`)"
+      middlewares:
+        - secured
+      tls: {}
+      service: usenet
+
     calibre:
       entryPoints:
         - "https"
@@ -291,6 +307,13 @@ http:
         servers:
           - url: "http://192.168.1.112:8112"
         passHostHeader: true
+
+    usenet:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.1.112:8080"
+        # Use the backend host so SABnzbd's hostname validation accepts the proxy.
+        passHostHeader: false
 
     calibre:
       loadBalancer:

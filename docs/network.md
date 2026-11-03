@@ -123,6 +123,10 @@ with the kill switch enabled. Failed pre-start checks retry every 15 seconds;
 a failed mount dependency requires restoring the mount and restarting SABnzbd.
 
 The web UI listens at `http://192.168.1.112:8080`.
+Rinoa's Traefik routes `https://usenet.local.solivan.dev` to this address,
+restricted to LAN and Headscale clients. DNS points the hostname to Rinoa
+(`192.168.1.110`). The proxy sends the backend host header for SABnzbd's
+hostname validation; the SABnzbd web login still applies.
 The deployment allowlists TCP port 8080 in NordVPN and permits incoming UFW
 connections from `192.168.1.0/24` on `ens18`. The Usenet connection on port 563
 continues through the VPN. LAN discovery alone does not replace these rules.
