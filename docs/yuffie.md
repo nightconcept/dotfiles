@@ -35,6 +35,11 @@ All steps must pass before the push:
    and `tidus-boot`.
 5. Build `homeConfigurations.{desktop,laptop,server}`.
 
+Each step runs alone, in its own `nix` process, and Nix builds one derivation at a time.
+Measured evaluation peaks: about 5 GB for step 1, 1.1–1.5 GB for each host. The
+`tidus-boot` VM takes 3 GB and runs last, with nothing else in memory. A run is slow,
+but it fits in 6 GB.
+
 `tidus-boot` boots tidus's full module list in a QEMU VM. It checks that `multi-user.target`,
 home-manager, Docker and SDDM start and that no unexpected unit fails. The VM has no age key,
 so `sops-install-secrets.service` is allowed to fail. Tests cannot check the laptop hardware
@@ -67,10 +72,10 @@ Vaultwarden on the same node. Yuffie gets a lower CPU share and builds at night 
 
 | Setting | Yuffie (VM 100) | Rinoa (VM 101) |
 |---|---|---|
-| Memory | 6144 MB (zram swap) | 8192 MB |
+| Memory | 6144 MB (zram swap) | 8192 MB (uses about 3 GB) |
 | CPU | 4 cores, `cpu: host` (nested KVM), `cpuunits: 50` | 4 cores, `cpuunits` default (100) |
 | Disk | `local-lvm`, 120 GB, `discard=on,ssd=1,iothread=1` | 200 GB, `discard=on,ssd=1,iothread=1` |
-| Nix | `max-jobs = 2`, `cores = 2`, daemon `batch`/`idle` priority | — |
+| Nix | `max-jobs = 1`, `cores = 2`, daemon `batch`/`idle` priority | — |
 
 The thin pool `local-lvm` is 349 GB. Without `discard=on`, guest trims do not return space to
 the pool. Yuffie's `min-free`/`max-free` start garbage collection during a build when its disk

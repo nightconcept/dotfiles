@@ -159,7 +159,12 @@ class Updater:
         return json.loads(out)
 
     def gate(self) -> list[str]:
-        """Runs every gate step and returns the installables that were built."""
+        """Runs every gate step and returns the installables that were built.
+
+        Steps run one at a time, each in its own nix process, so evaluation memory
+        (about 1.5 GB per host, 5 GB for the flake check) is freed before the next build.
+        Yuffie has 6 GB of RAM; the tidus-boot VM alone takes 3 GB.
+        """
         run(["nix", "flake", "check", "--all-systems", "--no-build"], cwd=self.repo)
         run(["nix", "fmt", "--", "--check", "."], cwd=self.repo)
         for host in self.args.darwin_hosts:
@@ -173,20 +178,27 @@ class Updater:
                 cwd=self.repo,
             )
 
-        checks = [f".#checks.x86_64-linux.{name}" for name in self.check_attrs()]
-        run(["nix", "build", "--no-link", "--keep-going", "-L", *checks], cwd=self.repo)
+        # VM tests last: by then the host closures they boot are already built.
+        names = sorted(self.check_attrs(), key=lambda name: name.endswith("-boot"))
+        checks = [f".#checks.x86_64-linux.{name}" for name in names]
+        for check in checks:
+            run(["nix", "build", "--no-link", "-L", check], cwd=self.repo)
 
         # Standalone home configs read USER and HOME, so they need an impure build.
-        homes = [
-            f".#homeConfigurations.{profile}.activationPackage"
-            for profile in self.args.home_profiles
-        ]
         env = os.environ | {"USER": "danny", "HOME": "/home/danny"}
-        run(
-            ["nix", "build", "--impure", "--no-link", "--keep-going", "-L", *homes],
-            cwd=self.repo,
-            env=env,
-        )
+        for profile in self.args.home_profiles:
+            run(
+                [
+                    "nix",
+                    "build",
+                    "--impure",
+                    "--no-link",
+                    "-L",
+                    f".#homeConfigurations.{profile}.activationPackage",
+                ],
+                cwd=self.repo,
+                env=env,
+            )
         return checks
 
     def rotate_roots(self, checks: list[str]) -> None:

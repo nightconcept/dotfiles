@@ -54,8 +54,9 @@ in {
 
   nix = {
     settings = {
-      # Two builds of two cores each leave room for rinoa on Valefor's four cores.
-      max-jobs = lib.mkForce 2;
+      # One build at a time on two cores: slow, but 6 GB of RAM never holds two builds, and
+      # rinoa keeps CPU on Valefor's four cores. The updater also runs its steps one by one.
+      max-jobs = lib.mkForce 1;
       cores = lib.mkForce 2;
       # Collect garbage during a build when the 120 GB disk runs low.
       min-free = 10 * 1024 * 1024 * 1024;
