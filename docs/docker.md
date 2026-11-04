@@ -180,3 +180,80 @@ Do not delete `.env` while retaining the database.
 
 The application follows upstream's `latest` image tag; it is not opted into Watchtower.
 SSO, email, and AI tagging are not configured.
+
+## httpSMS on Rinoa
+
+The `httpsms` module runs a self-hosted httpSMS gateway: API, web UI,
+PostgreSQL 17, and Redis. The `events` app uses it to send login texts.
+Both images build on Rinoa from the pinned `httpsms` flake input. The first
+start builds the web UI and takes several minutes.
+
+- `https://httpsms.local.solivan.dev` routes to the web UI (port 3000).
+- `https://httpsms-api.local.solivan.dev` routes to the API (port 8000).
+  The gateway phone app uses this URL as its server URL.
+- Both routes use `secured@file` (LAN and Tailscale clients only).
+- Other containers call the API at `http://httpsms-api:8000` on `proxy`.
+- PostgreSQL data: `/var/lib/docker-containers/httpsms/data/postgres`.
+- Secrets: `modules/nixos/security/sops/httpsms.yaml`. The module generated
+  `db_password` and `system_api_key`. The Firebase values are `CHANGEME`.
+
+The service refuses to start while a secret is `CHANGEME`. After the API
+starts, the service adds the events-queue system user to the database.
+There is no SMTP, so httpSMS sends no "phone offline" emails.
+
+### Setup
+
+1. Create a Firebase project. Enable **Authentication → Email/Password**.
+   Disable **email enumeration protection** (a firebaseui bug).
+2. Add `httpsms.local.solivan.dev` to **Authentication → Settings →
+   Authorized domains**.
+3. Register a **Web app**. Copy its config into `firebase_web/*` in
+   `httpsms.yaml` (`sops modules/nixos/security/sops/httpsms.yaml`).
+4. Generate a **service account** private key. Paste the JSON into
+   `firebase_credentials` as a YAML block scalar (`firebase_credentials: |`).
+5. Register an **Android app** with package `com.httpsms`. Download its
+   `google-services.json`.
+6. Build the Android app from the same httpSMS commit as the flake input.
+   Replace `android/app/google-services.json` with your file first. The stock
+   APK uses the hosted Firebase project, so it cannot receive your pushes.
+7. Add Pi-hole DNS records for `httpsms` and `httpsms-api` to `192.168.1.110`.
+8. Set `httpsms.enable = true` in `hosts/nixos/rinoa/default.nix`. Deploy Rinoa.
+9. Sign up in the web UI. Install the app on the gateway phone. On the login
+   screen, set the server URL to `https://httpsms-api.local.solivan.dev`. Scan
+   the phone API key QR code from the web UI.
+10. In the httpSMS app settings, set the message expiration to 600 seconds.
+
+The phone must stay on the home Wi-Fi (or Tailscale) to reach the API.
+
+## events on Rinoa
+
+The `events` module runs the events app (`forge.solivan.dev/nightconcept/events`).
+The image builds on Rinoa from the pinned `events` flake input.
+
+- The Cloudflare Tunnel routes `events.solivan.dev` to `http://events:8080`.
+  There are no Traefik labels and no host port. The app trusts
+  `CF-Connecting-IP` because of that.
+- The container runs as `1000:100` with a read-only root filesystem.
+- Data: `/var/lib/docker-containers/events/data` (SQLite and photos).
+- Backups: `/mnt/titan/backups/events`, nightly at 03:00, 14 days kept.
+- Secrets: `modules/nixos/security/sops/events.yaml`. The module generated
+  `admin_password` and `httpsms_webhook_key`. The other values are `CHANGEME`.
+
+### Setup
+
+1. Push the events repository to the forge. Run `nix flake update events`.
+2. Create a Cloudflare Turnstile widget for `events.solivan.dev`. Put its keys
+   in `turnstile_sitekey` and `turnstile_secret`.
+3. In the httpSMS web UI, copy the account API key into `httpsms_api_key`.
+   Put the gateway phone number (E.164) in `httpsms_from`.
+4. In the httpSMS web UI, add a webhook: URL `http://events:8080/hooks/httpsms`,
+   signing key = `httpsms_webhook_key`, events `message.phone.delivered`,
+   `message.send.failed`, `message.send.expired`.
+5. In the Cloudflare Zero Trust dashboard, add the tunnel public hostname
+   `events.solivan.dev` with service `http://events:8080`.
+6. Set `events.enable = true` in `hosts/nixos/rinoa/default.nix`. Deploy Rinoa.
+7. Log in at `https://events.solivan.dev/admin/login` with `admin_password`
+   (`sops -d modules/nixos/security/sops/events.yaml`).
+
+To update the app, push to the forge, run `nix flake update events`, and
+deploy Rinoa. The image tag is the commit, so a new commit builds a new image.

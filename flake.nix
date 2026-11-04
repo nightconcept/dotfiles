@@ -67,6 +67,18 @@
       flake = false;
     };
 
+    # Built on Rinoa by the events container module.
+    events = {
+      url = "git+https://forge.solivan.dev/nightconcept/events.git?rev=02cf0f27f415735a85f8242a03449fc4d393df65";
+      flake = false;
+    };
+
+    # Self-hosted SMS gateway API and web UI, built on Rinoa.
+    httpsms = {
+      url = "github:NdoleStudio/httpsms/f352d81800e05c677f5118c6c3d32040769bb7e5";
+      flake = false;
+    };
+
     pi-agent = {
       url = "github:earendil-works/pi?ref=v1.2.0";
       inputs.nixpkgs.follows = "nixpkgs";

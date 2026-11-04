@@ -1,0 +1,103 @@
+name: httpsms
+
+services:
+  postgres:
+    container_name: httpsms-db
+    image: postgres:17-alpine
+    restart: unless-stopped
+    networks:
+      - backend
+    environment:
+      POSTGRES_DB: httpsms
+      POSTGRES_USER: httpsms
+      POSTGRES_PASSWORD: ${DB_PASSWORD?required}
+    volumes:
+      - ${DATA_PATH?required}/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  redis:
+    container_name: httpsms-redis
+    image: redis:7-alpine
+    restart: unless-stopped
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    container_name: httpsms-api
+    image: httpsms-api:${API_TAG?required}
+    build:
+      context: ${SOURCE_PATH?required}/api
+    restart: unless-stopped
+    env_file:
+      - api.env
+    networks:
+      - proxy
+      - backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.httpsms-api.entrypoints=http"
+      - "traefik.http.routers.httpsms-api.rule=Host(`${API_HOST?required}`)"
+      - "traefik.http.routers.httpsms-api.middlewares=https-redirectscheme@file"
+      - "traefik.http.routers.httpsms-api-secure.entrypoints=https"
+      - "traefik.http.routers.httpsms-api-secure.rule=Host(`${API_HOST?required}`)"
+      - "traefik.http.routers.httpsms-api-secure.tls=true"
+      - "traefik.http.routers.httpsms-api-secure.middlewares=secured@file"
+      - "traefik.http.routers.httpsms-api-secure.service=httpsms-api"
+      - "traefik.http.services.httpsms-api.loadbalancer.server.port=8000"
+      - "traefik.docker.network=proxy"
+
+  web:
+    container_name: httpsms-web
+    image: httpsms-web:${WEB_TAG?required}
+    build:
+      context: ${WEB_BUILD_PATH?required}
+    restart: unless-stopped
+    networks:
+      - proxy
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:3000/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.httpsms-web.entrypoints=http"
+      - "traefik.http.routers.httpsms-web.rule=Host(`${WEB_HOST?required}`)"
+      - "traefik.http.routers.httpsms-web.middlewares=https-redirectscheme@file"
+      - "traefik.http.routers.httpsms-web-secure.entrypoints=https"
+      - "traefik.http.routers.httpsms-web-secure.rule=Host(`${WEB_HOST?required}`)"
+      - "traefik.http.routers.httpsms-web-secure.tls=true"
+      - "traefik.http.routers.httpsms-web-secure.middlewares=secured@file"
+      - "traefik.http.routers.httpsms-web-secure.service=httpsms-web"
+      - "traefik.http.services.httpsms-web.loadbalancer.server.port=3000"
+      - "traefik.docker.network=proxy"
+
+networks:
+  proxy:
+    external: true
+  backend:
+    internal: true

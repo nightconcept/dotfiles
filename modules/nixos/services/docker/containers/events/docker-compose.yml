@@ -1,0 +1,48 @@
+# Reachable only through the Cloudflare Tunnel (public hostname ->
+# http://events:8080). No Traefik labels and no host port: the app trusts
+# CF-Connecting-IP because of that.
+name: events
+
+services:
+  events:
+    container_name: events
+    image: events:${EVENTS_TAG?required}
+    build:
+      context: ${EVENTS_SOURCE?required}
+    restart: unless-stopped
+    env_file:
+      - app.env
+    environment:
+      BASE_URL: ${BASE_URL?required}
+      DATA_DIR: /data
+      BACKUP_DIR: /backup
+      HTTPSMS_BASE_URL: http://httpsms-api:8000
+      TZ: America/Los_Angeles
+      DEFAULT_REGION: US
+      DEFAULT_TZ: America/Los_Angeles
+      POST_EVENT_WINDOW_DAYS: "14"
+      SMS_DAILY_CAP: "15"
+      SMS_MONTHLY_CAP: "200"
+    volumes:
+      - ${DATA_PATH?required}:/data
+      - ${BACKUP_PATH?required}:/backup
+    networks:
+      - proxy
+    # uid 1000 matches the Titan CIFS mount owner, so backups can write there.
+    user: "1000:100"
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: ["CMD", "/events", "healthcheck"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    stop_grace_period: 20s
+
+networks:
+  proxy:
+    external: true

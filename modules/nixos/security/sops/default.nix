@@ -166,6 +166,160 @@ in {
             config.modules.nixos.docker.containers.obsidian-livesync.enable
             "docker-container-obsidian-livesync.service";
         };
+
+        # httpSMS gateway (modules/nixos/services/docker/containers/httpsms)
+        "services/httpsms/db_password" = {
+          sopsFile = ./httpsms.yaml;
+          key = "db_password";
+          owner = "root";
+          mode = "0400";
+          restartUnits =
+            optional
+            config.modules.nixos.docker.containers.httpsms.enable
+            "docker-container-httpsms.service";
+        };
+        "services/httpsms/system_api_key" = {
+          sopsFile = ./httpsms.yaml;
+          key = "system_api_key";
+          owner = "root";
+          mode = "0400";
+          restartUnits =
+            optional
+            config.modules.nixos.docker.containers.httpsms.enable
+            "docker-container-httpsms.service";
+        };
+        "services/httpsms/firebase_credentials" = {
+          sopsFile = ./httpsms.yaml;
+          key = "firebase_credentials";
+          owner = "root";
+          mode = "0400";
+          restartUnits =
+            optional
+            config.modules.nixos.docker.containers.httpsms.enable
+            "docker-container-httpsms.service";
+        };
+        "services/httpsms/firebase_web/api_key" = {
+          sopsFile = ./httpsms.yaml;
+          key = "firebase_web/api_key";
+          owner = "root";
+          mode = "0400";
+          restartUnits =
+            optional
+            config.modules.nixos.docker.containers.httpsms.enable
+            "docker-container-httpsms.service";
+        };
+        "services/httpsms/firebase_web/auth_domain" = {
+          sopsFile = ./httpsms.yaml;
+          key = "firebase_web/auth_domain";
+          owner = "root";
+          mode = "0400";
+          restartUnits =
+            optional
+            config.modules.nixos.docker.containers.httpsms.enable
+            "docker-container-httpsms.service";
+        };
+        "services/httpsms/firebase_web/project_id" = {
+          sopsFile = ./httpsms.yaml;
+          key = "firebase_web/project_id";
+          owner = "root";
+          mode = "0400";
+          restartUnits =
+            optional
+            config.modules.nixos.docker.containers.httpsms.enable
+            "docker-container-httpsms.service";
+        };
+        "services/httpsms/firebase_web/storage_bucket" = {
+          sopsFile = ./httpsms.yaml;
+          key = "firebase_web/storage_bucket";
+          owner = "root";
+          mode = "0400";
+          restartUnits =
+            optional
+            config.modules.nixos.docker.containers.httpsms.enable
+            "docker-container-httpsms.service";
+        };
+        "services/httpsms/firebase_web/messaging_sender_id" = {
+          sopsFile = ./httpsms.yaml;
+          key = "firebase_web/messaging_sender_id";
+          owner = "root";
+          mode = "0400";
+          restartUnits =
+            optional
+            config.modules.nixos.docker.containers.httpsms.enable
+            "docker-container-httpsms.service";
+        };
+        "services/httpsms/firebase_web/app_id" = {
+          sopsFile = ./httpsms.yaml;
+          key = "firebase_web/app_id";
+          owner = "root";
+          mode = "0400";
+          restartUnits =
+            optional
+            config.modules.nixos.docker.containers.httpsms.enable
+            "docker-container-httpsms.service";
+        };
+
+        # events app (modules/nixos/services/docker/containers/events)
+        "services/events/admin_password" = {
+          sopsFile = ./events.yaml;
+          key = "admin_password";
+          owner = "root";
+          mode = "0400";
+          restartUnits =
+            optional
+            config.modules.nixos.docker.containers.events.enable
+            "docker-container-events.service";
+        };
+        "services/events/turnstile_sitekey" = {
+          sopsFile = ./events.yaml;
+          key = "turnstile_sitekey";
+          owner = "root";
+          mode = "0400";
+          restartUnits =
+            optional
+            config.modules.nixos.docker.containers.events.enable
+            "docker-container-events.service";
+        };
+        "services/events/turnstile_secret" = {
+          sopsFile = ./events.yaml;
+          key = "turnstile_secret";
+          owner = "root";
+          mode = "0400";
+          restartUnits =
+            optional
+            config.modules.nixos.docker.containers.events.enable
+            "docker-container-events.service";
+        };
+        "services/events/httpsms_api_key" = {
+          sopsFile = ./events.yaml;
+          key = "httpsms_api_key";
+          owner = "root";
+          mode = "0400";
+          restartUnits =
+            optional
+            config.modules.nixos.docker.containers.events.enable
+            "docker-container-events.service";
+        };
+        "services/events/httpsms_from" = {
+          sopsFile = ./events.yaml;
+          key = "httpsms_from";
+          owner = "root";
+          mode = "0400";
+          restartUnits =
+            optional
+            config.modules.nixos.docker.containers.events.enable
+            "docker-container-events.service";
+        };
+        "services/events/httpsms_webhook_key" = {
+          sopsFile = ./events.yaml;
+          key = "httpsms_webhook_key";
+          owner = "root";
+          mode = "0400";
+          restartUnits =
+            optional
+            config.modules.nixos.docker.containers.events.enable
+            "docker-container-events.service";
+        };
       };
     };
   };

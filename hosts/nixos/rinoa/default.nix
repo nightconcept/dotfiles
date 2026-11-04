@@ -5,7 +5,9 @@
   lib,
   inputs,
   ...
-}: {
+}: let
+  containers = config.modules.nixos.docker.containers;
+in {
   imports = [
     ./hardware-configuration.nix
   ];
@@ -71,124 +73,142 @@
   modules.nixos.docker.healthCheck = {
     enable = true;
     listenAddress = "192.168.1.110";
-    expectedContainers = [
-      "traefik"
-      "watchtower"
-      "crowdsec"
-      "crowdsec-bouncer-traefik"
-      "ddclient"
-      "portainer"
-      "flaresolverr"
-      "cloudflare-tunnel"
-      "vaultwarden"
-      "prowlarr-abb"
-      "prowlarr"
-      "audiobookshelf"
-      "bookorbit"
-      "linkwarden"
-      "linkwarden-db"
-      "linkwarden-search"
-      "libbyrip-converter"
-      "forgejo-db"
-      "forgejo"
-      "zotero-webdav"
-      "opengist"
-      "seerr"
-      "obsidian-livesync"
-      "searxng"
-      "actual-budget"
-      "paisa"
-    ];
+    expectedContainers =
+      [
+        "traefik"
+        "watchtower"
+        "crowdsec"
+        "crowdsec-bouncer-traefik"
+        "ddclient"
+        "portainer"
+        "flaresolverr"
+        "cloudflare-tunnel"
+        "vaultwarden"
+        "prowlarr-abb"
+        "prowlarr"
+        "audiobookshelf"
+        "bookorbit"
+        "linkwarden"
+        "linkwarden-db"
+        "linkwarden-search"
+        "libbyrip-converter"
+        "forgejo-db"
+        "forgejo"
+        "zotero-webdav"
+        "opengist"
+        "seerr"
+        "obsidian-livesync"
+        "searxng"
+        "actual-budget"
+        "paisa"
+      ]
+      ++ lib.optionals containers.httpsms.enable [
+        "httpsms-db"
+        "httpsms-redis"
+        "httpsms-api"
+        "httpsms-web"
+      ]
+      ++ lib.optionals containers.events.enable ["events"];
     mounts = ["/mnt/titan"];
     # Terra-backed routes are monitored by Vincent's Uptime Kuma so a Terra
     # outage does not block Rinoa's NixOS activation.
-    httpChecks = [
-      {
-        name = "Linkwarden routed";
-        url = "https://linkwarden.local.solivan.dev/login";
-      }
-      {
-        name = "Actual Budget routed";
-        url = "https://budget.local.solivan.dev/";
-      }
-      {
-        name = "Paisa routed";
-        url = "https://ledger.local.solivan.dev/";
-      }
-      {
-        name = "Portainer direct";
-        url = "http://127.0.0.1:9000/api/status";
-      }
-      {
-        name = "Flaresolverr direct";
-        url = "http://127.0.0.1:8191/";
-      }
-      {
-        name = "Prowlarr direct";
-        url = "http://127.0.0.1:9696/ping";
-      }
-      {
-        name = "Prowlarr ABB direct";
-        url = "http://127.0.0.1:9697/ping";
-      }
-      {
-        name = "Forgejo routed";
-        url = "https://forge.local.solivan.dev/api/healthz";
-      }
-      {
-        name = "Vaultwarden routed";
-        url = "https://vaultwarden.local.solivan.dev/alive";
-      }
-      {
-        name = "Audiobookshelf routed";
-        url = "https://audiobookshelf.local.solivan.dev/healthcheck";
-      }
-      {
-        name = "Zotero WebDAV routed";
-        url = "https://zotero.local.solivan.dev/";
-        acceptedStatusCodes = ["200" "401"];
-      }
-      {
-        name = "OpenGist routed";
-        url = "https://gist.local.solivan.dev/healthcheck";
-      }
-      {
-        name = "Obsidian LiveSync routed";
-        url = "https://obsidian-db.local.solivan.dev/_up";
-        acceptedStatusCodes = ["200" "401"];
-      }
-      {
-        name = "Seerr direct";
-        url = "http://127.0.0.1:5055/api/v1/settings/public";
-      }
-      {
-        name = "SearXNG direct";
-        url = "http://127.0.0.1:8888/healthz";
-      }
-    ];
-    afterUnits = [
-      "docker-container-finance.service"
-      "docker-container-traefik.service"
-      "docker-container-watchtower.service"
-      "docker-container-crowdsec.service"
-      "docker-container-ddclient.service"
-      "docker-container-portainer.service"
-      "docker-container-flaresolverr.service"
-      "docker-container-cloudflare-tunnel.service"
-      "docker-container-vaultwarden.service"
-      "docker-container-prowlarr-abb.service"
-      "docker-container-prowlarr.service"
-      "docker-container-audiobookshelf.service"
-      "docker-container-bookorbit.service"
-      "docker-container-linkwarden.service"
-      "docker-container-libbyrip-converter.service"
-      "docker-container-forgejo.service"
-      "docker-container-zotero-webdav.service"
-      "docker-container-opengist.service"
-      "docker-container-seerr.service"
-      "docker-container-obsidian-livesync.service"
-      "docker-container-searxng.service"
-    ];
+    httpChecks =
+      [
+        {
+          name = "Linkwarden routed";
+          url = "https://linkwarden.local.solivan.dev/login";
+        }
+        {
+          name = "Actual Budget routed";
+          url = "https://budget.local.solivan.dev/";
+        }
+        {
+          name = "Paisa routed";
+          url = "https://ledger.local.solivan.dev/";
+        }
+        {
+          name = "Portainer direct";
+          url = "http://127.0.0.1:9000/api/status";
+        }
+        {
+          name = "Flaresolverr direct";
+          url = "http://127.0.0.1:8191/";
+        }
+        {
+          name = "Prowlarr direct";
+          url = "http://127.0.0.1:9696/ping";
+        }
+        {
+          name = "Prowlarr ABB direct";
+          url = "http://127.0.0.1:9697/ping";
+        }
+        {
+          name = "Forgejo routed";
+          url = "https://forge.local.solivan.dev/api/healthz";
+        }
+        {
+          name = "Vaultwarden routed";
+          url = "https://vaultwarden.local.solivan.dev/alive";
+        }
+        {
+          name = "Audiobookshelf routed";
+          url = "https://audiobookshelf.local.solivan.dev/healthcheck";
+        }
+        {
+          name = "Zotero WebDAV routed";
+          url = "https://zotero.local.solivan.dev/";
+          acceptedStatusCodes = ["200" "401"];
+        }
+        {
+          name = "OpenGist routed";
+          url = "https://gist.local.solivan.dev/healthcheck";
+        }
+        {
+          name = "Obsidian LiveSync routed";
+          url = "https://obsidian-db.local.solivan.dev/_up";
+          acceptedStatusCodes = ["200" "401"];
+        }
+        {
+          name = "Seerr direct";
+          url = "http://127.0.0.1:5055/api/v1/settings/public";
+        }
+        {
+          name = "SearXNG direct";
+          url = "http://127.0.0.1:8888/healthz";
+        }
+      ]
+      ++ lib.optionals containers.httpsms.enable [
+        {
+          name = "httpSMS API routed";
+          url = "https://httpsms-api.local.solivan.dev/health";
+        }
+      ];
+    afterUnits =
+      [
+        "docker-container-finance.service"
+        "docker-container-traefik.service"
+        "docker-container-watchtower.service"
+        "docker-container-crowdsec.service"
+        "docker-container-ddclient.service"
+        "docker-container-portainer.service"
+        "docker-container-flaresolverr.service"
+        "docker-container-cloudflare-tunnel.service"
+        "docker-container-vaultwarden.service"
+        "docker-container-prowlarr-abb.service"
+        "docker-container-prowlarr.service"
+        "docker-container-audiobookshelf.service"
+        "docker-container-bookorbit.service"
+        "docker-container-linkwarden.service"
+        "docker-container-libbyrip-converter.service"
+        "docker-container-forgejo.service"
+        "docker-container-zotero-webdav.service"
+        "docker-container-opengist.service"
+        "docker-container-seerr.service"
+        "docker-container-obsidian-livesync.service"
+        "docker-container-searxng.service"
+      ]
+      ++ lib.optionals containers.httpsms.enable ["docker-container-httpsms.service"]
+      ++ lib.optionals containers.events.enable ["docker-container-events.service"];
   };
 
   # Enable Docker containers
@@ -243,6 +263,10 @@
     opengist.enable = true;
     seerr.enable = true;
     searxng.enable = true;
+    # Enable after the external setup in docs/docker.md (Firebase, Turnstile,
+    # SOPS values, gateway phone). httpSMS first, then events.
+    httpsms.enable = false;
+    events.enable = false;
   };
 
   # System packages for server management

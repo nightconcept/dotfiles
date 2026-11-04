@@ -110,6 +110,23 @@
         "type": "github"
       }
     },
+    "events": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1793804427,
+        "narHash": "sha256-DYsha80m58Qt57EihKiVbLPCNUxWV2FYljgWILki5ws=",
+        "ref": "refs/heads/main",
+        "rev": "02cf0f27f415735a85f8242a03449fc4d393df65",
+        "revCount": 3,
+        "type": "git",
+        "url": "https://forge.solivan.dev/nightconcept/events.git"
+      },
+      "original": {
+        "rev": "02cf0f27f415735a85f8242a03449fc4d393df65",
+        "type": "git",
+        "url": "https://forge.solivan.dev/nightconcept/events.git"
+      }
+    },
     "firefox-gnome-theme": {
       "flake": false,
       "locked": {
@@ -427,6 +444,23 @@
       "original": {
         "owner": "nix-community",
         "repo": "home-manager",
+        "type": "github"
+      }
+    },
+    "httpsms": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1793652275,
+        "narHash": "sha256-qejoB+xchw7mfnGfYHkZUHup8p9Gu4ZZ730wVsMnHd0=",
+        "owner": "NdoleStudio",
+        "repo": "httpsms",
+        "rev": "f352d81800e05c677f5118c6c3d32040769bb7e5",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NdoleStudio",
+        "repo": "httpsms",
+        "rev": "f352d81800e05c677f5118c6c3d32040769bb7e5",
         "type": "github"
       }
     },
@@ -854,7 +888,9 @@
     "root": {
       "inputs": {
         "disko": "disko",
+        "events": "events",
         "home-manager": "home-manager",
+        "httpsms": "httpsms",
         "impermanence": "impermanence",
         "lazyvim-nixvim": "lazyvim-nixvim",
         "libbyrip": "libbyrip",
