@@ -53,6 +53,16 @@
     };
   };
 
+  # Authenticate once with `sudo tailscale up`, then approve the LAN route.
+  services.tailscale = {
+    enable = true;
+    useRoutingFeatures = "server";
+    extraSetFlags = [
+      "--advertise-routes=192.168.1.0/24"
+      "--accept-dns=false"
+    ];
+  };
+
   # Enable Docker
   modules.nixos.docker.enable = true;
 
@@ -83,7 +93,6 @@
       "forgejo"
       "zotero-webdav"
       "opengist"
-      "headscale"
       "seerr"
       "obsidian-livesync"
       "searxng"
@@ -232,7 +241,6 @@
       dataPath = "/var/lib/docker-containers/obsidian-livesync/data";
     };
     opengist.enable = true;
-    headscale.enable = true;
     seerr.enable = true;
     searxng.enable = true;
   };

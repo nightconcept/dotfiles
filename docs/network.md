@@ -124,7 +124,7 @@ a failed mount dependency requires restoring the mount and restarting SABnzbd.
 
 The web UI listens at `http://192.168.1.112:8080`.
 Rinoa's Traefik routes `https://usenet.local.solivan.dev` to this address,
-restricted to LAN and Headscale clients. DNS points the hostname to Rinoa
+restricted to LAN and Tailscale clients. DNS points the hostname to Rinoa
 (`192.168.1.110`). The proxy sends the backend host header for SABnzbd's
 hostname validation; the SABnzbd web login still applies.
 The deployment allowlists TCP port 8080 in NordVPN and permits incoming UFW
@@ -171,6 +171,36 @@ confirm a new public request fails (`curl --max-time 10 https://example.com`),
 then reconnect with `nordvpn connect p2p`. LAN access should remain available.
 This interrupts Barrett's downloads. A successful request while disconnected
 means the VPN protection needs investigation before downloading.
+
+## Remote access through Tailscale
+
+Rinoa uses hosted Tailscale and advertises `192.168.1.0/24` as a subnet route.
+The configuration enables forwarding and preserves Rinoa's existing DNS resolver.
+Other LAN devices do not need a Tailscale client.
+Headscale is removed because the Cloudflare Tunnel path cannot carry its control protocol.
+
+After deployment:
+
+1. On Rinoa, run `sudo tailscale up --login-server=https://controlplane.tailscale.com --advertise-routes=192.168.1.0/24 --accept-dns=false` and open the login URL.
+2. Sign in with the account that you will use on the phone.
+   For an existing enrollment, restore these settings with `sudo tailscale set --advertise-routes=192.168.1.0/24 --accept-dns=false`.
+3. In the [Tailscale admin console](https://login.tailscale.com/admin/machines), approve Rinoa's `192.168.1.0/24` subnet route.
+4. Review the tailnet access policy. Permit only the users, LAN addresses, and ports that need remote access.
+5. In the DNS settings, add `192.168.1.101` as a restricted nameserver for `local.solivan.dev`.
+6. Permit those clients to reach Pi-hole on UDP and TCP port 53 in the tailnet policy.
+7. On the phone, sign in to hosted Tailscale. Remove the old custom Headscale server selection.
+8. Disable phone Wi-Fi and open a permitted LAN service to verify remote access.
+
+This configuration does not advertise an exit node or enable Tailscale SSH.
+Rinoa must remain online for subnet access.
+No router port forwarding or public VPN hostname is required.
+Authentication state persists in `/var/lib/tailscale` across rebuilds and reboots.
+For an unattended router, disable device key expiry in the admin console and review this choice periodically.
+
+The old `hs.solivan.dev` DNS record and Cloudflare Tunnel ingress must be removed in Cloudflare.
+Cloudflare Tunnel ingress is managed outside this repository.
+Old Headscale data remains on disk for recovery. It is not used by Tailscale.
+Terra's next deployment uses hosted Tailscale and requires its own enrollment.
 
 ## Reverse proxy dependency
 

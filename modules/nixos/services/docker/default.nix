@@ -45,7 +45,6 @@ in {
     ./containers/forgejo
     ./containers/freshrss
     ./containers/gotify
-    ./containers/headscale
     ./containers/homepage
     ./containers/immich
     ./containers/linkwarden

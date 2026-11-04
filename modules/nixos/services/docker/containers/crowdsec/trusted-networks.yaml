@@ -1,5 +1,5 @@
 name: local/trusted-networks
-description: Keep LAN and Headscale clients out of reverse-proxy bans
+description: Keep LAN and Tailscale clients out of reverse-proxy bans
 whitelist:
   reason: Trusted LAN and VPN clients
   cidr:

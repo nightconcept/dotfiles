@@ -12,7 +12,7 @@ Available container modules include:
 - ***arr Stack**: sonarr, sonarr-anime, radarr, recyclarr, prowlarr, readarr, flaresolverr
 - **Books**: audiobookshelf, calibre, calibre-web, readarr-books
 - **Home Automation**: homepage, uptime-kuma, gotify
-- **Infrastructure**: traefik, portainer, watchtower (Nicholas Fedor fork), cloudflare-tunnel, headscale
+- **Infrastructure**: traefik, portainer, watchtower (Nicholas Fedor fork), cloudflare-tunnel
 - **Media requests**: seerr (the supported successor to Overseerr and Jellyseerr)
 - **Authentication**: vaultwarden
 - **Development**: forgejo, forgejo-runner, paseo
@@ -78,8 +78,8 @@ uv run python -m unittest discover -s modules/nixos/services/docker/containers/s
 The configured CrowdSec service reads Traefik's existing `traefik_traefik-logs` volume.
 Its bouncer key is registered through `BOUNCER_KEY_traefik` and shared with the existing Traefik bouncer.
 Only routers with `crowdsec-bouncer@docker` enforce CrowdSec decisions. There is no host firewall bouncer or outbound filtering.
-The acquisition whitelist covers the LAN and Headscale IPv4/IPv6 ranges to preserve trusted client access.
-Traefik's LAN access rules also permit the Headscale IPv4/IPv6 ranges.
+The acquisition whitelist covers the LAN and Tailscale IPv4/IPv6 ranges to preserve trusted client access.
+Traefik's LAN access rules also permit the Tailscale IPv4/IPv6 ranges.
 This whitelist prevents detection from creating bans. It does not remove existing manual decisions.
 Barrett's NordVPN traffic and direct LAN services do not pass through this middleware.
 
@@ -101,7 +101,7 @@ docker exec crowdsec cscli bouncers list
 ```
 
 Terra checks parsed four synthetic Traefik records.
-The test bouncer blocked a banned address and allowed LAN and Headscale clients.
+The test bouncer blocked a banned address and allowed LAN and Tailscale clients.
 These checks do not validate every VPN application.
 
 ## Forgejo Runner Image Cache
@@ -116,7 +116,7 @@ have not been used for 7 days.
 
 The `finance` module manages Actual Budget and Paisa on Rinoa.
 Both containers use the `proxy` network. Neither container publishes a host port.
-Traefik permits LAN and Headscale clients through `secured@file`.
+Traefik permits LAN and Tailscale clients through `secured@file`.
 
 - `https://budget.local.solivan.dev` routes to Actual Budget, container port 5006.
 - `https://ledger.local.solivan.dev` routes to Paisa, container port 7500.
@@ -164,7 +164,7 @@ After deploying a new container with Traefik labels, you must also add DNS recor
 ## Linkwarden on Rinoa
 
 The `linkwarden` module runs Linkwarden, PostgreSQL 16, and Meilisearch.
-Traefik serves `https://linkwarden.local.solivan.dev` to LAN and Headscale clients.
+Traefik serves `https://linkwarden.local.solivan.dev` to LAN and Tailscale clients.
 No container publishes a host port. Add this Pi-hole DNS record before deployment:
 `linkwarden.local.solivan.dev` → `192.168.1.110`.
 
