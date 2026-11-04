@@ -8,6 +8,7 @@
       systemType = "laptop";
       extraCasks = [
         "ungoogled-chromium"
+        "tailscale-app"
       ];
     };
     systemSettings = {
