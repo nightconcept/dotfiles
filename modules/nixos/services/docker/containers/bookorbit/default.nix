@@ -110,6 +110,11 @@ in {
             "${cfg.environmentFile}"
         fi
 
+        if ! grep -q '^BOOK_REQUEST_ENCRYPTION_KEY=.' "${cfg.environmentFile}"; then
+          sed -i '/^BOOK_REQUEST_ENCRYPTION_KEY=/d' "${cfg.environmentFile}"
+          printf '\nBOOK_REQUEST_ENCRYPTION_KEY=%s\n' "$(${pkgs.openssl}/bin/openssl rand -hex 32)" >> "${cfg.environmentFile}"
+        fi
+
         install -o root -g root -m 0600 "${cfg.environmentFile}" ${containerPath}/.env
       '';
 
