@@ -150,12 +150,6 @@ class LlamaSwapModule(HostModule):
             mode="644",
             _sudo=True,
         )
-        files.file(
-            name="Remove legacy foreman polkit rule",
-            path="/etc/polkit-1/rules.d/50-foreman-llama-swap.rules",
-            present=False,
-            _sudo=True,
-        )
         # Rotom keeps llama-swap down while its GPU window is open (overnight training), so a
         # deploy then must neither start nor restart it. The next window boundary starts it.
         gpu_window = gpu_window_open()
