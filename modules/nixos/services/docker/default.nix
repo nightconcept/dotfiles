@@ -48,6 +48,7 @@ in {
     ./containers/headscale
     ./containers/homepage
     ./containers/immich
+    ./containers/linkwarden
     # ./containers/minecraft
     ./containers/nextcloud
     ./containers/obsidian-livesync

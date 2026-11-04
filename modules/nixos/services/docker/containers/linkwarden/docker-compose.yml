@@ -1,0 +1,71 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: linkwarden-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?required}
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    labels:
+      - "traefik.enable=false"
+
+  meilisearch:
+    image: getmeili/meilisearch:v1.13.3
+    container_name: linkwarden-search
+    restart: unless-stopped
+    environment:
+      MEILI_MASTER_KEY: ${MEILI_MASTER_KEY:?required}
+      MEILI_ENV: production
+      MEILI_NO_ANALYTICS: "true"
+    volumes:
+      - ./meili_data:/meili_data
+    labels:
+      - "traefik.enable=false"
+
+  linkwarden:
+    image: ghcr.io/linkwarden/linkwarden:latest
+    container_name: linkwarden
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:?required}@postgres:5432/postgres
+      NEXTAUTH_URL: https://linkwarden.local.solivan.dev/api/v1/auth
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:?required}
+      MEILI_HOST: http://meilisearch:7700
+      MEILI_MASTER_KEY: ${MEILI_MASTER_KEY:?required}
+    volumes:
+      - ./data:/data/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+      meilisearch:
+        condition: service_started
+    networks:
+      - default
+      - proxy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/login').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.linkwarden.entrypoints=http"
+      - "traefik.http.routers.linkwarden.rule=Host(`linkwarden.local.solivan.dev`)"
+      - "traefik.http.routers.linkwarden.middlewares=https-redirectscheme@file"
+      - "traefik.http.routers.linkwarden-secure.entrypoints=https"
+      - "traefik.http.routers.linkwarden-secure.rule=Host(`linkwarden.local.solivan.dev`)"
+      - "traefik.http.routers.linkwarden-secure.tls=true"
+      - "traefik.http.routers.linkwarden-secure.middlewares=secured@file"
+      - "traefik.http.services.linkwarden.loadbalancer.server.port=3000"
+      - "traefik.docker.network=proxy"
+
+networks:
+  proxy:
+    external: true

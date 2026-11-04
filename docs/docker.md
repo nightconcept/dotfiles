@@ -160,3 +160,23 @@ After deploying a new container with Traefik labels, you must also add DNS recor
 - Domain: `<subdomain>.local.solivan.dev` → IP: `192.168.1.110` (rinoa)
 
 **Public domain** (`*.solivan.dev`): Add a DNS record in Cloudflare pointing to rinoa's WAN IP or Cloudflare Tunnel.
+
+## Linkwarden on Rinoa
+
+The `linkwarden` module runs Linkwarden, PostgreSQL 16, and Meilisearch.
+Traefik serves `https://linkwarden.local.solivan.dev` to LAN and Headscale clients.
+No container publishes a host port. Add this Pi-hole DNS record before deployment:
+`linkwarden.local.solivan.dev` → `192.168.1.110`.
+
+Deploy from Rinoa's checkout with `sudo nixos-rebuild switch --flake 'path:.#rinoa'`.
+Open the URL and register your account. Registration is enabled for trusted clients.
+
+State lives under `/var/lib/docker-containers/linkwarden/`:
+`data/` contains archives, `pgdata/` contains PostgreSQL data, and `meili_data/`
+contains the search index. The root-only `.env` contains generated credentials.
+Credentials persist across rebuilds. Back up the credentials and data together;
+stop `docker-container-linkwarden.service` before a filesystem backup.
+Do not delete `.env` while retaining the database.
+
+The application follows upstream's `latest` image tag; it is not opted into Watchtower.
+SSO, email, and AI tagging are not configured.

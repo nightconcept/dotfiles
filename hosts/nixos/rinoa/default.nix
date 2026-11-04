@@ -75,6 +75,9 @@
       "prowlarr"
       "audiobookshelf"
       "bookorbit"
+      "linkwarden"
+      "linkwarden-db"
+      "linkwarden-search"
       "libbyrip-converter"
       "forgejo-db"
       "forgejo"
@@ -91,6 +94,10 @@
     # Terra-backed routes are monitored by Vincent's Uptime Kuma so a Terra
     # outage does not block Rinoa's NixOS activation.
     httpChecks = [
+      {
+        name = "Linkwarden routed";
+        url = "https://linkwarden.local.solivan.dev/login";
+      }
       {
         name = "Actual Budget routed";
         url = "https://budget.local.solivan.dev/";
@@ -164,6 +171,7 @@
       "docker-container-prowlarr.service"
       "docker-container-audiobookshelf.service"
       "docker-container-bookorbit.service"
+      "docker-container-linkwarden.service"
       "docker-container-libbyrip-converter.service"
       "docker-container-forgejo.service"
       "docker-container-zotero-webdav.service"
@@ -207,6 +215,7 @@
     prowlarr.enable = true;
     audiobookshelf.enable = true;
     bookorbit.enable = true;
+    linkwarden.enable = true;
     libbyrip-converter.enable = true;
     nextcloud.enable = false;
     forgejo = {
