@@ -184,7 +184,7 @@ SSO, email, and AI tagging are not configured.
 ## httpSMS on Rinoa
 
 The `httpsms` module runs a self-hosted httpSMS gateway: API, web UI,
-PostgreSQL 17, and Redis. The `events` app uses it to send login texts.
+PostgreSQL 17, and Redis. The `events` app uses it to send invite and link texts.
 Both images build on Rinoa from the pinned `httpsms` flake input. The first
 start builds the web UI and takes several minutes.
 
@@ -193,6 +193,7 @@ start builds the web UI and takes several minutes.
   The gateway phone app uses this URL as its server URL.
 - Both routes use `secured@file` (LAN and Tailscale clients only).
 - Other containers call the API at `http://httpsms-api:8000` on `proxy`.
+  The events app uses the private `events-sms` network instead.
 - PostgreSQL data: `/var/lib/docker-containers/httpsms/data/postgres`.
 - Secrets: `modules/nixos/security/sops/httpsms.yaml`. The module generated
   `db_password` and `system_api_key`. The Firebase values are `CHANGEME`.
@@ -233,6 +234,9 @@ The image builds on Rinoa from the pinned `events` flake input.
 - The Cloudflare Tunnel routes `events.solivan.dev` to `http://events:8080`.
   There are no Traefik labels and no host port. The app trusts
   `CF-Connecting-IP` because of that.
+- The app is not on `proxy`. Only cloudflared reaches it, on `events-edge`.
+  Only `httpsms-api` shares `events-sms` with it (API calls and the webhook).
+  The events module adds both networks to those two stacks.
 - The container runs as `1000:100` with a read-only root filesystem.
 - Data: `/var/lib/docker-containers/events/data` (SQLite and photos).
 - Backups: `/mnt/titan/backups/events`, nightly at 03:00, 14 days kept.
@@ -251,6 +255,12 @@ The image builds on Rinoa from the pinned `events` flake input.
    `message.send.failed`, `message.send.expired`.
 5. In the Cloudflare Zero Trust dashboard, add the tunnel public hostname
    `events.solivan.dev` with service `http://events:8080`.
+   In the `solivan.dev` zone, add the bot protection:
+   - Security → Bots: turn on Bot Fight Mode and Block AI bots.
+   - WAF custom rule: hostname `events.solivan.dev` and country not `US` →
+     Managed Challenge.
+   - WAF rate-limiting rule: hostname `events.solivan.dev` and path starts
+     with `/login` or `/i/`, 20 requests per 10 seconds per IP → Block.
 6. Set `events.enable = true` in `hosts/nixos/rinoa/default.nix`. Deploy Rinoa.
 7. Log in at `https://events.solivan.dev/admin/login` with `admin_password`
    (`sops -d modules/nixos/security/sops/events.yaml`).

@@ -69,7 +69,7 @@
 
     # Built on Rinoa by the events container module.
     events = {
-      url = "git+https://forge.solivan.dev/nightconcept/events.git?rev=02cf0f27f415735a85f8242a03449fc4d393df65";
+      url = "git+https://forge.solivan.dev/nightconcept/events.git?rev=9e9cceffbc3e16e73e403bd10d10ab5175fcb3b2";
       flake = false;
     };
 

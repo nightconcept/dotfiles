@@ -18,6 +18,12 @@
     lib.optionals config.modules.nixos.security.sops.enable ["sops-install-secrets.service"];
   usesTitan = lib.hasPrefix "/mnt/titan" cfg.backupPath;
   sourceTag = builtins.substring 0 12 (cfg.source.rev or "local");
+  # The app trusts CF-Connecting-IP, so only cloudflared may reach it: it is
+  # not on the shared proxy network. It reaches httpSMS (and gets the webhook)
+  # on a network shared only with httpsms-api. Both networks allow egress.
+  edgeNetwork = "events-edge";
+  smsNetwork = "events-sms";
+  networkUnits = map (n: "docker-network-${n}.service") [edgeNetwork smsNetwork];
 in {
   options.modules.nixos.docker.containers.events = {
     enable = lib.mkEnableOption "events web app";
@@ -50,6 +56,12 @@ in {
   config = lib.mkIf cfg.enable {
     virtualisation.docker.enable = true;
 
+    modules.nixos.docker = {
+      networks = [edgeNetwork smsNetwork];
+      containers.cloudflare-tunnel.extraNetworks = [edgeNetwork];
+      containers.httpsms.apiExtraNetworks = [smsNetwork];
+    };
+
     systemd.tmpfiles.rules = [
       "d ${containerPath} 0700 root root -"
       "d ${cfg.dataPath} 0750 1000 100 -"
@@ -58,15 +70,17 @@ in {
     systemd.services."docker-container-${containerName}" = {
       description = "events Web App Container";
       after =
-        ["docker.service" "docker-network-proxy.service" "docker-container-httpsms.service"]
+        ["docker.service" "docker-container-httpsms.service"]
+        ++ networkUnits
         ++ secretUnits
         ++ lib.optionals usesTitan ["mnt-titan.mount"];
       requires =
-        ["docker.service" "docker-network-proxy.service"]
+        ["docker.service"]
+        ++ networkUnits
         ++ secretUnits
         ++ lib.optionals usesTitan ["mnt-titan.mount"];
       # The app works without the gateway: texts queue, and the admin can
-      # issue manual login links.
+      # copy personal links.
       wants = ["docker-container-httpsms.service"];
       wantedBy = ["multi-user.target"];
       unitConfig = lib.mkIf usesTitan {

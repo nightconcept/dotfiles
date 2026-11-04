@@ -113,16 +113,16 @@
     "events": {
       "flake": false,
       "locked": {
-        "lastModified": 1793804427,
-        "narHash": "sha256-DYsha80m58Qt57EihKiVbLPCNUxWV2FYljgWILki5ws=",
+        "lastModified": 1793808343,
+        "narHash": "sha256-C+RDdFhysphn6ek35YhlN+WMq53TE7GOBAyBfgTyy/8=",
         "ref": "refs/heads/main",
-        "rev": "02cf0f27f415735a85f8242a03449fc4d393df65",
-        "revCount": 3,
+        "rev": "9e9cceffbc3e16e73e403bd10d10ab5175fcb3b2",
+        "revCount": 7,
         "type": "git",
         "url": "https://forge.solivan.dev/nightconcept/events.git"
       },
       "original": {
-        "rev": "02cf0f27f415735a85f8242a03449fc4d393df65",
+        "rev": "9e9cceffbc3e16e73e403bd10d10ab5175fcb3b2",
         "type": "git",
         "url": "https://forge.solivan.dev/nightconcept/events.git"
       }

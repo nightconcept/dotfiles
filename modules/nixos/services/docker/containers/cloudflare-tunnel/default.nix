@@ -8,6 +8,12 @@
   cfg = config.modules.nixos.docker.containers.cloudflare-tunnel;
   containerName = "cloudflare-tunnel";
   containerPath = "/var/lib/docker-containers/${containerName}";
+  networkUnits = map (n: "docker-network-${n}.service") cfg.extraNetworks;
+  # Compose merges this file into docker-compose.yml. JSON is valid YAML.
+  networksOverride = pkgs.writeText "cloudflare-tunnel-networks.yml" (builtins.toJSON {
+    services.cloudflare-tunnel.networks = lib.genAttrs cfg.extraNetworks (_: {});
+    networks = lib.genAttrs cfg.extraNetworks (_: {external = true;});
+  });
 in {
   options.modules.nixos.docker.containers.cloudflare-tunnel = {
     enable = lib.mkEnableOption "Cloudflare Tunnel service";
@@ -19,6 +25,15 @@ in {
         then "/run/secrets/services/cloudflare-tunnel/tunnel_token"
         else null;
       description = "Path to file containing Cloudflare tunnel token";
+    };
+
+    extraNetworks = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [];
+      description = ''
+        Networks from modules.nixos.docker.networks that the tunnel also
+        joins, for origins kept off the shared proxy network.
+      '';
     };
   };
 
@@ -34,13 +49,18 @@ in {
     # Cloudflare Tunnel container service
     systemd.services."docker-container-${containerName}" = {
       description = "Cloudflare Tunnel Container";
-      after = ["docker.service" "docker-network-proxy.service"];
-      requires = ["docker.service" "docker-network-proxy.service"];
+      after = ["docker.service" "docker-network-proxy.service"] ++ networkUnits;
+      requires = ["docker.service" "docker-network-proxy.service"] ++ networkUnits;
       wantedBy = ["multi-user.target"];
 
       preStart = ''
         # Copy docker-compose.yml to runtime directory
         cp ${./docker-compose.yml} ${containerPath}/docker-compose.yml
+        ${
+          if cfg.extraNetworks == []
+          then "rm -f ${containerPath}/docker-compose.override.yml"
+          else "cp ${networksOverride} ${containerPath}/docker-compose.override.yml"
+        }
 
         # Generate .env file (initially empty)
         touch ${containerPath}/.env

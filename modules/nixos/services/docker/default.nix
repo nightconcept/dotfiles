@@ -90,6 +90,15 @@ in {
       description = "Docker Compose projects to manage";
     };
 
+    networks = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [];
+      description = ''
+        Extra user-defined bridge networks. Each gets a
+        docker-network-<name> unit, like the shared proxy network.
+      '';
+    };
+
     swarm = {
       enable = lib.mkOption {
         type = lib.types.bool;
@@ -165,6 +174,22 @@ in {
             RemainAfterExit = true;
           };
         };
-      };
+      }
+      // lib.listToAttrs (map (name:
+        lib.nameValuePair "docker-network-${name}" {
+          description = "Create Docker ${name} network";
+          after = ["docker.service"];
+          requires = ["docker.service"];
+          wantedBy = ["multi-user.target"];
+          script = ''
+            ${pkgs.docker}/bin/docker network inspect ${name} >/dev/null 2>&1 || \
+            ${pkgs.docker}/bin/docker network create ${name}
+          '';
+          serviceConfig = {
+            Type = "oneshot";
+            RemainAfterExit = true;
+          };
+        })
+      cfg.networks);
   };
 }

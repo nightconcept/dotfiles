@@ -23,6 +23,12 @@
   webKeys = ["api_key" "auth_domain" "project_id" "storage_bucket" "messaging_sender_id" "app_id"];
   # The API seeds this user for its in-process events queue (README step 7).
   systemUserId = "system-user-id";
+  networkUnits = map (n: "docker-network-${n}.service") cfg.apiExtraNetworks;
+  # Compose merges this file into docker-compose.yml. JSON is valid YAML.
+  networksOverride = pkgs.writeText "httpsms-networks.yml" (builtins.toJSON {
+    services.api.networks = lib.genAttrs cfg.apiExtraNetworks (_: {});
+    networks = lib.genAttrs cfg.apiExtraNetworks (_: {external = true;});
+  });
 in {
   options.modules.nixos.docker.containers.httpsms = {
     enable = lib.mkEnableOption "self-hosted httpSMS gateway";
@@ -56,6 +62,15 @@ in {
       default = "${containerPath}/data";
       description = "Persistent PostgreSQL data";
     };
+
+    apiExtraNetworks = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [];
+      description = ''
+        Networks from modules.nixos.docker.networks that the API also joins,
+        so clients kept off the shared proxy network can reach it.
+      '';
+    };
   };
 
   config = lib.mkIf cfg.enable (let
@@ -71,8 +86,8 @@ in {
 
     systemd.services."docker-container-${containerName}" = {
       description = "httpSMS Gateway Containers";
-      after = ["docker.service" "docker-network-proxy.service"] ++ secretUnits;
-      requires = ["docker.service" "docker-network-proxy.service"] ++ secretUnits;
+      after = ["docker.service" "docker-network-proxy.service"] ++ networkUnits ++ secretUnits;
+      requires = ["docker.service" "docker-network-proxy.service"] ++ networkUnits ++ secretUnits;
       wantedBy = ["multi-user.target"];
       restartTriggers = [./docker-compose.yml];
       path = [pkgs.coreutils pkgs.gnugrep pkgs.jq pkgs.docker];
@@ -102,6 +117,11 @@ in {
 
         install -d -m 0700 ${cfg.dataPath}/postgres
         install -m 0644 ${./docker-compose.yml} ${containerPath}/docker-compose.yml
+        ${
+          if cfg.apiExtraNetworks == []
+          then "rm -f ${containerPath}/docker-compose.override.yml"
+          else "install -m 0644 ${networksOverride} ${containerPath}/docker-compose.override.yml"
+        }
 
         # The web UI is a static Nuxt build: its config is read at build time,
         # so build from a writable copy that holds the .env file.
