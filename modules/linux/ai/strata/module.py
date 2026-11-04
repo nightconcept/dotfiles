@@ -115,6 +115,15 @@ class StrataModule(HostModule):
                         f"{setup_cmd}"
                     ),
                     f'test -f "{config}" || {{ echo "setup did not write {config}" >&2; exit 1; }}',
+                    (
+                        f'cd "{STRATA_DIR}" && .venv/bin/python -c '
+                        "'import json; from pathlib import Path; "
+                        "from strata_control.atomic import write_text; "
+                        f'p = Path("{config}"); cfg = json.loads(p.read_text()); '
+                        'cfg["drafting"] = "mtp"; '
+                        'write_text(p, json.dumps(cfg, indent=1))'
+                        "'"
+                    ),
                 ],
             )
 
