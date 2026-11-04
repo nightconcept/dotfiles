@@ -23,8 +23,7 @@
     reasonix.enable = true;
     rofi.enable = true;
     spotify.enable = true;
-    # Zotero 10.0.4 bundles Firefox ESR 140, now EOL and marked insecure. Re-enable once Zotero moves to ESR 153.
-    zotero.enable = false;
+    zotero.enable = true;
     # wezterm.enable = true; # Replaced by ghostty
     xdg.enable = true;
     shell = {

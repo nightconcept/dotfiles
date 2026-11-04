@@ -77,6 +77,7 @@ in {
           "stretchly"
           "visual-studio-code"
           "vlc"
+          "zotero"
         ]
         ++ optionals (cfg.systemType == "desktop") [
           "alt-tab"
