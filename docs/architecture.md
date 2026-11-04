@@ -88,7 +88,7 @@ See [Network](network.md) for direct access, VM placement, bridge topology, and 
 
 ### Active Linux Hosts (Non-Nix, managed via pyinfra)
 - `cloud` - Debian Docker host with a Windows Server 2025 Forgejo runner VM; deploy with `just cloud`; see [Cloud](cloud.md)
-- `terra` - Ubuntu-based LLM inference server; home-manager profile: `desktop`; reachable remotely via Tailscale (client) against a self-hosted Headscale control server on rinoa (no port forwarding)
+- `terra` - Ubuntu-based LLM inference server; home-manager profile: `desktop`; Tailscale client using the hosted coordination service. Rinoa provides the home subnet route after enrollment and route approval
 - `barrett` - Debian VPN torrent server with NordVPN; home-manager profile: `server`
 
 Deploy either host with: `flake-rebuild <hostname>` (auto-detects local vs remote)
