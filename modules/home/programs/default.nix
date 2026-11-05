@@ -18,6 +18,7 @@
     ./mise.nix
     ./git.nix
     ./nvim
+    ./openrig.nix
     ./opencode.nix
     ./pi.nix
     ./reasonix.nix
