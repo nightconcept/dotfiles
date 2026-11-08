@@ -182,6 +182,12 @@ in {
           name = "httpSMS API routed";
           url = "https://httpsms-api.local.solivan.dev/health";
         }
+      ]
+      ++ lib.optionals (containers.events.enable && containers.events.lanPreview) [
+        {
+          name = "events routed";
+          url = "https://events.local.solivan.dev/healthz";
+        }
       ];
     afterUnits =
       [
@@ -266,7 +272,12 @@ in {
     # Enable after the external setup in docs/docker.md (Firebase, Turnstile,
     # SOPS values, gateway phone). httpSMS first, then events.
     httpsms.enable = false;
-    events.enable = false;
+    # LAN test at https://events.local.solivan.dev until then: texts go to
+    # the log. Drop lanPreview to go live through the tunnel.
+    events = {
+      enable = true;
+      lanPreview = true;
+    };
   };
 
   # System packages for server management

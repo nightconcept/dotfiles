@@ -1,7 +1,9 @@
 # Reachable only through the Cloudflare Tunnel (public hostname ->
 # http://events:8080). No Traefik labels, no host port, and not on the shared
 # proxy network: only cloudflared (events-edge) and httpsms-api (events-sms)
-# can reach it, because the app trusts CF-Connecting-IP.
+# can reach it, because the app trusts CF-Connecting-IP. The NixOS module
+# writes the networks (and, for lanPreview, Traefik labels) to
+# docker-compose.override.yml.
 name: events
 
 services:
@@ -27,9 +29,6 @@ services:
     volumes:
       - ${DATA_PATH?required}:/data
       - ${BACKUP_PATH?required}:/backup
-    networks:
-      - events-edge
-      - events-sms
     # uid 1000 matches the Titan CIFS mount owner, so backups can write there.
     user: "1000:100"
     read_only: true
@@ -44,9 +43,3 @@ services:
       retries: 3
       start_period: 10s
     stop_grace_period: 20s
-
-networks:
-  events-edge:
-    external: true
-  events-sms:
-    external: true

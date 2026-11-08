@@ -3,6 +3,9 @@
 # The image builds on Rinoa from the pinned `events` flake input. The
 # Cloudflare Tunnel routes the public hostname to http://events:8080. Login
 # texts go through the httpSMS module on the same host.
+#
+# `lanPreview` runs it for testing instead: LAN/Tailscale only through
+# Traefik, texts written to the log, bot checks off, and no tunnel or httpSMS.
 {
   config,
   inputs,
@@ -23,7 +26,45 @@
   # on a network shared only with httpsms-api. Both networks allow egress.
   edgeNetwork = "events-edge";
   smsNetwork = "events-sms";
-  networkUnits = map (n: "docker-network-${n}.service") [edgeNetwork smsNetwork];
+  appNetworks =
+    if cfg.lanPreview
+    then ["proxy"]
+    else [edgeNetwork smsNetwork];
+  networkUnits = map (n: "docker-network-${n}.service") appNetworks;
+  lanHost = "events.local.solivan.dev";
+  baseUrl =
+    if cfg.lanPreview
+    then "https://${lanHost}"
+    else cfg.baseUrl;
+  smsSecrets = ["turnstile_sitekey" "turnstile_secret" "httpsms_api_key" "httpsms_from" "httpsms_webhook_key"];
+  requiredSecrets = ["admin_password"] ++ lib.optionals (!cfg.lanPreview) smsSecrets;
+  # Compose merges this file into docker-compose.yml. JSON is valid YAML.
+  override = pkgs.writeText "events-override.yml" (builtins.toJSON {
+    services.events =
+      {
+        networks = lib.genAttrs appNetworks (_: {});
+      }
+      // lib.optionalAttrs cfg.lanPreview {
+        environment = {
+          SMS_DRY_RUN = "1";
+          TURNSTILE_DISABLED = "1";
+        };
+        labels = [
+          "traefik.enable=true"
+          "traefik.http.routers.events.entrypoints=http"
+          "traefik.http.routers.events.rule=Host(`${lanHost}`)"
+          "traefik.http.routers.events.middlewares=https-redirectscheme@file"
+          "traefik.http.routers.events-secure.entrypoints=https"
+          "traefik.http.routers.events-secure.rule=Host(`${lanHost}`)"
+          "traefik.http.routers.events-secure.tls=true"
+          "traefik.http.routers.events-secure.middlewares=secured@file"
+          "traefik.http.routers.events-secure.service=events"
+          "traefik.http.services.events.loadbalancer.server.port=8080"
+          "traefik.docker.network=proxy"
+        ];
+      };
+    networks = lib.genAttrs appNetworks (_: {external = true;});
+  });
 in {
   options.modules.nixos.docker.containers.events = {
     enable = lib.mkEnableOption "events web app";
@@ -46,6 +87,17 @@ in {
       description = "SQLite database and photos";
     };
 
+    lanPreview = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = ''
+        Test on the LAN before the phone and Cloudflare are ready: serve
+        https://${lanHost} through Traefik (LAN/Tailscale only), write texts
+        and personal links to the log, and turn bot checks off. Only the
+        admin password secret is needed. Never route the tunnel to it.
+      '';
+    };
+
     backupPath = lib.mkOption {
       type = lib.types.str;
       default = "/mnt/titan/backups/events";
@@ -56,7 +108,7 @@ in {
   config = lib.mkIf cfg.enable {
     virtualisation.docker.enable = true;
 
-    modules.nixos.docker = {
+    modules.nixos.docker = lib.mkIf (!cfg.lanPreview) {
       networks = [edgeNetwork smsNetwork];
       containers.cloudflare-tunnel.extraNetworks = [edgeNetwork];
       containers.httpsms.apiExtraNetworks = [smsNetwork];
@@ -70,7 +122,8 @@ in {
     systemd.services."docker-container-${containerName}" = {
       description = "events Web App Container";
       after =
-        ["docker.service" "docker-container-httpsms.service"]
+        ["docker.service"]
+        ++ lib.optionals (!cfg.lanPreview) ["docker-container-httpsms.service"]
         ++ networkUnits
         ++ secretUnits
         ++ lib.optionals usesTitan ["mnt-titan.mount"];
@@ -81,19 +134,19 @@ in {
         ++ lib.optionals usesTitan ["mnt-titan.mount"];
       # The app works without the gateway: texts queue, and the admin can
       # copy personal links.
-      wants = ["docker-container-httpsms.service"];
+      wants = lib.optionals (!cfg.lanPreview) ["docker-container-httpsms.service"];
       wantedBy = ["multi-user.target"];
       unitConfig = lib.mkIf usesTitan {
         RequiresMountsFor = [cfg.backupPath];
       };
-      restartTriggers = [./docker-compose.yml];
+      restartTriggers = [./docker-compose.yml override];
       path = [pkgs.coreutils pkgs.gnugrep pkgs.util-linux];
 
       preStart = ''
         set -euo pipefail
         secret() { cat ${secretDir}/"$1"; }
 
-        for key in admin_password turnstile_sitekey turnstile_secret httpsms_api_key httpsms_from httpsms_webhook_key; do
+        for key in ${lib.concatStringsSep " " requiredSecrets}; do
           if [ ! -r ${secretDir}/"$key" ]; then
             echo "events secret $key is unavailable" >&2
             exit 1
@@ -114,19 +167,22 @@ in {
         install -d ${lib.escapeShellArg cfg.backupPath}
 
         install -m 0644 ${./docker-compose.yml} ${containerPath}/docker-compose.yml
+        install -m 0644 ${override} ${containerPath}/docker-compose.override.yml
         umask 077
         {
           printf 'ADMIN_PASSWORD=%s\n' "$(secret admin_password)"
+        ${lib.optionalString (!cfg.lanPreview) ''
           printf 'TURNSTILE_SITEKEY=%s\n' "$(secret turnstile_sitekey)"
           printf 'TURNSTILE_SECRET=%s\n' "$(secret turnstile_secret)"
           printf 'HTTPSMS_API_KEY=%s\n' "$(secret httpsms_api_key)"
           printf 'HTTPSMS_FROM=%s\n' "$(secret httpsms_from)"
           printf 'HTTPSMS_WEBHOOK_KEY=%s\n' "$(secret httpsms_webhook_key)"
+        ''}
         } > ${containerPath}/app.env
         {
           printf 'EVENTS_SOURCE=%s\n' ${cfg.source}
           printf 'EVENTS_TAG=%s\n' ${sourceTag}
-          printf 'BASE_URL=%s\n' ${lib.escapeShellArg cfg.baseUrl}
+          printf 'BASE_URL=%s\n' ${lib.escapeShellArg baseUrl}
           printf 'DATA_PATH=%s\n' ${lib.escapeShellArg cfg.dataPath}
           printf 'BACKUP_PATH=%s\n' ${lib.escapeShellArg cfg.backupPath}
         } > ${containerPath}/.env

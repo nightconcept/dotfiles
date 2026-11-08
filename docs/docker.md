@@ -265,5 +265,21 @@ The image builds on Rinoa from the pinned `events` flake input.
 7. Log in at `https://events.solivan.dev/admin/login` with `admin_password`
    (`sops -d modules/nixos/security/sops/events.yaml`).
 
+### LAN preview (before the phone and Cloudflare)
+
+`events.lanPreview = true` serves `https://events.local.solivan.dev` through
+Traefik to LAN and Tailscale clients only. Texts and their personal links go to
+`docker logs events` instead of a phone, and bot checks are off. Only
+`admin_password` is needed. The tunnel and httpSMS are not involved.
+
+Add the Pi-hole record `events.local.solivan.dev` → `192.168.1.110`. Phone and
+name login needs no text, so test contacts can use any numbers. Personal links
+are under **Contacts**. All LAN clients share one login rate-limit bucket
+(5 phone and name logins per 10 minutes), because Traefik is the client IP the app sees.
+
+To go live, set `lanPreview = false` after steps 1–5 and deploy. Delete test
+data first if you want a clean start: stop the stack and remove
+`/var/lib/docker-containers/events/data/*`.
+
 To update the app, push to the forge, run `nix flake update events`, and
 deploy Rinoa. The image tag is the commit, so a new commit builds a new image.
