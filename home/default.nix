@@ -18,6 +18,7 @@
       extraConfig = {
         targets.genericLinux.enable = true;
         home.pointerCursor.enable = true;
+        home.packages = [pkgs.github-copilot-cli];
       };
     };
 
