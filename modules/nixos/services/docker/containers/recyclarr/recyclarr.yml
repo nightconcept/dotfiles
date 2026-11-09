@@ -145,10 +145,16 @@ radarr:
       # The guide upgrades until score 10000, so Radarr keeps chasing
       # release-group tiers (big x264 encodes). Stop at score 50: an x265
       # file or any tiered release is final once it reaches Bluray-1080p.
+      # Keep the profile at 1080p and below; the TRaSH profile includes 2160p.
       - trash_id: d1d67249d3890e49bc12e275d989a7e9 # HD Bluray + WEB
         upgrade:
           allowed: true
           until_score: 50
+        qualities:
+          - name: 1080p
+            qualities: [WEBDL-1080p, WEBRip-1080p, Bluray-1080p]
+          - name: 720p
+            qualities: [Bluray-720p]
 
     custom_formats:
       - trash_ids:
