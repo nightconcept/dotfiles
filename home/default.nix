@@ -119,6 +119,17 @@
       extraConfig = {};
     };
 
+    wsl = {
+      profiles = [./profiles/server.nix];
+      username = builtins.getEnv "USER";
+      homeDirectory = builtins.getEnv "HOME";
+      extraImports = [];
+      extraConfig.modules.home.programs = {
+        herdr.enable = true;
+        openrig.enable = true;
+      };
+    };
+
     # Default fallback
     default = {
       profiles = [./profiles/server.nix];

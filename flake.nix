@@ -126,6 +126,7 @@
       desktop = lib.mkHome "desktop";
       laptop = lib.mkHome "laptop";
       server = lib.mkHome "server";
+      wsl = lib.mkHome "wsl";
     };
 
     # Formatters for different systems

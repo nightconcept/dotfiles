@@ -33,3 +33,13 @@ flake-rebuild barrett  # or: just barrett
 After the first successful run, `flake-rebuild` itself will be available in the host's fish shell for subsequent local deploys.
 
 On non-NixOS Linux, Home Manager packages such as `qemu-user` only provide the emulator binary on the user PATH. Transparent execution of foreign ELF binaries during local Nix builds additionally requires host-level `binfmt_misc` registration and daemon-level `extra-platforms`, which are managed here through pyinfra rather than Home Manager.
+
+## WSL
+
+Use the standalone `wsl` Home Manager profile to get the server configuration, Herdr, and OpenRig:
+
+```bash
+home-manager switch --flake '.#wsl' --impure
+```
+
+Run this from the dotfiles checkout. The profile reads the current user and home directory from the environment; the generic `server` profile does not enable Herdr or OpenRig.

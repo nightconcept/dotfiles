@@ -14,6 +14,7 @@
 | `waver` | `base + darwin-laptop` (MacBook Pro M1) |
 | `merlin` | `base + darwin-desktop` (Mac Mini M1) |
 | `desktop` / `laptop` / `server` | Generic standalone profiles |
+| `wsl` | `base + server`, with Herdr and OpenRig enabled |
 
 ## Directory Structure
 
