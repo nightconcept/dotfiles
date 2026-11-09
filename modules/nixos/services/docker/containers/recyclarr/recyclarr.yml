@@ -128,13 +128,12 @@ radarr:
     quality_definition:
       type: movie
       qualities:
-        # 1080p: 42 MB/min (~5.6 Mbps), about 5 GB for a 2-hour movie.
-        # Preferred is below max, so a mid-size x265 encode wins over the
-        # largest release under the cap. "Size: Over 8 GB" below still caps
-        # very long movies.
-        - { name: WEBDL-1080p, min: 5, max: 42, preferred: 35 }
-        - { name: WEBRip-1080p, min: 5, max: 42, preferred: 35 }
-        - { name: Bluray-1080p, min: 5, max: 42, preferred: 35 }
+        # 1080p: 42 MB/min (~5.6 Mbps) maximum; preferred 17 MB/min
+        # (~2.3 Mbps) matches the current library median. The size custom
+        # format below also rejects releases over 13 GB.
+        - { name: WEBDL-1080p, min: 5, max: 42, preferred: 17 }
+        - { name: WEBRip-1080p, min: 5, max: 42, preferred: 17 }
+        - { name: Bluray-1080p, min: 5, max: 42, preferred: 17 }
         # 720p: 30 MB/min (~3.6 GB for a 2-hour movie).
         - { name: Bluray-720p, min: 4, max: 30, preferred: 25 }
 
@@ -166,7 +165,7 @@ radarr:
       # fine. Untagged releases count as the original language.
       - trash_ids:
           - d6e9318c875905d6cfb5bee961afcea9 # Language: Not Original
-          - 514faaa4809b87c71c5c07f31e731120 # Size: Over 8 GB (local)
+          - 514faaa4809b87c71c5c07f31e731120 # Size: Over 13 GB (local)
         assign_scores_to:
           - trash_id: d1d67249d3890e49bc12e275d989a7e9
             score: -10000
