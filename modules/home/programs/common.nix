@@ -39,6 +39,7 @@ in {
         ripgrep
         rsync
         sops
+        tmux
         uv
         vim
         wget
