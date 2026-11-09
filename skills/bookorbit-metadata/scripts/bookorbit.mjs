@@ -56,7 +56,17 @@ function preserved(before, after, patch = {}) {
 }
 try {
   let result;
-  if (input.operation === 'snapshot') result = await Promise.all(input.ids.map(id => api('books/' + id)));
+  if (input.operation === 'cover') {
+    const response = await request('books/' + input.id + '/cover?medium=audio&strict=true');
+    result = { contentType: response.headers.get('content-type'), base64: Buffer.from(await response.arrayBuffer()).toString('base64') };
+  } else if (input.operation === 'score-snapshot') {
+    result = [];
+    for (let i = 0; i < input.ids.length; i += 25) {
+      const books = await Promise.all(input.ids.slice(i, i + 25).map(id => api('books/' + id)));
+      result.push(...books.map(({ id, libraryId, title, authors, covers, metadataScore }) =>
+        ({ id, libraryId, title, authors, covers, metadataScore })));
+    }
+  } else if (input.operation === 'snapshot') result = await Promise.all(input.ids.map(id => api('books/' + id)));
   else if (input.operation === 'settings') result = await api('libraries');
   else if (input.operation === 'automation') {
     result = [];
@@ -89,13 +99,27 @@ try {
       assert.ok(input.patch.audioMetadata?.chapters, 'Preserve track-derived chapters before automatic renaming');
     }
     let coverApplied = false;
-    if (input.cover && !before.covers.audio) {
+    if (input.coverData && (!before.covers.audio || input.replaceCover)) {
+      const form = new FormData();
+      form.append('file', new Blob([Buffer.from(input.coverData.base64, 'base64')], { type: input.coverData.contentType }), 'cover.png');
+      const response = await fetch('http://127.0.0.1:3000/api/v1/books/' + before.id + '/cover?medium=audio', {
+        method: 'POST', dispatcher, headers: { Authorization: 'Bearer ' + token }, body: form, signal: AbortSignal.timeout(600000),
+      });
+      if (!response.ok) throw Error('Cover upload HTTP ' + response.status);
+      coverApplied = true;
+    }
+    if (input.cover && (!before.covers.audio || input.replaceCover)) {
       await api('books/' + before.id + '/cover/from-url?medium=audio', 'POST', { url: input.cover });
       coverApplied = true;
     }
     const save = await api('books/' + before.id + '/metadata?syncFileWrite=true', 'PATCH', input.patch);
     const after = await api('books/' + before.id);
     preserved(before, after, input.patch); verifyPatch(after, input.patch);
+    if (coverApplied) {
+      const cover = after.covers.audio;
+      assert.ok(cover?.width >= 500 && cover?.height >= 500 && Math.abs(cover.width - cover.height) <= Math.max(cover.width, cover.height) * 0.05,
+        'Uploaded audiobook artwork must be square and at least 500 pixels per side');
+    }
     const writeLog = await api('books/' + before.id + '/write-log');
     result = { before, after, write: save.write, libraryAutoWriteEnabled: save.libraryAutoWriteEnabled, coverApplied, writeLog };
   } else if (input.operation === 'audit') {

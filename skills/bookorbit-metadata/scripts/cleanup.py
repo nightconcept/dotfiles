@@ -2,6 +2,7 @@
 """Prepare and apply tracked BookOrbit audiobook metadata batches on Rinoa."""
 
 import argparse
+import base64
 import datetime
 import json
 import re
@@ -11,11 +12,15 @@ from pathlib import Path
 from typing import Any
 
 REMOTE = Path(__file__).with_name("bookorbit.mjs")
+REPOSITORY = Path(__file__).resolve().parents[3]
 ROOT = Path.home() / ".local/share/bookorbit-metadata"
+LIBRARIES = {1: "book", 2: "audiobook", 4: "comic"}
 
 
 def save(path, value):
     """Replace a progress file atomically after each operation."""
+    if path.resolve().is_relative_to(REPOSITORY):
+        raise ValueError("Library data must be stored outside the dotfiles repository")
     temporary = path.with_suffix(path.suffix + ".tmp")
     temporary.write_text(json.dumps(value, indent=2) + "\n")
     temporary.replace(path)
@@ -181,6 +186,24 @@ def prepare(path, ids):
                     status="ready",
                     patch=make_patch(book, source),
                     cover=source.get("coverUrl"),
+                    replace_cover=bool(
+                        book["covers"].get("audio")
+                        and (
+                            not book["covers"]["audio"].get("width")
+                            or not book["covers"]["audio"].get("height")
+                            or min(
+                                book["covers"]["audio"]["width"], book["covers"]["audio"]["height"]
+                            )
+                            < 500
+                            or abs(
+                                book["covers"]["audio"]["width"] - book["covers"]["audio"]["height"]
+                            )
+                            > max(
+                                book["covers"]["audio"]["width"], book["covers"]["audio"]["height"]
+                            )
+                            * 0.05
+                        )
+                    ),
                     source_url="https://www.audible.com/pd/" + source["providerId"],
                     match_reason="Unique title/author/English/runtime match within 120 seconds",
                 )
@@ -203,8 +226,22 @@ def apply(path):
         item["status"] = "applying"
         save(path, batch)
         try:
+            cover_data = None
+            if item.get("cover_file"):
+                content = Path(item["cover_file"]).read_bytes()
+                if not content.startswith(b"\x89PNG\r\n\x1a\n") or len(content) > 20_000_000:
+                    raise RuntimeError("Cover must be a PNG smaller than 20 MB")
+                cover_data = {
+                    "base64": base64.b64encode(content).decode(),
+                    "contentType": "image/png",
+                }
             item["result"] = remote(
-                "apply", book=item["before"], patch=item["patch"], cover=item.get("cover")
+                "apply",
+                book=item["before"],
+                patch=item["patch"],
+                cover=item.get("cover"),
+                replaceCover=item.get("replace_cover", False),
+                coverData=cover_data,
             )
             item["status"] = "applied"
         except RuntimeError as error:
@@ -242,23 +279,79 @@ def audit(path):
     save(path, batch)
 
 
-def inventory(count):
-    """Select unreviewed audiobooks by metadata score."""
-    reviewed = set()
+def review_state():
+    """Collect reviewed entries and documented holds from the metadata batches."""
+    reviewed, held, seen = set(), set(), set()
     for path in ROOT.glob("batch-*.json"):
         record = json.loads(path.read_text())
         if not isinstance(record, dict):
             continue
+        if not re.fullmatch(r"batch-\d+\.json", path.name):
+            continue
         for item in record.get("items", []):
-            reviewed.add(int(item["id"]))
-    excluded = ",".join(map(str, sorted(reviewed))) or "0"
-    query = (
-        "select b.id from books b join book_metadata m on m.book_id=b.id "
-        f"where b.library_id=2 and b.status='present' and b.id not in ({excluded}) "
-        f"order by m.metadata_score nulls first,b.id limit {count}"
+            seen.add(int(item["id"]))
+            if item.get("status") in (
+                "audited",
+                "applied_and_reviewed",
+            ):
+                reviewed.add(int(item["id"]))
+                if item.get("held_fields") or item.get("remaining_issues"):
+                    held.add(int(item["id"]))
+    progress = ROOT / "progress.json"
+    if progress.exists():
+        held.update(json.loads(progress.read_text()).get("edition_holds", []))
+    return reviewed, held, seen
+
+
+def metadata_score(book, medium, reviewed=False, held=False):
+    """Score essentials and review evidence without claiming unchecked fields are correct."""
+    cover_key = "audio" if medium == "audiobook" else "ebook"
+    cover = (book.get("covers") or {}).get(cover_key) or {}
+    width, height = cover.get("width") or 0, cover.get("height") or 0
+    title = (book.get("title") or "").strip()
+    generic_title = bool(
+        re.fullmatch(r"(?:v|vol(?:ume)?|ch(?:apter)?|issue|part)[ ._-]*\d+", title, re.I)
     )
-    return (
-        subprocess.check_output(
+    if medium == "audiobook":
+        cover_ok = min(width, height) >= 500 and abs(width - height) <= max(width, height) * 0.05
+    else:
+        cover_ok = width >= 500 and height >= 700 and 0.45 <= width / height <= 0.90
+    parts = {
+        "title_present": 25 if title and not generic_title else 0,
+        "author_present": 25
+        if any((a.get("name") or "").strip() for a in book.get("authors", []))
+        else 0,
+        "suitable_cover": 25 if cover_ok else 0,
+        "metadata_reviewed": 15 if reviewed else 0,
+        "documented_uncertainty": -10 if held else 0,
+        "bookorbit_score": max(0, min(100, book.get("metadataScore") or 0)) // 10,
+    }
+    return {
+        "id": book["id"],
+        "title": book.get("title"),
+        "medium": medium,
+        "cover_dimensions": {"width": width or None, "height": height or None},
+        "title_needs_review": generic_title or not title,
+        "score": max(0, sum(parts.values())),
+        "points": parts,
+        "bookorbit_score": book.get("metadataScore"),
+        "reviewed": reviewed,
+        "documented_uncertainty": held,
+    }
+
+
+def scores(medium="audiobook"):
+    """Score the selected libraries using BookOrbit data and tracked reviews."""
+    library_ids = [str(key) for key, value in LIBRARIES.items() if medium in ("all", value)]
+    if not library_ids:
+        raise ValueError("Unknown medium")
+    query = (
+        f"select id from books where library_id in ({','.join(library_ids)}) "
+        "and status='present' order by id"
+    )
+    ids = [
+        int(i)
+        for i in subprocess.check_output(
             [
                 "ssh",
                 "-o",
@@ -270,7 +363,31 @@ def inventory(count):
         )
         .decode()
         .split()
-    )
+    ]
+    reviewed, held, seen = review_state()
+    books = remote("score-snapshot", ids=ids) if ids else []
+    result = [
+        metadata_score(b, LIBRARIES[b["libraryId"]], b["id"] in reviewed, b["id"] in held)
+        for b in books
+    ]
+    return sorted(
+        result,
+        key=lambda item: (
+            item["score"],
+            item["bookorbit_score"] if item["bookorbit_score"] is not None else -1,
+            item["id"],
+        ),
+    ), seen
+
+
+def inventory(count, cutoff=90):
+    """Select the least complete unreviewed audiobooks below our score cutoff."""
+    if not 1 <= cutoff <= 100:
+        raise ValueError("Cutoff must be between 1 and 100")
+    scored, seen = scores()
+    return [
+        str(item["id"]) for item in scored if item["id"] not in seen and item["score"] < cutoff
+    ][:count]
 
 
 def main():
@@ -281,16 +398,39 @@ def main():
     p.add_argument("batch", type=Path)
     p.add_argument("--ids", type=int, nargs="+")
     p.add_argument("--count", type=int, default=10)
+    p.add_argument("--cutoff", type=int, default=90)
     for command in ("apply", "audit"):
         p = sub.add_parser(command)
         p.add_argument("batch", type=Path)
+    p = sub.add_parser("score")
+    p.add_argument("report", type=Path)
+    p.add_argument("--medium", choices=["all", "audiobook", "book", "comic"], default="all")
     p = sub.add_parser("automation")
     p.add_argument("--ids", nargs="+", type=int, default=[1, 2])
     args = parser.parse_args()
+    ROOT.mkdir(mode=0o700, parents=True, exist_ok=True)
     if args.command == "prepare":
         if not 1 <= args.count <= 50:
             parser.error("--count must be between 1 and 50")
-        prepare(args.batch, args.ids or [int(i) for i in inventory(args.count)])
+        if not 1 <= args.cutoff <= 100:
+            parser.error("--cutoff must be between 1 and 100")
+        ids = args.ids or [int(i) for i in inventory(args.count, args.cutoff)]
+        if not ids:
+            print(f"No unreviewed audiobooks below score {args.cutoff}")
+            return
+        prepare(args.batch, ids)
+    elif args.command == "score":
+        entries, _ = scores(args.medium)
+        save(
+            args.report,
+            {
+                "date": datetime.date.today().isoformat(),
+                "cutoff": 90,
+                "medium": args.medium,
+                "items": entries,
+            },
+        )
+        print(f"Scored {len(entries)} entries; {sum(i['score'] < 90 for i in entries)} below 90")
     elif args.command == "automation":
         save(ROOT / "automation-settings.json", remote("automation", ids=args.ids, audio=True))
         print("Enabled file writing, audio tags, and renaming; settings saved")
@@ -301,6 +441,6 @@ def main():
 if __name__ == "__main__":
     try:
         main()
-    except (RuntimeError, subprocess.CalledProcessError) as error:
+    except (RuntimeError, ValueError, subprocess.CalledProcessError) as error:
         print(str(error), file=sys.stderr)
         sys.exit(1)
