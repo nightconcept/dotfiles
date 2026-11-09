@@ -128,12 +128,11 @@ radarr:
     quality_definition:
       type: movie
       qualities:
-        # 1080p: 42 MB/min (~5.6 Mbps) maximum; preferred 17 MB/min
-        # (~2.3 Mbps) matches the current library median. The size custom
-        # format below also rejects releases over 13 GB.
-        - { name: WEBDL-1080p, min: 5, max: 42, preferred: 17 }
-        - { name: WEBRip-1080p, min: 5, max: 42, preferred: 17 }
-        - { name: Bluray-1080p, min: 5, max: 42, preferred: 17 }
+        # 1080p: 42 MB/min (~5.6 Mbps) maximum, 35 MB/min preferred.
+        # The size custom format below also rejects releases over 13 GB.
+        - { name: WEBDL-1080p, min: 5, max: 42, preferred: 35 }
+        - { name: WEBRip-1080p, min: 5, max: 42, preferred: 35 }
+        - { name: Bluray-1080p, min: 5, max: 42, preferred: 35 }
         # 720p: 30 MB/min (~3.6 GB for a 2-hour movie).
         - { name: Bluray-720p, min: 4, max: 30, preferred: 25 }
 
