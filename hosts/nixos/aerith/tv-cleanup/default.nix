@@ -16,9 +16,9 @@ in {
     };
   };
 
-  # Enable after reviewing the first dry run.
   systemd.timers.tv-season-cleanup = {
     description = "Monthly cleanup of selected TV shows";
+    wantedBy = ["timers.target"];
     timerConfig = {
       OnCalendar = "monthly";
       Persistent = true;
