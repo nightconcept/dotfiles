@@ -8,6 +8,7 @@
 }: {
   imports = [
     ./hardware-configuration.nix
+    ./tv-cleanup
   ];
 
   # Allow unfree packages
