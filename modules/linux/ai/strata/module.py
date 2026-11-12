@@ -108,11 +108,19 @@ class StrataModule(HostModule):
                 name=f"Prepare the Strata {name} pack",
                 commands=[
                     (
+                        # Run setup only when the venv is missing or cannot import what setup.sh
+                        # installs (requirements.txt), or this pack has no config yet. A healthy
+                        # apply leaves the venv, the engine and the running service alone.
+                        f'cd "{STRATA_DIR}" && if [ -x .venv/bin/python ] '
+                        "&& .venv/bin/python -c 'import numpy, jinja2, yaml, requests, tqdm' "
+                        f'2>/dev/null && [ -f "{config}" ]; then '
+                        f'echo "Strata {name}: venv and config are fine; setup.sh not run."; '
+                        "else "
                         "systemctl stop llama-swap.service 2>/dev/null || true; "
                         "pkill -x strata 2>/dev/null || true; "
                         f'fuser -k "{STRATA_DIR}/engine/strata" 2>/dev/null || true; '
                         f'rm -f "{STRATA_DIR}/engine/strata"; '
-                        f"{setup_cmd}"
+                        f"{setup_cmd}; fi"
                     ),
                     f'test -f "{config}" || {{ echo "setup did not write {config}" >&2; exit 1; }}',
                     (
