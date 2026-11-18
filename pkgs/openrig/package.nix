@@ -17,11 +17,11 @@
 }:
 buildNpmPackage rec {
   pname = "openrig";
-  version = "0.7.8";
+  version = "0.7.18";
 
   src = fetchurl {
     url = "https://registry.npmjs.org/@openrig/cli/-/cli-${version}.tgz";
-    hash = "sha256-8XWlsY8tkVgfjzo3y0qoBwyimQ2PVXtjrBWzxqmUBEU=";
+    hash = "sha256-6+XOzgqgvB0KWxSuy0uhXhjn2czZ659RJ6krAvFUGM4=";
   };
   sourceRoot = "package";
 
@@ -31,7 +31,7 @@ buildNpmPackage rec {
     cp ${./package-lock.json} package-lock.json
   '';
 
-  npmDepsHash = "sha256-OO1Y76kxJnRyFYxobSBm3Fe7Qs2ndkBQC7fID+wi/f8=";
+  npmDepsHash = "sha256-kJoVMCouwyVSScN5WCniO19mVejGe7530mM5382hhVY=";
 
   # Already compiled upstream; postinstall is a runtime ABI check only.
   dontNpmBuild = true;
