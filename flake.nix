@@ -126,6 +126,7 @@
       desktop = lib.mkHome "desktop";
       laptop = lib.mkHome "laptop";
       server = lib.mkHome "server";
+      terra = lib.mkHome "terra";
       wsl = lib.mkHome "wsl";
     };
 

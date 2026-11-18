@@ -65,12 +65,13 @@
     };
 
     terra = {
-      profiles = [./profiles/server.nix];
+      profiles = [./profiles/linux-desktop.nix];
       username = "danny";
       homeDirectory = "/home/danny";
       extraImports = [];
       extraConfig = {
         targets.genericLinux.enable = true;
+        modules.home.programs.openrig.enable = true;
       };
     };
 

@@ -17,7 +17,7 @@ from modules.linux.services.wifi_watchdog import WiFiWatchdogModule
 
 # Initialize modules
 ssh = SSHModule()
-home_manager = HomeManagerModule(profile="desktop")
+home_manager = HomeManagerModule(profile="terra")
 storage = StorageModule()
 titan = TitanMountModule()
 tailscale = TailscaleModule()
