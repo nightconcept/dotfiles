@@ -23,12 +23,18 @@ in {
       after = ["docker.service" "docker-network-proxy.service"];
       requires = ["docker.service" "docker-network-proxy.service"];
       wantedBy = ["multi-user.target"];
-      restartTriggers = [./docker-compose.yml];
+      restartTriggers = [./docker-compose.yml ./default.nix];
 
       preStart = ''
         umask 077
         install -m 0644 ${./docker-compose.yml} ${containerPath}/docker-compose.yml
         install -d -m 0755 -o 977 -g 977 ${containerPath}/config
+        if [ -f ${containerPath}/config/settings.yml ]; then
+          ${pkgs.yq-go}/bin/yq -i '.search.formats = ["html", "json"]' ${containerPath}/config/settings.yml
+        else
+          printf 'use_default_settings: true\nsearch:\n  formats: [html, json]\n' > ${containerPath}/config/settings.yml
+          chown 977:977 ${containerPath}/config/settings.yml
+        fi
         if [ ! -s ${containerPath}/secret-key ]; then
           ${pkgs.openssl}/bin/openssl rand -hex 32 > ${containerPath}/secret-key
         fi

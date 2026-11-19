@@ -54,6 +54,7 @@ in {
     ./containers/nextcloud
     ./containers/obsidian-livesync
     ./containers/opengist
+    ./containers/pricebuddy
     ./containers/seerr
     # ./containers/open-webui
     # ./containers/palworld

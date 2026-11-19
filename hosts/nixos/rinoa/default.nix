@@ -267,6 +267,7 @@ in {
       dataPath = "/var/lib/docker-containers/obsidian-livesync/data";
     };
     opengist.enable = true;
+    pricebuddy.enable = true;
     seerr.enable = true;
     searxng.enable = true;
     # Enable after the external setup in docs/docker.md (Firebase, Turnstile,

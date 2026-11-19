@@ -1,0 +1,66 @@
+services:
+  app:
+    image: docker.io/jez500/pricebuddy:v1.0.57
+    container_name: pricebuddy
+    restart: unless-stopped
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      DB_HOST: database
+      DB_USERNAME: pricebuddy
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_DATABASE: pricebuddy
+      APP_USER_EMAIL: admin@example.com
+      APP_USER_PASSWORD: ${ADMIN_PASSWORD}
+      APP_URL: https://pricebuddy.local.solivan.dev
+      ASSET_URL: https://pricebuddy.local.solivan.dev
+      SESSION_SECURE_COOKIE: 'true'
+      SCRAPER_BASE_URL: http://scraper:3000
+    volumes:
+      - storage:/app/storage
+      - ./app.env:/app/.env
+    networks:
+      - default
+      - proxy
+    # Upstream prints its environment and initial password at startup.
+    logging:
+      driver: none
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.pricebuddy.rule=Host(`pricebuddy.local.solivan.dev`)"
+      - "traefik.http.routers.pricebuddy.entrypoints=https"
+      - "traefik.http.routers.pricebuddy.tls=true"
+      - "traefik.http.routers.pricebuddy.middlewares=pricebuddy-lan-only"
+      - "traefik.http.middlewares.pricebuddy-lan-only.ipallowlist.sourcerange=192.168.1.0/24"
+      - "traefik.http.services.pricebuddy.loadbalancer.server.port=80"
+      - "traefik.docker.network=proxy"
+
+  database:
+    image: docker.io/library/mysql:8.2
+    restart: unless-stopped
+    command: --skip-log-bin
+    environment:
+      MYSQL_DATABASE: pricebuddy
+      MYSQL_USER: pricebuddy
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    volumes:
+      - database:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 1m
+
+  scraper:
+    image: docker.io/jez500/seleniumbase-scrapper:latest
+    restart: unless-stopped
+
+networks:
+  proxy:
+    external: true
+volumes:
+  storage:
+  database:

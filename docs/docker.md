@@ -283,3 +283,31 @@ data first if you want a clean start: stop the stack and remove
 
 To update the app, push to the forge, run `nix flake update events`, and
 deploy Rinoa. The image tag is the commit, so a new commit builds a new image.
+
+## PriceBuddy on Rinoa
+
+PriceBuddy tracks product prices. Its app, MySQL database, and browser scraper
+run on Rinoa. Docker volumes hold the app storage and database. Back up both
+volumes and `/var/lib/docker-containers/pricebuddy/app.env` together. The app
+file contains its encryption key. Keep the generated `.env` as well; it holds
+its database credentials and initial admin password.
+
+Add `pricebuddy.local.solivan.dev` → `192.168.1.110` to Pi-hole local DNS.
+After deploying Rinoa, open `https://pricebuddy.local.solivan.dev/` on the LAN.
+The initial login is `admin@example.com`. On Rinoa, read the generated password:
+
+```sh
+sudo sed -n 's/^ADMIN_PASSWORD=//p' /var/lib/docker-containers/pricebuddy/.env
+```
+
+Change the password in PriceBuddy. The stored initial password does not change
+when you change it in the app.
+
+In PriceBuddy's Settings → Integrations → SearXng, enable search and set the URL
+to `http://searxng:8080/search`. Both containers share the Docker proxy network.
+The existing SearXNG service enables JSON responses for this integration. The
+web route and PriceBuddy route remain restricted to the LAN.
+
+Upstream PriceBuddy prints environment variables and the initial password on
+startup. Its Docker log driver is disabled to avoid storing those credentials.
+Application logs in the persistent storage volume remain available for diagnosis.
