@@ -131,7 +131,7 @@ http:
     starways-site:
       entryPoints:
         - "https"
-      rule: "Host(`starways.local.solivan.dev`)"
+      rule: "Host(`starways.local.solivan.dev`) || Host(`starways.solivan.dev`)"
       middlewares:
         - default-headers
         - https-redirectscheme
