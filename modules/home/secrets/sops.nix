@@ -119,8 +119,9 @@ in {
         # Hermes publishes its launcher here. Declaring the PATH keeps its installer from editing this file.
         case ":$PATH:" in *":$HOME/.local/bin:"*) ;; *) export PATH="$HOME/.local/bin:$PATH" ;; esac
 
-        # Launch fish for interactive sessions; non-interactive (VS Code SSH, scripts) stays bash
-        [[ $- == *i* ]] && exec fish
+        # Launch fish for interactive sessions; non-interactive (VS Code SSH, scripts) stays bash.
+        # OpenRig seats stay bash: OpenRig types POSIX launch scripts into them.
+        [[ $- == *i* && -z $OPENRIG_SESSION_NAME ]] && exec fish
       '';
       force = true; # Overwrite existing file
     };
