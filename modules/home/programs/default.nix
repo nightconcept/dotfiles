@@ -21,7 +21,6 @@
     ./openrig.nix
     ./opencode.nix
     ./pi.nix
-    ./reasonix.nix
     ./rofi.nix
     ./shell
     ./spotify.nix

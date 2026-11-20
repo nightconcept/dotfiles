@@ -12,17 +12,12 @@ the personal age recipient. See [SABnzbd setup](network.md#sabnzbd-on-barrett)
 for the schema and deployment commands. The service decrypts credentials in
 memory at startup and writes them to SABnzbd's private configuration file.
 
-### Reasonix API key
+### DeepSeek API key (pi)
 
-Run `sops modules/home/secrets/reasonix.yaml` and set `deepseek_api_key` to
-your DeepSeek API key. The file uses only the personal age recipient.
-
-Rebuild your Home Manager configuration to deploy the secret. SOPS renders
-`~/.reasonix/.env` with mode `0400`; Reasonix 1.18.0 reads provider credentials
-from this file rather than the process environment. Restart Reasonix after deployment.
-
-The activation step updates the old `deepseek-v4-flash` model name to
-`deepseek-flash` and preserves the other settings in `~/.reasonix/config.toml`.
+Run `sops modules/home/secrets/reasonix.yaml` and set `deepseek_api_key`. The
+file uses only the personal age recipient. `modules/home/programs/pi.nix`
+decrypts it to `~/.local/share/sops/secrets/deepseek_api_key`, and pi reads it
+through `models.json`.
 
 ### Secret Storage Conventions
 

@@ -80,7 +80,7 @@
     };
 
     pi-agent = {
-      url = "github:earendil-works/pi?ref=v1.2.0";
+      url = "github:earendil-works/pi?ref=v1.6.0";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };

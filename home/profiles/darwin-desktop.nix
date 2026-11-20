@@ -17,7 +17,6 @@
     ghostty.enable = true;
     herdr.enable = true;
     opencode.enable = true;
-    reasonix.enable = true;
     shell = {
       fish.enable = true;
       starship.enable = true;

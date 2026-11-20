@@ -24,8 +24,14 @@
   # Other llama-swap models pi can switch to; selecting one swaps the GPU over.
   otherLocalModelIds = ["qwen3.8-27b" "qwen3-35b-mtp"];
 
+  deepseekKeyPath = "${config.home.homeDirectory}/.local/share/sops/secrets/deepseek_api_key";
+
   piModelsConfig = pkgs.writeText "pi-models.json" (builtins.toJSON {
     providers = {
+      # Built-in DeepSeek provider (deepseek-flash, deepseek-v4-pro); we only
+      # supply the key, read from the sops-decrypted file at request time.
+      deepseek.apiKey = "!cat ${deepseekKeyPath}";
+
       "${localProvider}" = {
         baseUrl = "http://192.168.1.173:8080/v1";
         api = "openai-completions";
@@ -53,6 +59,13 @@ in {
 
   config = lib.mkIf cfg.enable {
     home.packages = [pi];
+
+    # Shared DeepSeek key; consider moving it to user.yaml.
+    sops.secrets.deepseek_api_key = {
+      sopsFile = ../secrets/reasonix.yaml;
+      path = deepseekKeyPath;
+      mode = "0400";
+    };
 
     home.file.".pi/agent/models.json" = {
       source = piModelsConfig;

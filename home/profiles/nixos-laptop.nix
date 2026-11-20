@@ -21,7 +21,6 @@
     herdr.enable = true;
     opencode.enable = true;
     openrig.enable = true;
-    reasonix.enable = true;
     rofi.enable = true;
     spotify.enable = true;
     # zotero.enable = true; # blocked: depends on insecure firefox-esr-140-bin

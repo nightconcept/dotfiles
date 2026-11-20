@@ -35,7 +35,6 @@
     ghostty.configOnly = true;
     herdr.enable = true;
     opencode.enable = true;
-    reasonix.enable = true;
     spotify.enable = true;
     # zotero.enable = true; # blocked: depends on insecure firefox-esr-140-bin
     # wezterm.configOnly = true; # Replaced by ghostty - install manually if needed

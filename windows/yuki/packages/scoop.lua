@@ -29,7 +29,6 @@ yuki.packages {
     "pipx",
     "pnpm",
     "psmux",
-    "reasonix",
     "ripgrep",
     "rustup",
     "sed",
