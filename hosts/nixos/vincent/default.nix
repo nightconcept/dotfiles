@@ -31,6 +31,22 @@ in {
   # Networking
   modules.nixos.networking.base.hostName = "vincent";
 
+  # Isolated storage network to Mog on Locke vmbr3.
+  networking.networkmanager.unmanaged = ["interface-name:ens19"];
+  networking.interfaces.ens19 = {
+    useDHCP = false;
+    ipv4.addresses = [
+      {
+        address = "10.77.0.40";
+        prefixLength = 24;
+      }
+    ];
+  };
+  boot.kernel.sysctl = {
+    "net.ipv4.conf.ens19.forwarding" = 0;
+    "net.ipv6.conf.ens19.disable_ipv6" = 1;
+  };
+
   # Bootloader configuration (override systemd-boot for BIOS/MBR systems)
   modules.nixos.core.bootloader.enable = false;
   boot.loader = {
