@@ -111,7 +111,10 @@ Cloudflare tunnel ingress configuration resides outside this repository.
 | **garnet** | 192.168.1.133 | Ubuntu VM, Titan client | Locke |
 | **barrett** | 192.168.1.112 (reserved) | VPN torrent server (qBittorrent + NordVPN) | Locke |
 | **aerith** | 192.168.1.118 | Plex (Docker, 32400), Jellyfin (8096), Sonarr (8989), Sonarr Anime (8990), Radarr (7878), Recyclarr, Watchtower, download sweeper | Locke (VM 105) |
-| **terra** | 192.168.1.173 (Wi-Fi DHCP; MAC `8c:86:dd:77:63:28`) | Ubuntu LLM inference server, pyinfra-managed | bare metal, not a VM |
+| **terra** | 192.168.1.173 (Wi-Fi DHCP; MAC `8c:86:dd:77:63:28`) | Central remote development PC and GPU host (AMD Radeon AI PRO R9700): LLM inference, Hermes, OpenRig. Ubuntu, pyinfra-managed | bare metal, not a VM |
+| **tidus** | 192.168.1.159 | NixOS Linux development PC (Dell Latitude 7420, Hyprland) | bare metal |
+| **cloud** | 192.168.1.204 | Forgejo CI runner; runs Windows in Docker for Windows CI. Debian 13 | not documented |
+| **celes** | 192.168.1.105 | Danny's Windows desktop (WSL). Not managed by this repo; agents do not reach it | bare metal |
 
 Barrett's `ens18` has `192.168.1.112`. Its former `192.168.1.117` address no longer responds.
 The router reserves `192.168.1.112` for Barrett's MAC `bc:24:11:39:96:98`.
