@@ -9,6 +9,7 @@ from modules.linux.programs.paseo.module import PaseoModule
 from modules.linux.programs.pinchflat.module import PinchflatModule
 from modules.linux.programs.ssh import SSHModule
 from modules.linux.programs.storage import StorageModule
+from modules.linux.programs.titan_backup.module import TitanBackupModule
 from modules.linux.programs.watchtower.module import WatchtowerModule
 from modules.linux.services.tailscale import TailscaleModule
 from modules.linux.services.titan_mount import TitanMountModule
@@ -29,6 +30,7 @@ kosync = KoreaderSyncModule()
 paseo = PaseoModule(port=6767)
 pinchflat = PinchflatModule()
 watchtower = WatchtowerModule()
+titan_backup = TitanBackupModule()
 hf = HuggingFaceModule()
 colab = ColabModule()
 ai = AIStackModule()
@@ -52,6 +54,7 @@ kosync.deploy()
 paseo.deploy()
 pinchflat.deploy()
 watchtower.deploy()
+titan_backup.deploy()
 
 # Deploy independent AI tooling, then the inference and agent stack.
 hf.deploy()

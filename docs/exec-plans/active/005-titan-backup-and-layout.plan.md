@@ -97,6 +97,14 @@ Method:
 
 After the check passes, Jeanne's old loose copies of these folders (Photography, Music, Airman Show, Programs, config, Archive) duplicate `titan-backup/`. Delete them.
 
+### Phase 2 progress (2026-11-22)
+
+- `modules/linux/programs/titan_backup/` adds `titan-backup.sh`, a weekly `titan-backup.timer` (Sunday 05:00, `Persistent=true`), and `titan-backup-alert.service` (`OnFailure`). The alert posts to Gotify only when `/etc/titan-backup/gotify.token` exists; put a `host-alerts` app token there.
+- Terra enables it in `hosts/linux/terra/main.py`. It is not deployed yet: run `just terra` at a quiet time (the full deploy restarts the AI stack and Hermes).
+- The first sync was started by hand on 2026-11-22 with the same script (`systemd-run --user --unit=titan-backup-first`, log `~/.local/state/lancelot-moves/titan-backup-first.log`).
+- After it finishes: rerun with `--dry-run --itemize-changes` (expect no changes), compare file counts, then delete Jeanne's old loose copies (`Photography`, `Music`, `Airman Show`, `Programs`, `config`, `Archive`, `Audiobooks`).
+- Jeanne's matching TV and movies moved to `/mnt/jeanne/titan-media/` (2,644 files). The backup job does not touch it.
+
 ## Phase 3: Prune Jeanne's TV and movies
 
 **Done 2026-11-21.** Deleted 555 files (292 GB): every TV and movie file with no name-and-size match on Titan (TV 87.9 GB, movies 138.5 GB) and, by the user's decision, all of `Movies/Movie Education` (65.6 GB, a rating-sorted copy of movies Titan already has). Kept 2.17 TB that matches Titan. Jeanne went from 4.2 TB to 4.0 TB used.
