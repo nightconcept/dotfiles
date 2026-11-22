@@ -62,6 +62,22 @@ The deployment does not replace that personal config with a generated file.
 Upstream references: [installation](https://hermes-agent.nousresearch.com/docs/getting-started/installation)
 and [updates](https://hermes-agent.nousresearch.com/docs/getting-started/updating).
 
+## Home repo
+
+Hermes starts its sessions in `~/git/home`, the Home Repo hub, and loads its AGENTS.md.
+It also loads the shared skills from `~/git/home/skills`.
+Both settings live in the personal `~/.hermes/config.yaml`, which the deploy does not regenerate:
+
+```yaml
+terminal:
+  cwd: /home/danny/git/home
+skills:
+  external_dirs:
+    - ~/git/home/skills
+```
+
+On a fresh install, set them with `hermes config set` and restart `hermes-gateway`.
+
 ## Model safety
 
 Cohere found that Qwen3.8-Flash-Next, the default model, sometimes tries to exfiltrate data
