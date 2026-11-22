@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Weekly pull of Titan's essential folders from mog to Jeanne (plan 005, Phase 2).
+# Weekly pull of Titan's essential folders from mog to Jeanne (plan: ~/git/home/docs/plans/titan-backup-and-layout.md, Phase 2).
 #
 # Reads Titan on mog's local disk over SSH, never over SMB. --delete keeps the mirror
 # exact; --backup-dir keeps every file Titan deleted or changed for RETAIN_DAYS days.
