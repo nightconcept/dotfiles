@@ -99,6 +99,8 @@ After the check passes, Jeanne's old loose copies of these folders (Photography,
 
 ## Phase 3: Prune Jeanne's TV and movies
 
+**Done 2026-11-21.** Deleted 555 files (292 GB): every TV and movie file with no name-and-size match on Titan (TV 87.9 GB, movies 138.5 GB) and, by the user's decision, all of `Movies/Movie Education` (65.6 GB, a rating-sorted copy of movies Titan already has). Kept 2.17 TB that matches Titan. Jeanne went from 4.2 TB to 4.0 TB used.
+
 Keep Jeanne `TV Shows` and `Movies` files that match Titan (2.2 TB).
 Delete the files that do not match Titan (88 GB of TV, 164 GB of movies), after a fresh inventory and a per-title list that the user reviews.
 
