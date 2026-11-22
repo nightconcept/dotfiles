@@ -129,13 +129,27 @@ Music  Audiobooks  Books  Comics  library media (unchanged; Music-Unorganized me
 Games  Games-Unorganized  Emulation   dgm (unchanged; Games-Staging moves under Games/_staging)
 Photography                       unchanged
 Personal/                         Wedding, Archive
-Backups/                          existing Backups, plus config/ (service config backups) and docker/
+Backups/                          existing Backups, plus config/ (service config backups) and docker-pre-locality-2026-11-01/
+Music/                            also takes Airman Show
 Software/                         OS, Programs
 Projects/                         data (autotrader, ddd, madness, ...), vesper
-downloads  transfer               inboxes (unchanged paths)
+downloads  transfer               inboxes (unchanged paths; transfer/upload_audiobooks is LibbyRip's upload path)
 ```
 
 Before each move, search this repo, the service configs on Aerith, Rinoa, and Barrett, and the dgm registry for the old path. Move a folder only on mog (`mv` on local disk is instant). Update the references in the same change. `Books-Unorganized` is empty; delete it. Phase 2 must use the new paths after Phase 5.
+
+### Phase 5 decisions (2026-11-21)
+
+- The user approved the grouping above.
+- `Airman Show` moves into `Music/`.
+- `OS` and `vesper` stay on Titan (not deleted). They move to `Software/` and `Projects/`.
+- `transfer` stays at the root as the inbox. `transfer/upload_audiobooks` is the LibbyRip converter's upload path. Sort its loose files (59 items from 2018 to 2026: photos, an MP3, a PDF) later.
+- `docker/` was checked on 2026-11-21. Nothing uses it:
+  - Rinoa's `forgejo`, `forgejo-db`, and `obsidian-livesync` containers mount only `/var/lib/docker-containers/...` on Rinoa (`hosts/nixos/rinoa/default.nix` sets `remoteDataPath` and `dataPath`). No Rinoa systemd unit names `titan/docker`.
+  - `docker/forgejo` (5.5 GB, newest file 2026-11-01) and `docker/obsidian-livesync` (82 MB, newest 2026-09-25) are the inactive originals from the plan 003 cutover. Plan 003 copied them with checksums to Rinoa. `Backups/storage-locality-2026-11-01/` also holds a Forgejo tar, a manifest, and a `pg_dump`.
+  - `docker/forgejo.new-empty.bak` (9.7 KB, 2025-09-24) is an empty leftover.
+  - Rinoa's local Forgejo and CouchDB data have no recurring backup yet (plan 003). Until they do, keep these originals as a fallback: move `docker/` to `Backups/docker-pre-locality-2026-11-01/` and delete `forgejo.new-empty.bak`.
+  - The Forgejo and obsidian-livesync modules still default to `/mnt/titan/docker/...`. Rinoa overrides both. Change the defaults when `docker/` moves.
 
 ## Open decisions
 
