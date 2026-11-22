@@ -41,7 +41,7 @@ in {
 
     dataPath = lib.mkOption {
       type = lib.types.str;
-      default = "/mnt/titan/docker/obsidian-livesync/data";
+      default = "${containerPath}/data";
       description = "Persistent CouchDB data directory";
     };
 

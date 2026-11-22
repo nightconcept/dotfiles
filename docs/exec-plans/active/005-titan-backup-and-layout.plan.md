@@ -138,6 +138,27 @@ downloads  transfer               inboxes (unchanged paths; transfer/upload_audi
 
 Before each move, search this repo, the service configs on Aerith, Rinoa, and Barrett, and the dgm registry for the old path. Move a folder only on mog (`mv` on local disk is instant). Update the references in the same change. `Books-Unorganized` is empty; delete it. Phase 2 must use the new paths after Phase 5.
 
+### Phase 5 progress
+
+**2026-11-21, done on mog with `mv` on local disk.** Each move was checked by file count and apparent size before and after; all matched:
+
+- `Wedding` → `Personal/Wedding` (1,117 files); `Archive` → `Personal/Archive` (28)
+- `OS` → `Software/OS` (4); `Programs` → `Software/Programs` (414)
+- `config` → `Backups/config` (144,535)
+- `docker` → `Backups/docker-pre-locality-2026-11-01` (40,222), after deleting the empty `docker/forgejo.new-empty.bak`
+- `Music-Unorganized` → `Music/_inbox` (1,620), with a `.plexignore` of `*` so Plex's Music library (`/mnt/titan/Music`) skips it
+- `Airman Show` → `Music/Airman Show` (568). Plex's Music library will scan it.
+- Deleted `sync.ffs_db` (FreeFileSync state from 2024-03-24)
+- The Forgejo and obsidian-livesync module defaults now point at `/var/lib/docker-containers/<name>/data`. Rinoa's system derivation is unchanged, so no deploy is needed.
+
+Checked before moving: mog has no rsync or user cron jobs on these paths (only SnapRAID diff and sync, which handle renames). Plex libraries are Movies, TV Shows, and Music only.
+
+**Held, because live users still point at the old paths:**
+
+- `vesper` and `data` → `Projects/`: rotom (running) and foreman archive leases to `host:/mnt/titan/vesper/{lease}` (`~/.config/rotom/config.toml`, `shadow.toml`, `~/.config/foreman/config.toml`). madness defaults its archive to `/mnt/titan/data/madness` (`src/march/cli.py`), and ddd backs up to `/mnt/titan/data/ddd` (`scripts/backup_data.py`). Update those, restart rotom while it holds no lease, then move.
+- `Games-Staging` → `Games/_staging`: Edea's `dgl-add-game` skill stages into `/mnt/titan/Games-Staging/{s}/{g}` (`references/bulk-add-batching.md`). Update the skill and dgm first.
+- `Books-Unorganized` (empty): Terra's Calibre container mounts it (`modules/linux/programs/books/docker-compose.yml`). Remove the mount and redeploy the books stack, then delete it.
+
 ### Phase 5 decisions (2026-11-21)
 
 - The user approved the grouping above.

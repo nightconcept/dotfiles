@@ -81,7 +81,7 @@ in {
 
     remoteDataPath = lib.mkOption {
       type = lib.types.str;
-      default = "/mnt/titan/docker/forgejo";
+      default = "${containerPath}/data";
       description = "Remote path for Forgejo data and repositories";
     };
   };
