@@ -106,6 +106,8 @@ Delete the files that do not match Titan (88 GB of TV, 164 GB of movies), after 
 
 ## Phase 4: Jeanne-only data
 
+2026-11-21: deleted `calibre-library` (105 GB, the old January 2024 library) by the user's decision. The live Calibre on Terra uses `/mnt/calibre-library` and was not touched.
+
 Jeanne is the only copy of about 1.9 TB (table above). For each folder, the user picks one:
 
 - **Move to Titan:** it becomes primary there, and Phase 2 backs it up if it is in the include list.
