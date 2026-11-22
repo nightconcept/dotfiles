@@ -154,6 +154,17 @@ Before each move, search this repo, the service configs on Aerith, Rinoa, and Ba
 
 Checked before moving: mog has no rsync or user cron jobs on these paths (only SnapRAID diff and sync, which handle renames). Plex libraries are Movies, TV Shows, and Music only.
 
+**2026-11-22, `transfer/` sorted on mog.** Each move was checked by file count and size. Large directories were recounted against the 2026-11-21 Titan inventory, because `find` read a just-renamed tree incompletely on mergerfs. All matched.
+
+- Backups are per person: `Backups/danny/windows-2025-06` (3,162 files, 2025 Windows reformat), `Backups/danny/game-saves/pc-2025-03` (6,028, "Saved Games"), `Backups/danny/game-saves/palworld-server/` (palworldbackup, two `saved-20240129_*.tar.gz` Palworld server saves, one `.sav`), `Backups/danny/config-misc/` (`debian_4_12`, `hardware-configuration.nix`, `colemak-dh.json`, `winutil-config.json`), `Backups/kim/pc-2025-01` (2,341, KimBackup).
+- `Personal/Secrets/`: `luks.key`, `secret-key`, `dataset_storage0_keys.json`, `vw-recovery`. Normal permissions, by the user's choice. They are still readable on every Titan client; move them to a password manager or SOPS later.
+- `Personal/Documents/`: `Identification.zip`, the eTranscript PDF, the VA residency video.
+- `Photography/Phone/`: `11_4/` and 14 loose photos and videos.
+- `Audiobooks/<Author>/<Title>/`: 10 MP3s. `Books/`: the NCLEX review PDF (renamed).
+- Deleted: `facebook-nightconcept.zip` and `misc/` (byte-identical and name-and-size-identical copies are in `Photography/`), the three forex zips, `agatha/checkpoints`, `desktop.ini`.
+- Left for the user to review: the two Falling in Love specials and their subtitles. `upload_audiobooks/` stays (LibbyRip).
+- The existing `Backups/` entries (`config`, `garnet`, `dietpi`, `events`, `storage-locality-2026-11-01`, `docker-pre-locality-2026-11-01`) were not moved; docs refer to their paths.
+
 **Held, because live users still point at the old paths:**
 
 - `vesper` and `data` → `Projects/`: rotom (running) and foreman archive leases to `host:/mnt/titan/vesper/{lease}` (`~/.config/rotom/config.toml`, `shadow.toml`, `~/.config/foreman/config.toml`). madness defaults its archive to `/mnt/titan/data/madness` (`src/march/cli.py`), and ddd backs up to `/mnt/titan/data/ddd` (`scripts/backup_data.py`). Update those, restart rotom while it holds no lease, then move.
