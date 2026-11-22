@@ -15,6 +15,9 @@ Personal dotfiles as a Nix flake supporting NixOS, nix-darwin, and home-manager.
 - [AI Stack](docs/ai.md) - Terra inference and Hermes module, software pins, deployment, and upgrade flow.
 - [Yuffie](docs/yuffie.md) - Nightly flake update builder: update policy, build gate, binary cache, reprovisioning runbook.
 - [Terminal](docs/terminal.md) - Installation guide for Ghostty and WezTerm.
+- [Backups](docs/backups.md) - Terra's Jeanne and Lancelot mounts and the weekly titan-backup job.
+
+This repo is the mechanism: machine config and how it works. Intent (where data lives, cross-machine plans, decisions) is in the home repo, `~/git/home` (see its `docs/home-vs-dotfiles.md`). Plans here are only for changes to this repo's code.
 
 ## Common Commands
 
