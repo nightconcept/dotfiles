@@ -72,6 +72,11 @@
       extraConfig = {
         targets.genericLinux.enable = true;
         modules.home.programs.openrig.enable = true;
+        # NoMachine shows a black screen while the GNOME Wayland session is locked.
+        dconf.settings."org/gnome/desktop/screensaver" = {
+          lock-enabled = false;
+          ubuntu-lock-on-suspend = false;
+        };
       };
     };
 
