@@ -106,6 +106,7 @@ Delete the files that do not match Titan (88 GB of TV, 164 GB of movies), after 
 
 ## Phase 4: Jeanne-only data
 
+2026-11-21: deleted `OS` (52 GB of 2024 installer ISOs) and `AI Models` (23.5 GB: 2023 Stable Diffusion checkpoints and the finished ThinkingCap quant work folder) by the user's decision.
 2026-11-21: deleted `calibre-library` (105 GB, the old January 2024 library) by the user's decision. The live Calibre on Terra uses `/mnt/calibre-library` and was not touched.
 
 Jeanne is the only copy of about 1.9 TB (table above). For each folder, the user picks one:
