@@ -2,8 +2,9 @@
 
 **ID:** 005
 **Created:** 2026-11-21
-**Status:** in progress. Phase 1 step 2 done 2026-11-21: deleted 23,345 Lancelot files (6.617 TB) whose content matched Titan or Jeanne. Lancelot went from 95 % to 7 % used. About 440 GB remains: TVShows2 183 GB, Movies2 127 GB, Games 129 GB.
-"Matched" here means the same name, size, and SHA-256 of the first and last 1 MiB. Titan's side was hashed on mog. 18 tiny metadata files matched on name and size but not content; they were kept.
+**Status:** in progress. Phase 1 done 2026-11-21 except step 6: Lancelot holds 972 KB (root junk files and `lost+found`), 6.9 TB free.
+Deleted 23,345 files (6.617 TB) whose content matched Titan or Jeanne. "Matched" means the same name, size, and SHA-256 of the first and last 1 MiB; Titan's side was hashed on mog.
+Then, by the user's decision, deleted the rest of TVShows2, Movies2, and Games (439 GB): copies Titan had replaced, seasons and shows Titan no longer has, Mulholland Drive, and all games.
 **Issue/Ref:** User request to free Lancelot, back up Titan's essential data to Terra, and give Titan's root a clearer layout.
 
 ## Goal
