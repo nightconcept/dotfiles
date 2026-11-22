@@ -199,3 +199,11 @@ Checked before moving: mog has no rsync or user cron jobs on these paths (only S
 3. Jeanne-only data (Phase 4): move, keep, or delete each folder.
 4. Where does Airman Show belong: media or Personal?
 5. Approve the Phase 5 layout before any move.
+
+## Decisions (2026-11-22)
+
+- Lancelot is terra's experimental cold storage. It holds Vesper data and cache
+  (moving from Jeanne), other AI data, and archived venvs and caches. Jeanne stays the Titan backup.
+- Venvs and caches are never deleted to free space; they move to Lancelot.
+- AI model weights stay on terra's NVMe (`/mnt/storage/llm-models`) for fast loads.
+- The intended home of every kind of data is recorded in `~/git/home/docs/storage.md`.
