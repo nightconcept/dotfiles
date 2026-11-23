@@ -3,6 +3,7 @@
   imports = [
     ./core
     ./homebrew
+    ./pared
     ./system-settings
   ];
 }

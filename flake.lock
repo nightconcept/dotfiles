@@ -863,6 +863,26 @@
         "type": "github"
       }
     },
+    "pared": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1794666482,
+        "narHash": "sha256-2zHS3C2c5wuqmkJNmvXCRhy0qi+4/TMv8uE++z+pG4I=",
+        "owner": "4evy",
+        "repo": "pared",
+        "rev": "26c34ec7df3d39924650b852e8d8aab57874e9ee",
+        "type": "github"
+      },
+      "original": {
+        "owner": "4evy",
+        "repo": "pared",
+        "type": "github"
+      }
+    },
     "pi-agent": {
       "inputs": {
         "nixpkgs": [
@@ -900,6 +920,7 @@
         "nixpkgs-master": "nixpkgs-master",
         "nordvpn-flake": "nordvpn-flake",
         "nvchad": "nvchad",
+        "pared": "pared",
         "pi-agent": "pi-agent",
         "sops-nix": "sops-nix",
         "spicetify-nix": "spicetify-nix",

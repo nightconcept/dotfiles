@@ -87,6 +87,7 @@ in {
       modules = [
         ../modules/darwin
         ../hosts/darwin/${hostname}
+        inputs.pared.darwinModules.default
         home-manager.darwinModules.home-manager
         {
           users.users.danny.home = "/Users/danny";
