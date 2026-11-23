@@ -64,7 +64,6 @@ in {
           "firefox"
           # "librewolf"
           "ghostty"
-          "gitbutler"
           "hiddenbar"
           "mos"
           "obsidian"
