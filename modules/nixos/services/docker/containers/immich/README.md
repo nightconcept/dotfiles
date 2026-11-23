@@ -10,13 +10,13 @@ Self-hosted photo and video management solution.
 
 ### Environment Variables
 Located in `.env`:
-- `UPLOAD_LOCATION`: `/mnt/titan/Photography/immich` - Where photos/videos are stored
+- `UPLOAD_LOCATION`: `/mnt/titan/Photos/immich` - Where photos/videos are stored
 - `DB_DATA_LOCATION`: `~/config/immich/postgres` - Database storage location
 - `TZ`: `America/Los_Angeles` - Timezone
 - `DB_PASSWORD`: Generated secure password for PostgreSQL
 
 ### Storage Paths
-- **Media**: `/mnt/titan/Photography/immich`
+- **Media**: `/mnt/titan/Photos/immich`
 - **Database**: `~/config/immich/postgres`
 - **ML Models**: Docker volume `immich_model-cache`
 
@@ -39,7 +39,7 @@ PostgreSQL database with vector extensions for similarity search
 1. Create necessary directories:
 ```bash
 mkdir -p ~/config/immich/postgres
-mkdir -p /mnt/titan/Photography/immich
+mkdir -p /mnt/titan/Photos/immich
 ```
 
 2. Start the services:
@@ -96,7 +96,7 @@ docker exec immich_postgres pg_isready
 ### Storage Space
 Monitor available space:
 ```bash
-df -h /mnt/titan/Photography/immich
+df -h /mnt/titan/Photos/immich
 ```
 
 ## Resources

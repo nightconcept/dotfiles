@@ -26,7 +26,7 @@ in {
 
     uploadLocation = lib.mkOption {
       type = lib.types.str;
-      default = "/mnt/titan/Photography/immich";
+      default = "/mnt/titan/Photos/immich";
       description = "Path to photo upload storage";
     };
 

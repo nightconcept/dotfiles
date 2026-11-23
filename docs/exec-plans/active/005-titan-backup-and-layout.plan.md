@@ -83,7 +83,7 @@ TVShows 12.4 TB, Movies 3.5 TB, Anime 1.9 TB, Games-Unorganized 1.5 TB, Emulatio
 
 Target: `/mnt/jeanne/titan-backup/`, with the same tree as `/export/titan`.
 
-Include (about 0.7 TB): Backups, Photography, Wedding, Archive, config, data, docker, vesper, Books, Books-Unorganized, Music, Music-Unorganized, Audiobooks, Comics, Programs, OS, Airman Show.
+Include (about 0.7 TB): Backups, Photos, Photography, Wedding, Archive, config, data, docker, vesper, Books, Books-Unorganized, Music, Music-Unorganized, Audiobooks, Comics, Programs, OS, Airman Show.
 Exclude: TVShows, Movies, Anime, Games, Games-Unorganized, Games-Staging, Emulation, downloads, transfer (Open decision 2).
 
 Method:
@@ -119,7 +119,7 @@ Likely candidates: calibre-library and Comics move to Titan. vesper-data (875 GB
 
 ## Phase 5: Titan root layout
 
-Services use these paths, so keep them where they are: `TVShows`, `Movies`, `Anime`, `Audiobooks`, `Books`, `downloads`, `transfer` (scripts in this repo), `Backups`, `docker`, `Photography`, `Games` (dgm registry paths like `Games/windows/...`), `Games-Unorganized` (Edea's dgm packaging input), and `Emulation/DGM`. The arr apps on Aerith also store root folders in their own databases.
+Services use these paths, so keep them where they are: `TVShows`, `Movies`, `Anime`, `Audiobooks`, `Books`, `downloads`, `transfer` (scripts in this repo), `Backups`, `docker`, `Games` (dgm registry paths like `Games/windows/...`), `Games-Unorganized` (Edea's dgm packaging input), and `Emulation/DGM`. The arr apps on Aerith also store root folders in their own databases.
 
 Proposed root (26 folders become 17):
 
@@ -127,7 +127,8 @@ Proposed root (26 folders become 17):
 TVShows  Movies  Anime            media for Plex, Jellyfin, and the arr apps (unchanged)
 Music  Audiobooks  Books  Comics  library media (unchanged; Music-Unorganized merges into Music/_inbox)
 Games  Games-Unorganized  Emulation   dgm (unchanged; Games-Staging moves under Games/_staging)
-Photography                       unchanged
+Photos                            was Photography (renamed 2026-11-22)
+Photography                       new folder for photos the user edits or develops
 Personal/                         Wedding, Archive
 Backups/                          existing Backups, plus config/ (service config backups) and docker-pre-locality-2026-11-01/
 Music/                            also takes Airman Show
