@@ -25,6 +25,7 @@
     ./shell
     ./spotify.nix
     ./ssh.nix
+    ./titan-mount.nix
     ./vscode.nix
     ./wezterm
     ./zotero.nix

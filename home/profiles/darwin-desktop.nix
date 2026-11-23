@@ -22,6 +22,7 @@
       starship.enable = true;
       zoxide.enable = true;
     };
+    titanMount.enable = true;
   };
 
   fonts.fontconfig.enable = true;

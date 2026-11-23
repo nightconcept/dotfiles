@@ -19,6 +19,17 @@ file uses only the personal age recipient. `modules/home/programs/pi.nix`
 decrypts it to `~/.local/share/sops/secrets/deepseek_api_key`, and pi reads it
 through `models.json`.
 
+### Titan SMB credentials (macOS)
+
+`modules/home/programs/titan-mount.nix` reuses `network/titan_credentials` from
+`modules/nixos/security/sops/common.yaml`, the same secret the Linux hosts copy
+to `/etc/mog-secrets`. Home-manager decrypts it to
+`~/.local/share/sops/secrets/titan_credentials`. A launchd agent mounts the share
+at `~/titan` at login and every 5 minutes (it exits at once if already mounted or
+Mog is unreachable). Log: `~/Library/Logs/titan-mount.log`. Enabled on every Mac
+through `home/profiles/darwin-desktop.nix` (`modules.home.programs.titanMount`),
+which `darwin-laptop.nix` imports.
+
 ### Secret Storage Conventions
 
 #### SOPS Encryption Key
