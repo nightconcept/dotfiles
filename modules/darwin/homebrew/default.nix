@@ -60,16 +60,13 @@ in {
 
       casks =
         [
-          "calibre"
           "discord"
-          "docker-desktop"
           "firefox"
           # "librewolf"
           "ghostty"
           "gitbutler"
           "hiddenbar"
           "mos"
-          "nomachine"
           "obsidian"
           "plex"
           "qdirstat"

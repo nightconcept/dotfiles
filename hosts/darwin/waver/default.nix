@@ -9,6 +9,8 @@
       extraCasks = [
         "ungoogled-chromium"
         "tailscale-app"
+        "docker-desktop"
+        "nomachine"
       ];
     };
     systemSettings = {
