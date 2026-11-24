@@ -108,7 +108,8 @@ in {
         "httpsms-api"
         "httpsms-web"
       ]
-      ++ lib.optionals containers.events.enable ["events"];
+      ++ lib.optionals containers.events.enable ["events"]
+      ++ lib.optionals containers.git-pages.enable ["git-pages" "sites-router"];
     mounts = ["/mnt/titan"];
     # Terra-backed routes are monitored by Vincent's Uptime Kuma so a Terra
     # outage does not block Rinoa's NixOS activation.
@@ -214,7 +215,8 @@ in {
         "docker-container-searxng.service"
       ]
       ++ lib.optionals containers.httpsms.enable ["docker-container-httpsms.service"]
-      ++ lib.optionals containers.events.enable ["docker-container-events.service"];
+      ++ lib.optionals containers.events.enable ["docker-container-events.service"]
+      ++ lib.optionals containers.git-pages.enable ["docker-container-git-pages.service"];
   };
 
   # Enable Docker containers
@@ -279,6 +281,9 @@ in {
       enable = true;
       lanPreview = true;
     };
+    # Static sites for forge repos. LAN name only until the Cloudflare tunnel
+    # hostname exists (docs/docker.md); then set public = true.
+    git-pages.enable = true;
   };
 
   # System packages for server management

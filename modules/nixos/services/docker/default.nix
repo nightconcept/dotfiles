@@ -43,6 +43,7 @@ in {
     # ./containers/enshrouded
     ./containers/flaresolverr
     ./containers/forgejo
+    ./containers/git-pages
     ./containers/freshrss
     ./containers/gotify
     ./containers/events

@@ -284,6 +284,54 @@ data first if you want a clean start: stop the stack and remove
 To update the app, push to the forge, run `nix flake update events`, and
 deploy Rinoa. The image tag is the commit, so a new commit builds a new image.
 
+## git-pages on Rinoa
+
+The `git-pages` module serves static sites for forge repos at
+`https://sites.solivan.dev/<user>/<repo>/`. Today it serves the Red Star
+decompilation progress page. The plan is in the home repo,
+`docs/plans/red-star-site-publishing.md`.
+
+- Path: tunnel or LAN -> Traefik (CrowdSec bouncer) -> `sites-router` (Caddy) ->
+  `git-pages`. Caddy turns `/<user>/<rest>` into host `<user>.pages.internal`
+  and path `/<rest>`, and restores the `/<user>` prefix on redirects.
+  git-pages is on its own `sites` network. Only the router joins `proxy`.
+- Authorization is the `[[wildcard]]` section in `config.toml`: a push is
+  accepted only for the `pages` branch of
+  `https://forge.solivan.dev/nightconcept/<repo>.git`. A new site needs a
+  webhook on its repo and nothing else; there is no DNS or tunnel change.
+- Images are pinned by digest and Watchtower does not touch them. git-pages is
+  0.x: read its release notes before changing the pin.
+- Data: `/var/lib/docker-containers/git-pages/data`. It is rebuilt from the
+  repos, so it is not backed up.
+- The LAN name `sites.local.solivan.dev` is always routed. `public = true`
+  adds `sites.solivan.dev`.
+
+### Setup
+
+1. In Pi-hole, add `sites.local.solivan.dev` -> `192.168.1.110`.
+2. Deploy Rinoa. The module is enabled in `hosts/nixos/rinoa/default.nix`.
+3. Check authorization without moving content. The `Dry-Run` header runs only
+   the checks:
+
+   ```bash
+   curl -X POST https://sites.local.solivan.dev/nightconcept/<repo>/ \
+     -H 'Content-Type: application/json' -H 'X-Forgejo-Event: push' \
+     -H 'Dry-Run: yes' \
+     --data '{"ref":"refs/heads/pages","repository":{"clone_url":"https://forge.solivan.dev/nightconcept/<repo>.git"}}'
+   ```
+
+   Expect `200 dry-run ok`. A wrong branch, repo, user or host returns 401.
+4. For each repo: Settings -> Webhooks -> Gitea webhook, URL
+   `https://sites.solivan.dev/nightconcept/<repo>/` (the LAN name works for a
+   test), content type JSON, push events, branch filter `pages`.
+5. To go public: in the Cloudflare Zero Trust dashboard, add the tunnel public
+   hostname `sites.solivan.dev` with the same service target as
+   `forge.solivan.dev`. In the `solivan.dev` zone, add a WAF rate-limiting rule
+   for `PUT`, `POST` and `DELETE` on this hostname. Set `public = true` in
+   `hosts/nixos/rinoa/default.nix` and deploy.
+6. Before relying on CrowdSec for tunnel traffic, confirm it sees real client
+   addresses (see the note under CrowdSec).
+
 ## PriceBuddy on Rinoa
 
 PriceBuddy tracks product prices. Its app, MySQL database, and browser scraper
