@@ -48,6 +48,12 @@ in {
   config = lib.mkIf cfg.enable {
     virtualisation.docker.enable = true;
 
+    sops.secrets.git-pages-deploy-token = {
+      sopsFile = ../../../../security/sops/git-pages.yaml;
+      key = "deploy_token";
+      mode = "0400";
+    };
+
     systemd.tmpfiles.rules = [
       "d ${containerPath} 0755 root root -"
       # git-pages runs as 1000:100 with a read-only root filesystem.
@@ -56,22 +62,26 @@ in {
 
     systemd.services."docker-container-${containerName}" = {
       description = "git-pages static sites";
-      after = ["docker.service" "docker-network-proxy.service"];
-      requires = ["docker.service" "docker-network-proxy.service"];
+      after = ["docker.service" "docker-network-proxy.service" "sops-install-secrets.service"];
+      requires = ["docker.service" "docker-network-proxy.service" "sops-install-secrets.service"];
       wantedBy = ["multi-user.target"];
 
       preStart = ''
+        test -s ${config.sops.secrets.git-pages-deploy-token.path}
         cp ${./docker-compose.yml} ${containerPath}/docker-compose.yml
         cp ${./compose.traefik.yml} ${containerPath}/compose.traefik.yml
         cp ${./config.toml} ${containerPath}/config.toml
         cp ${./Caddyfile} ${containerPath}/Caddyfile
 
+        # The env file holds the deploy token: root only, created before it is written.
+        install -m 600 /dev/null ${containerPath}/.env
         # Quoted heredoc: the rule contains backticks the shell must not run.
         cat > ${containerPath}/.env <<'EOF'
         COMPOSE_FILE=docker-compose.yml:compose.traefik.yml
         DATA_PATH=${cfg.dataPath}
         SITES_RULE="${rule}"
         EOF
+        echo "DEPLOY_TOKEN=$(cat ${config.sops.secrets.git-pages-deploy-token.path})" >> ${containerPath}/.env
       '';
 
       serviceConfig = {

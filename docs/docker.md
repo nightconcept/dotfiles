@@ -299,6 +299,10 @@ decompilation progress page. The plan is in the home repo,
   accepted only for the `pages` branch of
   `https://forge.solivan.dev/nightconcept/<repo>.git`. A new site needs a
   webhook on its repo and nothing else; there is no DNS or tunnel change.
+- Deploys also need a shared secret. The router rejects `POST`, `PUT`, `DELETE`
+  and `PATCH` without `Authorization: Bearer <token>` (SOPS
+  `git-pages.yaml`, key `deploy_token`). Set the same value in each webhook's
+  Authorization Header field. Reads are open.
 - Images are pinned by digest and Watchtower does not touch them. git-pages is
   0.x: read its release notes before changing the pin.
 - Data: `/var/lib/docker-containers/git-pages/data`. It is rebuilt from the

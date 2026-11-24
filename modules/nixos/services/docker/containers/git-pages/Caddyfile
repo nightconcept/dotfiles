@@ -4,12 +4,25 @@
 }
 
 :80 {
+	# Deploys (POST from the forge webhook, PUT, DELETE) need the shared secret.
+	# Reading a site stays open. Forgejo sends the header from the webhook's
+	# "Authorization Header" field, set to: Bearer <token>
+	@deploy_denied {
+		method POST PUT DELETE PATCH
+		not header Authorization "Bearer {$DEPLOY_TOKEN}"
+	}
+	handle @deploy_denied {
+		respond "deploys need the shared secret" 401
+	}
+
 	# /<user>/<rest> -> host <user>.pages.internal, path /<rest>
 	@site path_regexp site ^/([a-z0-9][a-z0-9-]*)/(.*)$
 	handle @site {
 		rewrite * /{re.site.2}
 		reverse_proxy git-pages:3000 {
 			header_up Host {re.site.1}.pages.internal
+			# git-pages would try to parse this as its own scheme; the router has checked it
+			header_up -Authorization
 			# git-pages redirects to /<rest>; put the /<user> prefix back
 			header_down Location ^/ /{re.site.1}/
 		}
