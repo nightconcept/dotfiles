@@ -1,0 +1,24 @@
+# LAN preview on Rinoa: Traefik fronts the router, with the CrowdSec bouncer,
+# like Forgejo. Add the Cloudflare Tunnel hostname later for the public name.
+services:
+  sites-router:
+    networks:
+      - sites
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.sites.entrypoints=http"
+      - "traefik.http.routers.sites.rule=Host(`sites.local.solivan.dev`)"
+      - "traefik.http.middlewares.sites-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.sites.middlewares=sites-https-redirect"
+      - "traefik.http.routers.sites-secure.entrypoints=https"
+      - "traefik.http.routers.sites-secure.rule=Host(`sites.local.solivan.dev`)"
+      - "traefik.http.routers.sites-secure.tls=true"
+      - "traefik.http.routers.sites-secure.middlewares=crowdsec-bouncer@docker"
+      - "traefik.http.routers.sites-secure.service=sites"
+      - "traefik.http.services.sites.loadbalancer.server.port=80"
+      - "traefik.docker.network=proxy"
+
+networks:
+  proxy:
+    external: true

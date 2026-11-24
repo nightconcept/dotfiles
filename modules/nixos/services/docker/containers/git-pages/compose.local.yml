@@ -1,0 +1,5 @@
+# Local preview on one workstation: publish the router on 127.0.0.1:8088.
+services:
+  sites-router:
+    ports:
+      - "127.0.0.1:8088:80"

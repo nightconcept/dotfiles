@@ -1,0 +1,33 @@
+# git-pages configuration for sites.solivan.dev (path layout, see docker-compose.yml).
+log-format = "text"
+
+[server]
+pages = "tcp/0.0.0.0:3000"  # the router reaches this; nothing else is published
+proxy = "-"
+https = "-"
+metrics = "tcp/0.0.0.0:3002"  # reachable on the stack network only
+
+# One wildcard entry covers every site: the router sends <user>.pages.internal.
+# A push is accepted only when its clone URL matches this template and the
+# branch is `pages`, so there is no per-site DNS record to manage.
+[[wildcard]]
+domain = "pages.internal"
+clone-url = "https://forge.solivan.dev/<user>/<project>.git"
+index-repo = "pages"
+index-repo-branch = "pages"
+
+[storage]
+type = "fs"
+
+[storage.fs]
+root = "./data"
+
+[secrets]
+type = "fs"
+
+[secrets.fs]
+root = "./data"
+
+[limits]
+max-site-size = "32MB"
+allowed-repository-url-prefixes = ["https://forge.solivan.dev/nightconcept/"]

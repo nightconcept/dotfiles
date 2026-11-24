@@ -1,0 +1,21 @@
+{
+	auto_https off
+	admin off
+}
+
+:80 {
+	# /<user>/<rest> -> host <user>.pages.internal, path /<rest>
+	@site path_regexp site ^/([a-z0-9][a-z0-9-]*)/(.*)$
+	handle @site {
+		rewrite * /{re.site.2}
+		reverse_proxy git-pages:3000 {
+			header_up Host {re.site.1}.pages.internal
+			# git-pages redirects to /<rest>; put the /<user> prefix back
+			header_down Location ^/ /{re.site.1}/
+		}
+	}
+
+	handle {
+		respond "no such site" 404
+	}
+}

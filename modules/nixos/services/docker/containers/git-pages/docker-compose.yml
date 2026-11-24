@@ -1,0 +1,56 @@
+# Static sites for forge repos: https://sites.solivan.dev/<user>/<repo>/
+#
+# git-pages serves the `pages` branch of each repo. Its native layout is
+# <user>.<domain>/<repo>/, so the router (Caddy) turns the path /<user>/<rest>
+# into a request for host <user>.pages.internal and path /<rest>. That host
+# exists only on this stack's network, so no certificate is involved.
+# Pushes are authorized by the [[wildcard]] section in config.toml: only the
+# `pages` branch of https://forge.solivan.dev/<user>/<repo>.git can publish.
+name: git-pages
+
+services:
+  git-pages:
+    container_name: git-pages
+    image: codeberg.org/git-pages/git-pages@${GIT_PAGES_DIGEST:-sha256:8876d2f0cd9a4de95688dada633d206af067df85c80ec611b5cf7f861f58b973}  # 0.10.2
+    restart: unless-stopped
+    user: "1000:100"
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      # Development only: authorizes every request. Never set it in production.
+      PAGES_INSECURE: ${PAGES_INSECURE:-}
+    volumes:
+      - ./config.toml:/app/config.toml:ro
+      - ${DATA_PATH:-./data}:/app/data
+    networks:
+      - sites
+
+  sites-router:
+    container_name: sites-router
+    image: docker.io/library/caddy@${CADDY_DIGEST:-sha256:003a97808e781aa9f7e75cc2f43d34d461099031faf5e20faefb9f61126836f0}  # 2.11-alpine
+    restart: unless-stopped
+    read_only: true
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+    security_opt:
+      - no-new-privileges:true
+    depends_on:
+      - git-pages
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    networks:
+      - sites
+
+volumes:
+  caddy-data:
+  caddy-config:
+
+networks:
+  sites:
