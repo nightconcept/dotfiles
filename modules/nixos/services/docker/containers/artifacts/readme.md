@@ -7,7 +7,7 @@ Client: `home/skills/publish-artifact`.
 | File | What it does |
 |---|---|
 | `nginx.conf` | Serves `/<id>`; `PUT`/`DELETE /_api/<id>.html\|.json` and `GET /_api/index.json` need the token. Sends the content policy. |
-| `sweep.py` | Expires artifacts and builds `index.json`. A systemd timer runs it every 5 minutes. |
+| `sweep.py` | Expires artifacts and builds `index.json`. A systemd path unit runs it the moment a file lands in or leaves `<dataPath>/a` (listed within a second), and a timer runs it every 5 minutes to catch expiry. |
 | `test_sweep.py` | `python3 -m unittest test_sweep` in this folder. |
 | `compose.traefik.yml` | Traefik labels with the CrowdSec bouncer. |
 | `compose.local.yml` | Publishes `127.0.0.1:8089` for a local preview. |

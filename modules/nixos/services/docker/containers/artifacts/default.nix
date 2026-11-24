@@ -72,6 +72,7 @@ in {
       "d ${containerPath} 0755 root root -"
       # nginx-unprivileged runs as uid 101 with a read-only root filesystem.
       "d ${cfg.dataPath} 0755 101 101 -"
+      "d ${cfg.dataPath}/a 0755 101 101 -"
     ];
 
     systemd.services."docker-container-${containerName}" = {
@@ -112,11 +113,14 @@ in {
       };
     };
 
-    # Expiry and the index. Every five minutes: it only scans one folder, and
-    # it is what makes a new artifact show up in `artifact list`.
+    # Expiry and the index. The sweeper runs the moment a file lands in or leaves
+    # the artifacts folder (so a new artifact is listed within a second), and every
+    # five minutes as well, which is what catches expiry.
     systemd.services.artifacts-sweep = {
       description = "Expire artifacts and rebuild the index";
       after = ["docker-container-${containerName}.service"];
+      # A burst of uploads can start it often; each run takes milliseconds.
+      startLimitIntervalSec = 0;
       serviceConfig = {
         Type = "oneshot";
         ExecStart = sweep;
@@ -125,6 +129,14 @@ in {
         ProtectHome = true;
         PrivateTmp = true;
         NoNewPrivileges = true;
+      };
+    };
+
+    systemd.paths.artifacts-sweep = {
+      wantedBy = ["multi-user.target"];
+      pathConfig = {
+        PathModified = "${cfg.dataPath}/a";
+        Unit = "artifacts-sweep.service";
       };
     };
 

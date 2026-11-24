@@ -373,7 +373,7 @@ later). Traefik with the CrowdSec bouncer fronts one nginx container.
 - Reads are open by id. Writes and the index need a bearer token (SOPS
   `artifacts.yaml`, key `write_token`). Pages are served with a sandboxing content
   policy: no network calls, images only as `data:`/`blob:`.
-- A systemd timer (`artifacts-sweep`, every 5 minutes) expires artifacts: 14 days by
+- A systemd path unit runs the sweeper (`artifacts-sweep`) as soon as a file changes, so a new artifact is listed within a second; a timer runs it every 5 minutes to catch expiry. It expires artifacts: 14 days by
   default, 90 at most, 20 pins, and a 2 GiB / 500-item cap. See the module readme.
 - Data: `/var/lib/docker-containers/artifacts/data`. It is not backed up.
 - Setup: the LAN name needs no DNS change (`*.local.solivan.dev` already points at
