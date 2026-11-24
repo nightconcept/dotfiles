@@ -15,6 +15,9 @@ services:
     restart: unless-stopped
     user: "1000:100"
     read_only: true
+    # A push clones the repo into a temporary directory, so /tmp must be writable.
+    tmpfs:
+      - /tmp:size=64m,mode=1777
     cap_drop:
       - ALL
     security_opt:
