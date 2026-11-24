@@ -3,7 +3,9 @@
 
 Layout under the data directory:
   a/<id>.html   the artifact (its mtime is the creation time)
-  a/<id>.json   metadata written by the publisher: title, expires, pinned, publisher
+  a/<id>.json   metadata written by the publisher: title, expires, pinned, and who
+                (publisher, agent, session, host, source). The "who" is declared by
+                the publisher, not verified: every writer shares one token.
   index.json    written here; the live artifacts and recent removals
 
 Rules (the server does not trust the publisher's metadata):
@@ -40,6 +42,10 @@ class Item:
     size: int
     title: str = "(untitled)"
     publisher: str = ""
+    agent: str = ""
+    session: str = ""
+    host: str = ""
+    source: str = ""
     expires: datetime | None = None
     pinned: bool = False
     meta_ok: bool = True
@@ -135,7 +141,8 @@ def load(data: Path) -> tuple[list[Item], list[str]]:
             items.append(item)
             continue
         item.title = str(meta.get("title") or item.title)[:200]
-        item.publisher = str(meta.get("publisher") or "")[:100]
+        for field_name, limit in (("publisher", 100), ("agent", 50), ("session", 200), ("host", 100), ("source", 300)):
+            setattr(item, field_name, str(meta.get(field_name) or "")[:limit])
         item.expires = parse_time(meta.get("expires"))
         item.pinned = meta.get("pinned") is True
         items.append(item)
@@ -167,7 +174,15 @@ def sweep(data: Path, now: datetime, limits: Limits, dry_run: bool = False) -> d
     except (OSError, ValueError, AttributeError):
         pass
     log = [
-        {"id": item.id, "title": item.title, "reason": reason, "at": stamp(now)}
+        {
+            "id": item.id,
+            "title": item.title,
+            "publisher": item.publisher,
+            "agent": item.agent,
+            "session": item.session,
+            "reason": reason,
+            "at": stamp(now),
+        }
         for item, reason in removed
     ] + [{"id": oid, "title": "", "reason": "orphan metadata", "at": stamp(now)} for oid in orphans]
     document = {
@@ -186,6 +201,10 @@ def sweep(data: Path, now: datetime, limits: Limits, dry_run: bool = False) -> d
                 "id": i.id,
                 "title": i.title,
                 "publisher": i.publisher,
+                "agent": i.agent,
+                "session": i.session,
+                "host": i.host,
+                "source": i.source,
                 "created": stamp(i.created),
                 "expires": stamp(i.expires) if i.expires else None,
                 "pinned": i.pinned,

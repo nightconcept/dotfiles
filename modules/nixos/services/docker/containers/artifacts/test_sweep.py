@@ -91,6 +91,23 @@ class DiskTests(unittest.TestCase):
         self.assertTrue((self.data / "a" / f"{gone}.html").exists())
         self.assertFalse((self.data / "index.json").exists())
 
+    def test_who_published_is_indexed_and_survives_removal(self):
+        who = {"publisher": "red-star", "agent": "claude-code", "session": "sess-1", "host": "terra", "source": "r@abc"}
+        keep = self.put("aaaa", {"title": "Kept", "expires": sweep.stamp(NOW + DAY), **who})
+        self.put("bbbb", {"title": "Gone", "expires": sweep.stamp(NOW - DAY), **who}, age_days=3)
+        sweep.sweep(self.data, NOW, sweep.Limits())
+        index = json.loads((self.data / "index.json").read_text())
+        item = index["items"][0]
+        self.assertEqual((item["id"], item["agent"], item["session"], item["host"], item["source"]),
+                         (keep, "claude-code", "sess-1", "terra", "r@abc"))
+        self.assertEqual((index["removed"][0]["publisher"], index["removed"][0]["session"]), ("red-star", "sess-1"))
+
+    def test_who_fields_are_cut_to_length(self):
+        self.put("aaaa", {"session": "s" * 500, "expires": sweep.stamp(NOW + DAY)})
+        sweep.sweep(self.data, NOW, sweep.Limits())
+        index = json.loads((self.data / "index.json").read_text())
+        self.assertEqual(len(index["items"][0]["session"]), 200)
+
     def test_bad_or_missing_metadata_still_expires_on_the_default(self):
         self.put("dead", age_days=20)
         self.put("beef", raw_meta="{not json", age_days=1)
