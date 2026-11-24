@@ -92,14 +92,14 @@ class DiskTests(unittest.TestCase):
         self.assertFalse((self.data / "index.json").exists())
 
     def test_who_published_is_indexed_and_survives_removal(self):
-        who = {"publisher": "red-star", "agent": "claude-code", "session": "sess-1", "host": "terra", "source": "r@abc"}
+        who = {"publisher": "red-star", "agent": "claude-code", "model": "claude-sonnet-5-5", "session": "sess-1", "host": "terra", "source": "r@abc"}
         keep = self.put("aaaa", {"title": "Kept", "expires": sweep.stamp(NOW + DAY), **who})
         self.put("bbbb", {"title": "Gone", "expires": sweep.stamp(NOW - DAY), **who}, age_days=3)
         sweep.sweep(self.data, NOW, sweep.Limits())
         index = json.loads((self.data / "index.json").read_text())
         item = index["items"][0]
-        self.assertEqual((item["id"], item["agent"], item["session"], item["host"], item["source"]),
-                         (keep, "claude-code", "sess-1", "terra", "r@abc"))
+        self.assertEqual((item["id"], item["model"], item["session"], item["host"], item["source"]),
+                         (keep, "claude-sonnet-5-5", "sess-1", "terra", "r@abc"))
         self.assertEqual((index["removed"][0]["publisher"], index["removed"][0]["session"]), ("red-star", "sess-1"))
 
     def test_who_fields_are_cut_to_length(self):

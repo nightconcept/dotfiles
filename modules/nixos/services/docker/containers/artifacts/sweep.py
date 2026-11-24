@@ -4,7 +4,7 @@
 Layout under the data directory:
   a/<id>.html   the artifact (its mtime is the creation time)
   a/<id>.json   metadata written by the publisher: title, expires, pinned, and who
-                (publisher, agent, session, host, source). The "who" is declared by
+                (publisher, agent, model, session, host, source). The "who" is declared by
                 the publisher, not verified: every writer shares one token.
   index.json    written here; the live artifacts and recent removals
 
@@ -43,6 +43,7 @@ class Item:
     title: str = "(untitled)"
     publisher: str = ""
     agent: str = ""
+    model: str = ""
     session: str = ""
     host: str = ""
     source: str = ""
@@ -141,7 +142,7 @@ def load(data: Path) -> tuple[list[Item], list[str]]:
             items.append(item)
             continue
         item.title = str(meta.get("title") or item.title)[:200]
-        for field_name, limit in (("publisher", 100), ("agent", 50), ("session", 200), ("host", 100), ("source", 300)):
+        for field_name, limit in (("publisher", 100), ("agent", 50), ("model", 100), ("session", 200), ("host", 100), ("source", 300)):
             setattr(item, field_name, str(meta.get(field_name) or "")[:limit])
         item.expires = parse_time(meta.get("expires"))
         item.pinned = meta.get("pinned") is True
@@ -179,6 +180,7 @@ def sweep(data: Path, now: datetime, limits: Limits, dry_run: bool = False) -> d
             "title": item.title,
             "publisher": item.publisher,
             "agent": item.agent,
+            "model": item.model,
             "session": item.session,
             "reason": reason,
             "at": stamp(now),
@@ -202,6 +204,7 @@ def sweep(data: Path, now: datetime, limits: Limits, dry_run: bool = False) -> d
                 "title": i.title,
                 "publisher": i.publisher,
                 "agent": i.agent,
+                "model": i.model,
                 "session": i.session,
                 "host": i.host,
                 "source": i.source,
