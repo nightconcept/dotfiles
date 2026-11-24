@@ -42,6 +42,7 @@ in {
     ./containers/ddclient
     # ./containers/enshrouded
     ./containers/flaresolverr
+    ./containers/artifacts
     ./containers/forgejo
     ./containers/git-pages
     ./containers/freshrss

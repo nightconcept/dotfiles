@@ -1,0 +1,25 @@
+# Traefik fronts the store with the CrowdSec bouncer, like Forgejo and the
+# sites router. ARTIFACTS_RULE is written by the NixOS module: the LAN name
+# always, the public name when `public` is set.
+services:
+  artifacts:
+    networks:
+      - artifacts
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.artifacts.entrypoints=http"
+      - "traefik.http.routers.artifacts.rule=${ARTIFACTS_RULE?required}"
+      - "traefik.http.middlewares.artifacts-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.artifacts.middlewares=artifacts-https-redirect"
+      - "traefik.http.routers.artifacts-secure.entrypoints=https"
+      - "traefik.http.routers.artifacts-secure.rule=${ARTIFACTS_RULE?required}"
+      - "traefik.http.routers.artifacts-secure.tls=true"
+      - "traefik.http.routers.artifacts-secure.middlewares=crowdsec-bouncer@docker"
+      - "traefik.http.routers.artifacts-secure.service=artifacts"
+      - "traefik.http.services.artifacts.loadbalancer.server.port=8080"
+      - "traefik.docker.network=proxy"
+
+networks:
+  proxy:
+    external: true

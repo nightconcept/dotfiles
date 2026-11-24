@@ -363,3 +363,19 @@ web route and PriceBuddy route remain restricted to the LAN.
 Upstream PriceBuddy prints environment variables and the initial password on
 startup. Its Docker log driver is disabled to avoid storing those credentials.
 Application logs in the persistent storage volume remain available for diagnosis.
+
+## artifacts on Rinoa
+
+The `artifacts` module hosts single-file HTML pages that agents publish, at
+`https://artifacts.local.solivan.dev/<id>` (public name `artifacts.solivan.dev`
+later). Traefik with the CrowdSec bouncer fronts one nginx container.
+
+- Reads are open by id. Writes and the index need a bearer token (SOPS
+  `artifacts.yaml`, key `write_token`). Pages are served with a sandboxing content
+  policy: no network calls, images only as `data:`/`blob:`.
+- A systemd timer (`artifacts-sweep`, every 5 minutes) expires artifacts: 14 days by
+  default, 90 at most, 20 pins, and a 2 GiB / 500-item cap. See the module readme.
+- Data: `/var/lib/docker-containers/artifacts/data`. It is not backed up.
+- Setup: the LAN name needs no DNS change (`*.local.solivan.dev` already points at
+  Rinoa). For the public name, add the Cloudflare tunnel hostname, then set
+  `public = true`.

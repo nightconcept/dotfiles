@@ -1,0 +1,5 @@
+# Local preview on one workstation: publish nginx on 127.0.0.1:8089.
+services:
+  artifacts:
+    ports:
+      - "127.0.0.1:8089:8080"
