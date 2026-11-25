@@ -378,8 +378,8 @@ the pinned `artifact-share` flake input.
   unpkg and Google Fonts) and can keep state through `window.claude.use('db')`.
 - Artifacts do not expire. Data: `/var/lib/docker-containers/artifacts/data`
   (`artifacts.sqlite3`). It is not backed up yet.
-- Setup: the LAN name needs no DNS change (`*.local.solivan.dev` already points at
-  Rinoa). For the public name, add the Cloudflare tunnel hostname, then set `public = true`
+- Setup: add the Pi-hole record `artifacts.local.solivan.dev` -> `192.168.1.110` (there is
+  no wildcard). For the public name, add the Cloudflare tunnel hostname, then set `public = true`
   (the app serves one base URL, so this switches the name instead of adding one).
 - Upgrade and operation: see the module readme.
 
