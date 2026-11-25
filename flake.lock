@@ -1,5 +1,22 @@
 {
   "nodes": {
+    "artifact-share": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1795578122,
+        "narHash": "sha256-c7I44mM7c8IyMS/VkD1zLMYkCBZPgvgyQdsptrKyLkk=",
+        "ref": "refs/heads/main",
+        "rev": "0b2206c706341a5c40f86569868db0c736944450",
+        "revCount": 2,
+        "type": "git",
+        "url": "https://forge.solivan.dev/nightconcept/artifact-share.git"
+      },
+      "original": {
+        "rev": "0b2206c706341a5c40f86569868db0c736944450",
+        "type": "git",
+        "url": "https://forge.solivan.dev/nightconcept/artifact-share.git"
+      }
+    },
     "base16": {
       "inputs": {
         "fromYaml": "fromYaml"
@@ -907,6 +924,7 @@
     },
     "root": {
       "inputs": {
+        "artifact-share": "artifact-share",
         "disko": "disko",
         "events": "events",
         "home-manager": "home-manager",

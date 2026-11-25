@@ -366,16 +366,20 @@ Application logs in the persistent storage volume remain available for diagnosis
 
 ## artifacts on Rinoa
 
-The `artifacts` module hosts single-file HTML pages that agents publish, at
-`https://artifacts.local.solivan.dev/<id>` (public name `artifacts.solivan.dev`
-later). Traefik with the CrowdSec bouncer fronts one nginx container.
+The `artifacts` module runs Artifact Share (`nightconcept/artifact-share`, our fork of
+AlexDobrushskiy/artifact-share) at `https://artifacts.local.solivan.dev/<id>`. Traefik with
+the CrowdSec bouncer fronts one Go container over SQLite. The image builds on Rinoa from
+the pinned `artifact-share` flake input.
 
-- Reads are open by id. Writes and the index need a bearer token (SOPS
-  `artifacts.yaml`, key `write_token`). Pages are served with a sandboxing content
-  policy: no network calls, images only as `data:`/`blob:`.
-- A systemd path unit runs the sweeper (`artifacts-sweep`) as soon as a file changes, so a new artifact is listed within a second; a timer runs it every 5 minutes to catch expiry. It expires artifacts: 14 days by
-  default, 90 at most, 20 pins, and a 2 GiB / 500-item cap. See the module readme.
-- Data: `/var/lib/docker-containers/artifacts/data`. It is not backed up.
+- One owner. Pages are private until made public: non-owners get 404. The owner signs in
+  with a one-time link (`docker exec artifacts artifact-share owner link`). Agents publish
+  with a publisher key (`... key create`) kept in `~/.config/artifact-share/config.json`.
+- Pages run in a sandboxed iframe (no network; scripts and styles from cdnjs, jsDelivr,
+  unpkg and Google Fonts) and can keep state through `window.claude.use('db')`.
+- Artifacts do not expire. Data: `/var/lib/docker-containers/artifacts/data`
+  (`artifacts.sqlite3`). It is not backed up yet.
 - Setup: the LAN name needs no DNS change (`*.local.solivan.dev` already points at
-  Rinoa). For the public name, add the Cloudflare tunnel hostname, then set
-  `public = true`.
+  Rinoa). For the public name, add the Cloudflare tunnel hostname, then set `public = true`
+  (the app serves one base URL, so this switches the name instead of adding one).
+- Upgrade and operation: see the module readme.
+

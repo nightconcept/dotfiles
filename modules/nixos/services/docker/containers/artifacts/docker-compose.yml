@@ -1,31 +1,53 @@
-# Artifacts: single-file HTML pages written by agents, served at /<id>.
-# nginx does the serving and the PUT/DELETE; sweep.py (a systemd timer on the
-# host) expires them. See readme.md.
+# Artifacts: Artifact Share (nightconcept/artifact-share, a fork of
+# AlexDobrushskiy/artifact-share). One Go binary over SQLite. The image builds
+# on Rinoa from the pinned `artifact-share` flake input. Traefik with the
+# CrowdSec bouncer fronts it. ARTIFACTS_RULE is written by the NixOS module.
 name: artifacts
 
 services:
   artifacts:
     container_name: artifacts
-    image: nginxinc/nginx-unprivileged@${NGINX_DIGEST:-sha256:7377697a821c131a924a7105fafbe7414db4e9fcc77a6f08f776f33f141ec3f8}  # 1.28-alpine
+    image: artifact-share:${ARTIFACTS_TAG?required}
+    build:
+      context: ${ARTIFACTS_SOURCE?required}
     restart: unless-stopped
+    environment:
+      ARTIFACT_SHARE_DATA_DIR: /data
+      ARTIFACT_SHARE_PORT: "8436"
+      ARTIFACT_SHARE_BASE_URL: ${ARTIFACTS_BASE_URL?required}
+    volumes:
+      - ${DATA_PATH?required}:/data
     read_only: true
+    tmpfs:
+      - /tmp:size=16m,mode=1777
     cap_drop:
       - ALL
     security_opt:
       - no-new-privileges:true
-    tmpfs:
-      - /tmp:size=32m,mode=1777
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./auth.conf:/etc/nginx/auth.conf:ro
-      - ${DATA_PATH:-./data}:/data
+    mem_limit: 256m
+    cpus: 1.0
+    pids_limit: 64
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
     networks:
-      - artifacts
-    healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/healthz"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.artifacts.entrypoints=http"
+      - "traefik.http.routers.artifacts.rule=${ARTIFACTS_RULE?required}"
+      - "traefik.http.middlewares.artifacts-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.artifacts.middlewares=artifacts-https-redirect"
+      - "traefik.http.routers.artifacts-secure.entrypoints=https"
+      - "traefik.http.routers.artifacts-secure.rule=${ARTIFACTS_RULE?required}"
+      - "traefik.http.routers.artifacts-secure.tls=true"
+      - "traefik.http.routers.artifacts-secure.middlewares=crowdsec-bouncer@docker"
+      - "traefik.http.routers.artifacts-secure.service=artifacts"
+      - "traefik.http.services.artifacts.loadbalancer.server.port=8436"
+      - "traefik.docker.network=proxy"
 
 networks:
-  artifacts:
+  proxy:
+    external: true

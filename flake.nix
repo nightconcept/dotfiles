@@ -78,6 +78,12 @@
       flake = false;
     };
 
+    # Artifact hosting (our fork of AlexDobrushskiy/artifact-share), built on Rinoa by the artifacts container module.
+    artifact-share = {
+      url = "git+https://forge.solivan.dev/nightconcept/artifact-share.git?rev=0b2206c706341a5c40f86569868db0c736944450";
+      flake = false;
+    };
+
     # Self-hosted SMS gateway API and web UI, built on Rinoa.
     httpsms = {
       url = "github:NdoleStudio/httpsms/f352d81800e05c677f5118c6c3d32040769bb7e5";

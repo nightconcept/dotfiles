@@ -1,35 +1,41 @@
 # artifacts
 
-Single-file HTML pages written by agents, served at `https://artifacts.solivan.dev/<id>`
-(LAN: `artifacts.local.solivan.dev`). Plan: `home/docs/plans/artifacts-hosting.md`.
-Client: `home/skills/publish-artifact`.
+[Artifact Share](https://forge.solivan.dev/nightconcept/artifact-share) (our fork of
+AlexDobrushskiy/artifact-share) at `https://artifacts.local.solivan.dev/<id>`. Client skill:
+`home/skills/publish-artifact`. Plan and decisions: `home/docs/plans/artifacts-hosting.md`.
+
+One Go binary over SQLite. The image builds on Rinoa from the pinned `artifact-share` flake
+input. Pages are private until made public: the owner signs in, everyone else gets 404.
 
 | File | What it does |
 |---|---|
-| `nginx.conf` | Serves `/<id>`; `PUT`/`DELETE /_api/<id>.html\|.json` and `GET /_api/index.json` need the token. Sends the content policy. |
-| `sweep.py` | Expires artifacts and builds `index.json`. A systemd path unit runs it the moment a file lands in or leaves `<dataPath>/a` (listed within a second), and a timer runs it every 5 minutes to catch expiry. |
-| `test_sweep.py` | `python3 -m unittest test_sweep` in this folder. |
-| `compose.traefik.yml` | Traefik labels with the CrowdSec bouncer. |
-| `compose.local.yml` | Publishes `127.0.0.1:8089` for a local preview. |
+| `default.nix` | Options, data folder, the systemd unit that builds and runs the compose project. |
+| `docker-compose.yml` | The container (read-only, no capabilities) and its Traefik labels with the CrowdSec bouncer. |
 
-Data: `<dataPath>/a/<id>.html`, `<id>.json`, and `<dataPath>/index.json`. The `.html`
-mtime is the creation time. The data is not backed up.
+Data: `<dataPath>/artifacts.sqlite3` holds every revision, comment and key digest. It does
+not expire, and it is **not backed up yet**.
 
-## Token
+## Operate
 
-`write_token` in `modules/nixos/security/sops/artifacts.yaml`. The module writes it
-into `auth.conf` (mode 400, uid 101) for nginx. Read it with
-`sops -d --extract '["write_token"]' modules/nixos/security/sops/artifacts.yaml`.
-To rotate: replace the value and switch Rinoa.
+```sh
+# Sign in as the owner: prints a one-time URL valid for 10 minutes.
+ssh rinoa docker exec artifacts artifact-share owner link
+# Publisher key for an agent machine (the secret prints once).
+ssh rinoa docker exec artifacts artifact-share key create --label terra --scopes create,read,update
+ssh rinoa docker exec artifacts artifact-share key list
+ssh rinoa docker exec artifacts artifact-share backup /data/backup.sqlite3
+```
 
-## Local preview
+Keys go in `~/.config/artifact-share/config.json` on each machine; see the home skill.
 
-Make a data folder and an `auth.conf` with the map from `default.nix`, mount them over
-`./data` and `./auth.conf` in a compose override, then
-`docker compose -f docker-compose.yml -f compose.local.yml -f override.yml up -d`.
+## Upgrade
+
+Push to `nightconcept/artifact-share`, then bump the `artifact-share` rev in `flake.nix`,
+`nix flake lock --update-input artifact-share`, and switch Rinoa. Merge upstream with
+`git fetch upstream && git merge upstream/main` in the fork.
 
 ## Not done yet
 
-- The Cloudflare tunnel hostname `artifacts.solivan.dev`, a rate-limit rule for
-  `PUT`/`DELETE`, and a check that CrowdSec sees real client addresses. Then
-  `public = true` for `artifacts` in `hosts/nixos/rinoa/default.nix`.
+- The Cloudflare tunnel hostname `artifacts.solivan.dev`, a rate-limit rule, and CrowdSec
+  seeing real client addresses. Then `public = true` in `hosts/nixos/rinoa/default.nix`.
+- Back up the data folder.
