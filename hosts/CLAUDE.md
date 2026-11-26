@@ -19,3 +19,4 @@ Host-specific configs live in `hosts/nixos/<hostname>/` and `hosts/darwin/<hostn
 |----------|-------------|
 | `waver` | MacBook Pro M1 |
 | `merlin` | Mac Mini M1 HTPC |
+| `yuna` | Mac Mini M1 (same settings as merlin) |

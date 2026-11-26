@@ -32,6 +32,7 @@ NixOS, macOS, and Linux system configurations managed by [Nix](https://nixos.org
 | `vincent` | NixOS | VM | CI/CD runner host |
 | `waver` | Darwin | MacBook Pro M1 | macOS Laptop with Aerospace DE |
 | `merlin` | Darwin | Mac Mini M1 | macOS Desktop HTPC |
+| `yuna` | Darwin | Mac Mini M1 | macOS Desktop (same settings as merlin) |
 
 ### Imperative & Declarative Setups (Non-Nix)
 

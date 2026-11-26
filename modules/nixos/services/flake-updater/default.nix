@@ -91,7 +91,7 @@ in {
 
     darwinHosts = mkOption {
       type = types.listOf types.str;
-      default = ["waver" "merlin"];
+      default = ["waver" "merlin" "yuna"];
       description = "Darwin configurations to evaluate. Linux cannot build them.";
     };
 

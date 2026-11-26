@@ -679,8 +679,8 @@ install_nix_darwin() {
     local darwin_config="waver"  # default
 
     # Check if merlin config exists and we're on merlin
-    if [[ "$hostname" == "merlin" ]]; then
-        darwin_config="merlin"
+    if [[ "$hostname" == "merlin" || "$hostname" == "yuna" ]]; then
+        darwin_config="$hostname"
     fi
 
     print_info "🔧 Installing nix-darwin..."

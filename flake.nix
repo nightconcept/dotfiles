@@ -130,6 +130,7 @@
     darwinConfigurations = {
       waver = lib.mkDarwin inputs.nixpkgs "waver";
       merlin = lib.mkDarwin inputs.nixpkgs "merlin";
+      yuna = lib.mkDarwin inputs.nixpkgs "yuna";
     };
 
     homeConfigurations = {

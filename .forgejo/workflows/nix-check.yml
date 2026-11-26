@@ -36,7 +36,7 @@ jobs:
         continue-on-error: true
         run: |
           set -eux
-          for cfg in waver merlin; do
+          for cfg in waver merlin yuna; do
             nix eval --raw ".#darwinConfigurations.${cfg}.config.system.build.toplevel.drvPath"
           done
 

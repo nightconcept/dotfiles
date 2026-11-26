@@ -13,6 +13,7 @@
 | `vincent` | `base + server` (CI/CD runner) |
 | `waver` | `base + darwin-laptop` (MacBook Pro M1) |
 | `merlin` | `base + darwin-desktop` (Mac Mini M1) |
+| `yuna` | `base + darwin-desktop` (Mac Mini M1) |
 | `desktop` / `laptop` / `server` | Generic standalone profiles |
 | `terra` | `base + linux-desktop` (GNOME, NoMachine host), with OpenRig enabled; lock screen disabled for NoMachine |
 | `wsl` | `base + server`, with Herdr and OpenRig enabled |

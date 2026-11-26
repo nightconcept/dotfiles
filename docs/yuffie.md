@@ -30,7 +30,7 @@ All steps must pass before the push:
 
 1. `nix flake check --all-systems --no-build` (evaluates everything, including Darwin checks).
 2. `nix fmt -- --check .` (a new formatter version can change the formatting).
-3. Evaluate `darwinConfigurations.{waver,merlin}`. Linux cannot build Darwin systems.
+3. Evaluate `darwinConfigurations.{waver,merlin,yuna}`. Linux cannot build Darwin systems.
 4. Build all `checks.x86_64-linux`: the toplevels of tidus, aerith, rinoa, vincent and yuffie,
    and `tidus-boot`.
 5. Build `homeConfigurations.{desktop,laptop,server}`.

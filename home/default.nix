@@ -97,6 +97,14 @@
       extraConfig = {};
     };
 
+    yuna = {
+      profiles = [./profiles/darwin-desktop.nix];
+      username = "danny";
+      homeDirectory = "/Users/danny";
+      extraImports = [];
+      extraConfig = {};
+    };
+
     # Generic standalone home-manager configurations
     desktop = {
       profiles = [./profiles/linux-desktop.nix];

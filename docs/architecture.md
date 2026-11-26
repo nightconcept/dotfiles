@@ -62,6 +62,7 @@ The home configuration uses a profile-based system where `home/default.nix` sele
 - **yuffie**: `base + server` (nightly flake update builder)
 - **waver**: `base + darwin-laptop` (MacBook Pro M1)
 - **merlin**: `base + darwin-desktop` (Mac Mini M1)
+- **yuna**: `base + darwin-desktop` (Mac Mini M1)
 - **terra**: `base + desktop` (LLM inference server) — deployed via `desktop` flake profile
 - **desktop/laptop/server**: Generic standalone profiles used by pyinfra-managed hosts
 
@@ -85,6 +86,7 @@ See [Network](network.md) for direct access, VM placement, bridge topology, and 
 ### Active Darwin Hosts
 - `waver` - MacBook Pro M1
 - `merlin` - Mac Mini M1 HTPC
+- `yuna` - Mac Mini M1 (same settings as merlin)
 
 ### Active Linux Hosts (Non-Nix, managed via pyinfra)
 - `cloud` - Debian Docker host with a Windows Server 2025 Forgejo runner VM; deploy with `just cloud`; see [Cloud](cloud.md)
