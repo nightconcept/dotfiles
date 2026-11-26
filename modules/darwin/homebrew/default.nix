@@ -70,7 +70,6 @@ in {
           "plex"
           "qdirstat"
           "raycast"
-          "stretchly"
           "visual-studio-code"
           "vlc"
           "zotero"
