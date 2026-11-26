@@ -62,14 +62,12 @@ in {
       after =
         ["docker.service" "docker-network-proxy.service"]
         ++ lib.optionals usesTitan ["mnt-titan.mount"];
-      # Make Titan mount a hard requirement if paths use it
-      requires =
-        ["docker.service" "docker-network-proxy.service"]
-        ++ lib.optionals usesTitan ["mnt-titan.mount"];
+      # Titan is only wanted, not required: if the share is unreachable at boot
+      # (Mog still starting), a hard Requires would fail this unit permanently.
+      # preStart waits for the mount instead.
+      requires = ["docker.service" "docker-network-proxy.service"];
+      wants = lib.optionals usesTitan ["mnt-titan.mount"];
       wantedBy = ["multi-user.target"];
-      unitConfig = lib.mkIf usesTitan {
-        RequiresMountsFor = [cfg.audiobooksPath cfg.podcastsPath];
-      };
 
       preStart = ''
         ${lib.optionalString usesTitan ''
