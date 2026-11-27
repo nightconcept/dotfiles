@@ -165,7 +165,7 @@ Pi-hole (`192.168.1.101`) is terra's DNS server. Block the hosts for terra only,
 devices on the LAN that use Alibaba Cloud continue to work:
 
 1. **Group Management → Groups:** Add a group named `ai-agents`.
-2. **Group Management → Clients:** Add `192.168.1.173` (terra). Assign it to `Default` and
+2. **Group Management → Clients:** Add `192.168.1.111` (terra). Assign it to `Default` and
    to `ai-agents`.
 3. **Domains → RegEx filter:** Add each regex below with **Add to denied domains**. Then,
    in the list, change its group from `Default` to `ai-agents`.

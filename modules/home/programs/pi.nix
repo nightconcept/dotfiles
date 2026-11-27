@@ -33,7 +33,7 @@
       deepseek.apiKey = "!cat ${deepseekKeyPath}";
 
       "${localProvider}" = {
-        baseUrl = "http://192.168.1.173:8080/v1";
+        baseUrl = "http://192.168.1.111:8080/v1";
         api = "openai-completions";
         apiKey = "none";
         compat = {

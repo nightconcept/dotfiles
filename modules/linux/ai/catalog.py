@@ -36,7 +36,7 @@ MODEL_CATALOG: list[dict[str, Any]] = [
         "id": "qwen3.8-flash-next-iq2_xs",
         "files": [],
         "cmd": (
-            "env -u LD_LIBRARY_PATH STRATA_ALLOWED_HOSTS=terra,terra.nclabs.net,192.168.1.173 "
+            "env -u LD_LIBRARY_PATH STRATA_ALLOWED_HOSTS=terra,terra.nclabs.net,192.168.1.111 "
             f"sh -c 'cd {STRATA_DIR} && exec .venv/bin/python "
             "serve/server.py --engine strata --config strata-iq2_xs.json --port ${PORT}'"
         ),
