@@ -328,31 +328,31 @@ http:
     calibre:
       loadBalancer:
         servers:
-          - url: "http://192.168.1.173:8085"
+          - url: "http://192.168.1.111:8085"
         passHostHeader: true
 
     pinchflat:
       loadBalancer:
         servers:
-          - url: "http://192.168.1.173:8945"
+          - url: "http://192.168.1.111:8945"
         passHostHeader: true
 
     kosync:
       loadBalancer:
         servers:
-          - url: "http://192.168.1.173:17200"
+          - url: "http://192.168.1.111:17200"
         passHostHeader: true
 
     starways-site:
       loadBalancer:
         servers:
-          - url: "http://192.168.1.173:8190"
+          - url: "http://192.168.1.111:8190"
         passHostHeader: true
 
     ai:
       loadBalancer:
         servers:
-          - url: "http://192.168.1.173:8080"
+          - url: "http://192.168.1.111:8080"
         passHostHeader: true
 
     bank:
